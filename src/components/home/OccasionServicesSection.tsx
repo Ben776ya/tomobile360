@@ -34,7 +34,7 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
         {/* Partnership badge */}
         <div className="absolute top-2.5 left-2.5">
-          <span className="bg-[#FFC358] text-white text-[10px] font-bold px-2 py-0.5 rounded font-sans tracking-wide shadow-sm">
+          <span className="bg-[#32B75C] text-white text-[10px] font-bold px-2 py-0.5 rounded font-sans tracking-wide shadow-sm">
             M-OCCAZ
           </span>
         </div>
@@ -100,7 +100,7 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
       </div>
 
       {/* Bottom accent line */}
-      <div className="h-0.5 bg-gradient-to-r from-[#006EFE] via-[#FFC358] to-[#006EFE] opacity-40" />
+      <div className="h-0.5 bg-gradient-to-r from-[#006EFE] via-[#32B75C] to-[#006EFE] opacity-40" />
     </a>
   )
 }
@@ -110,9 +110,9 @@ export async function OccasionServicesSection() {
   const featured = listings.slice(0, 3)
 
   return (
-    <section className="py-8 md:py-12">
+    <section className="py-4 md:py-6 bg-[#F2F4F6]">
       <div className="container mx-auto px-4">
-        <div className="bg-[#F2F4F6] rounded-2xl overflow-hidden shadow-card p-6 md:p-8 border border-gray-200">
+        <div className="p-6 md:p-8">
 
           {/* Section Title — M-Occaz Logo */}
           <div className="text-center mb-8 relative z-10">
@@ -158,7 +158,7 @@ export async function OccasionServicesSection() {
               href="https://m-occaz.ma/notre-parc-de-vehicules"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#FFC358] hover:bg-[#e6a832] text-white font-semibold font-sans rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#32B75C] hover:bg-[#e6a832] text-white font-semibold font-sans rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               <ExternalLink className="w-4 h-4" />
               Voir sur M.OCCAZ

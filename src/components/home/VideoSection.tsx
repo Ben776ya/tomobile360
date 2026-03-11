@@ -15,9 +15,9 @@ export function VideoSection({ videos }: VideoSectionProps) {
   const displayVideos = videos.slice(0, 3)
 
   return (
-    <section className="py-8 md:py-12">
+    <section className="py-4 md:py-6 bg-gray-900">
       <div className="container mx-auto px-4">
-        <div className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-700 shadow-card p-6 md:p-8 relative">
+        <div className="p-6 md:p-8 relative">
           {/* Section Header */}
           <div className="text-center mb-10 relative z-10">
             <div className="flex items-center justify-center gap-3 mb-4">

@@ -73,7 +73,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
 
   return (
     <section
-      className="pt-1 pb-8 md:pb-12"
+      className="pt-1 pb-4 md:pb-6"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -97,7 +97,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
               {/* Previous Button */}
               <button
                 onClick={handlePrevious}
-                className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full border border-gray-200 text-gray-500 hover:text-secondary hover:border-secondary/30 hover:shadow-glow-cyan-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 focus:ring-offset-white mr-3"
+                className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white mr-3"
                 aria-label="Marques précédentes"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -142,7 +142,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
               {/* Next Button */}
               <button
                 onClick={handleNext}
-                className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full border border-gray-200 text-gray-500 hover:text-secondary hover:border-secondary/30 hover:shadow-glow-cyan-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 focus:ring-offset-white ml-3"
+                className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white ml-3"
                 aria-label="Marques suivantes"
               >
                 <ChevronRight className="h-4 w-4" />

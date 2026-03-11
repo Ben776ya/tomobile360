@@ -40,7 +40,7 @@ const services = [
     title: 'Révision',
     description: 'Garages partenaires agréés.',
     link: '/services/revision',
-    color: 'bg-[#FFC358]',
+    color: 'bg-[#32B75C]',
     glowColor: 'group-hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]',
   },
   {
@@ -65,7 +65,7 @@ const services = [
 
 export function ServicesSection() {
   return (
-    <section className="py-8 md:py-12">
+    <section className="py-4 md:py-6">
       <div className="container mx-auto px-4">
         <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-card p-6 md:p-8">
         {/* Section Header */}

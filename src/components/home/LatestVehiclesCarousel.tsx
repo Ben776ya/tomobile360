@@ -58,7 +58,7 @@ export function LatestVehiclesCarousel({ vehicles }: LatestVehiclesCarouselProps
 
   return (
     <section
-      className="py-8 md:py-12"
+      className="py-4 md:py-6"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -77,10 +77,10 @@ export function LatestVehiclesCarousel({ vehicles }: LatestVehiclesCarouselProps
           <button
             onClick={handlePrevious}
             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-4 z-10
-                       w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary text-white shadow-glow-indigo-sm
+                       w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#32B75C] text-white shadow-sm
                        flex items-center justify-center
-                       hover:bg-primary-500 hover:shadow-glow-indigo transition-all duration-200
-                       focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 focus:ring-offset-white"
+                       hover:bg-[#28a34e] transition-all duration-200
+                       focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white"
             aria-label="Véhicules précédents"
           >
             <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
@@ -100,10 +100,10 @@ export function LatestVehiclesCarousel({ vehicles }: LatestVehiclesCarouselProps
           <button
             onClick={handleNext}
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-4 z-10
-                       w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary text-white shadow-glow-indigo-sm
+                       w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#32B75C] text-white shadow-sm
                        flex items-center justify-center
-                       hover:bg-primary-500 hover:shadow-glow-indigo transition-all duration-200
-                       focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 focus:ring-offset-white"
+                       hover:bg-[#28a34e] transition-all duration-200
+                       focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white"
             aria-label="Véhicules suivants"
           >
             <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
@@ -130,7 +130,7 @@ export function LatestVehiclesCarousel({ vehicles }: LatestVehiclesCarouselProps
             href="/neuf"
             className="inline-flex items-center gap-2 px-8 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-gold hover:shadow-gold-lg"
           >
-            CONSULTER TOUTES LES ANNONCES
+            Plus d&apos;annonces
             <ChevronRight className="w-5 h-5" />
           </Link>
         </div>

@@ -5,9 +5,9 @@ import { ChevronRight, Check } from 'lucide-react'
 
 export function PromoBanner() {
   return (
-    <section className="py-8 md:py-12">
+    <section className="py-4 md:py-6 bg-[#F2F4F6]">
       <div className="container mx-auto px-4">
-        <div className="bg-[#F2F4F6] rounded-2xl overflow-hidden border border-gray-200 shadow-card relative">
+        <div className="relative">
           <div className="flex flex-col lg:flex-row items-center relative z-10">
             {/* Left - Illustration/Image */}
             <div className="lg:w-1/3 p-6 lg:p-8 flex justify-center">
@@ -53,7 +53,7 @@ export function PromoBanner() {
             {/* Right - CTA */}
             <div className="lg:w-1/3 p-6 lg:p-8 flex flex-col items-center lg:items-end gap-4">
               <div className="text-center lg:text-right">
-                <span className="tag inline-block bg-[#FFC358] text-white text-xs font-bold tracking-wider px-3 py-1 rounded-full mb-2">OFFRE LIMITÉE</span>
+                <span className="tag inline-block bg-[#32B75C] text-white text-xs font-bold tracking-wider px-3 py-1 rounded-full mb-2">OFFRE LIMITÉE</span>
                 <p className="text-lg font-bold text-primary">Profitez-en maintenant</p>
               </div>
               <Link

@@ -10,6 +10,7 @@ import { ServicesSection } from '@/components/home/ServicesSection'
 import { PromoBanner } from '@/components/home/PromoBanner'
 import { VideoSection } from '@/components/home/VideoSection'
 import { NewsSection } from '@/components/home/NewsSection'
+import { QuickLinksSection } from '@/components/home/QuickLinksSection'
 
 export const revalidate = 60 // Revalidate every 60 seconds
 
@@ -96,31 +97,34 @@ export default async function HomePage() {
         <BrandCarousel brands={allBrands} />
       )}
 
-      {/* 3. Latest Listings Carousel - "NOS COUPS DE COEUR" */}
+      {/* 3. Quick Links */}
+      <QuickLinksSection />
+
+      {/* 4. Latest Listings Carousel - "NOS COUPS DE COEUR" */}
       {latestNewVehicles && latestNewVehicles.length > 0 && (
         <LatestVehiclesCarousel vehicles={latestNewVehicles} />
       )}
 
-      {/* 4. OCCASION Services Section */}
+      {/* 5. OCCASION Services Section */}
       <OccasionServicesSection />
 
-      {/* 5. Services Section - "NOS OFFRES & SERVICES" */}
+      {/* 6. Services Section - "NOS OFFRES & SERVICES" */}
       <ServicesSection />
 
-      {/* 6. Promotional Banner */}
+      {/* 7. Promotional Banner */}
       <PromoBanner />
 
-      {/* 7. Video Section - "TOMOBILE 360 TV" */}
+      {/* 8. Video Section - "TOMOBILE 360 TV" */}
       {latestVideos && latestVideos.length > 0 && (
         <VideoSection videos={latestVideos as any} />
       )}
 
-      {/* 8. News Section - "ACTUS & ESSAIS" */}
+      {/* 9. News Section - "ACTUS & ESSAIS" */}
       {recentArticles && recentArticles.length > 0 && (
         <NewsSection articles={recentArticles as any} />
       )}
 
-      {/* 9. Used Listings Section */}
+      {/* 10. Used Listings Section */}
       {latestUsedListings && latestUsedListings.length > 0 && (
         <section className="py-16 md:py-20">
           <div className="container mx-auto px-4">

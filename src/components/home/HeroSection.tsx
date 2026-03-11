@@ -230,11 +230,11 @@ export function HeroSection({ brands }: HeroSectionProps) {
     router.push(`/neuf?${params.toString()}`)
   }
 
-  const selectClassName = "w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFC358]/50 focus:border-[#FFC358]/30 bg-white text-gray-800 text-sm font-medium appearance-none cursor-pointer placeholder-gray-400"
-  const sliderThumbClass = "absolute w-full h-6 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#FFC358] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-gold [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#FFC358] [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-gold [&::-moz-range-thumb]:cursor-pointer"
+  const selectClassName = "w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#32B75C]/50 focus:border-[#32B75C]/30 bg-white text-gray-800 text-sm font-medium appearance-none cursor-pointer placeholder-gray-400"
+  const sliderThumbClass = "absolute w-full h-6 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#32B75C] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-gold [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#32B75C] [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-gold [&::-moz-range-thumb]:cursor-pointer"
 
   return (
-    <section className="pt-1 pb-14 md:pb-16">
+    <section className="pt-1 pb-7 md:pb-8">
       <div className="container mx-auto px-4">
         <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-elevated relative h-[460px] md:h-[calc(100vh-200px)]">
           {/* Image Slider - fills entire card */}
@@ -266,7 +266,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
                   key={index}
                   onClick={() => setCurrentSlide(index)}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
-                    index === currentSlide ? 'w-8 bg-[#FFC358] shadow-gold' : 'w-1.5 bg-white/50'
+                    index === currentSlide ? 'w-8 bg-[#32B75C] shadow-gold' : 'w-1.5 bg-white/50'
                   }`}
                   aria-label={`Slide ${index + 1}`}
                 />
@@ -291,16 +291,16 @@ export function HeroSection({ brands }: HeroSectionProps) {
 
         {/* Search Bar - 70% overlapping hero card, 30% on white space below */}
         <div className="-mt-[140px] px-[18%] md:px-[24%] relative z-20">
-          <div className="bg-white/40 backdrop-blur-md rounded-2xl shadow-elevated p-2.5 md:p-3 border border-white/20">
+          <div className="bg-white/8 backdrop-blur-sm rounded-2xl shadow-elevated p-2.5 md:p-3 pb-7 md:pb-8 border border-white/10">
               {/* NEUF / OCCASION Toggle */}
-              <div className="flex justify-center mb-2">
+              <div className="flex justify-center mb-4">
                 <div className="inline-flex bg-gray-100 rounded-full p-0.5 gap-0.5 border border-gray-200">
                   <button
                     onClick={() => setVehicleCondition('neuf')}
                     className={`px-7 py-2.5 rounded-full text-sm font-semibold transition-all duration-300
                       ${vehicleCondition === 'neuf'
-                        ? 'bg-[#FFC358] text-white shadow-gold'
-                        : 'text-gray-500 hover:text-[#FFC358] hover:bg-gray-50'
+                        ? 'bg-[#32B75C] text-white shadow-gold'
+                        : 'text-gray-500 hover:text-[#32B75C] hover:bg-gray-50'
                       }`}
                   >
                     NEUF
@@ -309,41 +309,41 @@ export function HeroSection({ brands }: HeroSectionProps) {
                     onClick={() => setVehicleCondition('occasion')}
                     className={`px-7 py-2.5 rounded-full text-sm font-semibold transition-all duration-300
                       ${vehicleCondition === 'occasion'
-                        ? 'bg-[#FFC358] text-white shadow-gold'
-                        : 'text-gray-500 hover:text-[#FFC358] hover:bg-gray-50'
+                        ? 'bg-[#32B75C] text-white shadow-gold'
+                        : 'text-gray-500 hover:text-[#32B75C] hover:bg-gray-50'
                       }`}
                   >
-                    OCCASION
+                    OCCAZ
                   </button>
                 </div>
               </div>
 
               {/* Vehicle Type Icons */}
-              <div className="grid grid-cols-5 gap-2 md:gap-3 mb-2">
+              <div className="grid grid-cols-5 gap-2 md:gap-3 mb-4">
                 {vehicleTypes.map((type) => (
                   <button
                     key={type.id}
                     onClick={() => setSelectedType(selectedType === type.id ? '' : type.id)}
-                    className={`flex flex-col items-center py-2 md:py-2.5 px-2 rounded-lg transition-all duration-300 border
+                    className={`flex flex-col items-center py-1 md:py-1.5 px-1.5 rounded-lg transition-all duration-300 border
                       ${selectedType === type.id
-                        ? 'bg-white text-[#FFC358] border-[#FFC358] scale-[1.03] shadow-sm'
-                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-white hover:text-[#FFC358] hover:border-[#FFC358]/50'
+                        ? 'bg-white text-[#32B75C] border-[#32B75C] scale-[1.03] shadow-sm'
+                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-white hover:text-[#32B75C] hover:border-[#32B75C]/50'
                       }`}
                   >
-                    <div className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center">
+                    <div className="w-5 h-5 md:w-6 md:h-6 flex items-center justify-center">
                       {type.id === 'Utilitaire' ? (
-                        <Truck className="w-6 h-6 md:w-7 md:h-7" />
+                        <Truck className="w-4 h-4 md:w-5 md:h-5" />
                       ) : (
-                        <Car className="w-6 h-6 md:w-7 md:h-7" />
+                        <Car className="w-4 h-4 md:w-5 md:h-5" />
                       )}
                     </div>
-                    <span className="text-[10px] md:text-xs font-medium leading-tight mt-0.5">{type.label}</span>
+                    <span className="text-[9px] md:text-[10px] font-medium leading-tight mt-0.5">{type.label}</span>
                   </button>
                 ))}
               </div>
 
               {/* Filter Dropdowns */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                 <select
                   value={selectedBrand}
                   onChange={(e) => setSelectedBrand(e.target.value)}
@@ -400,7 +400,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
                     <div className="relative h-6 flex items-center">
                       <div className="absolute left-0 right-0 h-1.5 bg-gray-200 rounded-full" />
                       <div
-                        className="absolute h-1.5 bg-gradient-to-r from-primary to-[#FFC358] rounded-full"
+                        className="absolute h-1.5 bg-gradient-to-r from-primary to-[#32B75C] rounded-full"
                         style={{
                           left: `${(priceRange[0] / 1000000) * 100}%`,
                           right: `${100 - (priceRange[1] / 1000000) * 100}%`,
