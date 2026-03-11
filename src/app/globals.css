@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Maybach Two-Tone: Deep Navy + Cream */
+    --primary: 222 38% 18%; /* #1C2541 Deep Navy */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 42 53% 54%; /* #C9A84C Champagne Gold */
+    --secondary-foreground: 222 38% 18%;
+
+    --background: 0 0% 100%; /* #ffffff White */
+    --foreground: 222 38% 18%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 38% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 38% 18%;
+
+    --muted: 210 18% 94%; /* #ECEFF2 Creamy Silver */
+    --muted-foreground: 220 9% 46%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 158 64% 42%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 42 53% 54%; /* Gold */
+
+    --radius: 0.75rem;
+
+    /* Custom shadows */
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-card-hover: 0 4px 16px rgba(0,0,0,0.10);
+    --shadow-elevated: 0 8px 24px rgba(0,0,0,0.12);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight font-sans;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+}
+
+@layer components {
+  /* Tag / Badge */
+  .tag {
+    @apply font-sans font-semibold;
+    background-color: #FFC358 !important;
+    color: white !important;
+    border-color: transparent !important;
+  }
+
+  /* Gold CTA Button */
+  .btn-cta {
+    @apply px-8 py-3 bg-secondary text-white font-semibold rounded-lg
+           hover:bg-secondary-400 transition-all duration-300
+           shadow-md hover:shadow-gold active:scale-[0.98];
+  }
+
+  /* Primary Navy Button */
+  .btn-primary {
+    @apply px-6 py-3 bg-primary text-white font-semibold rounded-lg
+           hover:bg-primary-600 transition-all duration-300
+           shadow-md hover:shadow-lg active:scale-[0.98];
+  }
+
+  /* Outlined Button */
+  .btn-outline {
+    @apply px-6 py-3 bg-transparent border-2 border-secondary text-secondary font-semibold rounded-lg
+           hover:bg-secondary hover:text-primary transition-all duration-300
+           hover:shadow-gold;
+  }
+
+  /* Card Component — Light */
+  .card {
+    @apply bg-white rounded-xl border border-gray-200 shadow-card
+           hover:shadow-card-hover transition-all duration-300
+           hover:border-secondary/20;
+  }
+
+  /* Dark Card Component — for header/footer/admin */
+  .card-dark {
+    @apply bg-dark-700/90 backdrop-blur-sm rounded-xl border border-white/10
+           shadow-dark-card hover:shadow-dark-elevated transition-all duration-300
+           hover:border-secondary/25;
+  }
+
+  /* Glass morphism panel — light */
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-gray-200 rounded-xl;
+  }
+
+  /* Glass morphism panel — dark (for header/footer/admin) */
+  .glass-dark {
+    @apply bg-dark-800/80 backdrop-blur-md border border-white/10 rounded-xl;
+  }
+
+  /* Section Container */
+  .section {
+    @apply py-16 md:py-20 lg:py-24;
+  }
+
+  /* Section Title */
+  .section-title {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold text-center text-primary mb-4;
+  }
+
+  /* Section Subtitle */
+  .section-subtitle {
+    @apply text-base md:text-lg text-muted-foreground text-center mb-8 md:mb-12;
+  }
+
+  /* Gold glow utilities */
+  .glow-cyan {
+    box-shadow: 0 0 15px rgba(201,168,76,0.20), 0 0 40px rgba(201,168,76,0.06);
+  }
+
+  .glow-indigo {
+    box-shadow: 0 0 12px rgba(28,37,65,0.20), 0 0 30px rgba(28,37,65,0.08);
+  }
+
+  .glow-cyan-text {
+    text-shadow: 0 0 10px rgba(201,168,76,0.3), 0 0 30px rgba(201,168,76,0.10);
+  }
+
+  .glow-indigo-text {
+    text-shadow: 0 0 8px rgba(28,37,65,0.3), 0 0 25px rgba(28,37,65,0.10);
+  }
+
+  /* Elegant gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-secondary-400 via-secondary to-secondary-400;
+  }
+
+  /* Subtle grid background (for dark sections only) */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Dark luxury section background */
+  .section-dark {
+    @apply bg-dark-800 text-white bg-grid relative overflow-hidden;
+  }
+
+  /* Gold accent line */
+  .neon-line {
+    @apply h-[2px] bg-gradient-to-r from-transparent via-secondary to-transparent;
+  }
+
+  /* Gold border on hover */
+  .neon-border-hover {
+    @apply border border-transparent transition-all duration-300 hover:border-secondary/30 hover:shadow-gold;
+  }
+}
