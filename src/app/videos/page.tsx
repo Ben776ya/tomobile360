@@ -121,7 +121,7 @@ export default async function VideosPage({
 
                 {/* Video Info */}
                 <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-secondary transition-colors duration-300">
+                  <h3 className="font-bold text-slate-700 mb-2 line-clamp-2 group-hover:text-secondary transition-colors duration-300">
                     {video.title}
                   </h3>
                   <p className="text-sm text-gray-600 line-clamp-2 mb-3">
@@ -143,7 +143,7 @@ export default async function VideosPage({
           ) : (
             <div className="col-span-full bg-white rounded-lg shadow-card p-12 text-center border border-gray-100">
               <Play className="h-16 w-16 mx-auto mb-4 text-gray-500" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-slate-700 mb-2">
                 Aucune vidéo disponible
               </h3>
               <p className="text-gray-600">

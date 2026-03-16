@@ -232,11 +232,11 @@ export default async function VehicleDetailPage({ params }: PageProps) {
               )}
 
               {promotion && (
-                <div className="mb-4 p-3 bg-[#78350f]/20 border border-[#FFC358]/30 rounded-md">
-                  <p className="text-sm font-semibold text-[#FFC358] mb-1">
+                <div className="mb-4 p-3 bg-[#78350f]/20 border border-[#32B75C]/30 rounded-md">
+                  <p className="text-sm font-semibold text-[#32B75C] mb-1">
                     {promotion.title}
                   </p>
-                  <p className="text-xs text-[#FFC358]/80">
+                  <p className="text-xs text-[#32B75C]/80">
                     Valable jusqu&apos;au{' '}
                     {new Date(promotion.valid_until).toLocaleDateString('fr-MA', {
                       day: 'numeric',

@@ -89,8 +89,8 @@ export function FavoriteButton({
       disabled={loading}
       className={
         isFavorite
-          ? 'text-[#FFC358] hover:text-[#FFC358] hover:bg-[#FFC358]/10 shadow-sm border border-[#FFC358]/30 hover:shadow-md transition-all'
-          : 'text-gray-500 shadow-sm border border-gray-200 hover:shadow-md hover:bg-[#FFC358]/10 hover:text-[#FFC358] hover:border-[#FFC358]/30 transition-all'
+          ? 'text-[#32B75C] hover:text-[#32B75C] hover:bg-[#32B75C]/10 shadow-sm border border-[#32B75C]/30 hover:shadow-md transition-all'
+          : 'text-gray-500 shadow-sm border border-gray-200 hover:shadow-md hover:bg-[#32B75C]/10 hover:text-[#32B75C] hover:border-[#32B75C]/30 transition-all'
       }
     >
       <Heart

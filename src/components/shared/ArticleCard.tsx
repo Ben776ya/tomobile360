@@ -15,7 +15,7 @@ const categoryConfig: Record<string, { label: string; bg: string }> = {
   International: { label: 'INTERNATIONAL', bg: 'bg-purple-500' },
   Market:        { label: 'MARCHÉ',        bg: 'bg-emerald-500' },
   Review:        { label: 'ESSAI',         bg: 'bg-orange-500' },
-  News:          { label: 'ACTUALITÉ',     bg: 'bg-[#FFC358]' },
+  News:          { label: 'ACTUALITÉ',     bg: 'bg-[#32B75C]' },
 }
 
 const isYouTube = (url: string | null | undefined) =>
@@ -53,7 +53,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
         {isVideo && (
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
-              <Play className="w-5 h-5 text-[#FFC358] fill-[#FFC358] ml-0.5" />
+              <Play className="w-5 h-5 text-[#32B75C] fill-[#32B75C] ml-0.5" />
             </div>
           </div>
         )}
@@ -79,7 +79,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
         )}
 
         {/* Title */}
-        <h3 className="font-bold text-gray-900 text-base leading-snug line-clamp-2 mb-2 group-hover:text-[#006EFE] transition-colors duration-200">
+        <h3 className="font-bold text-slate-700 text-base leading-snug line-clamp-2 mb-2 group-hover:text-[#006EFE] transition-colors duration-200">
           {article.title}
         </h3>
 

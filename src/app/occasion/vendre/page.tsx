@@ -18,7 +18,7 @@ export default function SellVehiclePage() {
             <ChevronLeft className="h-4 w-4" />
             Retour aux annonces
           </Link>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-700 mb-2">
             Vendre ma Voiture
           </h1>
           <p className="text-gray-600">

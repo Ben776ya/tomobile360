@@ -149,7 +149,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                 )}
 
                 {/* Title */}
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                <h1 className="text-3xl md:text-4xl font-bold text-slate-700 mb-4">
                   {article.title}
                 </h1>
 
@@ -235,7 +235,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             {/* Related Articles */}
             {relatedArticles && relatedArticles.length > 0 && (
               <div className="bg-white rounded-lg shadow-card p-6 sticky top-4 border border-gray-100">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">Articles similaires</h2>
+                <h2 className="text-lg font-bold text-slate-700 mb-4">Articles similaires</h2>
                 <div className="space-y-4">
                   {relatedArticles.map((related) => (
                     <Link

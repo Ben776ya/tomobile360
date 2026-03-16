@@ -248,7 +248,7 @@ export default function Footer() {
                 <div className={`text-xs px-3 py-2 rounded-lg ${
                   message.type === 'success'
                     ? 'bg-green-500/20 text-green-300 border border-green-500/30'
-                    : 'bg-[#FFC358]/20 text-[#fcd34d] border border-[#FFC358]/30'
+                    : 'bg-[#32B75C]/20 text-[#fcd34d] border border-[#32B75C]/30'
                 }`}>
                   {message.text}
                 </div>

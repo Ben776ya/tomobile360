@@ -79,7 +79,7 @@ export function AdminSidebar() {
         <form action="/actions/logout" method="post">
           <button
             type="submit"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-dark-200 hover:bg-[#FFC358]/10 hover:text-[#FFC358] hover:shadow-sm transition-all duration-200 w-full"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-dark-200 hover:bg-[#32B75C]/10 hover:text-[#32B75C] hover:shadow-sm transition-all duration-200 w-full"
           >
             <LogOut className="h-5 w-5" />
             <span>Déconnexion</span>

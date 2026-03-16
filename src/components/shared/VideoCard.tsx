@@ -55,7 +55,7 @@ export function VideoCard({ video }: VideoCardProps) {
 
       {/* Content */}
       <div className="p-4">
-        <h3 className="text-base font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-secondary transition-colors">
+        <h3 className="text-base font-bold text-slate-700 mb-2 line-clamp-2 group-hover:text-secondary transition-colors">
           {video.title}
         </h3>
 

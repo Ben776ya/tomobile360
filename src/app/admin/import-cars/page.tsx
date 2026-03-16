@@ -255,13 +255,13 @@ export default function ImportCarsPage() {
                 className={`p-4 rounded-lg flex items-start gap-3 ${
                   result.success
                     ? 'bg-green-900/30 border border-green-500/30'
-                    : 'bg-[#78350f]/30 border border-[#FFC358]/30'
+                    : 'bg-[#78350f]/30 border border-[#32B75C]/30'
                 }`}
               >
                 {result.success ? (
                   <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
                 ) : (
-                  <XCircle className="h-5 w-5 text-[#FFC358] flex-shrink-0 mt-0.5" />
+                  <XCircle className="h-5 w-5 text-[#32B75C] flex-shrink-0 mt-0.5" />
                 )}
                 <div className="flex-1">
                   <p
@@ -273,7 +273,7 @@ export default function ImportCarsPage() {
                   </p>
                   <p
                     className={`text-sm ${
-                      result.success ? 'text-green-400' : 'text-[#FFC358]'
+                      result.success ? 'text-green-400' : 'text-[#32B75C]'
                     }`}
                   >
                     {result.message}
@@ -291,7 +291,7 @@ export default function ImportCarsPage() {
                         </span>
                       )}
                       {result.failed !== undefined && result.failed > 0 && (
-                        <span className="text-[#FFC358]">
+                        <span className="text-[#32B75C]">
                           ✕ {result.failed} échouée{result.failed > 1 ? 's' : ''}
                         </span>
                       )}
@@ -300,7 +300,7 @@ export default function ImportCarsPage() {
                   {result.errors && result.errors.length > 0 && (
                     <div className="mt-3">
                       <p className="text-sm font-semibold text-[#fcd34d] mb-1">Erreurs:</p>
-                      <ul className="text-xs text-[#FFC358] space-y-1">
+                      <ul className="text-xs text-[#32B75C] space-y-1">
                         {result.errors.map((error, index) => (
                           <li key={index}>• {error}</li>
                         ))}

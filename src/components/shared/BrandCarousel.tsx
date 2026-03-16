@@ -83,7 +83,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
             {/* Section Title */}
             {showTitle && (
               <div className="text-center mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                <h2 className="text-2xl md:text-3xl font-bold text-slate-700 mb-2">
                   SÉLECTIONNEZ LA MARQUE DE VOTRE CHOIX
                 </h2>
                 <p className="text-gray-600">
@@ -97,7 +97,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
               {/* Previous Button */}
               <button
                 onClick={handlePrevious}
-                className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white mr-3"
+                className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white mr-5"
                 aria-label="Marques précédentes"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -142,7 +142,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
               {/* Next Button */}
               <button
                 onClick={handleNext}
-                className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white ml-3"
+                className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white ml-5"
                 aria-label="Marques suivantes"
               >
                 <ChevronRight className="h-4 w-4" />

@@ -33,7 +33,7 @@ export default async function AdminVehiclesPage({
     const { data, count: total } = await supabase
       .from('vehicles_new')
       .select(`
-        *,
+        id, year, price_min, price_max, is_popular, is_new_release, is_coup_de_coeur, coup_de_coeur_category, images, created_at,
         brands:brand_id (name, logo_url),
         models:model_id (name)
       `, { count: 'exact' })
@@ -185,6 +185,11 @@ export default async function AdminVehiclesPage({
                           {vehicle.is_new_release && (
                             <Badge variant="warning">Nouveauté</Badge>
                           )}
+                          {vehicle.is_coup_de_coeur && (
+                            <Badge className="bg-pink-100 text-pink-700 border border-pink-300 hover:bg-pink-100">
+                              ♥ {vehicle.coup_de_coeur_category}
+                            </Badge>
+                          )}
                         </div>
                       </td>
                     ) : (
@@ -218,6 +223,8 @@ export default async function AdminVehiclesPage({
                         vehicleType={tab === 'new' ? 'new' : 'used'}
                         isPopular={tab === 'new' ? vehicle.is_popular : undefined}
                         isNewRelease={tab === 'new' ? vehicle.is_new_release : undefined}
+                        isCoupDeCoeur={tab === 'new' ? vehicle.is_coup_de_coeur : undefined}
+                        coupDeCoeurCategory={tab === 'new' ? vehicle.coup_de_coeur_category : undefined}
                       />
                     </td>
                   </tr>

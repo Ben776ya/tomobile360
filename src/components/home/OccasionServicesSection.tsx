@@ -32,11 +32,16 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
-        {/* Partnership badge */}
-        <div className="absolute top-2.5 left-2.5">
-          <span className="bg-[#32B75C] text-white text-[10px] font-bold px-2 py-0.5 rounded font-sans tracking-wide shadow-sm">
-            M-OCCAZ
-          </span>
+        {/* M-CHECK badge */}
+        <div className="absolute top-2.5 left-2.5 flex items-center gap-1 pl-0 pr-2 py-0.5 rounded-full shadow-lg" style={{ backgroundColor: '#290054' }}>
+          <Image
+            src="/le_m_check.PNG"
+            alt="M-Check"
+            width={18}
+            height={18}
+            className="object-contain"
+          />
+          <span className="text-white text-[10px] font-bold tracking-wide">M-CHECK</span>
         </div>
       </div>
 
@@ -89,6 +94,17 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
               <span>{listing.power}</span>
             </div>
           )}
+          {/* M-CHECK spec item */}
+          <div className="flex items-center gap-1 text-[11px] font-bold">
+            <Image
+              src="/m_check_dark.PNG"
+              alt="M-Check"
+              width={32}
+              height={32}
+              className="object-contain flex-shrink-0"
+            />
+            <span style={{ color: '#290054' }}>CHECK</span>
+          </div>
         </div>
 
         {/* CTA */}

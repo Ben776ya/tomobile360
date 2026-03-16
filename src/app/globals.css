@@ -80,7 +80,7 @@
   /* Tag / Badge */
   .tag {
     @apply font-sans font-semibold;
-    background-color: #FFC358 !important;
+    background-color: #32B75C !important;
     color: white !important;
     border-color: transparent !important;
   }

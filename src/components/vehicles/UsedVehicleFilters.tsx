@@ -105,7 +105,7 @@ export function UsedVehicleFilters({
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-5 w-5 text-secondary" />
-          <h3 className="font-bold text-gray-900">Filtres</h3>
+          <h3 className="font-bold text-slate-700">Filtres</h3>
         </div>
         {hasActiveFilters && (
           <button

@@ -55,7 +55,7 @@ export function VehicleCard({ vehicle, showBadges = true }: VehicleCardProps) {
         {showBadges && (
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {activePromo && (
-              <Badge className="bg-[#FFC358] hover:bg-[#FFC358] text-white border-0 shadow-md font-bold">
+              <Badge className="bg-[#32B75C] hover:bg-[#32B75C] text-white border-0 shadow-md font-bold">
                 -{activePromo.discount_percentage}%
               </Badge>
             )}

@@ -94,7 +94,7 @@ export default function ContactPage() {
   const InputError = ({ error }: { error?: string }) => {
     if (!error) return null
     return (
-      <p className="mt-1 text-sm text-[#FFC358] flex items-center gap-1">
+      <p className="mt-1 text-sm text-[#32B75C] flex items-center gap-1">
         <AlertCircle className="h-3.5 w-3.5" />
         {error}
       </p>
@@ -106,7 +106,7 @@ export default function ContactPage() {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-gray-50 via-white to-gray-50 py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-700 mb-4">
             Contactez-nous
           </h1>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
@@ -121,7 +121,7 @@ export default function ContactPage() {
             {/* Contact Info */}
             <div className="lg:col-span-1 space-y-6">
               <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Nos Coordonnées</h2>
+                <h2 className="text-xl font-bold text-slate-700 mb-6">Nos Coordonnées</h2>
 
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
@@ -178,7 +178,7 @@ export default function ContactPage() {
               <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-200">
                 <div className="flex items-center gap-3 mb-4">
                   <MessageCircle className="h-6 w-6 text-secondary" />
-                  <h3 className="font-bold text-gray-900">Chat en ligne</h3>
+                  <h3 className="font-bold text-slate-700">Chat en ligne</h3>
                 </div>
                 <p className="text-sm text-gray-500 mb-4">
                   Besoin d&apos;une réponse rapide ? Chattez avec notre équipe en direct.
@@ -192,14 +192,14 @@ export default function ContactPage() {
             {/* Contact Form */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl p-8 shadow-card border border-gray-100">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Envoyez-nous un message</h2>
+                <h2 className="text-xl font-bold text-slate-700 mb-6">Envoyez-nous un message</h2>
 
                 {submitted ? (
                   <div className="text-center py-12">
                     <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Send className="h-8 w-8 text-green-400" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Message envoyé !</h3>
+                    <h3 className="text-xl font-bold text-slate-700 mb-2">Message envoyé !</h3>
                     <p className="text-gray-600 mb-6">
                       Nous vous répondrons dans les plus brefs délais.
                     </p>
@@ -222,7 +222,7 @@ export default function ContactPage() {
                           value={formData.name}
                           onChange={(e) => handleChange('name', e.target.value)}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
-                            errors.name ? 'border-[#FFC358]' : 'border-gray-200'
+                            errors.name ? 'border-[#32B75C]' : 'border-gray-200'
                           }`}
                           placeholder="Votre nom"
                         />
@@ -237,7 +237,7 @@ export default function ContactPage() {
                           value={formData.email}
                           onChange={(e) => handleChange('email', e.target.value)}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
-                            errors.email ? 'border-[#FFC358]' : 'border-gray-200'
+                            errors.email ? 'border-[#32B75C]' : 'border-gray-200'
                           }`}
                           placeholder="votre@email.com"
                         />
@@ -255,7 +255,7 @@ export default function ContactPage() {
                           value={formData.phone}
                           onChange={(e) => handleChange('phone', e.target.value)}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
-                            errors.phone ? 'border-[#FFC358]' : 'border-gray-200'
+                            errors.phone ? 'border-[#32B75C]' : 'border-gray-200'
                           }`}
                           placeholder="+212 6XX-XXXXXX"
                         />
@@ -269,7 +269,7 @@ export default function ContactPage() {
                           value={formData.subject}
                           onChange={(e) => handleChange('subject', e.target.value)}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all ${
-                            errors.subject ? 'border-[#FFC358]' : 'border-gray-200'
+                            errors.subject ? 'border-[#32B75C]' : 'border-gray-200'
                           }`}
                         >
                           <option value="">Sélectionnez un sujet</option>
@@ -292,7 +292,7 @@ export default function ContactPage() {
                         value={formData.message}
                         onChange={(e) => handleChange('message', e.target.value)}
                         className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all resize-none placeholder-gray-400 ${
-                          errors.message ? 'border-[#FFC358]' : 'border-gray-200'
+                          errors.message ? 'border-[#32B75C]' : 'border-gray-200'
                         }`}
                         placeholder="Votre message..."
                       />

@@ -85,7 +85,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         <div className="bg-white rounded-lg shadow-card p-6 mb-8 border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold text-slate-700 mb-2">
                 {category.name}
               </h1>
               <p className="text-gray-600">{category.description}</p>
@@ -170,7 +170,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
                     {topic.is_locked && (
                       <Lock className="h-4 w-4 text-gray-500" />
                     )}
-                    <h2 className="text-lg font-bold text-gray-900 truncate">
+                    <h2 className="text-lg font-bold text-slate-700 truncate">
                       {topic.title}
                     </h2>
                   </div>
@@ -208,7 +208,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         {topicsWithStats.length === 0 && (
           <div className="bg-white rounded-lg shadow-card p-12 text-center border border-gray-100">
             <MessageSquare className="h-16 w-16 mx-auto mb-4 text-gray-500" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-slate-700 mb-2">
               Aucun sujet pour le moment
             </h3>
             <p className="text-gray-600 mb-6">

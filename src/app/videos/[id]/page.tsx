@@ -113,7 +113,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
                         </Badge>
                       )}
                     </div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-700 mb-3">
                       {video.title}
                     </h1>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -138,7 +138,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
 
                 {/* Description */}
                 <div className="border-t border-gray-200 pt-4">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-3">Description</h2>
+                  <h2 className="text-lg font-semibold text-slate-700 mb-3">Description</h2>
                   <p className="text-gray-600 whitespace-pre-line">
                     <LinkifyText text={video.description || ''} />
                   </p>
@@ -147,7 +147,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
                 {/* Related Vehicle */}
                 {video.vehicle_id && (
                   <div className="border-t border-gray-200 pt-4 mt-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                    <h3 className="text-lg font-semibold text-slate-700 mb-3">
                       Véhicule présenté
                     </h3>
                     <Link
@@ -167,7 +167,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
             {/* Related Videos */}
             {relatedVideos && relatedVideos.length > 0 && (
               <div className="bg-white rounded-lg shadow-card p-6 border border-gray-100">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">Vidéos similaires</h2>
+                <h2 className="text-lg font-bold text-slate-700 mb-4">Vidéos similaires</h2>
                 <div className="space-y-4">
                   {relatedVideos.map((related) => (
                     <Link

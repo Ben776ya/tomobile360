@@ -98,7 +98,7 @@ export default async function ForumPage() {
                 <MessageSquare className="h-5 w-5 text-secondary" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-700">
                   {totalTopics || 0}
                 </p>
                 <p className="text-sm text-gray-500">Sujets</p>
@@ -111,7 +111,7 @@ export default async function ForumPage() {
                 <TrendingUp className="h-5 w-5 text-secondary" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-700">
                   {totalPosts || 0}
                 </p>
                 <p className="text-sm text-gray-500">Messages</p>
@@ -124,7 +124,7 @@ export default async function ForumPage() {
                 <Users className="h-5 w-5 text-secondary" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-700">
                   {totalUsers || 0}
                 </p>
                 <p className="text-sm text-gray-500">Membres</p>
@@ -167,7 +167,7 @@ export default async function ForumPage() {
 
                 {/* Category Info */}
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-xl font-bold text-gray-900 mb-1">
+                  <h2 className="text-xl font-bold text-slate-700 mb-1">
                     {category.name}
                   </h2>
                   <p className="text-gray-500 text-sm mb-3">
@@ -217,7 +217,7 @@ export default async function ForumPage() {
         {!categoriesWithStats || categoriesWithStats.length === 0 && (
           <div className="bg-white rounded-lg shadow-card p-12 text-center border border-gray-100">
             <MessageSquare className="h-16 w-16 mx-auto mb-4 text-gray-500" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-slate-700 mb-2">
               Aucune catégorie disponible
             </h3>
             <p className="text-gray-600">

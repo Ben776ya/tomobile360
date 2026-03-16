@@ -105,7 +105,7 @@ export default function NewTopicPage() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-700 mb-2">
             Créer un nouveau sujet
           </h1>
           <p className="text-gray-600">
@@ -121,7 +121,7 @@ export default function NewTopicPage() {
                 <MessageSquare className="h-6 w-6 text-secondary" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Nouveau sujet</h2>
+                <h2 className="text-xl font-bold text-slate-700">Nouveau sujet</h2>
                 <p className="text-sm text-gray-500">
                   Remplissez les informations ci-dessous
                 </p>
@@ -191,7 +191,7 @@ export default function NewTopicPage() {
 
               {/* Guidelines */}
               <div className="bg-gray-50/50 rounded-md p-4 border border-gray-100">
-                <h3 className="font-semibold text-gray-900 mb-2">Règles du forum</h3>
+                <h3 className="font-semibold text-slate-700 mb-2">Règles du forum</h3>
                 <ul className="text-sm text-gray-500 space-y-1">
                   <li>• Soyez respectueux envers les autres membres</li>
                   <li>• Pas de spam ou de publicité non sollicitée</li>

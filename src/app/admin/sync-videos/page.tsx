@@ -113,8 +113,8 @@ export default function SyncVideosPage() {
           {/* Sync Card */}
           <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6 mb-6">
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-12 h-12 rounded-full bg-[#FFC358]/20 flex items-center justify-center flex-shrink-0">
-                <Youtube className="h-6 w-6 text-[#FFC358]" />
+              <div className="w-12 h-12 rounded-full bg-[#32B75C]/20 flex items-center justify-center flex-shrink-0">
+                <Youtube className="h-6 w-6 text-[#32B75C]" />
               </div>
               <div className="flex-1">
                 <h2 className="text-lg font-bold text-white mb-2">
@@ -151,13 +151,13 @@ export default function SyncVideosPage() {
                 className={`p-4 rounded-lg flex items-start gap-3 ${
                   result.success
                     ? 'bg-green-900/30 border border-green-500/30'
-                    : 'bg-[#78350f]/30 border border-[#FFC358]/30'
+                    : 'bg-[#78350f]/30 border border-[#32B75C]/30'
                 }`}
               >
                 {result.success ? (
                   <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
                 ) : (
-                  <XCircle className="h-5 w-5 text-[#FFC358] flex-shrink-0 mt-0.5" />
+                  <XCircle className="h-5 w-5 text-[#32B75C] flex-shrink-0 mt-0.5" />
                 )}
                 <div className="flex-1">
                   <p
@@ -169,13 +169,13 @@ export default function SyncVideosPage() {
                   </p>
                   <p
                     className={`text-sm ${
-                      result.success ? 'text-green-400' : 'text-[#FFC358]'
+                      result.success ? 'text-green-400' : 'text-[#32B75C]'
                     }`}
                   >
                     {result.message}
                   </p>
                   {result.error && (
-                    <p className="text-sm text-[#FFC358] mt-2 font-mono">
+                    <p className="text-sm text-[#32B75C] mt-2 font-mono">
                       {result.error}
                     </p>
                   )}

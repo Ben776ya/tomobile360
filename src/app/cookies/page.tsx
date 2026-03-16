@@ -2,13 +2,13 @@ export default function CookiesPage() {
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-700 mb-8">
           Politique de Cookies
         </h1>
 
         <div className="prose max-w-none space-y-8">
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">1. Qu&apos;est-ce qu&apos;un cookie ?</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">1. Qu&apos;est-ce qu&apos;un cookie ?</h2>
             <p className="text-gray-600">
               Un cookie est un petit fichier texte déposé sur votre appareil (ordinateur,
               tablette, smartphone) lors de votre visite sur notre site. Les cookies nous
@@ -18,7 +18,7 @@ export default function CookiesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">2. Types de cookies utilisés</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">2. Types de cookies utilisés</h2>
 
             <h3 className="text-lg font-semibold text-gray-700 mt-6 mb-3">Cookies essentiels</h3>
             <p className="text-gray-600 mb-4">
@@ -49,7 +49,7 @@ export default function CookiesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">3. Liste des cookies utilisés</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">3. Liste des cookies utilisés</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -91,7 +91,7 @@ export default function CookiesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">4. Gestion des cookies</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">4. Gestion des cookies</h2>
             <p className="text-gray-600 mb-4">
               Vous pouvez à tout moment choisir d&apos;accepter ou de refuser les cookies. Plusieurs
               possibilités s&apos;offrent à vous :
@@ -109,7 +109,7 @@ export default function CookiesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">5. Configuration du navigateur</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">5. Configuration du navigateur</h2>
             <p className="text-gray-600 mb-4">
               Voici comment gérer les cookies dans les principaux navigateurs :
             </p>
@@ -122,7 +122,7 @@ export default function CookiesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">6. Conséquences du refus des cookies</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">6. Conséquences du refus des cookies</h2>
             <p className="text-gray-600">
               Le refus des cookies essentiels peut empêcher l&apos;utilisation de certaines
               fonctionnalités du site. Le refus des cookies non essentiels n&apos;affectera pas
@@ -131,7 +131,7 @@ export default function CookiesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">7. Contact</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">7. Contact</h2>
             <p className="text-gray-600">
               Pour toute question concernant notre politique de cookies, contactez-nous :<br />
               Email : privacy@tomobile360.ma

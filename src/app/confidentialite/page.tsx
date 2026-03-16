@@ -2,13 +2,13 @@ export default function ConfidentialitePage() {
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-700 mb-8">
           Politique de Confidentialité
         </h1>
 
         <div className="prose max-w-none space-y-8">
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">1. Introduction</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">1. Introduction</h2>
             <p className="text-gray-600">
               Tomobile 360 s&apos;engage à protéger la vie privée de ses utilisateurs. Cette politique
               de confidentialité explique comment nous collectons, utilisons et protégeons vos
@@ -17,7 +17,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">2. Données collectées</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">2. Données collectées</h2>
             <p className="text-gray-600 mb-4">
               Nous collectons les types de données suivants :
             </p>
@@ -30,7 +30,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">3. Utilisation des données</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">3. Utilisation des données</h2>
             <p className="text-gray-600 mb-4">
               Vos données sont utilisées pour :
             </p>
@@ -44,7 +44,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">4. Partage des données</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">4. Partage des données</h2>
             <p className="text-gray-600">
               Nous ne vendons pas vos données personnelles. Nous pouvons partager vos informations
               avec des tiers uniquement dans les cas suivants : prestataires de services essentiels,
@@ -53,7 +53,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">5. Sécurité des données</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">5. Sécurité des données</h2>
             <p className="text-gray-600">
               Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles
               appropriées pour protéger vos données contre tout accès non autorisé, modification,
@@ -62,7 +62,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">6. Vos droits</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">6. Vos droits</h2>
             <p className="text-gray-600 mb-4">
               Conformément à la loi, vous disposez des droits suivants :
             </p>
@@ -80,7 +80,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">7. Conservation des données</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">7. Conservation des données</h2>
             <p className="text-gray-600">
               Vos données sont conservées pendant la durée nécessaire aux finalités pour lesquelles
               elles ont été collectées, puis archivées conformément aux obligations légales en vigueur.
@@ -88,7 +88,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">8. Contact</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">8. Contact</h2>
             <p className="text-gray-600">
               Pour toute question concernant cette politique de confidentialité, contactez-nous :<br />
               Email : privacy@tomobile360.ma<br />

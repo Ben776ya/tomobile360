@@ -296,7 +296,7 @@ export function PromotionForm({ vehicles, promotion, mode }: PromotionFormProps)
 
       {/* Error/Success */}
       {error && (
-        <div className="bg-[#78350f]/30 border border-[#FFC358]/30 text-[#FFC358] text-sm px-4 py-3 rounded-lg">{error}</div>
+        <div className="bg-[#78350f]/30 border border-[#32B75C]/30 text-[#32B75C] text-sm px-4 py-3 rounded-lg">{error}</div>
       )}
       {success && (
         <div className="bg-green-900/30 border border-green-500/30 text-green-400 text-sm px-4 py-3 rounded-lg">{success}</div>

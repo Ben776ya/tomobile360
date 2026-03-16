@@ -114,7 +114,7 @@ export default async function TopicDetailPage({ params }: PageProps) {
 
             {/* Topic Content */}
             <div className="flex-1">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-700 mb-3">
                 {topic.title}
               </h1>
 
@@ -156,7 +156,7 @@ export default async function TopicDetailPage({ params }: PageProps) {
 
         {/* Replies */}
         <div className="space-y-4 mb-8">
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold text-slate-700">
             Réponses ({replies?.length || 0})
           </h2>
 
@@ -227,7 +227,7 @@ export default async function TopicDetailPage({ params }: PageProps) {
           ) : (
             <div className="bg-white rounded-lg shadow-card p-12 text-center border border-gray-100">
               <MessageSquare className="h-16 w-16 mx-auto mb-4 text-gray-500" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-slate-700 mb-2">
                 Aucune réponse pour le moment
               </h3>
               <p className="text-gray-600">

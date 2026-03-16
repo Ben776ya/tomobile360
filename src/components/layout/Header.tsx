@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, X, User, LogIn, LogOut, Settings, Heart, FileText, Search } from 'lucide-react'
+import { Menu, X, User, LogIn, LogOut, Settings, Heart, FileText, Search, PlayCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { logout } from '@/app/actions/auth'
 import { FloatingSocialBubble } from '@/components/shared/FloatingSocialBubble'
@@ -18,6 +18,14 @@ interface ArticleResult {
   featured_image: string | null
 }
 
+interface VideoResult {
+  id: string
+  title: string
+  thumbnail_url: string | null
+  category: string | null
+  duration: string | null
+}
+
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -28,6 +36,7 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<ArticleResult[]>([])
+  const [videoResults, setVideoResults] = useState<VideoResult[]>([])
   const [searchLoading, setSearchLoading] = useState(false)
   const lastScrollY = useRef(0)
   const searchRef = useRef<HTMLDivElement>(null)
@@ -57,6 +66,7 @@ export default function Header() {
         setSearchOpen(false)
         setSearchQuery('')
         setSearchResults([])
+        setVideoResults([])
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -72,17 +82,26 @@ export default function Header() {
   useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchResults([])
+      setVideoResults([])
       return
     }
     const timer = setTimeout(async () => {
       setSearchLoading(true)
-      const { data } = await supabase
-        .from('articles')
-        .select('id, title, slug, excerpt, category, featured_image')
-        .eq('is_published', true)
-        .or(`title.ilike.%${searchQuery}%,excerpt.ilike.%${searchQuery}%`)
-        .limit(5)
-      setSearchResults(data || [])
+      const [{ data: articles }, { data: videos }] = await Promise.all([
+        supabase
+          .from('articles')
+          .select('id, title, slug, excerpt, category, featured_image')
+          .eq('is_published', true)
+          .or(`title.ilike.%${searchQuery}%,excerpt.ilike.%${searchQuery}%`)
+          .limit(3),
+        supabase
+          .from('videos')
+          .select('id, title, thumbnail_url, category, duration')
+          .or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
+          .limit(3),
+      ])
+      setSearchResults(articles || [])
+      setVideoResults(videos || [])
       setSearchLoading(false)
     }, 300)
     return () => clearTimeout(timer)
@@ -159,7 +178,7 @@ export default function Header() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="relative px-4 py-1 text-sm font-bold italic tracking-wide text-white bg-[#FFC358] rounded-full transition-colors duration-200
+                      className="relative px-4 py-1 text-sm font-bold italic tracking-wide text-white bg-[#32B75C] rounded-full transition-colors duration-200
                         after:content-[''] after:absolute after:-bottom-2 after:left-0 after:right-0
                         after:h-[2px] after:rounded-full after:bg-[#006EFE]
                         after:transition-transform after:duration-300 after:origin-center
@@ -180,7 +199,7 @@ export default function Header() {
                       after:transition-transform after:duration-300 after:origin-center
                       ${isActive
                         ? 'text-[#006EFE] after:scale-x-100 after:bg-[#006EFE]'
-                        : 'text-black after:scale-x-0 after:bg-[#FFC358] hover:text-[#006EFE] hover:after:scale-x-100'
+                        : 'text-black after:scale-x-0 after:bg-[#32B75C] hover:text-[#006EFE] hover:after:scale-x-100'
                       }
                     `}
                   >
@@ -201,60 +220,111 @@ export default function Header() {
                 onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true) }}
                 onFocus={() => setSearchOpen(true)}
                 onKeyDown={e => {
-                  if (e.key === 'Escape') { setSearchOpen(false); setSearchQuery(''); setSearchResults([]) }
-                  if (e.key === 'Enter' && searchQuery.trim()) { router.push(`/actu?q=${encodeURIComponent(searchQuery.trim())}`); setSearchOpen(false); setSearchQuery(''); setSearchResults([]) }
+                  if (e.key === 'Escape') { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
+                  if (e.key === 'Enter' && searchQuery.trim()) { router.push(`/actu?q=${encodeURIComponent(searchQuery.trim())}`); setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
                 }}
-                placeholder="Rechercher un article..."
+                placeholder="Rechercher articles, vidéos..."
                 className="w-44 px-2 py-1.5 text-sm bg-transparent text-gray-800 placeholder-gray-500 outline-none"
               />
               {searchQuery && (
-                <button onClick={() => { setSearchQuery(''); setSearchResults([]); setSearchOpen(false) }} className="mr-2 text-gray-400 hover:text-gray-600">
+                <button onClick={() => { setSearchQuery(''); setSearchResults([]); setVideoResults([]); setSearchOpen(false) }} className="mr-2 text-gray-400 hover:text-gray-600">
                   <X className="h-3.5 w-3.5" />
                 </button>
               )}
             </div>
 
             {/* Results Dropdown */}
-            {searchOpen && (searchResults.length > 0 || searchLoading) && (
+            {searchOpen && (searchResults.length > 0 || videoResults.length > 0 || searchLoading) && (
               <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 animate-fade-in">
                 {searchLoading ? (
                   <div className="px-4 py-3 text-sm text-gray-400 text-center">Recherche...</div>
                 ) : (
                   <>
-                    {searchResults.map(article => (
-                      <Link
-                        key={article.id}
-                        href={`/actu/${article.slug}`}
-                        onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]) }}
-                        className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
-                      >
-                        {article.featured_image && (
-                          <Image src={article.featured_image} alt={article.title} width={44} height={44} className="w-11 h-11 object-cover rounded-lg flex-shrink-0" />
-                        )}
-                        <div className="min-w-0">
-                          {article.category && (
-                            <span className="text-[10px] font-semibold text-[#006EFE] uppercase tracking-wide">{article.category}</span>
-                          )}
-                          <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">{article.title}</p>
+                    {searchResults.length > 0 && (
+                      <>
+                        <div className="px-4 pt-3 pb-1">
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Articles</span>
                         </div>
+                        {searchResults.map(article => (
+                          <Link
+                            key={article.id}
+                            href={`/actu/${article.slug}`}
+                            onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
+                            className="flex items-start gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                          >
+                            {article.featured_image && (
+                              <Image src={article.featured_image} alt={article.title} width={40} height={40} className="w-10 h-10 object-cover rounded-lg flex-shrink-0" />
+                            )}
+                            <div className="min-w-0">
+                              {article.category && (
+                                <span className="text-[10px] font-semibold text-[#006EFE] uppercase tracking-wide">{article.category}</span>
+                              )}
+                              <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">{article.title}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </>
+                    )}
+                    {videoResults.length > 0 && (
+                      <>
+                        <div className={`px-4 pt-3 pb-1 ${searchResults.length > 0 ? 'border-t border-gray-100' : ''}`}>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Vidéos</span>
+                        </div>
+                        {videoResults.map(video => (
+                          <Link
+                            key={video.id}
+                            href="/videos"
+                            onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
+                            className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                          >
+                            {video.thumbnail_url ? (
+                              <div className="relative w-10 h-10 flex-shrink-0">
+                                <Image src={video.thumbnail_url} alt={video.title} fill className="object-cover rounded-lg" />
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <PlayCircle className="h-4 w-4 text-white drop-shadow" />
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                <PlayCircle className="h-5 w-5 text-gray-400" />
+                              </div>
+                            )}
+                            <div className="min-w-0">
+                              {video.category && (
+                                <span className="text-[10px] font-semibold text-[#32B75C] uppercase tracking-wide">{video.category}</span>
+                              )}
+                              <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">{video.title}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </>
+                    )}
+                    <div className="border-t border-gray-100 flex">
+                      <Link
+                        href={`/actu?q=${encodeURIComponent(searchQuery)}`}
+                        onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
+                        className="flex-1 px-3 py-2.5 text-xs font-semibold text-[#006EFE] hover:bg-blue-50 text-center transition-colors"
+                      >
+                        Articles →
                       </Link>
-                    ))}
-                    <Link
-                      href={`/actu?q=${encodeURIComponent(searchQuery)}`}
-                      onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]) }}
-                      className="block px-4 py-2.5 text-xs font-semibold text-[#006EFE] hover:bg-blue-50 text-center transition-colors"
-                    >
-                      Voir tous les résultats →
-                    </Link>
+                      <span className="w-px bg-gray-100" />
+                      <Link
+                        href="/videos"
+                        onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
+                        className="flex-1 px-3 py-2.5 text-xs font-semibold text-[#32B75C] hover:bg-amber-50 text-center transition-colors"
+                      >
+                        Vidéos →
+                      </Link>
+                    </div>
                   </>
                 )}
               </div>
             )}
 
             {/* No results */}
-            {searchOpen && searchQuery.trim().length > 1 && !searchLoading && searchResults.length === 0 && (
+            {searchOpen && searchQuery.trim().length > 1 && !searchLoading && searchResults.length === 0 && videoResults.length === 0 && (
               <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-100 px-4 py-3 z-50 animate-fade-in">
-                <p className="text-sm text-gray-400 text-center">Aucun article trouvé</p>
+                <p className="text-sm text-gray-400 text-center">Aucun résultat trouvé</p>
               </div>
             )}
           </div>
@@ -309,7 +379,7 @@ export default function Header() {
                       <hr className="my-2 border-gray-100" />
                       <button
                         onClick={() => logout()}
-                        className="flex items-center space-x-3 px-4 py-2.5 text-sm text-[#FFC358] hover:bg-[#fef3c7] w-full text-left transition-colors"
+                        className="flex items-center space-x-3 px-4 py-2.5 text-sm text-[#32B75C] hover:bg-[#fef3c7] w-full text-left transition-colors"
                       >
                         <LogOut className="h-4 w-4" />
                         <span>Déconnexion</span>
@@ -353,24 +423,35 @@ export default function Header() {
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   onKeyDown={e => {
-                    if (e.key === 'Enter' && searchQuery.trim()) { router.push(`/actu?q=${encodeURIComponent(searchQuery.trim())}`); setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]) }
+                    if (e.key === 'Enter' && searchQuery.trim()) { router.push(`/actu?q=${encodeURIComponent(searchQuery.trim())}`); setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
                   }}
-                  placeholder="Rechercher un article..."
+                  placeholder="Rechercher articles, vidéos..."
                   className="w-full pl-9 pr-3 py-2 text-sm bg-white/70 backdrop-blur rounded-lg text-gray-800 placeholder-gray-400 outline-none border border-white/40 focus:border-[#006EFE]/40"
                 />
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               </div>
-              {searchResults.length > 0 && (
+              {(searchResults.length > 0 || videoResults.length > 0) && (
                 <div className="mt-2 bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
                   {searchResults.map(article => (
                     <Link
                       key={article.id}
                       href={`/actu/${article.slug}`}
-                      onClick={() => { setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]) }}
+                      onClick={() => { setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
                       className="flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50 text-sm text-gray-800 border-b border-gray-50 last:border-0"
                     >
-                      <Search className="h-3.5 w-3.5 text-gray-300 flex-shrink-0" />
+                      <FileText className="h-3.5 w-3.5 text-[#006EFE] flex-shrink-0" />
                       <span className="line-clamp-1">{article.title}</span>
+                    </Link>
+                  ))}
+                  {videoResults.map(video => (
+                    <Link
+                      key={video.id}
+                      href="/videos"
+                      onClick={() => { setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
+                      className="flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50 text-sm text-gray-800 border-b border-gray-50 last:border-0"
+                    >
+                      <PlayCircle className="h-3.5 w-3.5 text-[#32B75C] flex-shrink-0" />
+                      <span className="line-clamp-1">{video.title}</span>
                     </Link>
                   ))}
                 </div>
@@ -387,8 +468,8 @@ export default function Header() {
                     className={`px-5 py-3 text-sm font-bold transition-all duration-300
                       border-l-[3px]
                       ${isOccasion
-                        ? `bg-[#FFC358] text-white ${isActive ? 'border-[#006EFE]' : 'border-transparent'}`
-                        : `${isActive ? 'text-[#006EFE] border-[#006EFE]' : 'text-black border-transparent hover:text-[#006EFE] hover:border-[#FFC358]'}`
+                        ? `bg-[#32B75C] text-white ${isActive ? 'border-[#006EFE]' : 'border-transparent'}`
+                        : `${isActive ? 'text-[#006EFE] border-[#006EFE]' : 'text-black border-transparent hover:text-[#006EFE] hover:border-[#32B75C]'}`
                       }
                     `}
                     onClick={() => setMobileMenuOpen(false)}
@@ -411,7 +492,7 @@ export default function Header() {
                     </Link>
                     <button
                       onClick={() => logout()}
-                      className="flex items-center space-x-3 px-3 py-3 text-sm font-medium text-[#FFC358] hover:bg-[#fef3c7]/30 w-full text-left rounded-lg transition-colors"
+                      className="flex items-center space-x-3 px-3 py-3 text-sm font-medium text-[#32B75C] hover:bg-[#fef3c7]/30 w-full text-left rounded-lg transition-colors"
                     >
                       <LogOut className="h-4 w-4" />
                       <span>Déconnexion</span>

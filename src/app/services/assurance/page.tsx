@@ -167,11 +167,11 @@ export default function AssurancePage() {
               <div
                 key={idx}
                 className={`relative bg-white rounded-2xl border-2 p-6 shadow-card transition-all hover:shadow-elevated flex flex-col ${
-                  type.recommended ? 'border-[#FFC358]' : 'border-[#006EFE]'
+                  type.recommended ? 'border-[#32B75C]' : 'border-[#006EFE]'
                 }`}
               >
                 {type.recommended && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FFC358] text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#32B75C] text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
                     Recommandé
                   </div>
                 )}
@@ -189,7 +189,7 @@ export default function AssurancePage() {
                   onClick={() => openForm(type.name)}
                   className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 mt-auto text-white ${
                     type.recommended
-                      ? 'bg-[#FFC358] hover:bg-[#e6a832]'
+                      ? 'bg-[#32B75C] hover:bg-[#e6a832]'
                       : 'bg-[#006EFE] hover:bg-[#0058d0]'
                   }`}
                 >

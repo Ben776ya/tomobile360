@@ -24,7 +24,7 @@ const isYouTube = (url: string | null | undefined) =>
 export function NewsSection({ articles }: NewsSectionProps) {
   if (!articles || articles.length === 0) return null
 
-  const displayArticles = articles.slice(0, 3)
+  const displayArticles = articles.slice(0, 4)
 
   const getExternalUrl = (article: Article) => {
     return article.content?.startsWith('http') ? article.content : null
@@ -46,7 +46,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
         </div>
 
         {/* Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {displayArticles.map((article) => {
             const cat = categoryConfig[article.category || 'News'] || categoryConfig.News
             const excerpt = article.excerpt || ''
@@ -91,7 +91,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
                       <span>{formatDate(article.published_at)}</span>
                     </div>
                   )}
-                  <h3 className="font-bold text-gray-900 text-base md:text-lg leading-snug line-clamp-2 mb-2 group-hover:text-[#006EFE] transition-colors duration-200">
+                  <h3 className="font-bold text-slate-700 text-base md:text-lg leading-snug line-clamp-2 mb-2 group-hover:text-[#006EFE] transition-colors duration-200">
                     {article.title}
                   </h3>
                   {excerpt && (

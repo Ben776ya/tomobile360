@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import type { CoupDeCoeurCategory } from '@/lib/types'
 
 // Check if user is admin
 async function checkAdmin() {
@@ -301,6 +302,65 @@ export async function toggleVehicleBadge(
   if (error) return { error: error.message }
 
   revalidatePath('/neuf')
+  revalidatePath('/admin/vehicles')
+  return { success: true }
+}
+
+export async function setCoupDeCoeur(
+  vehicleId: string,
+  isCoupDeCoeur: boolean,
+  category: CoupDeCoeurCategory | null
+): Promise<{ success: boolean; error?: string }> {
+  const adminCheck = await checkAdmin()
+  if (adminCheck.error) return { success: false, error: adminCheck.error }
+
+  const supabase = await createClient()
+
+  // When assigning, auto-deassign the previous vehicle in the same category + slot (EV or thermal)
+  if (isCoupDeCoeur && category) {
+    const { data: vehicle } = await supabase
+      .from('vehicles_new')
+      .select('fuel_type')
+      .eq('id', vehicleId)
+      .single()
+
+    if (vehicle) {
+      const isElectric = vehicle.fuel_type === 'Electric'
+
+      const { data: existing } = await supabase
+        .from('vehicles_new')
+        .select('id, fuel_type')
+        .eq('is_coup_de_coeur', true)
+        .eq('coup_de_coeur_category', category)
+        .neq('id', vehicleId)
+
+      if (existing && existing.length > 0) {
+        const toUnsetIds = existing
+          .filter(v => (isElectric ? v.fuel_type === 'Electric' : v.fuel_type !== 'Electric'))
+          .map(v => v.id)
+
+        if (toUnsetIds.length > 0) {
+          await supabase
+            .from('vehicles_new')
+            .update({ is_coup_de_coeur: false, coup_de_coeur_category: null })
+            .in('id', toUnsetIds)
+        }
+      }
+    }
+  }
+
+  const { error } = await supabase
+    .from('vehicles_new')
+    .update({
+      is_coup_de_coeur: isCoupDeCoeur,
+      coup_de_coeur_category: isCoupDeCoeur ? category : null,
+    })
+    .eq('id', vehicleId)
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/')
+  revalidatePath('/coups-de-coeur')
   revalidatePath('/admin/vehicles')
   return { success: true }
 }

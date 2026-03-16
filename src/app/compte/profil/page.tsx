@@ -465,27 +465,27 @@ export default function ProfilePage() {
       </div>
 
       {/* Delete Account */}
-      <div className="bg-[#78350f]/20 border border-[#FFC358]/30 rounded-lg p-6">
+      <div className="bg-[#78350f]/20 border border-[#32B75C]/30 rounded-lg p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-full bg-[#78350f]/30 border border-[#FFC358]/30 flex items-center justify-center">
-            <Trash2 className="h-6 w-6 text-[#FFC358]" />
+          <div className="w-12 h-12 rounded-full bg-[#78350f]/30 border border-[#32B75C]/30 flex items-center justify-center">
+            <Trash2 className="h-6 w-6 text-[#32B75C]" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-[#fcd34d]">
               Zone de danger
             </h2>
-            <p className="text-sm text-[#FFC358]">
+            <p className="text-sm text-[#32B75C]">
               Actions irréversibles sur votre compte
             </p>
           </div>
         </div>
 
         <div className="space-y-4">
-          <div className="bg-white rounded-md p-4 border border-[#FFC358]/20">
+          <div className="bg-white rounded-md p-4 border border-[#32B75C]/20">
             <h3 className="font-semibold text-[#fcd34d] mb-2">
               Supprimer mon compte
             </h3>
-            <p className="text-sm text-[#FFC358]/80 mb-4">
+            <p className="text-sm text-[#32B75C]/80 mb-4">
               Cette action supprimera définitivement votre compte, toutes vos
               annonces, vos favoris et vos données personnelles. Cette action
               est irréversible.

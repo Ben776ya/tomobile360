@@ -80,8 +80,8 @@ export default async function DashboardPage() {
       label: 'Favoris',
       value: totalFavorites || 0,
       icon: Heart,
-      color: 'text-[#FFC358]',
-      bgColor: 'bg-[#FFC358]/20 border border-[#FFC358]/30',
+      color: 'text-[#32B75C]',
+      bgColor: 'bg-[#32B75C]/20 border border-[#32B75C]/30',
     },
   ]
 

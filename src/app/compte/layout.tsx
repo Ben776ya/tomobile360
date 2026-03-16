@@ -95,7 +95,7 @@ export default async function AccountLayout({
               <form action="/actions/logout" method="post" className="mt-6 pt-6 border-t border-gray-200">
                 <button
                   type="submit"
-                  className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-[#78350f]/30 transition text-gray-700 hover:text-[#FFC358] w-full"
+                  className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-[#78350f]/30 transition text-gray-700 hover:text-[#32B75C] w-full"
                 >
                   <LogOut className="h-5 w-5" />
                   <span className="font-medium">Déconnexion</span>

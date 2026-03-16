@@ -32,7 +32,7 @@ const categoryColors: Record<string, string> = {
   International: 'bg-purple-500 text-white',
   Market: 'bg-green-500 text-white',
   Review: 'bg-orange-500 text-white',
-  News: 'bg-[#FFC358] text-white',
+  News: 'bg-[#32B75C] text-white',
 }
 
 export default async function NewsPage({

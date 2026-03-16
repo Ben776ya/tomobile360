@@ -27,6 +27,12 @@ export type VehicleCategory =
   | 'Pick-up'
   | 'Utilitaire'
 
+export type CoupDeCoeurCategory =
+  | 'voiture'
+  | 'suv'
+  | 'pickup'
+  | 'electrique'
+
 export type FuelType = 'Essence' | 'Diesel' | 'Hybrid' | 'Electric' | 'PHEV'
 export type Transmission = 'Manual' | 'Automatic' | 'CVT' | 'DCT'
 export type Condition = 'Excellent' | 'Très Bon' | 'Bon' | 'Acceptable'
@@ -76,6 +82,8 @@ export type VehicleNew = {
   power_kw: number | null
   source_url: string | null
   mileage: number | null
+  is_coup_de_coeur: boolean
+  coup_de_coeur_category: CoupDeCoeurCategory | null
   brands?: Brand
   models?: Model
 }

@@ -133,7 +133,7 @@ export default function ValuationPage() {
             <ChevronLeft className="h-4 w-4" />
             Retour aux annonces
           </Link>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-700 mb-2">
             Estimez votre Véhicule
           </h1>
           <p className="text-gray-600">
@@ -148,7 +148,7 @@ export default function ValuationPage() {
                 <Calculator className="h-6 w-6 text-secondary" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Outil d&apos;estimation</h2>
+                <h2 className="text-xl font-bold text-slate-700">Outil d&apos;estimation</h2>
                 <p className="text-sm text-gray-500">
                   Remplissez les informations ci-dessous
                 </p>
@@ -255,7 +255,7 @@ export default function ValuationPage() {
               {/* Results */}
               {estimation && (
                 <div className="mt-8 p-6 bg-secondary/10 border border-secondary/20 rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4 text-center text-gray-900">
+                  <h3 className="text-lg font-semibold mb-4 text-center text-slate-700">
                     Estimation de votre véhicule
                   </h3>
 

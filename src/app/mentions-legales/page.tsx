@@ -2,13 +2,13 @@ export default function MentionsLegalesPage() {
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-700 mb-8">
           Mentions Légales
         </h1>
 
         <div className="prose max-w-none space-y-8">
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">1. Éditeur du site</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">1. Éditeur du site</h2>
             <p className="text-gray-600">
               Le site Tomobile360.ma est édité par :<br />
               <strong>Tomobile 360 SARL</strong><br />
@@ -20,7 +20,7 @@ export default function MentionsLegalesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">2. Hébergement</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">2. Hébergement</h2>
             <p className="text-gray-600">
               Le site est hébergé par :<br />
               <strong>Vercel Inc.</strong><br />
@@ -31,7 +31,7 @@ export default function MentionsLegalesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">3. Propriété intellectuelle</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">3. Propriété intellectuelle</h2>
             <p className="text-gray-600">
               L&apos;ensemble du contenu du site Tomobile360.ma (textes, images, vidéos, logos, graphismes, etc.)
               est protégé par les lois relatives à la propriété intellectuelle. Toute reproduction,
@@ -41,7 +41,7 @@ export default function MentionsLegalesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">4. Responsabilité</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">4. Responsabilité</h2>
             <p className="text-gray-600">
               Tomobile 360 s&apos;efforce d&apos;assurer l&apos;exactitude et la mise à jour des informations diffusées
               sur ce site. Toutefois, elle ne peut garantir l&apos;exactitude, la précision ou l&apos;exhaustivité
@@ -52,7 +52,7 @@ export default function MentionsLegalesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">5. Liens hypertextes</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">5. Liens hypertextes</h2>
             <p className="text-gray-600">
               Le site peut contenir des liens vers d&apos;autres sites web. Tomobile 360 n&apos;exerce aucun
               contrôle sur ces sites et décline toute responsabilité quant à leur contenu et aux
@@ -61,7 +61,7 @@ export default function MentionsLegalesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">6. Droit applicable</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">6. Droit applicable</h2>
             <p className="text-gray-600">
               Les présentes mentions légales sont régies par le droit marocain. En cas de litige,
               les tribunaux marocains seront seuls compétents.

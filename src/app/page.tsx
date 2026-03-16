@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { HeroSection } from '@/components/home/HeroSection'
 import { BrandCarousel } from '@/components/shared/BrandCarousel'
 import { OccasionServicesSection } from '@/components/home/OccasionServicesSection'
-import { LatestVehiclesCarousel } from '@/components/home/LatestVehiclesCarousel'
+import { CoupsDeCoeurSection } from '@/components/home/LatestVehiclesCarousel'
 import { UsedListingCard } from '@/components/vehicles/UsedListingCard'
 import { ServicesSection } from '@/components/home/ServicesSection'
 import { PromoBanner } from '@/components/home/PromoBanner'
@@ -21,7 +21,7 @@ export default async function HomePage() {
   const [
     { data: brands },
     { data: models },
-    { data: latestNewVehicles },
+    { data: coupDeCoeurVehicles },
     { data: latestUsedListings },
     { data: recentArticles },
     { data: latestVideos },
@@ -39,17 +39,19 @@ export default async function HomePage() {
       .select('id, name, brand_id')
       .order('name'),
 
-    // Latest new vehicles (for "LES DERNIÈRES ANNONCES" section)
+    // Coup de Cœur vehicles — 3 segments × 2 slots (thermal + EV) = 6 max
     supabase
       .from('vehicles_new')
       .select(`
-        id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, horsepower, brand_id, model_id,
+        id, images, price_min, price_max, is_new_release, is_popular, is_coup_de_coeur, coup_de_coeur_category, version, year, fuel_type, transmission, horsepower, brand_id, model_id,
         brands:brand_id (name, logo_url),
-        models:model_id (name),
-        promotions (discount_percentage, is_active)
+        models:model_id (name)
       `)
+      .eq('is_coup_de_coeur', true)
+      .eq('is_available', true)
+      .in('coup_de_coeur_category', ['voiture', 'suv', 'pickup'])
       .order('created_at', { ascending: false })
-      .limit(8),
+      .limit(6),
 
     // Latest used listings
     supabase
@@ -71,7 +73,7 @@ export default async function HomePage() {
       .select('id, title, slug, excerpt, featured_image, category, content, published_at')
       .eq('is_published', true)
       .order('published_at', { ascending: false })
-      .limit(3),
+      .limit(4),
 
     // Latest videos for TOMOBILE 360 TV
     supabase
@@ -100,10 +102,8 @@ export default async function HomePage() {
       {/* 3. Quick Links */}
       <QuickLinksSection />
 
-      {/* 4. Latest Listings Carousel - "NOS COUPS DE COEUR" */}
-      {latestNewVehicles && latestNewVehicles.length > 0 && (
-        <LatestVehiclesCarousel vehicles={latestNewVehicles} />
-      )}
+      {/* 4. Coups de Cœur — curated categories */}
+      <CoupsDeCoeurSection vehicles={(coupDeCoeurVehicles as any) || []} />
 
       {/* 5. OCCASION Services Section */}
       <OccasionServicesSection />

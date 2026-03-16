@@ -390,7 +390,7 @@ export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps)
                   <button
                     type="button"
                     onClick={() => setImages(images.filter((_, j) => j !== i))}
-                    className="text-[#FFC358] hover:text-[#fcd34d]"
+                    className="text-[#32B75C] hover:text-[#fcd34d]"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -681,7 +681,7 @@ export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps)
 
       {/* Error/Success Messages */}
       {error && (
-        <div className="bg-[#78350f]/30 border border-[#FFC358]/30 text-[#FFC358] text-sm px-4 py-3 rounded-lg">
+        <div className="bg-[#78350f]/30 border border-[#32B75C]/30 text-[#32B75C] text-sm px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
