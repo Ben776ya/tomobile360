@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronLeft, MapPin, Calendar, Gauge, Phone, Mail, User } from 'lucide-react'
+import { ChevronRight, MapPin, Calendar, Gauge, Phone, Mail, User, Eye, MessageCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -73,19 +73,28 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
   const images = listing.images || []
   const seller = listing.profiles
 
+  const whatsappPhone = listing.contact_phone
+    ? listing.contact_phone.replace(/\D/g, '').replace(/^0/, '212')
+    : '212600000000'
+  const whatsappText = encodeURIComponent(
+    `Bonjour, je suis intéressé(e) par votre annonce ${brandName} ${modelName} ${listing.year} sur Tomobile 360.`
+  )
+
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pb-20 lg:pb-8">
         {/* Breadcrumb */}
-        <div className="mb-6">
-          <Link
-            href="/occasion"
-            className="inline-flex items-center gap-2 text-secondary hover:text-secondary-400"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Retour aux annonces
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-gray-500 mb-6">
+          <Link href="/" className="hover:text-[#006EFE] transition-colors">Accueil</Link>
+          <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
+          <Link href="/occasion" className="hover:text-[#006EFE] transition-colors">Occasion</Link>
+          <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
+          <Link href={`/occasion?brand=${listing.brand_id}`} className="hover:text-[#006EFE] transition-colors">
+            {brandName}
           </Link>
-        </div>
+          <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
+          <span className="text-gray-800 font-medium">{modelName}</span>
+        </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -113,7 +122,13 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
                       <h1 className="text-3xl font-bold text-primary">
                         {brandName} {modelName}
                       </h1>
-                      <p className="text-gray-400">{listing.year}</p>
+                      <div className="flex items-center gap-3 mt-1">
+                        <p className="text-gray-400">{listing.year}</p>
+                        <div className="flex items-center gap-1 text-sm text-gray-400">
+                          <Eye className="h-4 w-4" />
+                          <span>Vu {(listing.views || 0).toLocaleString()} fois</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -230,6 +245,18 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
                 </div>
               </div>
 
+              {/* WhatsApp CTA */}
+              <a
+                href={`https://wa.me/${whatsappPhone}?text=${whatsappText}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-white font-semibold text-sm transition-all duration-200 hover:opacity-90 active:scale-[0.98] mb-3"
+                style={{ backgroundColor: '#25D366' }}
+              >
+                <MessageCircle className="h-5 w-5" />
+                Contacter sur WhatsApp
+              </a>
+
               {/* Contact Info */}
               <div className="space-y-3">
                 {listing.contact_phone && (
@@ -288,6 +315,33 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Sticky mobile contact bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3">
+        <div className="flex-1 min-w-0">
+          <p className="text-xs text-gray-500 truncate">{brandName} {modelName} {listing.year}</p>
+          <p className="font-bold text-secondary text-sm">{formatPrice(listing.price)}</p>
+        </div>
+        {listing.contact_phone && (
+          <a
+            href={`tel:${listing.contact_phone}`}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-medium text-sm whitespace-nowrap"
+          >
+            <Phone className="h-4 w-4" />
+            Appeler
+          </a>
+        )}
+        <a
+          href={`https://wa.me/${whatsappPhone}?text=${whatsappText}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-white font-semibold text-sm whitespace-nowrap"
+          style={{ backgroundColor: '#25D366' }}
+        >
+          <MessageCircle className="h-4 w-4" />
+          WhatsApp
+        </a>
       </div>
     </div>
   )

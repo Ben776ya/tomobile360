@@ -1,16 +1,22 @@
 import { createClient } from '@/lib/supabase/server'
+import type { VehicleUsed, Video, Article } from '@/lib/types'
+
+type HomeUsedListing = VehicleUsed & {
+  brands?: { name: string; logo_url: string | null }
+  models?: { name: string }
+  profiles?: { full_name: string | null; avatar_url: string | null }
+}
 
 // Components
 import { HeroSection } from '@/components/home/HeroSection'
 import { BrandCarousel } from '@/components/shared/BrandCarousel'
 import { OccasionServicesSection } from '@/components/home/OccasionServicesSection'
-import { CoupsDeCoeurSection } from '@/components/home/LatestVehiclesCarousel'
+import { FeatureGrid } from '@/components/home/FeatureGrid'
 import { UsedListingCard } from '@/components/vehicles/UsedListingCard'
 import { ServicesSection } from '@/components/home/ServicesSection'
 import { PromoBanner } from '@/components/home/PromoBanner'
 import { VideoSection } from '@/components/home/VideoSection'
 import { NewsSection } from '@/components/home/NewsSection'
-import { QuickLinksSection } from '@/components/home/QuickLinksSection'
 
 export const revalidate = 60 // Revalidate every 60 seconds
 
@@ -21,7 +27,6 @@ export default async function HomePage() {
   const [
     { data: brands },
     { data: models },
-    { data: coupDeCoeurVehicles },
     { data: latestUsedListings },
     { data: recentArticles },
     { data: latestVideos },
@@ -38,20 +43,6 @@ export default async function HomePage() {
       .from('models')
       .select('id, name, brand_id')
       .order('name'),
-
-    // Coup de Cœur vehicles — 3 segments × 2 slots (thermal + EV) = 6 max
-    supabase
-      .from('vehicles_new')
-      .select(`
-        id, images, price_min, price_max, is_new_release, is_popular, is_coup_de_coeur, coup_de_coeur_category, version, year, fuel_type, transmission, horsepower, brand_id, model_id,
-        brands:brand_id (name, logo_url),
-        models:model_id (name)
-      `)
-      .eq('is_coup_de_coeur', true)
-      .eq('is_available', true)
-      .in('coup_de_coeur_category', ['voiture', 'suv', 'pickup'])
-      .order('created_at', { ascending: false })
-      .limit(6),
 
     // Latest used listings
     supabase
@@ -99,32 +90,29 @@ export default async function HomePage() {
         <BrandCarousel brands={allBrands} />
       )}
 
-      {/* 3. Quick Links */}
-      <QuickLinksSection />
+      {/* 3. Feature grid — comparateur, offres, top ventes, coups de cœur */}
+      <FeatureGrid />
 
-      {/* 4. Coups de Cœur — curated categories */}
-      <CoupsDeCoeurSection vehicles={(coupDeCoeurVehicles as any) || []} />
-
-      {/* 5. OCCASION Services Section */}
+      {/* 4. OCCASION Services Section */}
       <OccasionServicesSection />
 
-      {/* 6. Services Section - "NOS OFFRES & SERVICES" */}
+      {/* 7. Services Section - "NOS OFFRES & SERVICES" */}
       <ServicesSection />
 
-      {/* 7. Promotional Banner */}
+      {/* 8. Promotional Banner */}
       <PromoBanner />
 
-      {/* 8. Video Section - "TOMOBILE 360 TV" */}
+      {/* 9. Video Section - "TOMOBILE 360 TV" */}
       {latestVideos && latestVideos.length > 0 && (
-        <VideoSection videos={latestVideos as any} />
+        <VideoSection videos={latestVideos as unknown as Video[]} />
       )}
 
-      {/* 9. News Section - "ACTUS & ESSAIS" */}
+      {/* 10. News Section - "ACTUS & ESSAIS" */}
       {recentArticles && recentArticles.length > 0 && (
-        <NewsSection articles={recentArticles as any} />
+        <NewsSection articles={recentArticles as unknown as Article[]} />
       )}
 
-      {/* 10. Used Listings Section */}
+      {/* 11. Used Listings Section */}
       {latestUsedListings && latestUsedListings.length > 0 && (
         <section className="py-16 md:py-20">
           <div className="container mx-auto px-4">
@@ -142,7 +130,7 @@ export default async function HomePage() {
             {/* Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {latestUsedListings.map((listing) => (
-                <UsedListingCard key={listing.id} listing={listing as any} />
+                <UsedListingCard key={listing.id} listing={listing as unknown as HomeUsedListing} />
               ))}
             </div>
             </div>
