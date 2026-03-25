@@ -8,6 +8,7 @@ import { Menu, X, User, LogIn, LogOut, Settings, Heart, FileText, Search, PlayCi
 import { createClient } from '@/lib/supabase/client'
 import { logout } from '@/app/actions/auth'
 import { FloatingSocialBubble } from '@/components/shared/FloatingSocialBubble'
+import { cn } from '@/lib/utils'
 
 interface ArticleResult {
   id: string
@@ -32,7 +33,6 @@ export default function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [hidden, setHidden] = useState(false)
-  const [atTop, setAtTop] = useState(true)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<ArticleResult[]>([])
@@ -112,15 +112,13 @@ export default function Header() {
       const currentScrollY = window.scrollY
 
       if (currentScrollY <= 10) {
-        setAtTop(true)
         setHidden(false)
       } else {
-        setAtTop(false)
         if (currentScrollY > lastScrollY.current + 5) {
           // scrolling down — hide
           setHidden(true)
         } else if (currentScrollY < lastScrollY.current - 5) {
-          // scrolling up — show with glass
+          // scrolling up — show
           setHidden(false)
         }
       }
@@ -143,13 +141,10 @@ export default function Header() {
   return (
     <>
     <header
-      className={`sticky top-0 z-50 transition-all duration-500
-        ${hidden ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}
-        ${atTop
-          ? 'bg-transparent border-b border-transparent'
-          : 'bg-white/20 backdrop-blur-lg border-b border-white/10 shadow-sm'
-        }
-      `}
+      className={cn(
+        'sticky top-0 z-50 bg-white border-b border-gray-200 transition-transform duration-300',
+        hidden && '-translate-y-full'
+      )}
     >
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-[70px]">
@@ -171,35 +166,15 @@ export default function Header() {
             <nav className="flex items-center">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href || pathname?.startsWith(link.href + '/')
-                const isOccasion = link.href === '/occasion'
-
-                if (isOccasion) {
-                  return (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="relative px-4 py-1 text-sm font-bold italic tracking-wide text-white bg-[#32B75C] rounded-full transition-colors duration-200
-                        after:content-[''] after:absolute after:-bottom-2 after:left-0 after:right-0
-                        after:h-[2px] after:rounded-full after:bg-[#006EFE]
-                        after:transition-transform after:duration-300 after:origin-center
-                        after:scale-x-0 hover:after:scale-x-100"
-                    >
-                      {link.label}
-                    </Link>
-                  )
-                }
 
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`relative px-4 py-2 text-sm font-bold tracking-wide rounded-md transition-colors duration-200
-                      after:content-[''] after:absolute after:bottom-0 after:left-3 after:right-3
-                      after:h-[2px] after:rounded-full
-                      after:transition-transform after:duration-300 after:origin-center
+                    className={`px-3 py-1 text-sm font-bold tracking-wide transition-all duration-200
                       ${isActive
-                        ? 'text-[#006EFE] after:scale-x-100 after:bg-[#006EFE]'
-                        : 'text-black after:scale-x-0 after:bg-[#32B75C] hover:text-[#006EFE] hover:after:scale-x-100'
+                        ? 'text-[#006EFE] font-semibold'
+                        : 'text-gray-600 hover:text-[#006EFE]'
                       }
                     `}
                   >
@@ -211,7 +186,7 @@ export default function Header() {
 
           {/* Search Field — right after nav */}
           <div ref={searchRef} className="relative">
-            <div className="flex items-center bg-white/20 backdrop-blur border border-white/30 rounded-full shadow-sm hover:bg-white/30 focus-within:bg-white/40 focus-within:border-white/50 transition-all duration-300">
+            <div className="flex items-center bg-gray-50 border border-gray-200 rounded-full hover:border-gray-300 focus-within:border-[#006EFE] focus-within:ring-1 focus-within:ring-[#006EFE]/20 transition-all duration-200">
               <Search className="h-4 w-4 text-gray-500 ml-3 flex-shrink-0" />
               <input
                 ref={searchInputRef}
@@ -291,7 +266,7 @@ export default function Header() {
                             )}
                             <div className="min-w-0">
                               {video.category && (
-                                <span className="text-[10px] font-semibold text-[#32B75C] uppercase tracking-wide">{video.category}</span>
+                                <span className="text-[10px] font-semibold text-[#006EFE] uppercase tracking-wide">{video.category}</span>
                               )}
                               <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">{video.title}</p>
                             </div>
@@ -311,7 +286,7 @@ export default function Header() {
                       <Link
                         href="/videos"
                         onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
-                        className="flex-1 px-3 py-2.5 text-xs font-semibold text-[#32B75C] hover:bg-amber-50 text-center transition-colors"
+                        className="flex-1 px-3 py-2.5 text-xs font-semibold text-[#006EFE] hover:bg-blue-50 text-center transition-colors"
                       >
                         Vidéos →
                       </Link>
@@ -336,7 +311,7 @@ export default function Header() {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="p-2 rounded-full hover:bg-white/20 transition-all duration-300"
+                  className="p-2 rounded-full hover:bg-gray-50 transition-all duration-300"
                 >
                   <User className="h-5 w-5 text-[#006EFE]" />
                 </button>
@@ -379,7 +354,7 @@ export default function Header() {
                       <hr className="my-2 border-gray-100" />
                       <button
                         onClick={() => logout()}
-                        className="flex items-center space-x-3 px-4 py-2.5 text-sm text-[#32B75C] hover:bg-[#fef3c7] w-full text-left transition-colors"
+                        className="flex items-center space-x-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 w-full text-left transition-colors"
                       >
                         <LogOut className="h-4 w-4" />
                         <span>Déconnexion</span>
@@ -391,7 +366,7 @@ export default function Header() {
             ) : (
               <Link
                 href="/login"
-                className="p-2 rounded-full hover:bg-white/20 transition-all duration-300"
+                className="p-2 rounded-full hover:bg-gray-50 transition-all duration-300"
               >
                 <User className="h-5 w-5 text-[#006EFE]" />
               </Link>
@@ -400,7 +375,7 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 rounded-lg hover:bg-white/20 transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -414,9 +389,9 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-3 border-t border-white/20 animate-slide-in bg-white/30 backdrop-blur-lg rounded-b-2xl">
+          <div className="lg:hidden py-3 border-t border-gray-200 animate-slide-in bg-white rounded-b-2xl">
             {/* Mobile Search */}
-            <div className="px-4 pb-3 border-b border-white/20">
+            <div className="px-4 pb-3 border-b border-gray-200">
               <div className="relative">
                 <input
                   type="text"
@@ -426,7 +401,7 @@ export default function Header() {
                     if (e.key === 'Enter' && searchQuery.trim()) { router.push(`/actu?q=${encodeURIComponent(searchQuery.trim())}`); setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
                   }}
                   placeholder="Rechercher articles, vidéos..."
-                  className="w-full pl-9 pr-3 py-2 text-sm bg-white/70 backdrop-blur rounded-lg text-gray-800 placeholder-gray-400 outline-none border border-white/40 focus:border-[#006EFE]/40"
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 rounded-lg text-gray-800 placeholder-gray-400 outline-none border border-gray-200 focus:border-[#006EFE]/40"
                 />
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               </div>
@@ -450,7 +425,7 @@ export default function Header() {
                       onClick={() => { setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
                       className="flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50 text-sm text-gray-800 border-b border-gray-50 last:border-0"
                     >
-                      <PlayCircle className="h-3.5 w-3.5 text-[#32B75C] flex-shrink-0" />
+                      <PlayCircle className="h-3.5 w-3.5 text-[#006EFE] flex-shrink-0" />
                       <span className="line-clamp-1">{video.title}</span>
                     </Link>
                   ))}
@@ -460,16 +435,15 @@ export default function Header() {
             <nav className="flex flex-col">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href || pathname?.startsWith(link.href + '/')
-                const isOccasion = link.href === '/occasion'
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
                     className={`px-5 py-3 text-sm font-bold transition-all duration-300
                       border-l-[3px]
-                      ${isOccasion
-                        ? `bg-[#32B75C] text-white ${isActive ? 'border-[#006EFE]' : 'border-transparent'}`
-                        : `${isActive ? 'text-[#006EFE] border-[#006EFE]' : 'text-black border-transparent hover:text-[#006EFE] hover:border-[#32B75C]'}`
+                      ${isActive
+                        ? 'text-[#006EFE] border-[#006EFE] bg-blue-50/50'
+                        : 'text-gray-700 border-transparent hover:text-[#006EFE] hover:border-[#006EFE]/30'
                       }
                     `}
                     onClick={() => setMobileMenuOpen(false)}
@@ -479,12 +453,12 @@ export default function Header() {
                 )
               })}
 
-              <div className="pt-3 mt-2 border-t border-white/20 space-y-1 px-2">
+              <div className="pt-3 mt-2 border-t border-gray-200 space-y-1 px-2">
                 {user ? (
                   <>
                     <Link
                       href="/compte"
-                      className="flex items-center space-x-3 px-3 py-3 text-sm font-medium text-[#006EFE] hover:bg-white/20 rounded-lg transition-colors"
+                      className="flex items-center space-x-3 px-3 py-3 text-sm font-medium text-[#006EFE] hover:bg-blue-50/50 rounded-lg transition-colors"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <User className="h-4 w-4" />
@@ -492,7 +466,7 @@ export default function Header() {
                     </Link>
                     <button
                       onClick={() => logout()}
-                      className="flex items-center space-x-3 px-3 py-3 text-sm font-medium text-[#32B75C] hover:bg-[#fef3c7]/30 w-full text-left rounded-lg transition-colors"
+                      className="flex items-center space-x-3 px-3 py-3 text-sm font-medium text-red-500 hover:bg-red-50 w-full text-left rounded-lg transition-colors"
                     >
                       <LogOut className="h-4 w-4" />
                       <span>Déconnexion</span>
@@ -501,7 +475,7 @@ export default function Header() {
                 ) : (
                   <Link
                     href="/login"
-                    className="flex items-center space-x-3 px-3 py-3 text-sm font-medium text-[#006EFE] hover:bg-white/20 rounded-lg transition-colors"
+                    className="flex items-center space-x-3 px-3 py-3 text-sm font-medium text-[#006EFE] hover:bg-blue-50/50 rounded-lg transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <LogIn className="h-4 w-4" />
