@@ -96,11 +96,9 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-dark-800 text-white relative overflow-hidden">
+    <footer className="bg-dark-800 text-white relative overflow-hidden border-t border-white/10">
       {/* Subtle grid texture */}
       <div className="absolute inset-0 bg-grid pointer-events-none opacity-50" />
-      {/* Neon line separator at top */}
-      <div className="neon-line w-full" />
       {/* Main Footer */}
       <div className="container mx-auto px-4 py-12 lg:py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
@@ -160,7 +158,7 @@ export default function Footer() {
 
           {/* Column 2: NEUF */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white">
+            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white font-display">
               Neuf
             </h3>
             <ul className="space-y-3">
@@ -179,7 +177,7 @@ export default function Footer() {
 
           {/* Column 3: OCCASION & SERVICES */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white">
+            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white font-display">
               Occasion
             </h3>
             <ul className="space-y-3 mb-8">
@@ -195,7 +193,7 @@ export default function Footer() {
               ))}
             </ul>
 
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white">
+            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white font-display">
               Services
             </h3>
             <ul className="space-y-3">
@@ -214,7 +212,7 @@ export default function Footer() {
 
           {/* Column 4: Newsletter */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white">
+            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white font-display">
               Newsletter
             </h3>
             <p className="text-sm text-dark-300 mb-4">
@@ -248,7 +246,7 @@ export default function Footer() {
                 <div className={`text-xs px-3 py-2 rounded-lg ${
                   message.type === 'success'
                     ? 'bg-green-500/20 text-green-300 border border-green-500/30'
-                    : 'bg-[#32B75C]/20 text-[#fcd34d] border border-[#32B75C]/30'
+                    : 'bg-red-500/20 text-red-300 border border-red-500/30'
                 }`}>
                   {message.text}
                 </div>
@@ -281,6 +279,9 @@ export default function Footer() {
               © {currentYear} Tomobile 360. Tous droits réservés.
             </p>
             <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+              <Link href="/qui-sommes-nous" className="text-sm text-dark-400 hover:text-secondary hover:underline transition-all duration-300">
+                Qui Sommes-Nous
+              </Link>
               <Link href="/mentions-legales" className="text-sm text-dark-400 hover:text-secondary hover:underline transition-all duration-300">
                 Mentions Légales
               </Link>
