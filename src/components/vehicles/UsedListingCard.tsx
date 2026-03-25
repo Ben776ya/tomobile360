@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { VehicleUsed } from '@/lib/types'
 import { Badge } from '@/components/ui/badge'
-import { formatPrice, formatRelativeTime } from '@/lib/utils'
+import { cn, formatPrice, formatRelativeTime } from '@/lib/utils'
 import { MapPin, Calendar, Gauge, Eye, Fuel } from 'lucide-react'
 
 interface UsedListingCardProps {
@@ -21,9 +21,11 @@ export function UsedListingCard({ listing }: UsedListingCardProps) {
   return (
     <Link
       href={`/occasion/${listing.id}`}
-      className="group block bg-white rounded-xl border border-gray-200 overflow-hidden
-                 shadow-card hover:shadow-card-hover hover:-translate-y-1
-                 hover:border-secondary/20 transition-all duration-300"
+      className={cn(
+        'group block bg-white rounded-xl border border-gray-200 overflow-hidden',
+        'transition-all duration-200',
+        'hover:-translate-y-0.5 hover:shadow-card-hover hover:border-secondary/20'
+      )}
     >
       {/* Image Container */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
@@ -34,11 +36,10 @@ export function UsedListingCard({ listing }: UsedListingCardProps) {
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
         {/* Price Badge */}
         <div className="absolute top-3 right-3">
-          <div className="tag bg-secondary text-white font-bold text-sm px-3 py-1.5 rounded-lg shadow-gold">
+          <div className="bg-secondary text-white font-semibold text-sm px-3 py-1.5 rounded-lg">
             {formatPrice(listing.price)}
           </div>
         </div>
@@ -63,7 +64,7 @@ export function UsedListingCard({ listing }: UsedListingCardProps) {
 
         {/* Brand Logo */}
         {listing.brands?.logo_url && (
-          <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-md border border-gray-200">
+          <div className="absolute bottom-3 left-3 bg-white rounded-lg p-2 border border-gray-200">
             <Image
               src={listing.brands.logo_url}
               alt={brandName}
@@ -110,9 +111,6 @@ export function UsedListingCard({ listing }: UsedListingCardProps) {
           </span>
         </div>
       </div>
-
-      {/* Bottom accent line */}
-      <div className="h-1 bg-gradient-to-r from-primary via-secondary to-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-glow-cyan-sm" />
     </Link>
   )
 }
