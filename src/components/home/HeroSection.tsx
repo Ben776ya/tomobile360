@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Search, Car, Truck, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, Car, Truck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
@@ -33,8 +33,8 @@ const vehicleTypes = [
   { id: 'Citadine', label: 'Citadine' },
   { id: 'Berline', label: 'Berline' },
   { id: 'SUV', label: 'SUV/4x4' },
-  { id: 'Monospace', label: 'Monospace' },
-  { id: 'Utilitaire', label: 'Utilitaire' },
+  { id: 'Monospace', label: 'Sportive' },
+  { id: 'Utilitaire', label: 'VUL' },
 ]
 
 const fuelTypes = [
@@ -121,7 +121,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
     fetchHeroImages()
   }, [])
 
-  // Slider auto-rotation
+  // Slider auto-rotation (kept for heroImages state usage)
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length)
@@ -230,92 +230,54 @@ export function HeroSection({ brands }: HeroSectionProps) {
     router.push(`/neuf?${params.toString()}`)
   }
 
-  const selectClassName = "w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#32B75C]/50 focus:border-[#32B75C]/30 bg-white text-gray-800 text-sm font-medium appearance-none cursor-pointer placeholder-gray-400"
-  const sliderThumbClass = "absolute w-full h-6 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#32B75C] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-gold [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#32B75C] [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-gold [&::-moz-range-thumb]:cursor-pointer"
+  const selectClassName = 'w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:border-[#006EFE] focus:ring-1 focus:ring-[#006EFE]/20 outline-none transition-all duration-200 appearance-none cursor-pointer'
+  const sliderThumbClass = 'absolute w-full h-6 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#006EFE] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#006EFE] [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer'
 
   return (
-    <section className="pt-1 pb-7 md:pb-8">
-      <div className="container mx-auto px-4">
-        <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-elevated relative h-[460px] md:h-[calc(100vh-200px)]">
-          {/* Image Slider - fills entire card */}
-          <div className="absolute inset-0">
-            {heroImages.map((src, index) => (
-              <div
-                key={index}
-                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                  index === currentSlide ? 'opacity-100' : 'opacity-0'
-                }`}
-              >
-                <Image
-                  src={src}
-                  alt={`Véhicule ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  priority={index === 0}
-                  sizes="100vw"
-                />
-              </div>
-            ))}
-            {/* Gradient overlay - stronger at bottom for search form legibility */}
-            <div className="absolute inset-0 bg-gradient-to-b from-dark-800/30 via-dark-800/10 to-dark-800/85" />
-            {/* Subtle indigo tint overlay */}
-            <div className="absolute inset-0 bg-primary-950/20 mix-blend-multiply" />
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-              {heroImages.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    index === currentSlide ? 'w-8 bg-[#32B75C] shadow-gold' : 'w-1.5 bg-white/50'
-                  }`}
-                  aria-label={`Slide ${index + 1}`}
-                />
-              ))}
-            </div>
-            <button
-              onClick={() => setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length)}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-dark-800/40 backdrop-blur-sm text-white flex items-center justify-center hover:bg-dark-800/60 hover:shadow-glow-cyan-sm transition-all border border-white/10"
-              aria-label="Slide précédente"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={() => setCurrentSlide((prev) => (prev + 1) % heroImages.length)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-dark-800/40 backdrop-blur-sm text-white flex items-center justify-center hover:bg-dark-800/60 hover:shadow-glow-cyan-sm transition-all border border-white/10"
-              aria-label="Slide suivante"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
+    <section className="relative bg-gradient-to-br from-gray-50 via-white to-blue-50/30 min-h-[55vh] flex items-center overflow-hidden">
+      {/* Decorative accent */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#006EFE]/5 to-transparent pointer-events-none" />
+      <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-[#006EFE]/5 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Search Bar - 70% overlapping hero card, 30% on white space below */}
-        <div className="-mt-[140px] px-[18%] md:px-[24%] relative z-20">
-          <div className="bg-white/8 backdrop-blur-sm rounded-2xl shadow-elevated p-2.5 md:p-3 pb-7 md:pb-8 border border-white/10">
+      <div className="container mx-auto px-4 lg:px-8 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center py-12 lg:py-16">
+          {/* Left column: headline + search card */}
+          <div>
+            {/* Headline */}
+            <div className="mb-8">
+              <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-primary leading-tight mb-3">
+                Trouvez votre voiture<br />
+                <span className="text-[#006EFE]">au meilleur prix</span>
+              </h1>
+              <p className="text-gray-500 text-lg">
+                Neuf et occasion — comparez les prix au Maroc
+              </p>
+            </div>
+
+            {/* Floating search card */}
+            <div className="bg-white rounded-2xl border border-gray-200 p-6 lg:p-8 shadow-lg">
               {/* NEUF / OCCASION Toggle */}
-              <div className="flex justify-center mb-4">
-                <div className="inline-flex bg-gray-100 rounded-full p-0.5 gap-0.5 border border-gray-200">
-                  <button
-                    onClick={() => setVehicleCondition('neuf')}
-                    className={`px-7 py-2.5 rounded-full text-sm font-semibold transition-all duration-300
-                      ${vehicleCondition === 'neuf'
-                        ? 'bg-[#32B75C] text-white shadow-gold'
-                        : 'text-gray-500 hover:text-[#32B75C] hover:bg-gray-50'
-                      }`}
-                  >
-                    NEUF
-                  </button>
-                  <button
-                    onClick={() => setVehicleCondition('occasion')}
-                    className={`px-7 py-2.5 rounded-full text-sm font-semibold transition-all duration-300
-                      ${vehicleCondition === 'occasion'
-                        ? 'bg-[#32B75C] text-white shadow-gold'
-                        : 'text-gray-500 hover:text-[#32B75C] hover:bg-gray-50'
-                      }`}
-                  >
-                    OCCAZ
-                  </button>
-                </div>
+              <div className="inline-flex rounded-xl bg-gray-100 p-1 mb-6">
+                <button
+                  onClick={() => setVehicleCondition('neuf')}
+                  className={`px-7 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
+                    vehicleCondition === 'neuf'
+                      ? 'bg-[#006EFE] text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  NEUF
+                </button>
+                <button
+                  onClick={() => setVehicleCondition('occasion')}
+                  className={`px-7 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
+                    vehicleCondition === 'occasion'
+                      ? 'bg-[#006EFE] text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  OCCAZ
+                </button>
               </div>
 
               {/* Vehicle Type Icons */}
@@ -324,11 +286,11 @@ export function HeroSection({ brands }: HeroSectionProps) {
                   <button
                     key={type.id}
                     onClick={() => setSelectedType(selectedType === type.id ? '' : type.id)}
-                    className={`flex flex-col items-center py-1 md:py-1.5 px-1.5 rounded-lg transition-all duration-300 border
-                      ${selectedType === type.id
-                        ? 'bg-white text-[#32B75C] border-[#32B75C] scale-[1.03] shadow-sm'
-                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-white hover:text-[#32B75C] hover:border-[#32B75C]/50'
-                      }`}
+                    className={`flex flex-col items-center py-1 md:py-1.5 px-1.5 rounded-lg transition-all duration-300 border ${
+                      selectedType === type.id
+                        ? 'bg-white text-[#006EFE] border-[#006EFE] scale-[1.03] shadow-sm'
+                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-white hover:text-[#006EFE] hover:border-[#006EFE]/50'
+                    }`}
                   >
                     <div className="w-5 h-5 md:w-6 md:h-6 flex items-center justify-center">
                       {type.id === 'Utilitaire' ? (
@@ -389,7 +351,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
 
               {/* Price Slider + Search Button */}
               <div className="flex flex-col md:flex-row md:items-end gap-3">
-                {/* Price Range Slider - centered in left space */}
+                {/* Price Range Slider */}
                 <div className="flex-1 flex items-end justify-center">
                   <div className="w-full md:w-4/5">
                     <div className="flex justify-between items-center mb-1.5">
@@ -400,7 +362,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
                     <div className="relative h-6 flex items-center">
                       <div className="absolute left-0 right-0 h-1.5 bg-gray-200 rounded-full" />
                       <div
-                        className="absolute h-1.5 bg-gradient-to-r from-primary to-[#32B75C] rounded-full"
+                        className="absolute h-1.5 bg-gradient-to-r from-primary to-[#006EFE] rounded-full"
                         style={{
                           left: `${(priceRange[0] / 1000000) * 100}%`,
                           right: `${100 - (priceRange[1] / 1000000) * 100}%`,
@@ -431,13 +393,13 @@ export function HeroSection({ brands }: HeroSectionProps) {
                 {/* Search Button + Result Count */}
                 <div className="flex flex-col items-center gap-1 flex-shrink-0">
                   {resultCount !== null && (
-                    <span className="text-xs text-gray-500">
+                    <span className="text-sm text-gray-400 text-center">
                       {resultCount.toLocaleString('fr-FR')} résultat{resultCount !== 1 ? 's' : ''}
                     </span>
                   )}
                   <button
                     onClick={handleSearch}
-                    className="px-8 py-2.5 bg-secondary hover:bg-secondary-400 text-white font-bold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5 active:scale-[0.98]"
+                    className="w-full px-6 py-3 bg-[#006EFE] hover:bg-[#005BD4] text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
                   >
                     <Search className="h-4 w-4" />
                     Rechercher
@@ -446,7 +408,22 @@ export function HeroSection({ brands }: HeroSectionProps) {
               </div>
             </div>
           </div>
+
+          {/* Right column: decorative vehicle image */}
+          <div className="hidden lg:block relative">
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-elevated">
+              <Image
+                src={heroImages[0] || fallbackImages[0]}
+                alt="Tomobile 360"
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 1024px) 0vw, 50vw"
+              />
+            </div>
+          </div>
         </div>
+      </div>
     </section>
   )
 }
