@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatRelativeTime } from '@/lib/utils'
+import sanitizeHtml from 'sanitize-html'
 
 export const revalidate = 30
 
@@ -103,8 +104,9 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
   const estimateReadTime = (content: string) => {
     const wordsPerMinute = 200
-    const words = content.split(/\s+/).length
-    const minutes = Math.ceil(words / wordsPerMinute)
+    const plainText = content.replace(/<[^>]+>/g, ' ').trim()
+    const words = plainText.split(/\s+/).filter(Boolean).length
+    const minutes = Math.max(1, Math.ceil(words / wordsPerMinute))
     return `${minutes} min`
   }
 
@@ -149,7 +151,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                 )}
 
                 {/* Title */}
-                <h1 className="text-3xl md:text-4xl font-bold text-slate-700 mb-4">
+                <h1 className="text-3xl md:text-4xl font-bold text-primary font-display leading-tight mb-4">
                   {article.title}
                 </h1>
 
@@ -182,10 +184,18 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                 )}
 
                 {/* Article Body */}
-                <div className="prose max-w-none">
+                <div className="mx-auto max-w-[65ch]">
                   <div
-                    className="text-gray-600 whitespace-pre-line"
-                    dangerouslySetInnerHTML={{ __html: article.content }}
+                    className="text-gray-600 leading-relaxed text-base [&>p]:mb-5 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:text-primary [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:font-display [&>h3]:text-lg [&>h3]:font-bold [&>h3]:text-primary [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:font-display [&>img]:rounded-xl [&>img]:my-6 [&>a]:text-[#006EFE] [&>a]:hover:underline [&>blockquote]:border-l-4 [&>blockquote]:border-[#006EFE] [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-gray-500 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:mb-5 [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:mb-5"
+                    dangerouslySetInnerHTML={{
+                      __html: sanitizeHtml(article.content, {
+                        allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2']),
+                        allowedAttributes: {
+                          ...sanitizeHtml.defaults.allowedAttributes,
+                          img: ['src', 'alt', 'width', 'height', 'loading'],
+                        },
+                      }),
+                    }}
                   />
                 </div>
 

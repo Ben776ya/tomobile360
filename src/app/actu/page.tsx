@@ -32,7 +32,7 @@ const categoryColors: Record<string, string> = {
   International: 'bg-purple-500 text-white',
   Market: 'bg-green-500 text-white',
   Review: 'bg-orange-500 text-white',
-  News: 'bg-[#32B75C] text-white',
+  News: 'bg-[#006EFE] text-white',
 }
 
 export default async function NewsPage({
@@ -88,7 +88,7 @@ export default async function NewsPage({
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-primary font-display mb-2">
             Explorez l&apos;actu auto : Tout ce que vous devez savoir !
           </h1>
           <p className="text-gray-500">
@@ -103,10 +103,10 @@ export default async function NewsPage({
               <Link
                 key={cat.value}
                 href={cat.value === 'all' ? '/actu' : `/actu?category=${cat.value}`}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
                   category === cat.value
-                    ? 'bg-secondary text-white shadow-gold ring-2 ring-secondary/30 font-semibold'
-                    : 'bg-gray-50 text-gray-600 hover:bg-secondary/10 hover:text-secondary'
+                    ? 'bg-[#006EFE] text-white font-semibold'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 {cat.label}
