@@ -60,7 +60,7 @@
 
   /* Typography */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight font-sans;
+    @apply font-bold tracking-tight font-display;
   }
 
   h1 {
@@ -79,10 +79,7 @@
 @layer components {
   /* Tag / Badge */
   .tag {
-    @apply font-sans font-semibold;
-    background-color: #32B75C !important;
-    color: white !important;
-    border-color: transparent !important;
+    @apply font-sans font-semibold text-xs uppercase tracking-wide;
   }
 
   /* Gold CTA Button */
@@ -108,8 +105,8 @@
 
   /* Card Component — Light */
   .card {
-    @apply bg-white rounded-xl border border-gray-200 shadow-card
-           hover:shadow-card-hover transition-all duration-300
+    @apply bg-white rounded-xl border border-gray-200
+           hover:shadow-card-hover transition-all duration-200
            hover:border-secondary/20;
   }
 
@@ -132,7 +129,7 @@
 
   /* Section Container */
   .section {
-    @apply py-16 md:py-20 lg:py-24;
+    @apply py-20 md:py-24 lg:py-28;
   }
 
   /* Section Title */
@@ -190,3 +187,4 @@
     @apply border border-transparent transition-all duration-300 hover:border-secondary/30 hover:shadow-gold;
   }
 }
+
