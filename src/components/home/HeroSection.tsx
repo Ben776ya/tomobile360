@@ -67,7 +67,7 @@ const fiscalPowerToHP: Record<string, { min: number; max: number }> = {
 }
 
 const selectStyle = {
-  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
   backgroundPosition: 'right 0.5rem center',
   backgroundRepeat: 'no-repeat',
   backgroundSize: '1.25em 1.25em',
@@ -98,7 +98,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
           .not('images', 'is', null)
 
         if (data && data.length > 0) {
-          // Take only the first image (thumbnail) of each car
           const thumbnails: string[] = []
           for (const vehicle of data) {
             if (vehicle.images && vehicle.images.length > 0) {
@@ -121,7 +120,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
     fetchHeroImages()
   }, [])
 
-  // Slider auto-rotation (kept for heroImages state usage)
+  // Slider auto-rotation
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length)
@@ -133,7 +132,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
   useEffect(() => {
     const fetchCount = async () => {
       try {
-        // For occasion: count from M-Occaz scraped data
         if (vehicleCondition === 'occasion') {
           const params = new URLSearchParams()
           const brandName = selectedBrand ? brands.find(b => b.id === selectedBrand)?.name : ''
@@ -147,7 +145,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
 
         const supabase = createClient()
 
-        // Use inner join on models when filtering by category
         const selectStr = selectedType ? '*, models!inner(*)' : '*'
         let query = supabase.from('vehicles_new').select(selectStr, { count: 'exact', head: true })
 
@@ -168,7 +165,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
           }
         }
 
-        // Price slider (overrides budget)
         if (priceRange[0] > 0) {
           if (vehicleCondition === 'neuf') query = query.gte('price_min', priceRange[0])
           else query = query.gte('price', priceRange[0])
@@ -187,19 +183,18 @@ export function HeroSection({ brands }: HeroSectionProps) {
         const { count } = await query
         setResultCount(count)
       } catch {
-        // Silently handle errors - count is a nice-to-have
+        // Silently handle errors
       }
     }
 
     const timer = setTimeout(fetchCount, 300)
     return () => clearTimeout(timer)
-  }, [vehicleCondition, selectedBrand, selectedType, selectedFuel, selectedBudget, selectedFiscalPower, priceRange])
+  }, [vehicleCondition, selectedBrand, selectedType, selectedFuel, selectedBudget, selectedFiscalPower, priceRange, brands])
 
   const handleSearch = () => {
     const params = new URLSearchParams()
 
     if (vehicleCondition === 'occasion') {
-      // For M-Occaz: pass brand name (not ID) and fuel as text
       const brandName = selectedBrand ? brands.find(b => b.id === selectedBrand)?.name : ''
       if (brandName) params.set('brand', brandName)
       if (selectedFuel) params.set('fuel', selectedFuel)
@@ -217,7 +212,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
       if (max && !selectedBudget.includes('+')) params.set('priceMax', max)
     }
 
-    // Price slider overrides budget
     if (priceRange[0] > 0) params.set('priceMin', priceRange[0].toString())
     if (priceRange[1] < 1000000) params.set('priceMax', priceRange[1].toString())
 
@@ -230,200 +224,217 @@ export function HeroSection({ brands }: HeroSectionProps) {
     router.push(`/neuf?${params.toString()}`)
   }
 
-  const selectClassName = 'w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:border-[#006EFE] focus:ring-1 focus:ring-[#006EFE]/20 outline-none transition-all duration-200 appearance-none cursor-pointer'
+  const selectClassName = 'w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white focus:border-[#006EFE] focus:ring-1 focus:ring-[#006EFE]/40 outline-none transition-all duration-200 appearance-none cursor-pointer placeholder-white/50'
   const sliderThumbClass = 'absolute w-full h-6 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#006EFE] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#006EFE] [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer'
 
   return (
-    <section className="relative bg-gradient-to-br from-gray-50 via-white to-blue-50/30 min-h-[55vh] flex items-center overflow-hidden">
-      {/* Decorative accent */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#006EFE]/5 to-transparent pointer-events-none" />
-      <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-[#006EFE]/5 rounded-full blur-3xl pointer-events-none" />
+    <section className="relative min-h-[62vh] flex items-center overflow-hidden">
 
-      <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center py-12 lg:py-16">
-          {/* Left column: headline + search card */}
-          <div>
-            {/* Headline */}
-            <div className="mb-8">
-              <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-primary leading-tight mb-3">
-                Trouvez votre voiture<br />
-                <span className="text-[#006EFE]">au meilleur prix</span>
-              </h1>
-              <p className="text-gray-500 text-lg">
-                Neuf et occasion — comparez les prix au Maroc
-              </p>
-            </div>
+      {/* Full-bleed background carousel */}
+      {heroImages.map((img, idx) => (
+        <div
+          key={idx}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            idx === currentSlide ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <Image
+            src={img}
+            alt=""
+            fill
+            className="object-cover"
+            priority={idx === 0}
+            sizes="100vw"
+          />
+        </div>
+      ))}
 
-            {/* Floating search card */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 lg:p-8 shadow-lg">
-              {/* NEUF / OCCASION Toggle */}
-              <div className="inline-flex rounded-xl bg-gray-100 p-1 mb-6">
-                <button
-                  onClick={() => setVehicleCondition('neuf')}
-                  className={`px-7 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
-                    vehicleCondition === 'neuf'
-                      ? 'bg-[#006EFE] text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  NEUF
-                </button>
-                <button
-                  onClick={() => setVehicleCondition('occasion')}
-                  className={`px-7 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
-                    vehicleCondition === 'occasion'
-                      ? 'bg-[#006EFE] text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  OCCAZ
-                </button>
-              </div>
+      {/* Dark gradient overlay — left darker, right lighter so cars are visible */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20 pointer-events-none" />
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent pointer-events-none" />
 
-              {/* Vehicle Type Icons */}
-              <div className="grid grid-cols-5 gap-2 md:gap-3 mb-4">
-                {vehicleTypes.map((type) => (
-                  <button
-                    key={type.id}
-                    onClick={() => setSelectedType(selectedType === type.id ? '' : type.id)}
-                    className={`flex flex-col items-center py-1 md:py-1.5 px-1.5 rounded-lg transition-all duration-300 border ${
-                      selectedType === type.id
-                        ? 'bg-white text-[#006EFE] border-[#006EFE] scale-[1.03] shadow-sm'
-                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-white hover:text-[#006EFE] hover:border-[#006EFE]/50'
-                    }`}
-                  >
-                    <div className="w-5 h-5 md:w-6 md:h-6 flex items-center justify-center">
-                      {type.id === 'Utilitaire' ? (
-                        <Truck className="w-4 h-4 md:w-5 md:h-5" />
-                      ) : (
-                        <Car className="w-4 h-4 md:w-5 md:h-5" />
-                      )}
-                    </div>
-                    <span className="text-[9px] md:text-[10px] font-medium leading-tight mt-0.5">{type.label}</span>
-                  </button>
-                ))}
-              </div>
+      {/* Content */}
+      <div className="container mx-auto px-4 lg:px-8 relative z-10 py-12 lg:py-16">
+        {/* Search panel — dark overlay card anchored left */}
+        <div className="w-full max-w-xl bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 p-6 lg:p-8">
 
-              {/* Filter Dropdowns */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-                <select
-                  value={selectedBrand}
-                  onChange={(e) => setSelectedBrand(e.target.value)}
-                  className={selectClassName}
-                  style={selectStyle}
-                >
-                  <option value="">MARQUE</option>
-                  {brands.map((brand) => (
-                    <option key={brand.id} value={brand.id}>{brand.name}</option>
-                  ))}
-                </select>
-                <select
-                  value={selectedBudget}
-                  onChange={(e) => setSelectedBudget(e.target.value)}
-                  className={selectClassName}
-                  style={selectStyle}
-                >
-                  {budgetRanges.map((range) => (
-                    <option key={range.value} value={range.value}>{range.label}</option>
-                  ))}
-                </select>
-                <select
-                  value={selectedFuel}
-                  onChange={(e) => setSelectedFuel(e.target.value)}
-                  className={selectClassName}
-                  style={selectStyle}
-                >
-                  {fuelTypes.map((fuel) => (
-                    <option key={fuel.value} value={fuel.value}>{fuel.label}</option>
-                  ))}
-                </select>
-                <select
-                  value={selectedFiscalPower}
-                  onChange={(e) => setSelectedFiscalPower(e.target.value)}
-                  className={selectClassName}
-                  style={selectStyle}
-                >
-                  {fiscalPowerOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-              </div>
+          {/* Title */}
+          <h1 className="font-display text-2xl lg:text-3xl font-bold text-white leading-tight mb-1">
+            Trouvez la voiture idéale au Maroc
+          </h1>
+          <p className="text-white/60 text-sm mb-5">
+            Neuf et occasion — comparez les prix, faites le bon choix
+          </p>
 
-              {/* Price Slider + Search Button */}
-              <div className="flex flex-col md:flex-row md:items-end gap-3">
-                {/* Price Range Slider */}
-                <div className="flex-1 flex items-end justify-center">
-                  <div className="w-full md:w-4/5">
-                    <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-xs font-medium text-gray-600">{formatPrice(priceRange[0])}</span>
-                      <span className="text-xs font-medium text-gray-400">Prix</span>
-                      <span className="text-xs font-medium text-gray-600">{formatPrice(priceRange[1])}</span>
-                    </div>
-                    <div className="relative h-6 flex items-center">
-                      <div className="absolute left-0 right-0 h-1.5 bg-gray-200 rounded-full" />
-                      <div
-                        className="absolute h-1.5 bg-gradient-to-r from-primary to-[#006EFE] rounded-full"
-                        style={{
-                          left: `${(priceRange[0] / 1000000) * 100}%`,
-                          right: `${100 - (priceRange[1] / 1000000) * 100}%`,
-                        }}
-                      />
-                      <input
-                        type="range"
-                        min="0"
-                        max="1000000"
-                        step="10000"
-                        value={priceRange[0]}
-                        onChange={(e) => setPriceRange([Math.min(Number(e.target.value), priceRange[1] - 10000), priceRange[1]])}
-                        className={`${sliderThumbClass} z-30`}
-                      />
-                      <input
-                        type="range"
-                        min="0"
-                        max="1000000"
-                        step="10000"
-                        value={priceRange[1]}
-                        onChange={(e) => setPriceRange([priceRange[0], Math.max(Number(e.target.value), priceRange[0] + 10000)])}
-                        className={`${sliderThumbClass} z-40`}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Search Button + Result Count */}
-                <div className="flex flex-col items-center gap-1 flex-shrink-0">
-                  {resultCount !== null && (
-                    <span className="text-sm text-gray-400 text-center">
-                      {resultCount.toLocaleString('fr-FR')} résultat{resultCount !== 1 ? 's' : ''}
-                    </span>
-                  )}
-                  <button
-                    onClick={handleSearch}
-                    className="w-full px-6 py-3 bg-[#006EFE] hover:bg-[#005BD4] text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
-                  >
-                    <Search className="h-4 w-4" />
-                    Rechercher
-                  </button>
-                </div>
-              </div>
-            </div>
+          {/* NEUF / OCCASION Toggle */}
+          <div className="inline-flex rounded-xl bg-white/10 p-1 mb-5">
+            <button
+              onClick={() => setVehicleCondition('neuf')}
+              className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                vehicleCondition === 'neuf'
+                  ? 'bg-[#006EFE] text-white shadow-sm'
+                  : 'text-white/70 hover:text-white'
+              }`}
+            >
+              NEUF
+            </button>
+            <button
+              onClick={() => setVehicleCondition('occasion')}
+              className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                vehicleCondition === 'occasion'
+                  ? 'bg-[#006EFE] text-white shadow-sm'
+                  : 'text-white/70 hover:text-white'
+              }`}
+            >
+              OCCAZ
+            </button>
           </div>
 
-          {/* Right column: decorative vehicle image */}
-          <div className="hidden lg:block relative">
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-elevated">
-              <Image
-                src={heroImages[0] || fallbackImages[0]}
-                alt="Tomobile 360"
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 1024px) 0vw, 50vw"
-              />
+          {/* Vehicle Type Icons */}
+          <div className="grid grid-cols-5 gap-2 mb-4">
+            {vehicleTypes.map((type) => (
+              <button
+                key={type.id}
+                onClick={() => setSelectedType(selectedType === type.id ? '' : type.id)}
+                className={`flex flex-col items-center py-1.5 px-1 rounded-lg transition-all duration-200 border ${
+                  selectedType === type.id
+                    ? 'bg-[#006EFE]/20 text-[#006EFE] border-[#006EFE]/50 scale-[1.03]'
+                    : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-white hover:border-white/25'
+                }`}
+              >
+                <div className="w-5 h-5 flex items-center justify-center">
+                  {type.id === 'Utilitaire' ? (
+                    <Truck className="w-4 h-4" />
+                  ) : (
+                    <Car className="w-4 h-4" />
+                  )}
+                </div>
+                <span className="text-[9px] font-medium leading-tight mt-0.5">{type.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Filter Dropdowns */}
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <select
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+              className={selectClassName}
+              style={selectStyle}
+            >
+              <option value="" className="bg-gray-900 text-white">MARQUE</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id} className="bg-gray-900 text-white">{brand.name}</option>
+              ))}
+            </select>
+            <select
+              value={selectedBudget}
+              onChange={(e) => setSelectedBudget(e.target.value)}
+              className={selectClassName}
+              style={selectStyle}
+            >
+              {budgetRanges.map((range) => (
+                <option key={range.value} value={range.value} className="bg-gray-900 text-white">{range.label}</option>
+              ))}
+            </select>
+            <select
+              value={selectedFuel}
+              onChange={(e) => setSelectedFuel(e.target.value)}
+              className={selectClassName}
+              style={selectStyle}
+            >
+              {fuelTypes.map((fuel) => (
+                <option key={fuel.value} value={fuel.value} className="bg-gray-900 text-white">{fuel.label}</option>
+              ))}
+            </select>
+            <select
+              value={selectedFiscalPower}
+              onChange={(e) => setSelectedFiscalPower(e.target.value)}
+              className={selectClassName}
+              style={selectStyle}
+            >
+              {fiscalPowerOptions.map((opt) => (
+                <option key={opt.value} value={opt.value} className="bg-gray-900 text-white">{opt.label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Price Slider + Search Button */}
+          <div className="flex flex-col gap-3">
+            {/* Price Range Slider */}
+            <div>
+              <div className="flex justify-between items-center mb-1.5">
+                <span className="text-xs font-medium text-white/70">{formatPrice(priceRange[0])}</span>
+                <span className="text-xs font-medium text-white/40">Prix</span>
+                <span className="text-xs font-medium text-white/70">{formatPrice(priceRange[1])}</span>
+              </div>
+              <div className="relative h-6 flex items-center">
+                <div className="absolute left-0 right-0 h-1.5 bg-white/20 rounded-full" />
+                <div
+                  className="absolute h-1.5 bg-gradient-to-r from-[#006EFE] to-[#006EFE] rounded-full"
+                  style={{
+                    left: `${(priceRange[0] / 1000000) * 100}%`,
+                    right: `${100 - (priceRange[1] / 1000000) * 100}%`,
+                  }}
+                />
+                <input
+                  type="range"
+                  min="0"
+                  max="1000000"
+                  step="10000"
+                  value={priceRange[0]}
+                  onChange={(e) => setPriceRange([Math.min(Number(e.target.value), priceRange[1] - 10000), priceRange[1]])}
+                  className={`${sliderThumbClass} z-30`}
+                />
+                <input
+                  type="range"
+                  min="0"
+                  max="1000000"
+                  step="10000"
+                  value={priceRange[1]}
+                  onChange={(e) => setPriceRange([priceRange[0], Math.max(Number(e.target.value), priceRange[0] + 10000)])}
+                  className={`${sliderThumbClass} z-40`}
+                />
+              </div>
+            </div>
+
+            {/* Search Button + Result Count */}
+            <div className="flex items-center gap-3">
+              {resultCount !== null && (
+                <span className="text-sm text-white/50 flex-1 text-right">
+                  {resultCount.toLocaleString('fr-FR')} résultat{resultCount !== 1 ? 's' : ''}
+                </span>
+              )}
+              <button
+                onClick={handleSearch}
+                className="flex-shrink-0 px-8 py-3 bg-[#006EFE] hover:bg-[#005BD4] text-white font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 w-full justify-center"
+              >
+                <Search className="h-4 w-4" />
+                Rechercher
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Carousel dots */}
+      {heroImages.length > 1 && (
+        <div className="absolute bottom-8 right-8 z-10 flex items-center gap-2">
+          {heroImages.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`transition-all duration-300 rounded-full ${
+                idx === currentSlide
+                  ? 'w-6 h-2 bg-white'
+                  : 'w-2 h-2 bg-white/40 hover:bg-white/70'
+              }`}
+              aria-label={`Image ${idx + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   )
 }
