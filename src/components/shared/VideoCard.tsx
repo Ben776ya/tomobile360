@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Video } from '@/lib/types'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import { Play, Eye, Clock } from 'lucide-react'
 
 interface VideoCardProps {
@@ -14,7 +15,11 @@ export function VideoCard({ video }: VideoCardProps) {
   return (
     <Link
       href={`/videos/${video.id}`}
-      className="group block bg-white backdrop-blur-sm rounded-lg shadow-card border border-gray-100 hover:shadow-elevated hover:border-secondary/20 transition-all duration-300 overflow-hidden"
+      className={cn(
+        'group block bg-white rounded-xl border border-gray-200 overflow-hidden',
+        'transition-all duration-200',
+        'hover:-translate-y-0.5 hover:shadow-card-hover hover:border-secondary/20'
+      )}
     >
       {/* Thumbnail */}
       <div className="relative aspect-video overflow-hidden bg-gray-50">
@@ -28,7 +33,7 @@ export function VideoCard({ video }: VideoCardProps) {
 
         {/* Play Button Overlay */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
-          <div className="w-16 h-16 rounded-full bg-secondary/90 flex items-center justify-center group-hover:scale-110 group-hover:shadow-glow-cyan transition-all shadow-lg">
+          <div className="w-16 h-16 rounded-full bg-secondary/90 flex items-center justify-center group-hover:scale-110 transition-all shadow-lg">
             <Play className="h-8 w-8 text-white ml-1" fill="white" />
           </div>
         </div>
@@ -71,9 +76,6 @@ export function VideoCard({ video }: VideoCardProps) {
           <span>{video.views.toLocaleString()} vues</span>
         </div>
       </div>
-
-      {/* Hover effect line */}
-      <div className="h-1 bg-gradient-to-r from-primary via-secondary to-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 shadow-glow-cyan-sm" />
     </Link>
   )
 }

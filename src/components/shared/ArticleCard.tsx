@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Article } from '@/lib/types'
-import { formatDate } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { Calendar, Play, ArrowRight, ExternalLink } from 'lucide-react'
 
 interface ArticleCardProps {
@@ -15,7 +15,7 @@ const categoryConfig: Record<string, { label: string; bg: string }> = {
   International: { label: 'INTERNATIONAL', bg: 'bg-purple-500' },
   Market:        { label: 'MARCHÉ',        bg: 'bg-emerald-500' },
   Review:        { label: 'ESSAI',         bg: 'bg-orange-500' },
-  News:          { label: 'ACTUALITÉ',     bg: 'bg-[#32B75C]' },
+  News:          { label: 'ACTUALITÉ',     bg: 'bg-green-500' },
 }
 
 const isYouTube = (url: string | null | undefined) =>
@@ -28,6 +28,12 @@ export function ArticleCard({ article }: ArticleCardProps) {
   const isVideo = isYouTube(externalUrl)
   const cat = categoryConfig[article.category || 'News'] || categoryConfig.News
 
+  const cardClassName = cn(
+    'group flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden',
+    'transition-all duration-200',
+    'hover:-translate-y-0.5 hover:shadow-card-hover hover:border-secondary/20'
+  )
+
   const cardContent = (
     <>
       {/* Image */}
@@ -39,12 +45,10 @@ export function ArticleCard({ article }: ArticleCardProps) {
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        {/* Bottom gradient for legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
         {/* Category tag */}
         {article.category && (
-          <span className={`tag absolute top-3 left-3 ${cat.bg} text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-md`}>
+          <span className={`absolute top-3 left-3 ${cat.bg} text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-md`}>
             {cat.label}
           </span>
         )}
@@ -53,7 +57,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
         {isVideo && (
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
-              <Play className="w-5 h-5 text-[#32B75C] fill-[#32B75C] ml-0.5" />
+              <Play className="w-5 h-5 text-[#006EFE] fill-[#006EFE] ml-0.5" />
             </div>
           </div>
         )}
@@ -96,24 +100,19 @@ export function ArticleCard({ article }: ArticleCardProps) {
           <ArrowRight className="w-4 h-4" />
         </div>
       </div>
-
-      {/* Bottom accent line */}
-      <div className="h-[2px] bg-gradient-to-r from-[#006EFE] to-[#0284FE] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
     </>
   )
 
-  const className = "group flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-
   if (externalUrl) {
     return (
-      <a href={externalUrl} target="_blank" rel="noopener noreferrer" className={className}>
+      <a href={externalUrl} target="_blank" rel="noopener noreferrer" className={cardClassName}>
         {cardContent}
       </a>
     )
   }
 
   return (
-    <Link href={`/actu/${article.slug}`} className={className}>
+    <Link href={`/actu/${article.slug}`} className={cardClassName}>
       {cardContent}
     </Link>
   )
