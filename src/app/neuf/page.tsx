@@ -109,6 +109,14 @@ export default async function NewVehiclesPage({
 
   const totalPages = count ? Math.ceil(count / itemsPerPage) : 0
 
+  const quickFilters = [
+    { label: 'Moins de 100 000 DH', params: 'priceMax=100000' },
+    { label: 'SUV / 4x4', params: 'category=SUV' },
+    { label: 'Électrique', params: 'fuel=Electric' },
+    { label: `Récent (< 3 ans)`, params: `yearMin=${new Date().getFullYear() - 3}` },
+    { label: 'Moins de 200 000 DH', params: 'priceMax=200000' },
+  ]
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -142,6 +150,19 @@ export default async function NewVehiclesPage({
 
           {/* Results */}
           <main className="lg:col-span-3">
+            {/* Quick-filter pills */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              {quickFilters.map((f) => (
+                <Link
+                  key={f.params}
+                  href={`/neuf?${f.params}`}
+                  className="px-4 py-1.5 text-sm font-medium rounded-full border border-gray-200 text-gray-600 hover:border-[#006EFE] hover:text-[#006EFE] hover:bg-[#006EFE]/5 transition-all duration-150"
+                >
+                  {f.label}
+                </Link>
+              ))}
+            </div>
+
             {/* Results Header */}
             <div className="flex items-center justify-between mb-6 bg-white p-4 rounded-lg shadow-card border border-gray-200">
               <p className="text-sm text-gray-500">

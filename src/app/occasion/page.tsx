@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { ExternalLink, Calendar, Gauge, Fuel, Zap, GitFork, Car } from 'lucide-react'
 import { getMoccazListings, type MoccazListing } from '@/lib/scrapers/moccaz'
 
@@ -139,6 +140,14 @@ export default async function UsedVehiclesPage({
     moccazListings = moccazListings.filter(l => l.fuel.toLowerCase().includes(fuel))
   }
 
+  const quickFilters = [
+    { label: 'Moins de 80 000 DH', params: 'priceMax=80000' },
+    { label: 'Diesel', params: 'fuel=Diesel' },
+    { label: 'Automatique', params: 'transmission=Automatic' },
+    { label: 'Casablanca', params: 'city=Casablanca' },
+    { label: 'Moins de 50 000 km', params: 'mileageMax=50000' },
+  ]
+
   return (
     <div className="min-h-screen bg-[#F2F4F6]">
 
@@ -173,6 +182,19 @@ export default async function UsedVehiclesPage({
                 Voir tout sur M·OCCAZ
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
+            </div>
+
+            {/* Quick-filter pills */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              {quickFilters.map((f) => (
+                <Link
+                  key={f.params}
+                  href={`/occasion?${f.params}`}
+                  className="px-4 py-1.5 text-sm font-medium rounded-full border border-gray-200 text-gray-600 hover:border-[#006EFE] hover:text-[#006EFE] hover:bg-[#006EFE]/5 transition-all duration-150"
+                >
+                  {f.label}
+                </Link>
+              ))}
             </div>
 
             {/* Listings grid — first 3 cars, then ad banner, then cars 4-19 */}

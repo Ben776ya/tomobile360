@@ -1,8 +1,6 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { X, SlidersHorizontal } from 'lucide-react'
 
@@ -23,12 +21,18 @@ interface VehicleFiltersProps {
 export function VehicleFilters({
   brands,
   categories,
-  currentFilters,
 }: VehicleFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const [filters, setFilters] = useState(currentFilters)
+  // Read filter values directly from URL
+  const brand = searchParams.get('brand') || ''
+  const category = searchParams.get('category') || ''
+  const fuel = searchParams.get('fuel') || ''
+  const transmission = searchParams.get('transmission') || ''
+  const priceMin = searchParams.get('priceMin') || ''
+  const priceMax = searchParams.get('priceMax') || ''
+  const sort = searchParams.get('sort') || ''
 
   const fuelTypes = ['Essence', 'Diesel', 'Hybrid', 'Electric', 'PHEV']
   const transmissionTypes = ['Manual', 'Automatic', 'CVT', 'DCT']
@@ -48,52 +52,81 @@ export function VehicleFilters({
   ]
 
   const handleFilterChange = (key: string, value: string) => {
-    const newFilters = { ...filters, [key]: value }
-    setFilters(newFilters)
+    const params = new URLSearchParams(searchParams.toString())
+    if (value) {
+      params.set(key, value)
+    } else {
+      params.delete(key)
+    }
+    // Use replace to avoid stacking history entries
+    router.replace(`?${params.toString()}`, { scroll: false })
   }
 
   const handlePriceRangeChange = (min?: string, max?: string) => {
-    const newFilters = { ...filters, priceMin: min, priceMax: max }
-    setFilters(newFilters)
+    const params = new URLSearchParams(searchParams.toString())
+    if (min) {
+      params.set('priceMin', min)
+    } else {
+      params.delete('priceMin')
+    }
+    if (max) {
+      params.set('priceMax', max)
+    } else {
+      params.delete('priceMax')
+    }
+    router.replace(`?${params.toString()}`, { scroll: false })
   }
 
-  const applyFilters = () => {
-    const params = new URLSearchParams()
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value && value !== '') {
-        params.set(key, value)
-      }
-    })
-
-    router.push(`/neuf?${params.toString()}`)
+  const filterLabels: Record<string, (v: string, b: Array<{ id: string; name: string }>) => string> = {
+    brand: (v, b) => b.find(br => br.id === v)?.name || v,
+    category: (v) => v,
+    fuel: (v) => v,
+    transmission: (v) => v,
+    priceMin: (v) => `Min ${parseInt(v).toLocaleString()} DH`,
+    priceMax: (v) => `Max ${parseInt(v).toLocaleString()} DH`,
+    sort: (v) => {
+      const labels: Record<string, string> = { newest: 'Plus récents', popular: 'Plus populaires', 'price-asc': 'Prix ↑', 'price-desc': 'Prix ↓' }
+      return labels[v] || v
+    },
   }
 
-  const clearFilters = () => {
-    setFilters({})
-    router.push('/neuf')
-  }
+  const activeFilters = Object.entries({ brand, category, fuel, transmission, priceMin, priceMax }).filter(([, v]) => v)
 
-  const hasActiveFilters = Object.values(filters).some((v) => v && v !== '')
+  const selectClass = 'w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:border-[#006EFE] focus:ring-1 focus:ring-[#006EFE]/20 outline-none transition-all duration-200'
 
   return (
-    <div className="bg-white backdrop-blur-sm rounded-lg shadow-card border border-gray-200 sticky top-20 max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col">
+    <div className="bg-white rounded-xl border border-gray-200 sticky top-20 max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col">
       {/* Header - Fixed */}
       <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="h-5 w-5 text-secondary" />
+          <SlidersHorizontal className="h-5 w-5 text-[#006EFE]" />
           <h3 className="font-bold text-slate-700">Filtres</h3>
         </div>
-        {hasActiveFilters && (
-          <button
-            onClick={clearFilters}
-            className="text-sm text-gray-500 hover:text-secondary hover:scale-105 flex items-center gap-1 transition-all duration-300"
-          >
-            <X className="h-4 w-4" />
-            Effacer
-          </button>
-        )}
       </div>
+
+      {/* Active filter chips */}
+      {activeFilters.length > 0 && (
+        <div className="flex flex-wrap gap-2 px-6 pt-4 pb-2">
+          {activeFilters.map(([key, value]) => (
+            <button
+              key={key}
+              onClick={() => handleFilterChange(key, '')}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#006EFE]/10 text-[#006EFE] text-sm font-medium rounded-full border border-[#006EFE]/20 hover:bg-[#006EFE]/20 transition-colors duration-150"
+            >
+              {filterLabels[key]?.(value, brands) || value}
+              <X className="h-3.5 w-3.5" />
+            </button>
+          ))}
+          {activeFilters.length > 1 && (
+            <button
+              onClick={() => router.replace('?', { scroll: false })}
+              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors duration-150"
+            >
+              Tout effacer
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Scrollable Content */}
       <div className="overflow-y-auto flex-1 p-6 pt-4 space-y-6 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/40">
@@ -101,9 +134,9 @@ export function VehicleFilters({
         <div>
           <Label className="mb-2 block">Trier par</Label>
           <select
-            value={filters.sort || 'newest'}
+            value={sort || 'newest'}
             onChange={(e) => handleFilterChange('sort', e.target.value)}
-            className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary hover:border-secondary/50 transition-all duration-300 cursor-pointer"
+            className={selectClass}
           >
             {sortOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -119,14 +152,14 @@ export function VehicleFilters({
         <div>
           <Label className="mb-2 block">Marque</Label>
           <select
-            value={filters.brand || ''}
+            value={brand}
             onChange={(e) => handleFilterChange('brand', e.target.value)}
-            className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary hover:border-secondary/50 transition-all duration-300 cursor-pointer"
+            className={selectClass}
           >
             <option value="">Toutes les marques</option>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
+            {brands.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
               </option>
             ))}
           </select>
@@ -136,14 +169,14 @@ export function VehicleFilters({
         <div>
           <Label className="mb-2 block">Catégorie</Label>
           <select
-            value={filters.category || ''}
+            value={category}
             onChange={(e) => handleFilterChange('category', e.target.value)}
-            className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary hover:border-secondary/50 transition-all duration-300 cursor-pointer"
+            className={selectClass}
           >
             <option value="">Toutes les catégories</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
               </option>
             ))}
           </select>
@@ -154,15 +187,15 @@ export function VehicleFilters({
           <Label className="mb-2 block">Gamme de prix</Label>
           <div className="space-y-2">
             {priceRanges.map((range, index) => (
-              <label key={index} className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-all duration-300">
+              <label key={index} className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-all duration-200">
                 <input
                   type="radio"
                   name="priceRange"
                   checked={
-                    filters.priceMin === range.min && filters.priceMax === range.max
+                    priceMin === (range.min || '') && priceMax === (range.max || '')
                   }
                   onChange={() => handlePriceRangeChange(range.min, range.max)}
-                  className="w-4 h-4 text-secondary focus:ring-secondary cursor-pointer"
+                  className="w-4 h-4 text-[#006EFE] focus:ring-[#006EFE] cursor-pointer"
                 />
                 <span className="text-sm text-gray-700">{range.label}</span>
               </label>
@@ -174,14 +207,14 @@ export function VehicleFilters({
         <div>
           <Label className="mb-2 block">Carburant</Label>
           <select
-            value={filters.fuel || ''}
+            value={fuel}
             onChange={(e) => handleFilterChange('fuel', e.target.value)}
-            className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary hover:border-secondary/50 transition-all duration-300 cursor-pointer"
+            className={selectClass}
           >
             <option value="">Tous les carburants</option>
-            {fuelTypes.map((fuel) => (
-              <option key={fuel} value={fuel}>
-                {fuel}
+            {fuelTypes.map((f) => (
+              <option key={f} value={f}>
+                {f}
               </option>
             ))}
           </select>
@@ -191,30 +224,19 @@ export function VehicleFilters({
         <div>
           <Label className="mb-2 block">Transmission</Label>
           <select
-            value={filters.transmission || ''}
+            value={transmission}
             onChange={(e) => handleFilterChange('transmission', e.target.value)}
-            className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary hover:border-secondary/50 transition-all duration-300 cursor-pointer"
+            className={selectClass}
           >
             <option value="">Toutes les transmissions</option>
-            {transmissionTypes.map((transmission) => (
-              <option key={transmission} value={transmission}>
-                {transmission}
+            {transmissionTypes.map((t) => (
+              <option key={t} value={t}>
+                {t}
               </option>
             ))}
           </select>
         </div>
 
-      </div>
-
-      {/* Apply Button - Sticky at Bottom */}
-      <div className="p-6 pt-4 border-t border-gray-200 flex-shrink-0 bg-white">
-        <Button
-          onClick={applyFilters}
-          className="w-full bg-secondary hover:bg-secondary-600 text-white font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-          size="lg"
-        >
-          Appliquer les filtres
-        </Button>
       </div>
     </div>
   )
