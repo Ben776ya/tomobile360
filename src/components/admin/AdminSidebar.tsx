@@ -12,12 +12,16 @@ import {
   Video,
   LogOut,
   Shield,
-  ExternalLink
+  ExternalLink,
+  Tag,
+  Heart
 } from 'lucide-react'
 
 const menuItems = [
   { href: '/admin', icon: LayoutDashboard, label: 'Tableau de bord', exact: true },
   { href: '/admin/vehicles', icon: Car, label: 'Véhicules' },
+  { href: '/admin/brands', icon: Tag, label: 'Marques' },
+  { href: '/admin/coups-de-coeur', icon: Heart, label: 'Coups de Cœur' },
   { href: '/admin/content', icon: FileText, label: 'Contenu' },
   { href: '/admin/users', icon: Users, label: 'Utilisateurs' },
   { href: '/admin/promotions', icon: TrendingUp, label: 'Promotions' },
