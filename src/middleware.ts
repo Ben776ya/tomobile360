@@ -55,7 +55,29 @@ export async function middleware(request: NextRequest) {
   )
 
   // Refresh session if expired - required for Server Components
-  await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Admin route protection (SEC-01)
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    // D-02: Unauthenticated -> redirect to login with redirect param
+    if (!user) {
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', request.nextUrl.pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+
+    // D-04: Query profiles table for admin status (session client, RLS allows own row)
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single()
+
+    // D-03: Authenticated but not admin -> redirect to homepage
+    if (!profile?.is_admin) {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+  }
 
   return response
 }
