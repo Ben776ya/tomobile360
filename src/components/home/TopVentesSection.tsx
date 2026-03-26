@@ -145,7 +145,7 @@ export function TopVentesSection({ vehicles }: Props) {
 
             <div className="text-center">
               <Link
-                href="/neuf?sort=popular"
+                href="/neuf/populaires"
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-white/80 hover:text-white transition-colors duration-200"
               >
                 Voir tous les modèles populaires

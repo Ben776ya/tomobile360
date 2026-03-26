@@ -71,7 +71,7 @@ const features = [
     title: 'Top Ventes',
     tagline: 'Les plus populaires au Maroc',
     action: 'link' as const,
-    href: '/neuf?sort=popular',
+    href: '/neuf/populaires',
     color: '#8B5CF6',
   },
   {

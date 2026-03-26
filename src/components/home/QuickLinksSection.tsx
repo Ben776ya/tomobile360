@@ -25,7 +25,7 @@ const links = [
     icon: TrendingUp,
     title: 'Top Ventes Maroc',
     description: 'Les modèles les plus populaires',
-    href: '/neuf?sort=popular',
+    href: '/neuf/populaires',
     color: 'bg-orange-500',
     glowColor: 'group-hover:shadow-[0_0_15px_rgba(249,115,22,0.2)]',
   },
