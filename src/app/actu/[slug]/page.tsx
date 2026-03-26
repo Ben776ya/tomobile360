@@ -73,10 +73,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
   }
 
   // Increment view count
-  await supabase
-    .from('articles')
-    .update({ views: (article.views || 0) + 1 })
-    .eq('id', article.id)
+  void supabase.rpc('increment_article_views', { article_id: article.id })
 
   // Fetch related articles (same category)
   const { data: relatedArticles } = await supabase

@@ -72,10 +72,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
   const isFavorite = await checkIsFavorite(params.id, 'new')
 
   // Increment view count
-  await supabase
-    .from('vehicles_new')
-    .update({ views: (vehicle.views || 0) + 1 })
-    .eq('id', params.id)
+  void supabase.rpc('increment_vehicle_views', { vehicle_id: vehicle.id })
 
   // Fetch similar vehicles (same brand or category)
   const { data: similarVehicles } = await supabase

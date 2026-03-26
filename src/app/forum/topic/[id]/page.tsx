@@ -42,10 +42,7 @@ export default async function TopicDetailPage({ params }: PageProps) {
   }
 
   // Increment view count
-  await supabase
-    .from('forum_topics')
-    .update({ views: (topic.views || 0) + 1 })
-    .eq('id', params.id)
+  void supabase.rpc('increment_forum_topic_views', { topic_id: topic.id })
 
   // Fetch replies
   const { data: replies } = await supabase

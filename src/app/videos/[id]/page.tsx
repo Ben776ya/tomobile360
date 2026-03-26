@@ -33,10 +33,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
   }
 
   // Increment view count
-  await supabase
-    .from('videos')
-    .update({ views: (video.views || 0) + 1 })
-    .eq('id', params.id)
+  void supabase.rpc('increment_video_views', { video_id: video.id })
 
   // Fetch related videos (same category)
   const { data: relatedVideos } = await supabase
