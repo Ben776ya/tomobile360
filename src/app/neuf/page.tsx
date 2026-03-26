@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
 import { VehicleFilters } from '@/components/vehicles/VehicleFilters'
+import { BrandHeader } from '@/components/vehicles/BrandHeader'
 import { Loader2 } from 'lucide-react'
 
 export const revalidate = 60
@@ -98,7 +99,7 @@ export default async function NewVehiclesPage({
     { data: brands },
     { data: categories },
   ] = await Promise.all([
-    supabase.from('brands').select('id, name').order('name'),
+    supabase.from('brands').select('id, name, logo_url, description, created_at').order('name'),
     supabase.from('models').select('category').order('category'),
   ])
 
@@ -150,6 +151,12 @@ export default async function NewVehiclesPage({
 
           {/* Results */}
           <main className="lg:col-span-3">
+            {/* Brand header when brand filter is active (D-36) */}
+            {brand && (() => {
+              const activeBrand = brands?.find((b) => b.id === brand)
+              return activeBrand ? <BrandHeader brand={activeBrand as any} /> : null
+            })()}
+
             {/* Quick-filter pills */}
             <div className="flex flex-wrap gap-2 mb-6">
               {quickFilters.map((f) => (
