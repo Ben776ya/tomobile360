@@ -134,7 +134,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
             href="/actu"
             className="inline-flex items-center gap-2 px-8 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-gold hover:shadow-gold-lg"
           >
-            Plus d'actus
+            Plus d&apos;actus
             <ChevronRight className="w-5 h-5" />
           </Link>
         </div>
