@@ -512,3 +512,35 @@ export async function deleteUser(userId: string) {
   revalidatePath('/admin/users')
   return { success: true }
 }
+
+// Brand Actions
+export async function getBrands() {
+  const { error: authError } = await checkAdmin()
+  if (authError) return { error: authError, data: null }
+
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('brands')
+    .select('id, name, logo_url, description, created_at')
+    .order('name', { ascending: true })
+
+  if (error) return { error: error.message, data: null }
+  return { error: null, data }
+}
+
+export async function updateBrand(id: string, data: { description: string | null }) {
+  const { error: authError } = await checkAdmin()
+  if (authError) return { error: authError }
+
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('brands')
+    .update({ description: data.description })
+    .eq('id', id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/neuf')
+  revalidatePath('/admin/brands')
+  return { success: true }
+}
