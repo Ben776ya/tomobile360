@@ -72,6 +72,7 @@ export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps)
   const [isPopular, setIsPopular] = useState(vehicle?.is_popular ?? false)
   const [isNewRelease, setIsNewRelease] = useState(vehicle?.is_new_release ?? false)
   const [isComingSoon, setIsComingSoon] = useState(vehicle?.is_coming_soon ?? false)
+  const [isFeaturedOffer, setIsFeaturedOffer] = useState(vehicle?.is_featured_offer ?? false)
 
   // Coup de Cœur
   const [coupDeCoeurReason, setCoupDeCoeurReason] = useState(vehicle?.coup_de_coeur_reason ?? '')
@@ -200,6 +201,7 @@ export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps)
       is_popular: isPopular,
       is_new_release: isNewRelease,
       is_coming_soon: isComingSoon,
+      is_featured_offer: isFeaturedOffer,
       coup_de_coeur_reason: coupDeCoeurReason || null,
     }
 
@@ -444,6 +446,15 @@ export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps)
               className="rounded border-white/10 h-4 w-4"
             />
             <span className="text-sm text-dark-100">Bientôt disponible</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isFeaturedOffer}
+              onChange={(e) => setIsFeaturedOffer(e.target.checked)}
+              className="rounded border-white/10 h-4 w-4"
+            />
+            <span className="text-sm text-dark-100">Offre Spéciale</span>
           </label>
         </div>
       </div>
