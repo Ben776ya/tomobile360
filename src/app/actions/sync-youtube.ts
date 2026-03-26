@@ -6,8 +6,7 @@ import { fetchYouTubeChannelVideos, categorizeVideo } from '@/lib/youtube'
 export interface SyncResult {
   success: boolean
   message: string
-  videosAdded?: number
-  videosUpdated?: number
+  videosProcessed?: number
   error?: string
 }
 
@@ -42,8 +41,7 @@ export async function syncYouTubeVideos(): Promise<SyncResult> {
       return {
         success: true,
         message: 'No videos found on the channel',
-        videosAdded: 0,
-        videosUpdated: 0,
+        videosProcessed: 0,
       }
     }
 
@@ -67,67 +65,39 @@ export async function syncYouTubeVideos(): Promise<SyncResult> {
       }
     })
 
-    let videosAdded = 0
-    let videosUpdated = 0
+    // Map YouTube videos to DB row shape
+    const videoRows = youtubeVideos.map(video => ({
+      title: video.title,
+      description: video.description,
+      video_url: video.videoUrl,
+      thumbnail_url: video.thumbnailUrl,
+      duration: video.duration,
+      category: categorizeVideo(video.title, video.description),
+      views: video.viewCount,
+      is_published: true,
+    }))
 
-    // Process each video
-    for (const video of youtubeVideos) {
-      // Check if video already exists in database
-      const { data: existingVideo } = await supabase
-        .from('videos')
-        .select('id, views')
-        .eq('video_url', video.videoUrl)
-        .single()
+    // Batch upsert — single DB operation instead of O(n) sequential queries
+    const { data: upsertedRows, error: upsertError } = await supabase
+      .from('videos')
+      .upsert(videoRows, { onConflict: 'video_url', ignoreDuplicates: false })
+      .select()
 
-      const videoData = {
-        title: video.title,
-        description: video.description,
-        video_url: video.videoUrl,
-        thumbnail_url: video.thumbnailUrl,
-        duration: video.duration,
-        category: categorizeVideo(video.title, video.description),
-        views: video.viewCount,
-        is_published: true,
-        created_at: new Date(video.publishedAt).toISOString(),
-      }
-
-      if (existingVideo) {
-        // Update existing video (mainly views count)
-        const { error } = await supabase
-          .from('videos')
-          .update({
-            views: video.viewCount,
-            thumbnail_url: video.thumbnailUrl,
-            description: video.description,
-            title: video.title,
-            duration: video.duration,
-          })
-          .eq('id', existingVideo.id)
-
-        if (!error) {
-          videosUpdated++
-        } else {
-          console.error(`Error updating video ${video.title}:`, error)
-        }
-      } else {
-        // Insert new video
-        const { error } = await supabase
-          .from('videos')
-          .insert([videoData])
-
-        if (!error) {
-          videosAdded++
-        } else {
-          console.error(`Error inserting video ${video.title}:`, error)
-        }
+    if (upsertError) {
+      console.error('Error upserting videos:', upsertError)
+      return {
+        success: false,
+        message: 'Failed to sync videos',
+        error: upsertError.message,
       }
     }
 
+    const videosProcessed = upsertedRows?.length ?? videoRows.length
+
     return {
       success: true,
-      message: `Sync completed: ${videosAdded} videos added, ${videosUpdated} videos updated`,
-      videosAdded,
-      videosUpdated,
+      message: `Sync completed: ${videosProcessed} videos processed`,
+      videosProcessed,
     }
   } catch (error) {
     console.error('Error syncing YouTube videos:', error)
