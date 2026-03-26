@@ -24,6 +24,9 @@ interface PageProps {
 export default async function UsedVehicleDetailPage({ params }: PageProps) {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  const isAuthenticated = !!user
+
   // Fetch listing details
   const { data: listing, error } = await supabase
     .from('vehicles_used')
@@ -73,12 +76,14 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
   const images = listing.images || []
   const seller = listing.profiles
 
-  const whatsappPhone = listing.contact_phone
+  const whatsappPhone = isAuthenticated && listing.contact_phone
     ? listing.contact_phone.replace(/\D/g, '').replace(/^0/, '212')
-    : '212600000000'
-  const whatsappText = encodeURIComponent(
-    `Bonjour, je suis intéressé(e) par votre annonce ${brandName} ${modelName} ${listing.year} sur Tomobile 360.`
-  )
+    : ''
+  const whatsappText = isAuthenticated
+    ? encodeURIComponent(
+        `Bonjour, je suis interesse(e) par votre annonce ${brandName} ${modelName} ${listing.year} sur Tomobile 360.`
+      )
+    : ''
 
   return (
     <div className="min-h-screen bg-background">
@@ -245,45 +250,60 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* WhatsApp CTA */}
-              <a
-                href={`https://wa.me/${whatsappPhone}?text=${whatsappText}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-white font-semibold text-sm transition-all duration-200 hover:opacity-90 active:scale-[0.98] mb-3"
-                style={{ backgroundColor: '#25D366' }}
-              >
-                <MessageCircle className="h-5 w-5" />
-                Contacter sur WhatsApp
-              </a>
+              {/* WhatsApp CTA and Contact Info */}
+              {isAuthenticated ? (
+                <>
+                  <a
+                    href={`https://wa.me/${whatsappPhone}?text=${whatsappText}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-white font-semibold text-sm transition-all duration-200 hover:opacity-90 active:scale-[0.98] mb-3"
+                    style={{ backgroundColor: '#25D366' }}
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    Contacter sur WhatsApp
+                  </a>
 
-              {/* Contact Info */}
-              <div className="space-y-3">
-                {listing.contact_phone && (
-                  <a
-                    href={`tel:${listing.contact_phone}`}
-                    className="flex items-center gap-3 p-3 border border-gray-200 rounded-md hover:bg-gray-100 transition"
+                  <div className="space-y-3">
+                    {listing.contact_phone && (
+                      <a
+                        href={`tel:${listing.contact_phone}`}
+                        className="flex items-center gap-3 p-3 border border-gray-200 rounded-md hover:bg-gray-100 transition"
+                      >
+                        <Phone className="h-5 w-5 text-secondary" />
+                        <div>
+                          <p className="text-xs text-gray-400">Téléphone</p>
+                          <p className="font-semibold text-primary">{listing.contact_phone}</p>
+                        </div>
+                      </a>
+                    )}
+                    {listing.contact_email && (
+                      <a
+                        href={`mailto:${listing.contact_email}`}
+                        className="flex items-center gap-3 p-3 border border-gray-200 rounded-md hover:bg-gray-100 transition"
+                      >
+                        <Mail className="h-5 w-5 text-secondary" />
+                        <div>
+                          <p className="text-xs text-gray-400">Email</p>
+                          <p className="font-semibold text-sm text-primary break-all">{listing.contact_email}</p>
+                        </div>
+                      </a>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 text-center mb-3">
+                  <p className="text-sm text-gray-500 mb-3">
+                    Connectez-vous pour voir les coordonnees du vendeur
+                  </p>
+                  <Link
+                    href={`/login?redirect=/occasion/${params.id}`}
+                    className="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-xl bg-secondary text-white text-sm font-semibold transition-all duration-200 hover:opacity-90"
                   >
-                    <Phone className="h-5 w-5 text-secondary" />
-                    <div>
-                      <p className="text-xs text-gray-400">Téléphone</p>
-                      <p className="font-semibold text-primary">{listing.contact_phone}</p>
-                    </div>
-                  </a>
-                )}
-                {listing.contact_email && (
-                  <a
-                    href={`mailto:${listing.contact_email}`}
-                    className="flex items-center gap-3 p-3 border border-gray-200 rounded-md hover:bg-gray-100 transition"
-                  >
-                    <Mail className="h-5 w-5 text-secondary" />
-                    <div>
-                      <p className="text-xs text-gray-400">Email</p>
-                      <p className="font-semibold text-sm text-primary break-all">{listing.contact_email}</p>
-                    </div>
-                  </a>
-                )}
-              </div>
+                    Se connecter
+                  </Link>
+                </div>
+              )}
 
               {/* Location & Stats */}
               <div className="mt-6 pt-6 border-t border-gray-200 space-y-2">
@@ -323,25 +343,36 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
           <p className="text-xs text-gray-500 truncate">{brandName} {modelName} {listing.year}</p>
           <p className="font-bold text-secondary text-sm">{formatPrice(listing.price)}</p>
         </div>
-        {listing.contact_phone && (
-          <a
-            href={`tel:${listing.contact_phone}`}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-medium text-sm whitespace-nowrap"
+        {isAuthenticated ? (
+          <>
+            {listing.contact_phone && (
+              <a
+                href={`tel:${listing.contact_phone}`}
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-medium text-sm whitespace-nowrap"
+              >
+                <Phone className="h-4 w-4" />
+                Appeler
+              </a>
+            )}
+            <a
+              href={`https://wa.me/${whatsappPhone}?text=${whatsappText}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-white font-semibold text-sm whitespace-nowrap"
+              style={{ backgroundColor: '#25D366' }}
+            >
+              <MessageCircle className="h-4 w-4" />
+              WhatsApp
+            </a>
+          </>
+        ) : (
+          <Link
+            href={`/login?redirect=/occasion/${params.id}`}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-secondary text-white font-semibold text-sm whitespace-nowrap"
           >
-            <Phone className="h-4 w-4" />
-            Appeler
-          </a>
+            Se connecter
+          </Link>
         )}
-        <a
-          href={`https://wa.me/${whatsappPhone}?text=${whatsappText}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-white font-semibold text-sm whitespace-nowrap"
-          style={{ backgroundColor: '#25D366' }}
-        >
-          <MessageCircle className="h-4 w-4" />
-          WhatsApp
-        </a>
       </div>
     </div>
   )
