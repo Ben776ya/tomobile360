@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 import type { CoupDeCoeurCategory } from '@/lib/types'
 
@@ -500,15 +501,24 @@ export async function deleteUser(userId: string) {
     return { error: 'Vous ne pouvez pas supprimer votre propre compte' }
   }
 
-  const supabase = await createClient()
+  // D-22/D-23: Service-role client for auth.admin operations
+  const supabaseAdmin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  )
 
-  const { error } = await supabase
-    .from('profiles')
-    .delete()
-    .eq('id', userId)
+  // D-21: Remove auth record (cascades to profiles row via FK)
+  const { error } = await supabaseAdmin.auth.admin.deleteUser(userId)
 
   if (error) return { error: error.message }
 
+  // D-24: Revalidate admin users page
   revalidatePath('/admin/users')
   return { success: true }
 }
