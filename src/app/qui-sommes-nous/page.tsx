@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { AtSign, PhoneCall, Camera } from 'lucide-react'
+import { AtSign, Camera } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Qui Sommes-Nous | Tomobile 360',
@@ -26,7 +26,6 @@ const team = [
     name: 'Rafik Kamal Lahlou',
     role: 'Fondateur & Directeur de rédaction',
     email: 'rafiklahlou@gmail.com',
-    phone: '+212 661 335 343',
     bio: "Véritable touche-à-tout, Rafik Lahlou est avant tout un fervent passionné de l'automobile depuis tout jeune. Il fut le premier à créer un site web consacré à l'automobile au Maroc (tomobile.net) en 2000. Directeur de rédaction des publications Challenge, VH Magazine et Lalla Fatima, il dirige conjointement avec Abdelmajid Alaoui l'atelier RM Automobiles Classiques. Vice-président de la Fédération Marocaine des Véhicules Anciens et du Royal Automobile Club Marocain.",
     socials: [
       { label: 'Instagram', icon: 'ig' },
@@ -42,7 +41,6 @@ const team = [
     name: 'David Jérémie',
     role: 'Journaliste Automobile',
     email: 'davidolivierjeremie@gmail.com',
-    phone: '+212 619 031 813',
     bio: "David Jérémie a évolué dès l'entame de sa carrière en 1994 en Martinique dans l'automobile, le journalisme et la radio. C'est en 2002 qu'il intègre la presse marocaine, s'étant fait une spécialité dans le secteur de l'automobile sous toutes ses formes, du deux-roues et des sports mécaniques.",
     socials: [
       { label: 'Instagram', icon: 'ig' },
@@ -58,7 +56,6 @@ const team = [
     name: 'Amine Bouharaoui',
     role: 'Journaliste Spécialisé',
     email: 'aminebouharaoui@gmail.com',
-    phone: '+212 607 664 459',
     bio: "Amine Bouharaoui est un passionné de l'automobile, tant des véhicules actuels que des véhicules anciens, de la mécanique, des nouvelles technologies liées à la mobilité électrique et du sport automobile. Ses connaissances techniques et son ressenti au volant lui permettent de se faire une idée précise sur tout type de véhicules.",
     socials: [
       { label: 'Instagram', icon: 'ig' },
@@ -75,7 +72,6 @@ const team = [
     name: 'Nabil Bennani (NAB)',
     role: 'Humoriste & Animateur',
     email: 'nabnabilbennani@gmail.com',
-    phone: '+212 666 16 60 72',
     bio: "NAB est un humoriste, animateur et voix-off marocain reconnu. Il observe avec humour les contradictions du quotidien moderne, créant une proximité naturelle avec un public large. Il anime une émission sur Radio MFM et collabore avec VH Magazine et Tomobile360, apportant son regard singulier sur l'univers automobile.",
     socials: [
       { label: 'Instagram', icon: 'ig' },
@@ -327,13 +323,6 @@ export default function QuiSommesNousPage() {
                     >
                       <AtSign size={12} className="flex-shrink-0 text-gray-300 group-hover/link:text-[#006EFE] transition-colors duration-300" />
                       <span className="truncate">{member.email}</span>
-                    </a>
-                    <a
-                      href={`tel:${member.phone.replace(/\s/g, '')}`}
-                      className="flex items-center gap-2 text-[12px] text-gray-400 hover:text-[#006EFE] transition-colors duration-300 group/link"
-                    >
-                      <PhoneCall size={12} className="flex-shrink-0 text-gray-300 group-hover/link:text-[#006EFE] transition-colors duration-300" />
-                      {member.phone}
                     </a>
                   </div>
 
