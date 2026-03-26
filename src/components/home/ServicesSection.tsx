@@ -1,4 +1,4 @@
-'use client'
+  'use client'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -28,7 +28,7 @@ const services = [
   {
     id: 'test-drive',
     icon: Car,
-    title: 'Test Drive',
+    title: 'Demande de Test Drive',
     description: 'Essayez avant de vous décider.',
     link: '/contact',
     color: 'bg-neon-purple',
@@ -37,11 +37,12 @@ const services = [
   {
     id: 'revision',
     icon: Wrench,
-    title: 'Entretien rapide',
-    description: 'Garages partenaires agréés.',
+    logoSrc: '/daba_pneu.png',
+    title: 'DabaPneus',
+    description: 'Pneus et entretien rapide avec notre partenaire DabaPneu — livraison et montage inclus.',
     link: '/services/revision',
-    color: 'bg-[#32B75C]',
-    glowColor: 'group-hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]',
+    color: 'bg-[#FDF6E3]',
+    glowColor: 'group-hover:shadow-[0_0_15px_rgba(212,175,55,0.25)]',
   },
   {
     id: 'controle',
@@ -124,7 +125,7 @@ export function ServicesSection() {
               </div>
               {/* Row 2 — Other services: 4 cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {services.slice(2).map(s => renderCard(s, true))}
+                {[services[2], services[3], services[4], services[5]].map(s => renderCard(s, true))}
               </div>
             </>
           )

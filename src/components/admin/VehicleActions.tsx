@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Edit, Trash2, Star, Sparkles, Heart } from 'lucide-react'
+import { Edit, Trash2, Star, Sparkles, Heart, Tag } from 'lucide-react'
 import { deleteVehicle, toggleVehicleBadge, setCoupDeCoeur } from '@/lib/actions/admin'
 import type { CoupDeCoeurCategory } from '@/lib/types'
 
@@ -15,6 +15,7 @@ interface VehicleActionsProps {
   isNewRelease?: boolean
   isCoupDeCoeur?: boolean
   coupDeCoeurCategory?: string | null
+  isFeaturedOffer?: boolean
 }
 
 const CDC_CATEGORIES: { value: CoupDeCoeurCategory; label: string }[] = [
@@ -30,6 +31,7 @@ export function VehicleActions({
   isNewRelease,
   isCoupDeCoeur,
   coupDeCoeurCategory,
+  isFeaturedOffer,
 }: VehicleActionsProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -61,6 +63,14 @@ export function VehicleActions({
   const handleToggleNewRelease = async () => {
     setLoading(true)
     const result = await toggleVehicleBadge(vehicleId, 'is_new_release', !isNewRelease)
+    if (result.error) alert(result.error)
+    else router.refresh()
+    setLoading(false)
+  }
+
+  const handleToggleFeaturedOffer = async () => {
+    setLoading(true)
+    const result = await toggleVehicleBadge(vehicleId, 'is_featured_offer', !isFeaturedOffer)
     if (result.error) alert(result.error)
     else router.refresh()
     setLoading(false)
@@ -106,6 +116,16 @@ export function VehicleActions({
             className={`shadow-sm border border-border hover:shadow-md ${isNewRelease ? 'bg-green-100 border-green-300 hover:bg-green-200' : 'hover:bg-green-50'}`}
           >
             <Sparkles className={`h-4 w-4 ${isNewRelease ? 'fill-green-500 text-green-500' : 'text-muted-foreground'}`} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleToggleFeaturedOffer}
+            disabled={loading}
+            title="Offre Spéciale"
+            className={`shadow-sm border border-border hover:shadow-md ${isFeaturedOffer ? 'bg-emerald-100 border-emerald-300 hover:bg-emerald-200' : 'hover:bg-emerald-50'}`}
+          >
+            <Tag className={`h-4 w-4 ${isFeaturedOffer ? 'fill-emerald-500 text-emerald-500' : 'text-muted-foreground'}`} />
           </Button>
 
           {/* Coup de Cœur toggle */}

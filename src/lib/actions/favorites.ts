@@ -14,15 +14,11 @@ export async function addToFavorites(vehicleId: string, vehicleType: 'new' | 'us
     return { error: 'Vous devez être connecté' }
   }
 
-  const insertData: any = {
+  const insertData = {
     user_id: user.id,
     vehicle_type: vehicleType,
-  }
-
-  if (vehicleType === 'new') {
-    insertData.vehicle_new_id = vehicleId
-  } else {
-    insertData.vehicle_used_id = vehicleId
+    vehicle_new_id: vehicleType === 'new' ? vehicleId : null,
+    vehicle_used_id: vehicleType === 'used' ? vehicleId : null,
   }
 
   const { error } = await supabase.from('favorites').insert(insertData)
@@ -91,7 +87,7 @@ export async function checkIsFavorite(vehicleId: string, vehicleType: 'new' | 'u
     query = query.eq('vehicle_used_id', vehicleId)
   }
 
-  const { data } = await query.single()
+  const { data } = await query.maybeSingle()
 
   return !!data
 }

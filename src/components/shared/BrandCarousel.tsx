@@ -78,7 +78,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="container mx-auto px-4">
-        <div className="bg-muted/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-200 shadow-card p-6 md:p-8">
+        <div className="bg-white rounded-2xl overflow-hidden p-6 md:p-8">
           <div className="w-3/4 mx-auto">
             {/* Section Title */}
             {showTitle && (

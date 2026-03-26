@@ -286,7 +286,7 @@ export async function deleteVehicle(id: string, type: 'new' | 'used') {
 
 export async function toggleVehicleBadge(
   id: string,
-  badge: 'is_popular' | 'is_new_release',
+  badge: 'is_popular' | 'is_new_release' | 'is_featured_offer',
   value: boolean
 ) {
   const adminCheck = await checkAdmin()

@@ -7,17 +7,12 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
 
+const HERO_IMAGE = '/hero-section.png'
+
 interface HeroSectionProps {
   brands: Array<{ id: string; name: string }>
   models?: Array<{ id: string; name: string; brand_id: string }>
 }
-
-const fallbackImages = [
-  'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?q=80&w=2574',
-  'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2574',
-  'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2574',
-  'https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=2574',
-]
 
 const budgetRanges = [
   { value: '', label: 'BUDGET' },
@@ -76,8 +71,6 @@ const selectStyle = {
 
 export function HeroSection({ brands }: HeroSectionProps) {
   const router = useRouter()
-  const [heroImages, setHeroImages] = useState<string[]>(fallbackImages)
-  const [currentSlide, setCurrentSlide] = useState(0)
   const [vehicleCondition, setVehicleCondition] = useState<'neuf' | 'occasion'>('neuf')
   const [selectedType, setSelectedType] = useState('')
   const [selectedBrand, setSelectedBrand] = useState('')
@@ -86,47 +79,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
   const [selectedFiscalPower, setSelectedFiscalPower] = useState('')
   const [priceRange, setPriceRange] = useState([0, 1000000])
   const [resultCount, setResultCount] = useState<number | null>(null)
-
-  // Fetch random images from new vehicles
-  useEffect(() => {
-    const fetchHeroImages = async () => {
-      try {
-        const supabase = createClient()
-        const { data } = await supabase
-          .from('vehicles_new')
-          .select('images')
-          .not('images', 'is', null)
-
-        if (data && data.length > 0) {
-          const thumbnails: string[] = []
-          for (const vehicle of data) {
-            if (vehicle.images && vehicle.images.length > 0) {
-              thumbnails.push(vehicle.images[0])
-            }
-          }
-
-          if (thumbnails.length >= 4) {
-            const shuffled = thumbnails.sort(() => Math.random() - 0.5)
-            setHeroImages(shuffled.slice(0, 4))
-          } else if (thumbnails.length > 0) {
-            setHeroImages(thumbnails)
-          }
-        }
-      } catch {
-        // Keep fallback images on error
-      }
-    }
-
-    fetchHeroImages()
-  }, [])
-
-  // Slider auto-rotation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [heroImages.length])
 
   // Fetch result count reactively
   useEffect(() => {
@@ -230,29 +182,27 @@ export function HeroSection({ brands }: HeroSectionProps) {
   return (
     <section className="relative min-h-[62vh] flex items-center overflow-hidden">
 
-      {/* Full-bleed background carousel */}
-      {heroImages.map((img, idx) => (
-        <div
-          key={idx}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            idx === currentSlide ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          <Image
-            src={img}
-            alt=""
-            fill
-            className="object-cover"
-            priority={idx === 0}
-            sizes="100vw"
-          />
-        </div>
-      ))}
+      {/* Static hero background */}
+      <div className="absolute inset-0">
+        <Image
+          src={HERO_IMAGE}
+          alt=""
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+        />
+      </div>
 
-      {/* Dark gradient overlay — left darker, right lighter so cars are visible */}
+      {/* Dark gradient overlay — left darker, right lighter so car is visible */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20 pointer-events-none" />
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+
+      {/* Bottom wave transition — high on left (search side), low on right */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden leading-none">
+        <svg viewBox="0 0 1440 72" preserveAspectRatio="none" className="w-full block h-16">
+          <path d="M0,18 C400,68 1040,0 1440,52 L1440,72 L0,72 Z" className="fill-background" />
+        </svg>
+      </div>
 
       {/* Content */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10 py-12 lg:py-16">
@@ -400,15 +350,15 @@ export function HeroSection({ brands }: HeroSectionProps) {
             </div>
 
             {/* Search Button + Result Count */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-2">
               {resultCount !== null && (
-                <span className="text-sm text-white/50 flex-1 text-right">
+                <p className="text-sm text-white/60 text-center">
                   {resultCount.toLocaleString('fr-FR')} résultat{resultCount !== 1 ? 's' : ''}
-                </span>
+                </p>
               )}
               <button
                 onClick={handleSearch}
-                className="flex-shrink-0 px-8 py-3 bg-[#006EFE] hover:bg-[#005BD4] text-white font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 w-full justify-center"
+                className="w-full px-8 py-3 bg-[#006EFE] hover:bg-[#005BD4] text-white font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 justify-center"
               >
                 <Search className="h-4 w-4" />
                 Rechercher
@@ -417,24 +367,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
           </div>
         </div>
       </div>
-
-      {/* Carousel dots */}
-      {heroImages.length > 1 && (
-        <div className="absolute bottom-8 right-8 z-10 flex items-center gap-2">
-          {heroImages.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`transition-all duration-300 rounded-full ${
-                idx === currentSlide
-                  ? 'w-6 h-2 bg-white'
-                  : 'w-2 h-2 bg-white/40 hover:bg-white/70'
-              }`}
-              aria-label={`Image ${idx + 1}`}
-            />
-          ))}
-        </div>
-      )}
     </section>
   )
 }

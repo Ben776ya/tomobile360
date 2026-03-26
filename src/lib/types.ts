@@ -84,6 +84,8 @@ export type VehicleNew = {
   mileage: number | null
   is_coup_de_coeur: boolean
   coup_de_coeur_category: CoupDeCoeurCategory | null
+  coup_de_coeur_reason: string | null
+  is_featured_offer: boolean
   brands?: Brand
   models?: Model
 }
@@ -220,7 +222,8 @@ export type Favorite = {
   id: string
   user_id: string
   vehicle_type: 'new' | 'used'
-  vehicle_id: string
+  vehicle_new_id: string | null
+  vehicle_used_id: string | null
   created_at: string
 }
 

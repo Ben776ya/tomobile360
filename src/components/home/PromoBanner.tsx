@@ -5,22 +5,22 @@ import { ChevronRight, Check } from 'lucide-react'
 
 export function PromoBanner() {
   return (
-    <section className="py-4 md:py-6 bg-[#F2F4F6]">
+    <section className="py-2 md:py-3 bg-[#F2F4F6]">
       <div className="container mx-auto px-4">
         <div className="relative">
           <div className="flex flex-col lg:flex-row items-center relative z-10">
             {/* Left - Illustration/Image */}
-            <div className="lg:w-1/3 p-6 lg:p-8 flex justify-center">
-              <div className="relative w-48 h-48 md:w-64 md:h-64">
+            <div className="lg:w-1/3 p-3 lg:p-4 flex justify-center">
+              <div className="relative w-32 h-32 md:w-44 md:h-44">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/20 rounded-full animate-glow-pulse" />
                 <div className="relative w-full h-full flex items-center justify-center">
                   <div className="text-center">
-                    <p className="text-sm text-gray-500 mb-1">Offre exceptionnelle</p>
+                    <p className="text-xs text-gray-500 mb-0.5">Offre exceptionnelle</p>
                     <div className="relative">
-                      <span className="text-6xl md:text-7xl font-black text-secondary glow-cyan-text">2.9</span>
-                      <span className="text-2xl md:text-3xl font-bold text-secondary align-top">%</span>
+                      <span className="text-4xl md:text-5xl font-black text-secondary glow-cyan-text">2.9</span>
+                      <span className="text-lg md:text-xl font-bold text-secondary align-top">%</span>
                     </div>
-                    <p className="text-sm font-semibold text-gray-700">sur votre PRÊT AUTO</p>
+                    <p className="text-xs font-semibold text-gray-700">sur votre PRÊT AUTO</p>
                   </div>
                 </div>
               </div>

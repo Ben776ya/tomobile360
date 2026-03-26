@@ -171,14 +171,19 @@ export default function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`px-3 py-1 text-sm font-bold tracking-wide transition-all duration-200
-                      ${isActive
-                        ? 'text-[#006EFE] font-semibold'
-                        : 'text-gray-600 hover:text-[#006EFE]'
-                      }
-                    `}
+                    className="relative px-2.5 py-0.5 text-sm font-bold tracking-wide rounded-sm overflow-hidden group/nav"
                   >
-                    {link.label}
+                    {/* Fill rising from the underline */}
+                    <span
+                      className={`absolute inset-0 bg-[#33B75D] origin-bottom transition-transform duration-300 ease-out z-0
+                        ${isActive ? 'scale-y-100' : 'scale-y-0 group-hover/nav:scale-y-100'}
+                      `}
+                    />
+                    <span className={`relative z-10 transition-colors duration-200
+                      ${isActive ? 'text-white' : 'text-gray-600 group-hover/nav:text-white'}
+                    `}>
+                      {link.label}
+                    </span>
                   </Link>
                 )
               })}
