@@ -24,21 +24,21 @@ interface PageProps {
 export default async function UsedVehicleDetailPage({ params }: PageProps) {
   const supabase = await createClient()
 
-  const { data: { user } } = await supabase.auth.getUser()
-  const isAuthenticated = !!user
+  // Wave A: getUser() and listing fetch are independent — run in parallel (per D-07)
+  const [{ data: { user } }, { data: listing, error }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from('vehicles_used')
+      .select(`
+        *,
+        brands:brand_id (id, name, logo_url),
+        models:model_id (id, name, category),
+        profiles:user_id (full_name, avatar_url, phone, city)
+      `)
+      .eq('id', params.id)
+      .single()
+  ])
 
-  // Fetch listing details
-  const { data: listing, error } = await supabase
-    .from('vehicles_used')
-    .select(`
-      *,
-      brands:brand_id (id, name, logo_url),
-      models:model_id (id, name, category),
-      profiles:user_id (full_name, avatar_url, phone, city)
-    `)
-    .eq('id', params.id)
-    .single()
-
+  // notFound guard between Wave A and Wave B (per D-08)
   if (error || !listing) {
     notFound()
   }
@@ -47,29 +47,27 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
     notFound()
   }
 
-  // Check if favorited
-  const isFavorite = await checkIsFavorite(params.id, 'used')
+  const isAuthenticated = !!user
 
-  // Increment view count
-  await supabase
-    .from('vehicles_used')
-    .update({ views: (listing.views || 0) + 1 })
-    .eq('id', params.id)
+  // Fire-and-forget atomic view increment (per D-04, D-05) — NOT in Promise.all
+  void supabase.rpc('increment_used_vehicle_views', { vehicle_id: listing.id })
 
-  // Fetch similar listings
-  const { data: similarListings } = await supabase
-    .from('vehicles_used')
-    .select(`
-      *,
-      brands:brand_id (name, logo_url),
-      models:model_id (name),
-      profiles:user_id (full_name, avatar_url)
-    `)
-    .neq('id', params.id)
-    .eq('is_active', true)
-    .eq('is_sold', false)
-    .or(`brand_id.eq.${listing.brand_id},city.eq.${listing.city}`)
-    .limit(4)
+  // Wave B: similar listings and checkIsFavorite are independent — run in parallel (per D-07)
+  const [isFavorite, { data: similarListings }] = await Promise.all([
+    checkIsFavorite(params.id, 'used'),
+    supabase.from('vehicles_used')
+      .select(`
+        *,
+        brands:brand_id (name, logo_url),
+        models:model_id (name),
+        profiles:user_id (full_name, avatar_url)
+      `)
+      .neq('id', params.id)
+      .eq('is_active', true)
+      .eq('is_sold', false)
+      .or(`brand_id.eq.${listing.brand_id},city.eq.${listing.city}`)
+      .limit(4)
+  ])
 
   const brandName = listing.brands?.name || 'Unknown'
   const modelName = listing.models?.name || 'Unknown'
