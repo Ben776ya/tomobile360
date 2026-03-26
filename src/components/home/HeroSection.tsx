@@ -7,12 +7,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
 
-const FALLBACK_IMAGES = [
-  '/hero-section.png',
-  'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1920&q=80',
-  'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920&q=80',
-  'https://images.unsplash.com/photo-1542362567-b07e54358753?w=1920&q=80',
-]
+const HERO_IMAGE = '/hero-section.png'
 
 interface HeroSectionProps {
   brands: Array<{ id: string; name: string }>
@@ -84,8 +79,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
   const [selectedFiscalPower, setSelectedFiscalPower] = useState('')
   const [priceRange, setPriceRange] = useState([0, 1000000])
   const [resultCount, setResultCount] = useState<number | null>(null)
-  const [heroImages, setHeroImages] = useState<string[]>(FALLBACK_IMAGES)
-  const [currentSlide, setCurrentSlide] = useState(0)
 
   // Fetch result count reactively
   useEffect(() => {
@@ -150,39 +143,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
     return () => clearTimeout(timer)
   }, [vehicleCondition, selectedBrand, selectedType, selectedFuel, selectedBudget, selectedFiscalPower, priceRange, brands])
 
-  // Fetch real vehicle images for carousel
-  useEffect(() => {
-    async function fetchHeroImages() {
-      const supabase = createClient()
-      const { data } = await supabase
-        .from('vehicles_new')
-        .select('images')
-        .not('images', 'eq', '{}')
-        .order('created_at', { ascending: false })
-        .limit(8)
-
-      if (data && data.length > 0) {
-        const imgs = data
-          .flatMap((v: { images: string[] | null }) => v.images || [])
-          .filter(Boolean)
-          .slice(0, 5)
-        if (imgs.length >= 2) {
-          setHeroImages(imgs)
-        }
-      }
-    }
-    fetchHeroImages()
-  }, [])
-
-  // Auto-advance carousel every 5 seconds
-  useEffect(() => {
-    if (heroImages.length <= 1) return
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [heroImages.length])
-
   const handleSearch = () => {
     const params = new URLSearchParams()
 
@@ -222,47 +182,20 @@ export function HeroSection({ brands }: HeroSectionProps) {
   return (
     <section className="relative min-h-[62vh] flex items-center overflow-hidden">
 
-      {/* Carousel background */}
+      {/* Static hero background */}
       <div className="absolute inset-0">
-        {heroImages.map((img, idx) => (
-          <div
-            key={idx}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              idx === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <Image
-              src={img}
-              alt=""
-              fill
-              className="object-cover"
-              priority={idx === 0}
-              sizes="100vw"
-            />
-          </div>
-        ))}
+        <Image
+          src={HERO_IMAGE}
+          alt=""
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+        />
       </div>
 
       {/* Dark gradient overlay — left darker, right lighter so car is visible */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20 pointer-events-none" />
-
-      {/* Carousel navigation dots */}
-      {heroImages.length > 1 && (
-        <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2">
-          {heroImages.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                idx === currentSlide
-                  ? 'bg-white scale-110'
-                  : 'bg-white/40 hover:bg-white/60'
-              }`}
-              aria-label={`Image ${idx + 1}`}
-            />
-          ))}
-        </div>
-      )}
 
       {/* Bottom wave transition — high on left (search side), low on right */}
       <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden leading-none">
