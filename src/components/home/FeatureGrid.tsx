@@ -133,7 +133,7 @@ export function FeatureGrid() {
       .eq('coup_de_coeur_category', category)
       .limit(10)
     if (data) {
-      setCdcByCategory(prev => ({ ...prev, [category]: data as CdcVehicle[] }))
+      setCdcByCategory(prev => ({ ...prev, [category]: data as unknown as CdcVehicle[] }))
     }
     setCdcLoading(false)
   }, [cdcByCategory])
