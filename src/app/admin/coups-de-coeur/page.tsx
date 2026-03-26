@@ -38,7 +38,7 @@ export default function AdminCoupsDeCoeurPage() {
     if (fetchError) {
       setError(fetchError.message)
     } else {
-      setVehicles((data as CoupDeCoeurVehicle[]) || [])
+      setVehicles((data as unknown as CoupDeCoeurVehicle[]) || [])
     }
     setLoading(false)
   }, [])
