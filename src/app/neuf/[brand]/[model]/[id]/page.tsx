@@ -291,6 +291,44 @@ export default async function VehicleDetailPage({ params }: PageProps) {
           </div>
         </div>
 
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@graph': [
+                {
+                  '@type': 'Car',
+                  name: `${brandName} ${modelName}`,
+                  brand: { '@type': 'Brand', name: brandName },
+                  model: modelName,
+                  vehicleModelDate: vehicle.year?.toString(),
+                  fuelType: vehicle.fuel_type,
+                  offers: {
+                    '@type': 'AggregateOffer',
+                    priceCurrency: 'MAD',
+                    lowPrice: vehicle.price_min,
+                    highPrice: vehicle.price_max || vehicle.price_min,
+                    availability: vehicle.is_available
+                      ? 'https://schema.org/InStock'
+                      : 'https://schema.org/OutOfStock',
+                  },
+                },
+                {
+                  '@type': 'BreadcrumbList',
+                  itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://tomobile360.ma' },
+                    { '@type': 'ListItem', position: 2, name: 'Voitures Neuves', item: 'https://tomobile360.ma/neuf' },
+                    { '@type': 'ListItem', position: 3, name: brandName, item: `https://tomobile360.ma/neuf?brand=${vehicle.brand_id}` },
+                    { '@type': 'ListItem', position: 4, name: `${brandName} ${modelName}` },
+                  ],
+                },
+              ],
+            }),
+          }}
+        />
+
         {/* Similar Vehicles */}
         {similarVehicles && similarVehicles.length > 0 && (
           <div className="mt-12">

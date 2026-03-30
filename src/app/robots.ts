@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/compte/', '/api/'],
       },
     ],
-    sitemap: `${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'https://tomobile360.ma' : 'http://localhost:3000'}/sitemap.xml`,
+    sitemap: 'https://tomobile360.ma/sitemap.xml',
   }
 }

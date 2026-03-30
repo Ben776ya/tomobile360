@@ -82,6 +82,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <h1 className="sr-only">Tomobile 360 — Marketplace Automobile au Maroc : Voitures Neuves et Occasion</h1>
       {/* 1. Hero Section with Search Form */}
       <HeroSection brands={brands || []} models={models || []} />
 

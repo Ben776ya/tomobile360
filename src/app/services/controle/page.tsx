@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ClipboardCheck, Check, ChevronRight, ArrowLeft, MapPin, Calendar, Clock } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Contrôle Technique Voiture au Maroc | Tomobile 360',
+  description: 'Passez votre contrôle technique dans plus de 40 centres partenaires agréés au Maroc. Réservation en ligne, 350 DH.',
+}
 
 const checkpoints = [
   'Freinage',

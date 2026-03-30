@@ -21,6 +21,37 @@ interface PageProps {
   }
 }
 
+export async function generateMetadata({ params }: PageProps) {
+  const supabase = await createClient()
+  const { data: listing } = await supabase
+    .from('vehicles_used')
+    .select(`
+      price, year, city, fuel_type, mileage,
+      brands:brand_id (name),
+      models:model_id (name)
+    `)
+    .eq('id', params.id)
+    .single()
+
+  if (!listing) return { title: 'Annonce non trouvée | Tomobile 360' }
+
+  const brandName = (listing.brands as any)?.name || ''
+  const modelName = (listing.models as any)?.name || ''
+  const price = listing.price
+    ? `${Math.round(listing.price).toLocaleString('fr-MA')} DH`
+    : ''
+
+  return {
+    title: `${brandName} ${modelName} ${listing.year} — ${price} | Occasion Maroc`,
+    description: `${brandName} ${modelName} ${listing.year}, ${listing.mileage?.toLocaleString('fr-MA')} km, ${listing.fuel_type}, ${listing.city}. Achetez votre voiture d'occasion au Maroc sur Tomobile 360.`,
+    openGraph: {
+      title: `${brandName} ${modelName} ${listing.year} — ${price}`,
+      description: `${listing.city} · ${listing.mileage?.toLocaleString('fr-MA')} km · ${listing.fuel_type}`,
+      type: 'website' as const,
+    },
+  }
+}
+
 export default async function UsedVehicleDetailPage({ params }: PageProps) {
   const supabase = await createClient()
 

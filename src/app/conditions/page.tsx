@@ -1,3 +1,11 @@
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Conditions Générales d'Utilisation | Tomobile 360",
+  description: "Consultez les conditions générales d'utilisation de la plateforme Tomobile 360.",
+  robots: { index: false, follow: true },
+}
+
 export default function ConditionsPage() {
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">

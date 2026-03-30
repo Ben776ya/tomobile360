@@ -1,3 +1,11 @@
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Politique de Cookies | Tomobile 360',
+  description: "Politique d'utilisation des cookies sur la plateforme Tomobile 360.",
+  robots: { index: false, follow: true },
+}
+
 export default function CookiesPage() {
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">

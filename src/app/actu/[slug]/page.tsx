@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const supabase = await createClient()
   const { data: article } = await supabase
     .from('articles')
-    .select('title, excerpt, featured_image, slug')
+    .select('title, excerpt, featured_image, slug, profiles:author_id (full_name)')
     .eq('slug', params.slug)
     .eq('is_published', true)
     .single()
@@ -58,7 +58,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
   // Fetch article
   const { data: article } = await supabase
     .from('articles')
-    .select('*')
+    .select('*, profiles:author_id (full_name, avatar_url)')
     .eq('slug', params.slug)
     .eq('is_published', true)
     .single()
@@ -109,6 +109,40 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@graph': [
+              {
+                '@type': 'NewsArticle',
+                headline: article.title,
+                description: article.excerpt,
+                image: article.featured_image || 'https://tomobile360.ma/og-image.png',
+                datePublished: article.published_at,
+                publisher: {
+                  '@type': 'Organization',
+                  name: 'Tomobile 360',
+                  logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://tomobile360.ma/logo_tomobil360.png',
+                  },
+                },
+                url: `https://tomobile360.ma/actu/${article.slug}`,
+              },
+              {
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                  { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://tomobile360.ma' },
+                  { '@type': 'ListItem', position: 2, name: 'Actualités', item: 'https://tomobile360.ma/actu' },
+                  { '@type': 'ListItem', position: 3, name: article.title },
+                ],
+              },
+            ],
+          }),
+        }}
+      />
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <div className="mb-6">
@@ -154,6 +188,11 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
                 {/* Meta Info */}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6 pb-6 border-b border-gray-200">
+                  {(article as any).profiles?.full_name && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-gray-700">{(article as any).profiles.full_name}</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
                     <span>{formatRelativeTime(article.published_at)}</span>

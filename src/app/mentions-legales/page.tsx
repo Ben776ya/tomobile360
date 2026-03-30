@@ -1,3 +1,11 @@
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Mentions Légales | Tomobile 360',
+  description: 'Mentions légales de la plateforme Tomobile 360, marketplace automobile au Maroc.',
+  robots: { index: false, follow: true },
+}
+
 export default function MentionsLegalesPage() {
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">

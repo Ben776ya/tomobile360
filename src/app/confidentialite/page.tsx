@@ -1,3 +1,11 @@
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Politique de Confidentialité | Tomobile 360',
+  description: 'Consultez la politique de confidentialité de Tomobile 360 concernant la collecte et le traitement de vos données personnelles.',
+  robots: { index: false, follow: true },
+}
+
 export default function ConfidentialitePage() {
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">

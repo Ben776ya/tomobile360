@@ -17,6 +17,36 @@ interface PageProps {
   }
 }
 
+export async function generateMetadata({ params }: PageProps) {
+  const supabase = await createClient()
+  const { data: video } = await supabase
+    .from('videos')
+    .select('title, description, thumbnail_url')
+    .eq('id', params.id)
+    .eq('is_published', true)
+    .single()
+
+  if (!video) return { title: 'Vidéo non trouvée | Tomobile 360' }
+
+  return {
+    title: `${video.title} | Tomobile 360 TV`,
+    description: video.description?.substring(0, 155) || 'Regardez les meilleures vidéos automobile du Maroc sur Tomobile 360 TV.',
+    openGraph: {
+      title: video.title,
+      description: video.description?.substring(0, 155),
+      images: video.thumbnail_url
+        ? [{ url: video.thumbnail_url }]
+        : [{ url: '/og-image.png' }],
+      type: 'video.other' as const,
+    },
+    twitter: {
+      card: 'summary_large_image' as const,
+      title: video.title,
+      images: video.thumbnail_url ? [video.thumbnail_url] : ['/og-image.png'],
+    },
+  }
+}
+
 export default async function VideoDetailPage({ params }: PageProps) {
   const supabase = await createClient()
 
@@ -60,7 +90,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
     return url
   }
 
-  const embedUrl = getVideoEmbedUrl(video.video_url)
+  const embedUrl = getVideoEmbedUrl((video as any).embed_url || (video as any).video_url || '')
 
   const categoryLabels: { [key: string]: string } = {
     review: 'Essai',

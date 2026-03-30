@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { CreditCard, Shield, Wrench, ClipboardCheck, ChevronRight, Car, Calculator, FileCheck } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Services Auto au Maroc — Crédit, Assurance, Révision | Tomobile 360',
+  description: 'Crédit auto, assurance, révision, contrôle technique : tous les services automobiles au Maroc réunis sur Tomobile 360.',
+}
 
 const services = [
   {

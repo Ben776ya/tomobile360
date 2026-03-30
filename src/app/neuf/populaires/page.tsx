@@ -1,7 +1,13 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
+
+export const metadata: Metadata = {
+  title: 'Voitures Populaires au Maroc | Tomobile 360',
+  description: 'Les voitures neuves les plus populaires au Maroc. Comparez les modèles les plus vendus et trouvez votre prochaine voiture.',
+}
 
 export const revalidate = 60
 

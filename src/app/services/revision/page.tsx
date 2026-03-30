@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Check, ArrowLeft, Truck, ShieldCheck, Zap } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Révision & Entretien Voiture au Maroc | Tomobile 360',
+  description: 'Révisez et entretenez votre voiture dans nos centres partenaires agréés au Maroc. Prise de rendez-vous en ligne.',
+}
 
 const DABAPNEU_WEBSITE = 'https://www.dabapneu.ma'
 

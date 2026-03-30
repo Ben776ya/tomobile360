@@ -1,8 +1,25 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronLeft, Pin, Lock, MessageSquare, Eye, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+
+export async function generateMetadata({ params }: { params: { category: string } }): Promise<Metadata> {
+  const supabase = await createClient()
+  const { data: category } = await supabase
+    .from('forum_categories')
+    .select('name, description')
+    .eq('id', params.category)
+    .single()
+
+  if (!category) return { title: 'Forum | Tomobile 360' }
+
+  return {
+    title: `${category.name} — Forum Automobile Maroc | Tomobile 360`,
+    description: category.description || `Discussions et conseils sur ${category.name} dans le forum automobile Tomobile 360.`,
+  }
+}
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatRelativeTime } from '@/lib/utils'

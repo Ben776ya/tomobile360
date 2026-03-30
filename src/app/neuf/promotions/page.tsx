@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
 import type { VehicleNew } from '@/lib/types'
+
+export const metadata: Metadata = {
+  title: 'Promotions Voitures Neuves au Maroc | Tomobile 360',
+  description: 'Profitez des meilleures promotions sur les voitures neuves au Maroc. Remises, offres spéciales et prix barrés chez les concessionnaires.',
+}
 
 export const revalidate = 60
 

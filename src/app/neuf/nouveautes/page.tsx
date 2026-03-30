@@ -1,7 +1,13 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
+
+export const metadata: Metadata = {
+  title: 'Nouveautés Automobiles au Maroc | Tomobile 360',
+  description: 'Découvrez les dernières nouveautés automobiles disponibles au Maroc. Nouvelles sorties, premiers prix et fiches techniques.',
+}
 
 export const revalidate = 60
 
