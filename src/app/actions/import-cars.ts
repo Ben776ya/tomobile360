@@ -9,8 +9,6 @@ import { ImportedCar, validateCar, normalizeBrandName, ImportResult } from '@/li
  */
 export async function importCars(cars: ImportedCar[]): Promise<ImportResult> {
   try {
-    console.log(`Starting import of ${cars.length} cars...`)
-
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
@@ -108,7 +106,6 @@ export async function importCars(cars: ImportedCar[]): Promise<ImportResult> {
           .single()
 
         if (existingVehicle) {
-          console.log(`Skipping existing vehicle: ${brandName} ${car.model} ${car.year}`)
           skipped++
           continue
         }
@@ -167,7 +164,6 @@ export async function importCars(cars: ImportedCar[]): Promise<ImportResult> {
         }
 
         imported++
-        console.log(`Imported: ${brandName} ${car.model} ${car.year}`)
 
       } catch (error) {
         errors.push(`Error processing ${car.brand} ${car.model}: ${error instanceof Error ? error.message : 'Unknown error'}`)

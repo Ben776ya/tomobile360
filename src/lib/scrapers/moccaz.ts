@@ -49,12 +49,10 @@ function getSpec(
 export async function getMoccazListings(): Promise<MoccazListing[]> {
   // Return cache if still valid
   if (cache !== null && Date.now() - cacheTime < CACHE_TTL) {
-    console.log('[moccaz] Returning cached listings:', cache.length)
     return cache
   }
 
   try {
-    console.log('[moccaz] Fetching listing page...')
     const res = await fetch(LISTING_PAGE, {
       headers: HEADERS,
       // @ts-ignore
@@ -141,9 +139,6 @@ export async function getMoccazListings(): Promise<MoccazListing[]> {
 
     cache = result
     cacheTime = Date.now()
-    console.log(
-      `[moccaz] Done. ${result.filter((r) => r.image).length}/${result.length} with images.`
-    )
     return result
   } catch (err) {
     console.error('[moccaz] Scrape error:', err)

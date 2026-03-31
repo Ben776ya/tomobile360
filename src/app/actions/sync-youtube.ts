@@ -16,8 +16,6 @@ export interface SyncResult {
  */
 export async function syncYouTubeVideos(): Promise<SyncResult> {
   try {
-    console.log('Starting YouTube sync...')
-
     // Get API key from environment
     const apiKey = process.env.YOUTUBE_API_KEY
     if (!apiKey) {
@@ -29,13 +27,9 @@ export async function syncYouTubeVideos(): Promise<SyncResult> {
       }
     }
 
-    console.log('API key found, fetching videos from YouTube...')
-
     // Fetch videos from YouTube channel
     const channelHandle = 'Tomobile360' // or use environment variable
     const youtubeVideos = await fetchYouTubeChannelVideos(channelHandle, apiKey, 50)
-
-    console.log(`Fetched ${youtubeVideos.length} videos from YouTube`)
 
     if (youtubeVideos.length === 0) {
       return {

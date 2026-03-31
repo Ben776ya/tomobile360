@@ -426,7 +426,6 @@ export function parseJSONCars(jsonText: string): ImportedCar[] {
 
     // Check if it's vroom.be scraped format
     if (isVroomFormat(data)) {
-      console.log('Detected vroom.be format, parsing...')
       const cars: ImportedCar[] = []
       for (const vroomCar of data) {
         const parsed = parseVroomCar(vroomCar)
