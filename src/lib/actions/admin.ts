@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 import type { CoupDeCoeurCategory } from '@/lib/types'
+import type { UpdateVideoInput, UpdateVehicleInput, UpdatePromotionInput } from '@/lib/validations'
+import { validateAction, UpdateVideoSchema, UpdateVehicleSchema, UpdatePromotionSchema } from '@/lib/validations'
 
 // Check if user is admin
 async function checkAdmin() {
@@ -151,15 +153,18 @@ export async function createVideo(data: {
   return { success: true, videoId: video.id }
 }
 
-export async function updateVideo(id: string, data: any) {
+export async function updateVideo(id: string, data: UpdateVideoInput) {
   const adminCheck = await checkAdmin()
   if (adminCheck.error) return { error: adminCheck.error }
+
+  const validated = validateAction(UpdateVideoSchema, data)
+  if (!validated.success) return { error: validated.error }
 
   const supabase = await createClient()
 
   const { error } = await supabase
     .from('videos')
-    .update(data)
+    .update(validated.data)
     .eq('id', id)
 
   if (error) return { error: error.message }
@@ -247,16 +252,19 @@ export async function createVehicle(data: {
   return { success: true, vehicleId: vehicle.id }
 }
 
-export async function updateVehicle(id: string, data: any) {
+export async function updateVehicle(id: string, data: UpdateVehicleInput) {
   const adminCheck = await checkAdmin()
   if (adminCheck.error) return { error: adminCheck.error }
+
+  const validated = validateAction(UpdateVehicleSchema, data)
+  if (!validated.success) return { error: validated.error }
 
   const supabase = await createClient()
 
   const { error } = await supabase
     .from('vehicles_new')
     .update({
-      ...data,
+      ...validated.data,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
@@ -414,15 +422,18 @@ export async function createPromotion(data: {
   return { success: true, promotionId: promotion.id }
 }
 
-export async function updatePromotion(id: string, data: any) {
+export async function updatePromotion(id: string, data: UpdatePromotionInput) {
   const adminCheck = await checkAdmin()
   if (adminCheck.error) return { error: adminCheck.error }
+
+  const validated = validateAction(UpdatePromotionSchema, data)
+  if (!validated.success) return { error: validated.error }
 
   const supabase = await createClient()
 
   const { error } = await supabase
     .from('promotions')
-    .update(data)
+    .update(validated.data)
     .eq('id', id)
 
   if (error) return { error: error.message }
@@ -547,6 +558,24 @@ export async function updateBrand(id: string, data: { description: string | null
     .from('brands')
     .update({ description: data.description })
     .eq('id', id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/neuf')
+  revalidatePath('/admin/brands')
+  return { success: true }
+}
+
+export async function createBrand(data: { name: string; logo_url: string | null; description: string | null }) {
+  const { error: authError } = await checkAdmin()
+  if (authError) return { error: authError }
+
+  if (!data.name.trim()) return { error: 'Le nom de la marque est requis' }
+
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('brands')
+    .insert({ name: data.name.trim(), logo_url: data.logo_url, description: data.description || null })
 
   if (error) return { error: error.message }
 
