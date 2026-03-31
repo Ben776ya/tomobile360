@@ -3,16 +3,19 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { validateAction, LoginSchema, SignupSchema, ResetPasswordSchema, UpdatePasswordSchema } from '@/lib/validations'
 
 export async function login(formData: FormData) {
   const supabase = createClient()
 
-  const data = {
+  const rawData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
+  const validated = validateAction(LoginSchema, rawData)
+  if (!validated.success) return { error: validated.error }
 
-  const { error } = await supabase.auth.signInWithPassword(data)
+  const { error } = await supabase.auth.signInWithPassword(validated.data)
 
   if (error) {
     return { error: error.message }
@@ -25,17 +28,25 @@ export async function login(formData: FormData) {
 export async function signup(formData: FormData) {
   const supabase = createClient()
 
-  const data = {
+  const rawData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
+    full_name: formData.get('full_name') as string,
+    phone: (formData.get('phone') as string) || '',
+    city: (formData.get('city') as string) || '',
+  }
+  const validated = validateAction(SignupSchema, rawData)
+  if (!validated.success) return { error: validated.error }
+
+  const { data: authData, error } = await supabase.auth.signUp({
+    email: validated.data.email,
+    password: validated.data.password,
     options: {
       data: {
-        full_name: formData.get('full_name') as string,
+        full_name: validated.data.full_name,
       },
     },
-  }
-
-  const { data: authData, error } = await supabase.auth.signUp(data)
+  })
 
   if (error) {
     return { error: error.message }
@@ -45,9 +56,9 @@ export async function signup(formData: FormData) {
   if (authData.user) {
     const { error: profileError } = await supabase.from('profiles').insert({
       id: authData.user.id,
-      full_name: formData.get('full_name') as string,
-      phone: formData.get('phone') as string || null,
-      city: formData.get('city') as string || null,
+      full_name: validated.data.full_name,
+      phone: validated.data.phone || null,
+      city: validated.data.city || null,
     })
 
     // profileError is non-fatal — user can still log in
@@ -66,9 +77,12 @@ export async function logout() {
 
 export async function resetPassword(formData: FormData) {
   const supabase = createClient()
-  const email = formData.get('email') as string
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  const rawData = { email: formData.get('email') as string }
+  const validated = validateAction(ResetPasswordSchema, rawData)
+  if (!validated.success) return { error: validated.error }
+
+  const { error } = await supabase.auth.resetPasswordForEmail(validated.data.email, {
     redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password`,
   })
 
@@ -81,10 +95,13 @@ export async function resetPassword(formData: FormData) {
 
 export async function updatePassword(formData: FormData) {
   const supabase = createClient()
-  const password = formData.get('password') as string
+
+  const rawData = { password: formData.get('password') as string }
+  const validated = validateAction(UpdatePasswordSchema, rawData)
+  if (!validated.success) return { error: validated.error }
 
   const { error } = await supabase.auth.updateUser({
-    password: password,
+    password: validated.data.password,
   })
 
   if (error) {

@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { validateAction, UsedListingSchema } from '@/lib/validations'
 
 export async function createUsedListing(data: {
   brand_id: string
@@ -19,7 +20,7 @@ export async function createUsedListing(data: {
   contact_phone: string
   contact_email: string
   seller_type: string
-}) {
+}): Promise<{ error?: string; fieldErrors?: Record<string, string[]>; success?: boolean; listingId?: string }> {
   const supabase = await createClient()
 
   const {
@@ -30,25 +31,28 @@ export async function createUsedListing(data: {
     return { error: 'Vous devez être connecté pour publier une annonce' }
   }
 
+  const validated = validateAction(UsedListingSchema, data)
+  if (!validated.success) return { error: validated.error, fieldErrors: validated.fieldErrors }
+
   const { data: listing, error } = await supabase
     .from('vehicles_used')
     .insert({
       user_id: user.id,
-      brand_id: data.brand_id,
-      model_id: data.model_id,
-      year: data.year,
-      mileage: data.mileage,
-      fuel_type: data.fuel_type,
-      transmission: data.transmission,
-      color: data.color,
-      condition: data.condition,
-      description: data.description,
-      price: data.price,
-      city: data.city,
-      images: data.images,
-      contact_phone: data.contact_phone,
-      contact_email: data.contact_email,
-      seller_type: data.seller_type,
+      brand_id: validated.data.brand_id,
+      model_id: validated.data.model_id,
+      year: validated.data.year,
+      mileage: validated.data.mileage,
+      fuel_type: validated.data.fuel_type,
+      transmission: validated.data.transmission,
+      color: validated.data.color,
+      condition: validated.data.condition,
+      description: validated.data.description,
+      price: validated.data.price,
+      city: validated.data.city,
+      images: validated.data.images,
+      contact_phone: validated.data.contact_phone,
+      contact_email: validated.data.contact_email,
+      seller_type: validated.data.seller_type,
       is_active: true,
       is_sold: false,
     })
