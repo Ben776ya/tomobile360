@@ -195,7 +195,7 @@ export type Article = {
   content: string
   excerpt: string | null
   featured_image: string | null
-  category: 'Morocco' | 'International' | 'Market' | 'Review' | 'News' | null
+  category: 'morocco' | 'international' | 'market' | 'review' | 'news' | null
   tags: string[] | null
   is_published: boolean
   published_at: string | null
@@ -211,7 +211,7 @@ export type Video = {
   description: string | null
   embed_url: string
   thumbnail_url: string | null
-  category: 'Review' | 'Launch' | 'Comparison' | 'Tutorial' | 'News' | null
+  category: 'review' | 'launch' | 'comparison' | 'tutorial' | 'news' | null
   vehicle_id: string | null
   duration: string | null
   views: number

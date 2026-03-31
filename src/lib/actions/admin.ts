@@ -55,7 +55,7 @@ export async function createArticle(data: {
       excerpt: data.excerpt,
       content: data.content,
       featured_image: data.featured_image || null,
-      category: data.category,
+      category: data.category.toLowerCase(),
       tags: data.tags || [],
       is_published: data.is_published,
       author_id: adminCheck.user!.id,
@@ -94,7 +94,7 @@ export async function updateArticle(id: string, data: {
       excerpt: data.excerpt,
       content: data.content,
       featured_image: data.featured_image || null,
-      category: data.category,
+      category: data.category.toLowerCase(),
       tags: data.tags || [],
       is_published: data.is_published,
       published_at: data.is_published ? new Date().toISOString() : null,
@@ -142,7 +142,15 @@ export async function createVideo(data: {
 
   const { data: video, error } = await supabase
     .from('videos')
-    .insert(data)
+    .insert({
+      title: data.title,
+      description: data.description,
+      video_url: data.video_url,
+      thumbnail_url: data.thumbnail_url || null,
+      category: data.category.toLowerCase(),
+      is_published: data.is_published,
+      duration: data.duration || null,
+    })
     .select()
     .single()
 

@@ -20,19 +20,19 @@ interface SearchParams {
 const ITEMS_PER_PAGE = 18
 
 const categoryLabels: Record<string, string> = {
-  Morocco: 'Maroc',
-  International: 'International',
-  Market: 'Marché',
-  Review: 'Essai',
-  News: 'Actualité',
+  morocco: 'Maroc',
+  international: 'International',
+  market: 'Marché',
+  review: 'Essai',
+  news: 'Actualité',
 }
 
 const categoryColors: Record<string, string> = {
-  Morocco: 'bg-blue-500 text-white',
-  International: 'bg-purple-500 text-white',
-  Market: 'bg-green-500 text-white',
-  Review: 'bg-orange-500 text-white',
-  News: 'bg-[#006EFE] text-white',
+  morocco: 'bg-blue-500 text-white',
+  international: 'bg-purple-500 text-white',
+  market: 'bg-green-500 text-white',
+  review: 'bg-orange-500 text-white',
+  news: 'bg-[#006EFE] text-white',
 }
 
 export default async function NewsPage({
@@ -71,11 +71,11 @@ export default async function NewsPage({
   // Categories for filter
   const categories = [
     { value: 'all', label: 'Tout' },
-    { value: 'Morocco', label: 'Maroc' },
-    { value: 'International', label: 'International' },
-    { value: 'Market', label: 'Marché' },
-    { value: 'Review', label: 'Essais' },
-    { value: 'News', label: 'Actualités' },
+    { value: 'morocco', label: 'Maroc' },
+    { value: 'international', label: 'International' },
+    { value: 'market', label: 'Marché' },
+    { value: 'review', label: 'Essais' },
+    { value: 'news', label: 'Actualités' },
   ]
 
   // Helper to get external URL from article

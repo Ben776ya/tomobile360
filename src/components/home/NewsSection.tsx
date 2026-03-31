@@ -11,11 +11,11 @@ interface NewsSectionProps {
 }
 
 const categoryConfig: Record<string, { label: string; bg: string }> = {
-  Morocco:       { label: 'MAROC',         bg: 'bg-blue-500' },
-  International: { label: 'INTERNATIONAL', bg: 'bg-purple-500' },
-  Market:        { label: 'MARCHÉ',        bg: 'bg-emerald-500' },
-  Review:        { label: 'ESSAI',         bg: 'bg-orange-500' },
-  News:          { label: 'ACTUALITÉ',     bg: 'bg-[#32B75C]' },
+  morocco:       { label: 'MAROC',         bg: 'bg-blue-500' },
+  international: { label: 'INTERNATIONAL', bg: 'bg-purple-500' },
+  market:        { label: 'MARCHÉ',        bg: 'bg-emerald-500' },
+  review:        { label: 'ESSAI',         bg: 'bg-orange-500' },
+  news:          { label: 'ACTUALITÉ',     bg: 'bg-[#32B75C]' },
 }
 
 const isYouTube = (url: string | null | undefined) =>
@@ -48,7 +48,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
         {/* Articles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {displayArticles.map((article) => {
-            const cat = categoryConfig[article.category || 'News'] || categoryConfig.News
+            const cat = categoryConfig[article.category || 'news'] || categoryConfig.news
             const excerpt = article.excerpt || ''
             const externalUrl = getExternalUrl(article)
             const isVideo = isYouTube(externalUrl)

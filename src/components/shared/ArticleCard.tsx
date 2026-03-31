@@ -11,11 +11,11 @@ interface ArticleCardProps {
 }
 
 const categoryConfig: Record<string, { label: string; bg: string }> = {
-  Morocco:       { label: 'MAROC',         bg: 'bg-blue-500' },
-  International: { label: 'INTERNATIONAL', bg: 'bg-purple-500' },
-  Market:        { label: 'MARCHÉ',        bg: 'bg-emerald-500' },
-  Review:        { label: 'ESSAI',         bg: 'bg-orange-500' },
-  News:          { label: 'ACTUALITÉ',     bg: 'bg-green-500' },
+  morocco:       { label: 'MAROC',         bg: 'bg-blue-500' },
+  international: { label: 'INTERNATIONAL', bg: 'bg-purple-500' },
+  market:        { label: 'MARCHÉ',        bg: 'bg-emerald-500' },
+  review:        { label: 'ESSAI',         bg: 'bg-orange-500' },
+  news:          { label: 'ACTUALITÉ',     bg: 'bg-green-500' },
 }
 
 const isYouTube = (url: string | null | undefined) =>
@@ -26,7 +26,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
   const excerpt = article.excerpt || ''
   const externalUrl = article.content?.startsWith('http') ? article.content : null
   const isVideo = isYouTube(externalUrl)
-  const cat = categoryConfig[article.category || 'News'] || categoryConfig.News
+  const cat = categoryConfig[article.category || 'news'] || categoryConfig.news
 
   const cardClassName = cn(
     'group flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden',
