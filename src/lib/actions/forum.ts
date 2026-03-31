@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { validateAction, ForumTopicSchema, ForumReplySchema } from '@/lib/validations'
 
 export async function deleteTopic(topicId: string) {
   const supabase = await createClient()
@@ -167,5 +168,64 @@ export async function updatePost(postId: string, content: string) {
   }
 
   revalidatePath(`/forum/topic/${post.topic_id}`)
+  return { success: true }
+}
+
+export async function createTopic(data: { category_id: string; title: string; content: string }) {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: 'Vous devez etre connecte pour creer un sujet' }
+  }
+
+  const validated = validateAction(ForumTopicSchema, data)
+  if (!validated.success) return { error: validated.error, fieldErrors: validated.fieldErrors }
+
+  const { data: topic, error } = await supabase
+    .from('forum_topics')
+    .insert({
+      category_id: validated.data.category_id,
+      author_id: user.id,
+      title: validated.data.title,
+      content: validated.data.content,
+    })
+    .select()
+    .single()
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/forum')
+  return { success: true, topicId: topic.id }
+}
+
+export async function createReply(data: { topic_id: string; content: string }) {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: 'Vous devez etre connecte pour repondre' }
+  }
+
+  const validated = validateAction(ForumReplySchema, data)
+  if (!validated.success) return { error: validated.error, fieldErrors: validated.fieldErrors }
+
+  const { error } = await supabase
+    .from('forum_posts')
+    .insert({
+      topic_id: validated.data.topic_id,
+      author_id: user.id,
+      content: validated.data.content,
+    })
+
+  if (error) return { error: error.message }
+
+  revalidatePath(`/forum/topic/${validated.data.topic_id}`)
   return { success: true }
 }

@@ -47,6 +47,7 @@ export function PostListingForm() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [brands, setBrands] = useState<any[]>([])
   const [models, setModels] = useState<any[]>([])
 
@@ -134,6 +135,7 @@ export function PostListingForm() {
     }
 
     setLoading(true)
+    setError('')
 
     try {
       const supabase = createClient()
@@ -144,7 +146,7 @@ export function PostListingForm() {
       } = await supabase.auth.getUser()
 
       if (!user) {
-        alert('Vous devez être connecté pour publier une annonce')
+        setError('Vous devez être connecté pour publier une annonce')
         router.push('/login')
         return
       }
@@ -171,7 +173,8 @@ export function PostListingForm() {
       })
 
       if (result.error) {
-        throw new Error(result.error)
+        setError(result.error)
+        return
       }
 
       alert('Votre annonce a été publiée avec succès!')
@@ -179,7 +182,7 @@ export function PostListingForm() {
       // Redirect to the listing page (using replace to prevent back navigation to form)
       router.replace(`/occasion/${result.listingId}`)
     } catch {
-      alert('Une erreur est survenue. Veuillez réessayer.')
+      setError('Une erreur est survenue. Veuillez réessayer.')
     } finally {
       setLoading(false)
     }
@@ -244,6 +247,11 @@ export function PostListingForm() {
 
       {/* Form Content */}
       <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm mb-4">
+            {error}
+          </div>
+        )}
         {/* Step 1: Vehicle Info */}
         {currentStep === 1 && (
           <div className="space-y-6">

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { createReply } from '@/lib/actions/forum'
 import { Button } from '@/components/ui/button'
 import { MessageSquare } from 'lucide-react'
 
@@ -12,43 +12,36 @@ interface ReplyFormProps {
 
 export function ReplyForm({ topicId }: ReplyFormProps) {
   const router = useRouter()
-  const supabase = createClient()
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!content.trim()) {
-      alert('Veuillez entrer votre réponse')
+      setError('Veuillez entrer votre réponse')
       return
     }
 
     setLoading(true)
+    setError('')
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      if (!user) {
-        alert('Vous devez être connecté pour répondre')
-        return
-      }
-
-      const { error } = await supabase.from('forum_posts').insert({
+      const result = await createReply({
         topic_id: topicId,
-        author_id: user.id,
         content: content.trim(),
       })
 
-      if (error) throw error
+      if (result.error) {
+        setError(result.error)
+        return
+      }
 
       setContent('')
-      alert('Votre réponse a été publiée avec succès!')
       router.refresh()
     } catch {
-      alert('Erreur lors de la publication de votre réponse')
+      setError('Erreur lors de la publication de votre réponse')
     } finally {
       setLoading(false)
     }
@@ -64,6 +57,11 @@ export function ReplyForm({ topicId }: ReplyFormProps) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+            {error}
+          </div>
+        )}
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}

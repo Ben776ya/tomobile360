@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft, MessageSquare } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { createTopic } from '@/lib/actions/forum'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,6 +14,7 @@ export default function NewTopicPage() {
   const router = useRouter()
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [categories, setCategories] = useState<any[]>([])
   const [formData, setFormData] = useState({
     category_id: '',
@@ -51,39 +53,29 @@ export default function NewTopicPage() {
     e.preventDefault()
 
     if (!formData.category_id || !formData.title.trim() || !formData.content.trim()) {
-      alert('Veuillez remplir tous les champs')
+      setError('Veuillez remplir tous les champs')
       return
     }
 
     setLoading(true)
+    setError('')
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
+      const result = await createTopic({
+        category_id: formData.category_id,
+        title: formData.title.trim(),
+        content: formData.content.trim(),
+      })
 
-      if (!user) {
-        alert('Vous devez être connecté')
+      if (result.error) {
+        setError(result.error)
         return
       }
 
-      const { data, error } = await supabase
-        .from('forum_topics')
-        .insert({
-          category_id: formData.category_id,
-          author_id: user.id,
-          title: formData.title.trim(),
-          content: formData.content.trim(),
-        })
-        .select()
-        .single()
-
-      if (error) throw error
-
       alert('Votre sujet a été créé avec succès!')
-      router.push(`/forum/topic/${data.id}`)
+      router.push(`/forum/topic/${result.topicId}`)
     } catch {
-      alert('Erreur lors de la création du sujet')
+      setError('Erreur lors de la création du sujet')
     } finally {
       setLoading(false)
     }
@@ -129,6 +121,11 @@ export default function NewTopicPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+                  {error}
+                </div>
+              )}
               {/* Category */}
               <div>
                 <Label htmlFor="category" className="text-gray-700">Catégorie *</Label>
