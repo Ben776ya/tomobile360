@@ -124,7 +124,7 @@ export default async function NewsPage({
             className="block bg-white rounded-xl shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300 mb-8 border border-gray-100 hover:border-secondary/20 group"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-              <div className="relative h-64 md:h-80 bg-gray-100 overflow-hidden">
+              <div className="relative h-48 sm:h-64 md:h-80 bg-gray-100 overflow-hidden">
                 {featuredArticle.featured_image ? (
                   <Image
                     src={featuredArticle.featured_image}
@@ -144,13 +144,13 @@ export default async function NewsPage({
                   </Badge>
                 </div>
               </div>
-              <div className="p-6 md:p-8 flex flex-col justify-center">
+              <div className="p-4 sm:p-6 md:p-8 flex flex-col justify-center">
                 {featuredArticle.category && (
                   <Badge className={`w-fit mb-3 border-0 ${categoryColors[featuredArticle.category] || 'bg-gray-500 text-white'}`}>
                     {categoryLabels[featuredArticle.category] || featuredArticle.category}
                   </Badge>
                 )}
-                <h2 className="text-xl md:text-2xl font-bold text-primary mb-3 group-hover:text-secondary transition-colors line-clamp-3">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-primary mb-3 group-hover:text-secondary transition-colors line-clamp-3">
                   {featuredArticle.title}
                 </h2>
                 <p className="text-gray-500 mb-4 line-clamp-3 text-sm">
