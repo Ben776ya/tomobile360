@@ -36,26 +36,6 @@ export const ForumReplySchema = z.object({
   content: z.string().min(1, 'Le message ne peut pas etre vide').max(10000, 'Le message est trop long'),
 })
 
-// === Used Listing Schema ===
-
-export const UsedListingSchema = z.object({
-  brand_id: z.string().uuid('Marque invalide'),
-  model_id: z.string().uuid('Modele invalide'),
-  year: z.number().int().min(1970, 'Annee invalide').max(new Date().getFullYear() + 1, 'Annee invalide'),
-  mileage: z.number().int().min(0, 'Kilometrage invalide'),
-  fuel_type: z.string().min(1, 'Type de carburant requis'),
-  transmission: z.string().min(1, 'Transmission requise'),
-  color: z.string().min(1, 'Couleur requise'),
-  condition: z.string().min(1, 'Etat requis'),
-  description: z.string().min(10, 'La description doit contenir au moins 10 caracteres'),
-  price: z.number().positive('Le prix doit etre positif'),
-  city: z.string().min(1, 'Ville requise'),
-  images: z.array(z.string().url()).default([]),
-  contact_phone: z.string().min(8, 'Numero de telephone invalide'),
-  contact_email: z.string().email('Email invalide'),
-  seller_type: z.string().min(1, 'Type de vendeur requis'),
-})
-
 // === Admin Update Schemas ===
 
 export const UpdateVideoSchema = z.object({
@@ -122,7 +102,6 @@ export const UpdatePromotionSchema = z.object({
 
 // === Inferred Types ===
 
-export type UsedListingInput = z.infer<typeof UsedListingSchema>
 export type UpdateVideoInput = z.infer<typeof UpdateVideoSchema>
 export type UpdateVehicleInput = z.infer<typeof UpdateVehicleSchema>
 export type UpdatePromotionInput = z.infer<typeof UpdatePromotionSchema>
