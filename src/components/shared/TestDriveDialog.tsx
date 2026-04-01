@@ -16,11 +16,11 @@ import {
 
 interface TestDriveDialogProps {
   vehicleName: string
+  dealerPhone?: string
 }
 
-export function TestDriveDialog({ vehicleName }: TestDriveDialogProps) {
+export function TestDriveDialog({ vehicleName, dealerPhone }: TestDriveDialogProps) {
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -32,14 +32,13 @@ export function TestDriveDialog({ vehicleName }: TestDriveDialogProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-
-    // Simulate sending request
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    alert('Votre demande d\'essai a été envoyée avec succès! Nous vous contacterons bientôt pour confirmer le rendez-vous.')
+    const dateInfo = formData.preferredDate
+      ? `Date souhaitee: ${formData.preferredDate}${formData.preferredTime ? ` a ${formData.preferredTime}` : ''}`
+      : ''
+    const message = `Bonjour, je souhaite planifier un essai routier pour ${vehicleName}.%0A%0ANom: ${formData.name}%0ATelephone: ${formData.phone}%0A${dateInfo}${formData.message ? `%0A%0A${formData.message}` : ''}`
+    const phone = dealerPhone ? dealerPhone.replace(/[^0-9]/g, '') : ''
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank')
     setOpen(false)
-    setLoading(false)
     setFormData({
       name: '',
       email: '',
@@ -146,14 +145,13 @@ export function TestDriveDialog({ vehicleName }: TestDriveDialogProps) {
           </div>
 
           <div className="flex gap-3">
-            <Button type="submit" disabled={loading} className="flex-1 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
-              {loading ? 'Envoi...' : 'Envoyer la demande'}
+            <Button type="submit" className="flex-1 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+              Envoyer la demande
             </Button>
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
-              disabled={loading}
               className="shadow-sm hover:shadow-md transition-all duration-300"
             >
               Annuler

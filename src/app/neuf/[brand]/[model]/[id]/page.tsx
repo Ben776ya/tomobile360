@@ -17,6 +17,9 @@ import { checkIsFavorite } from '@/lib/actions/favorites'
 
 export const revalidate = 60
 
+const TOMOBILE_PHONE = '212XXX000000' // TODO: Replace with real Tomobile 360 WhatsApp number
+const TOMOBILE_PHONE_DISPLAY = '+212 XXX-000000' // TODO: Replace with real display number
+
 interface PageProps {
   params: {
     id: string
@@ -277,7 +280,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
               <div className="space-y-3">
                 {/* WhatsApp CTA — primary contact */}
                 <a
-                  href={`https://wa.me/212600000000?text=${whatsappText}`}
+                  href={`https://wa.me/${TOMOBILE_PHONE}?text=${whatsappText}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
@@ -290,10 +293,11 @@ export default async function VehicleDetailPage({ params }: PageProps) {
                 <ContactDealerDialog
                   vehicleName={`${brandName} ${modelName} ${vehicle.year}`}
                   dealerEmail="contact@tomobile360.ma"
-                  dealerPhone="+212 5XX XXX XXX"
+                  dealerPhone={TOMOBILE_PHONE_DISPLAY}
                 />
                 <TestDriveDialog
                   vehicleName={`${brandName} ${modelName} ${vehicle.year}`}
+                  dealerPhone={TOMOBILE_PHONE}
                 />
                 <Link href="/neuf/comparer" className="block">
                   <Button variant="outline" className="w-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
@@ -369,7 +373,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
       {/* Sticky Mobile Contact Bar */}
       <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 px-4 py-3 flex gap-3 shadow-lg">
         <a
-          href={`https://wa.me/212600000000?text=${whatsappText}`}
+          href={`https://wa.me/${TOMOBILE_PHONE}?text=${whatsappText}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#25D366] text-white font-semibold rounded-xl text-sm"
@@ -380,7 +384,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
           WhatsApp
         </a>
         <a
-          href="tel:+212600000000"
+          href={`tel:${TOMOBILE_PHONE_DISPLAY}`}
           className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#006EFE] text-white font-semibold rounded-xl text-sm"
         >
           Appeler

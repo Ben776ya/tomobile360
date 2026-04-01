@@ -26,7 +26,6 @@ export function ContactDealerDialog({
   dealerPhone,
 }: ContactDealerDialogProps) {
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -36,14 +35,10 @@ export function ContactDealerDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-
-    // Simulate sending email
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    alert('Votre message a été envoyé avec succès! Le concessionnaire vous contactera bientôt.')
+    const message = `Bonjour, je suis interesse(e) par ${vehicleName}.%0A%0ANom: ${formData.name}%0ATelephone: ${formData.phone}%0AEmail: ${formData.email}%0A%0A${formData.message}`
+    const phone = dealerPhone ? dealerPhone.replace(/[^0-9]/g, '') : ''
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank')
     setOpen(false)
-    setLoading(false)
     setFormData({
       name: '',
       email: '',
@@ -146,14 +141,13 @@ export function ContactDealerDialog({
           </div>
 
           <div className="flex gap-3">
-            <Button type="submit" disabled={loading} className="flex-1 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
-              {loading ? 'Envoi...' : 'Envoyer le message'}
+            <Button type="submit" className="flex-1 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+              Envoyer le message
             </Button>
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
-              disabled={loading}
               className="shadow-sm hover:shadow-md transition-all duration-300"
             >
               Annuler
