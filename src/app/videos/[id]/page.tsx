@@ -31,6 +31,9 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: `${video.title} | Tomobile 360 TV`,
     description: video.description?.substring(0, 155) || 'Regardez les meilleures vidéos automobile du Maroc sur Tomobile 360 TV.',
+    alternates: {
+      canonical: `https://tomobile360.ma/videos/${params.id}`,
+    },
     openGraph: {
       title: video.title,
       description: video.description?.substring(0, 155),

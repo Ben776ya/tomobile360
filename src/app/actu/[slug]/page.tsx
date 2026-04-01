@@ -33,6 +33,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${article.title} | Tomobile 360`,
     description: article.excerpt || undefined,
+    alternates: {
+      canonical: `https://tomobile360.ma/actu/${article.slug}`,
+    },
     openGraph: {
       title: article.title,
       description: article.excerpt || undefined,
