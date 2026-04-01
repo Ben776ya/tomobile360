@@ -146,13 +146,15 @@ export default async function DashboardPage() {
           Actions rapides
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link
-            href="/occasion/vendre"
+          <a
+            href="https://www.m-occaz.ma/vendez-votre-vehicule"
+            target="_blank"
+            rel="noopener noreferrer"
             className="p-4 border-2 border-dashed border-gray-200 rounded-lg hover:border-secondary/40 hover:bg-secondary/5 hover:shadow-gold hover:-translate-y-0.5 transition-all duration-300 text-center"
           >
             <Car className="h-8 w-8 mx-auto mb-2 text-secondary" />
             <p className="font-medium text-primary">Vendre ma voiture</p>
-          </Link>
+          </a>
 
           <Link
             href="/occasion"
