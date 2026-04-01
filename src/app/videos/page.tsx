@@ -57,7 +57,7 @@ export default async function VideosPage({
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-2">
             Regardez nos vidéos : L&apos;auto comme vous ne l&apos;avez jamais vue !
           </h1>
           <p className="text-gray-600">
@@ -72,7 +72,7 @@ export default async function VideosPage({
               <Link
                 key={cat.value}
                 href={`/videos?category=${cat.value}`}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
                   category === cat.value
                     ? 'bg-secondary text-white shadow-glow-cyan ring-2 ring-secondary/30 scale-105'
                     : 'bg-gray-50/50 text-gray-600 hover:bg-secondary/10 hover:text-secondary hover:scale-105'
@@ -120,7 +120,7 @@ export default async function VideosPage({
                 </div>
 
                 {/* Video Info */}
-                <div className="p-4">
+                <div className="p-3 sm:p-4">
                   <h3 className="font-bold text-slate-700 mb-2 line-clamp-2 group-hover:text-secondary transition-colors duration-300">
                     {video.title}
                   </h3>
