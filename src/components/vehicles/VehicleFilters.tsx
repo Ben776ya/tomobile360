@@ -95,7 +95,7 @@ export function VehicleFilters({
   const selectClass = 'w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:border-[#006EFE] focus:ring-1 focus:ring-[#006EFE]/20 outline-none transition-all duration-200'
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 sticky top-20 max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col">
+    <div className="bg-white rounded-xl border-0 lg:border border-gray-200 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col">
       {/* Header - Fixed */}
       <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-2">

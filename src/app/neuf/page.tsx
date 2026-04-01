@@ -131,6 +131,32 @@ export default async function NewVehiclesPage({
           </p>
         </div>
 
+        <div className="lg:hidden mb-4">
+          <details className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <summary className="flex items-center justify-between p-4 cursor-pointer font-bold text-slate-700">
+              <span className="flex items-center gap-2">
+                <SlidersHorizontal className="h-5 w-5 text-[#006EFE]" />
+                Filtres
+              </span>
+            </summary>
+            <div className="border-t border-gray-200">
+              <VehicleFilters
+                brands={brands || []}
+                categories={uniqueCategories}
+                currentFilters={{
+                  brand,
+                  category,
+                  fuel,
+                  transmission,
+                  priceMin: priceMin?.toString(),
+                  priceMax: priceMax?.toString(),
+                  sort,
+                }}
+              />
+            </div>
+          </details>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
           <aside className="hidden lg:block lg:col-span-1">
