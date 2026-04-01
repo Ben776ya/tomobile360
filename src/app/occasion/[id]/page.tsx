@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps) {
   const { data: listing } = await supabase
     .from('vehicles_used')
     .select(`
-      price, year, city, fuel_type, mileage,
+      price, year, city, fuel_type, mileage, images,
       brands:brand_id (name),
       models:model_id (name)
     `)
@@ -41,13 +41,28 @@ export async function generateMetadata({ params }: PageProps) {
     ? `${Math.round(listing.price).toLocaleString('fr-MA')} DH`
     : ''
 
+  const canonicalUrl = `https://tomobile360.ma/occasion/${params.id}`
+  const ogImage = (listing as any).images?.[0] || '/og-image.png'
+
   return {
     title: `${brandName} ${modelName} ${listing.year} — ${price} | Occasion Maroc`,
     description: `${brandName} ${modelName} ${listing.year}, ${listing.mileage?.toLocaleString('fr-MA')} km, ${listing.fuel_type}, ${listing.city}. Achetez votre voiture d'occasion au Maroc sur Tomobile 360.`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: `${brandName} ${modelName} ${listing.year} — ${price}`,
       description: `${listing.city} · ${listing.mileage?.toLocaleString('fr-MA')} km · ${listing.fuel_type}`,
+      url: canonicalUrl,
+      images: [{ url: ogImage, width: 1200, height: 630 }],
       type: 'website' as const,
+      siteName: 'Tomobile 360',
+    },
+    twitter: {
+      card: 'summary_large_image' as const,
+      title: `${brandName} ${modelName} ${listing.year} — ${price}`,
+      description: `${listing.city} · ${listing.mileage?.toLocaleString('fr-MA')} km · ${listing.fuel_type}`,
+      images: [ogImage],
     },
   }
 }

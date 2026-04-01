@@ -44,9 +44,31 @@ export async function generateMetadata({ params }: PageProps) {
     }
   }
 
+  const canonicalUrl = `https://tomobile360.ma/neuf/${params.brand}/${params.model}/${params.id}`
+  const title = `${vehicle.brands?.name} ${vehicle.models?.name} ${vehicle.year} - Tomobile 360`
+  const description = `Découvrez le ${vehicle.brands?.name} ${vehicle.models?.name} ${vehicle.year}. Prix à partir de ${formatPrice(vehicle.price_min || 0)}`
+  const ogImage = vehicle.images?.[0] || '/og-image.png'
+
   return {
-    title: `${vehicle.brands?.name} ${vehicle.models?.name} ${vehicle.year} - Tomobile 360`,
-    description: `Découvrez le ${vehicle.brands?.name} ${vehicle.models?.name} ${vehicle.year}. Prix à partir de ${formatPrice(vehicle.price_min || 0)}`,
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+      type: 'website' as const,
+      siteName: 'Tomobile 360',
+    },
+    twitter: {
+      card: 'summary_large_image' as const,
+      title,
+      description,
+      images: [ogImage],
+    },
   }
 }
 
