@@ -4,9 +4,9 @@ import { Car, Calculator, Search, Gauge, Calendar, Fuel, ChevronRight, Zap, GitF
 import { getMoccazListings, type MoccazListing } from '@/lib/scrapers/moccaz'
 
 const serviceButtons = [
-  { href: '/occasion', label: 'Parcourir les annonces', icon: Search },
-  { href: '/occasion/vendre', label: 'Vendre ma voiture', icon: Car },
-  { href: '/occasion/estimation', label: 'Estimation gratuite', icon: Calculator },
+  { href: '/occasion', label: 'Parcourir les annonces', icon: Search, external: false },
+  { href: 'https://www.m-occaz.ma/vendez-votre-vehicule', label: 'Vendre ma voiture', icon: Car, external: true },
+  { href: '/occasion/estimation', label: 'Estimation gratuite', icon: Calculator, external: false },
 ]
 
 function MOccazCard({ listing }: { listing: MoccazListing }) {
@@ -180,17 +180,31 @@ export async function OccasionServicesSection() {
               Voir sur M.OCCAZ
             </a>
 
-            {serviceButtons.map((btn) => (
-              <Link
-                key={btn.href}
-                href={btn.href}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-gold hover:shadow-gold-lg"
-              >
-                <btn.icon className="w-4 h-4" />
-                <span>{btn.label}</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Link>
-            ))}
+            {serviceButtons.map((btn) =>
+              btn.external ? (
+                <a
+                  key={btn.href}
+                  href={btn.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-gold hover:shadow-gold-lg"
+                >
+                  <btn.icon className="w-4 h-4" />
+                  <span>{btn.label}</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </a>
+              ) : (
+                <Link
+                  key={btn.href}
+                  href={btn.href}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-gold hover:shadow-gold-lg"
+                >
+                  <btn.icon className="w-4 h-4" />
+                  <span>{btn.label}</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              )
+            )}
           </div>
 
         </div>
