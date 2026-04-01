@@ -98,7 +98,7 @@ export default async function CoupsDeCoeurPage({
     <div className="min-h-screen bg-[#F2F4F6]">
 
       {/* Hero Banner */}
-      <div className={`bg-gradient-to-r ${activeCat.gradient} py-14 px-4`}>
+      <div className={`bg-gradient-to-r ${activeCat.gradient} py-8 sm:py-14 px-4`}>
         <div className="container mx-auto text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm mb-5 shadow-lg">
             <activeCat.Icon className="w-8 h-8 text-white" />
@@ -106,7 +106,7 @@ export default async function CoupsDeCoeurPage({
           <p className="text-white/70 text-sm font-semibold tracking-widest uppercase mb-2">
             Nos Coups de Cœur
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 font-display">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-3 font-display">
             {activeCat.label}
           </h1>
           <p className="text-white/85 text-lg font-medium mb-1">{activeCat.tagline}</p>
@@ -126,7 +126,7 @@ export default async function CoupsDeCoeurPage({
                   key={cat.value}
                   href={`/coups-de-coeur?categorie=${cat.value}`}
                   className={`
-                    flex items-center gap-2 px-6 py-4 text-sm font-semibold whitespace-nowrap
+                    flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 text-sm font-semibold whitespace-nowrap
                     border-b-[3px] transition-all duration-200 flex-shrink-0
                     ${isActive
                       ? 'border-current'

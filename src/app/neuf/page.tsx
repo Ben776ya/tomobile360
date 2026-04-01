@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
 import { VehicleFilters } from '@/components/vehicles/VehicleFilters'
 import { BrandHeader } from '@/components/vehicles/BrandHeader'
-import { Loader2 } from 'lucide-react'
+import { Loader2, SlidersHorizontal } from 'lucide-react'
 
 export const revalidate = 60
 
@@ -123,7 +123,7 @@ export default async function NewVehiclesPage({
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-2">
             Découvrez vos véhicules neufs : Le meilleur choix au Maroc !
           </h1>
           <p className="text-gray-500">
@@ -133,7 +133,7 @@ export default async function NewVehiclesPage({
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
-          <aside className="lg:col-span-1">
+          <aside className="hidden lg:block lg:col-span-1">
             <VehicleFilters
               brands={brands || []}
               categories={uniqueCategories}

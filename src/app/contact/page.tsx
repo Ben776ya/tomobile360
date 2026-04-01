@@ -104,9 +104,9 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-gray-50 via-white to-gray-50 py-16 md:py-24">
+      <section className="bg-gradient-to-br from-gray-50 via-white to-gray-50 py-10 sm:py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-700 mb-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-700 mb-4">
             Contactez-nous
           </h1>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
