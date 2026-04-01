@@ -79,7 +79,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
     >
       <div className="container mx-auto px-4">
         <div className="bg-white rounded-2xl overflow-hidden p-6 md:p-8">
-          <div className="w-3/4 mx-auto">
+          <div className="w-full sm:w-3/4 mx-auto">
             {/* Section Title */}
             {showTitle && (
               <div className="text-center mb-6">
@@ -97,7 +97,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
               {/* Previous Button */}
               <button
                 onClick={handlePrevious}
-                className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white mr-5"
+                className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white mr-2 sm:mr-5"
                 aria-label="Marques précédentes"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -106,7 +106,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
               {/* Brands Container */}
               <div className="flex-1">
                 <div
-                  className="grid gap-5 md:gap-6"
+                  className="grid gap-3 sm:gap-5 md:gap-6"
                   style={{ gridTemplateColumns: `repeat(${brandsPerPage}, minmax(0, 1fr))` }}
                 >
                   {displayBrands.map((brand) => (
@@ -114,8 +114,8 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
                       key={brand.id}
                       href={`/neuf?brand=${brand.id}`}
                       className="group flex flex-col items-center justify-center
-                                 bg-white border border-gray-100 rounded-xl p-4 md:p-5
-                                 min-h-[96px] md:min-h-[116px]
+                                 bg-white border border-gray-100 rounded-xl p-3 sm:p-4 md:p-5
+                                 min-h-[80px] sm:min-h-[96px] md:min-h-[116px]
                                  hover:border-secondary/30 hover:shadow-glow-cyan-sm
                                  transition-all duration-300"
                     >
@@ -142,7 +142,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
               {/* Next Button */}
               <button
                 onClick={handleNext}
-                className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white ml-5"
+                className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white ml-2 sm:ml-5"
                 aria-label="Marques suivantes"
               >
                 <ChevronRight className="h-4 w-4" />
