@@ -286,9 +286,13 @@ export default function ValuationPage() {
                   </p>
 
                   <div className="text-center">
-                    <Link href="/occasion/vendre">
+                    <a
+                      href="https://www.m-occaz.ma/vendez-votre-vehicule"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Button size="lg" className="shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">Vendre ma voiture maintenant</Button>
-                    </Link>
+                    </a>
                   </div>
                 </div>
               )}
