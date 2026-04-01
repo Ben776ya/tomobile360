@@ -1,41 +1,5 @@
 import { z } from 'zod'
 
-// === Auth Schemas ===
-
-export const LoginSchema = z.object({
-  email: z.string().email('Email invalide'),
-  password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caracteres'),
-})
-
-export const SignupSchema = z.object({
-  email: z.string().email('Email invalide'),
-  password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caracteres'),
-  full_name: z.string().min(2, 'Le nom doit contenir au moins 2 caracteres').max(100),
-  phone: z.string().optional().default(''),
-  city: z.string().optional().default(''),
-})
-
-export const ResetPasswordSchema = z.object({
-  email: z.string().email('Email invalide'),
-})
-
-export const UpdatePasswordSchema = z.object({
-  password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caracteres'),
-})
-
-// === Forum Schemas ===
-
-export const ForumTopicSchema = z.object({
-  category_id: z.string().uuid('Categorie invalide'),
-  title: z.string().min(3, 'Le titre doit contenir au moins 3 caracteres').max(200, 'Le titre ne doit pas depasser 200 caracteres'),
-  content: z.string().min(20, 'Le message doit contenir au moins 20 caracteres'),
-})
-
-export const ForumReplySchema = z.object({
-  topic_id: z.string().uuid('Sujet invalide'),
-  content: z.string().min(1, 'Le message ne peut pas etre vide').max(10000, 'Le message est trop long'),
-})
-
 // === Admin Update Schemas ===
 
 export const UpdateVideoSchema = z.object({

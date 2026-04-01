@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { MessageSquare, Users, TrendingUp, Search, Plus } from 'lucide-react'
+import { MessageSquare, Users, TrendingUp, Search } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Forum Automobile Maroc — Discussions & Conseils | Tomobile 360',
   description: 'Rejoignez la communauté automobile marocaine. Posez vos questions, partagez vos expériences et obtenez des conseils sur votre voiture.',
 }
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatRelativeTime } from '@/lib/utils'
 
@@ -149,12 +148,6 @@ export default async function ForumPage() {
               className="pl-10 bg-white text-gray-900 border-gray-200 placeholder-gray-400 focus:ring-secondary/50"
             />
           </div>
-          <Link href="/forum/nouveau">
-            <Button className="shadow-glow-cyan hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 bg-secondary text-white hover:bg-secondary-400">
-              <Plus className="h-4 w-4 mr-2" />
-              Nouveau sujet
-            </Button>
-          </Link>
         </div>
 
         {/* Categories */}

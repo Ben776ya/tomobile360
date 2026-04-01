@@ -1,14 +1,9 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronLeft, MessageSquare, Eye, ThumbsUp } from 'lucide-react'
+import { MessageSquare, Eye } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { formatRelativeTime } from '@/lib/utils'
-import { ReplyForm } from '@/components/forum/ReplyForm'
-import { TopicActions } from '@/components/forum/TopicActions'
-import { PostActions } from '@/components/forum/PostActions'
 
 export const revalidate = 30
 
@@ -20,11 +15,6 @@ interface PageProps {
 
 export default async function TopicDetailPage({ params }: PageProps) {
   const supabase = await createClient()
-
-  // Get current user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
 
   // Fetch topic
   const { data: topic } = await supabase
@@ -53,20 +43,6 @@ export default async function TopicDetailPage({ params }: PageProps) {
     `)
     .eq('topic_id', params.id)
     .order('created_at', { ascending: true })
-
-  // Check if user is admin
-  let isAdmin = false
-  if (user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single()
-    isAdmin = profile?.is_admin || false
-  }
-
-  const isAuthor = !!(user && user.id === topic.author_id)
-  const canEdit = isAuthor || isAdmin
 
   return (
     <div className="min-h-screen bg-background">
@@ -137,16 +113,6 @@ export default async function TopicDetailPage({ params }: PageProps) {
                 </p>
               </div>
 
-              {/* Action Buttons */}
-              {canEdit && (
-                <div className="mt-4">
-                  <TopicActions
-                    topicId={topic.id}
-                    isAuthor={isAuthor}
-                    isAdmin={isAdmin}
-                  />
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -199,24 +165,6 @@ export default async function TopicDetailPage({ params }: PageProps) {
                     </p>
 
                     {/* Reply Actions */}
-                    <div className="flex items-center gap-4 mt-3">
-                      <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-secondary transition">
-                        <ThumbsUp className="h-4 w-4" />
-                        <span>J&apos;aime</span>
-                      </button>
-                      {user && (
-                        <button className="text-sm text-gray-500 hover:text-secondary transition">
-                          Répondre
-                        </button>
-                      )}
-                      {user && (reply.author_id === user.id || isAdmin) && (
-                        <PostActions
-                          postId={reply.id}
-                          isAuthor={reply.author_id === user.id}
-                          isAdmin={isAdmin}
-                        />
-                      )}
-                    </div>
                   </div>
                 </div>
               </div>
@@ -234,25 +182,12 @@ export default async function TopicDetailPage({ params }: PageProps) {
           )}
         </div>
 
-        {/* Reply Form */}
-        {user && !topic.is_locked ? (
-          <ReplyForm topicId={topic.id} />
-        ) : !user ? (
-          <div className="bg-white rounded-lg shadow-card p-6 text-center border border-gray-100">
-            <p className="text-gray-600 mb-4">
-              Vous devez être connecté pour répondre
-            </p>
-            <Link href="/login">
-              <Button className="shadow-glow-cyan hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 bg-secondary text-white hover:bg-secondary-400">Se connecter</Button>
-            </Link>
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow-card p-6 text-center border border-gray-100">
-            <p className="text-gray-600">
-              Ce sujet est verrouillé. Vous ne pouvez plus y répondre.
-            </p>
-          </div>
-        )}
+        {/* Read-only notice */}
+        <div className="bg-white rounded-lg shadow-card p-6 text-center border border-gray-100">
+          <p className="text-gray-600">
+            Le forum est actuellement en lecture seule.
+          </p>
+        </div>
       </div>
     </div>
   )

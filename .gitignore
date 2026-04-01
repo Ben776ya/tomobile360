@@ -34,8 +34,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# tooling
 .claude/
 CLAUDE.md
+.planning/
+docs/
 nul
-
-.vercel

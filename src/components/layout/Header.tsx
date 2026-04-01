@@ -4,9 +4,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, X, User, LogIn, LogOut, Settings, Heart, FileText, Search, PlayCircle } from 'lucide-react'
+import { Menu, X, FileText, Search, PlayCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { logout } from '@/app/actions/auth'
 import { FloatingSocialBubble } from '@/components/shared/FloatingSocialBubble'
 import { cn } from '@/lib/utils'
 
@@ -30,8 +29,6 @@ interface VideoResult {
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const [user, setUser] = useState<any>(null)
   const [hidden, setHidden] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -44,20 +41,6 @@ export default function Header() {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-    })
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [supabase.auth])
 
   // Close search on outside click
   useEffect(() => {
@@ -310,74 +293,6 @@ export default function Header() {
           </div>
           </div>{/* end nav+search group */}
 
-          {/* Right Side Actions */}
-          <div className="hidden lg:flex items-center">
-            {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="p-2 rounded-full hover:bg-gray-50 transition-all duration-300"
-                >
-                  <User className="h-5 w-5 text-[#006EFE]" />
-                </button>
-
-                {userMenuOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setUserMenuOpen(false)}
-                    />
-                    <div className="absolute right-0 mt-2 w-56 bg-white/80 backdrop-blur-md rounded-xl shadow-lg py-2 z-20 border border-gray-200/50 animate-fade-in">
-                      <div className="px-4 py-2 border-b border-gray-100 mb-2">
-                        <p className="text-sm font-medium text-gray-900">Mon Compte</p>
-                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                      </div>
-                      <Link
-                        href="/compte"
-                        className="flex items-center space-x-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-white/60 hover:text-[#006EFE] transition-colors"
-                        onClick={() => setUserMenuOpen(false)}
-                      >
-                        <Settings className="h-4 w-4" />
-                        <span>Tableau de bord</span>
-                      </Link>
-                      <Link
-                        href="/compte/mes-annonces"
-                        className="flex items-center space-x-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-white/60 hover:text-[#006EFE] transition-colors"
-                        onClick={() => setUserMenuOpen(false)}
-                      >
-                        <FileText className="h-4 w-4" />
-                        <span>Mes annonces</span>
-                      </Link>
-                      <Link
-                        href="/compte/favoris"
-                        className="flex items-center space-x-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-white/60 hover:text-[#006EFE] transition-colors"
-                        onClick={() => setUserMenuOpen(false)}
-                      >
-                        <Heart className="h-4 w-4" />
-                        <span>Mes favoris</span>
-                      </Link>
-                      <hr className="my-2 border-gray-100" />
-                      <button
-                        onClick={() => logout()}
-                        className="flex items-center space-x-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 w-full text-left transition-colors"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        <span>Déconnexion</span>
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className="p-2 rounded-full hover:bg-gray-50 transition-all duration-300"
-              >
-                <User className="h-5 w-5 text-[#006EFE]" />
-              </Link>
-            )}
-          </div>
-
           {/* Mobile Menu Button */}
           <button
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -458,36 +373,6 @@ export default function Header() {
                 )
               })}
 
-              <div className="pt-3 mt-2 border-t border-gray-200 space-y-1 px-2">
-                {user ? (
-                  <>
-                    <Link
-                      href="/compte"
-                      className="flex items-center space-x-3 px-3 py-3 text-sm font-medium text-[#006EFE] hover:bg-blue-50/50 rounded-lg transition-colors"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <User className="h-4 w-4" />
-                      <span>Mon Compte</span>
-                    </Link>
-                    <button
-                      onClick={() => logout()}
-                      className="flex items-center space-x-3 px-3 py-3 text-sm font-medium text-red-500 hover:bg-red-50 w-full text-left rounded-lg transition-colors"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      <span>Déconnexion</span>
-                    </button>
-                  </>
-                ) : (
-                  <Link
-                    href="/login"
-                    className="flex items-center space-x-3 px-3 py-3 text-sm font-medium text-[#006EFE] hover:bg-blue-50/50 rounded-lg transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <LogIn className="h-4 w-4" />
-                    <span>Connexion</span>
-                  </Link>
-                )}
-              </div>
             </nav>
           </div>
         )}

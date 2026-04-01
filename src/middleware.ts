@@ -59,11 +59,9 @@ export async function middleware(request: NextRequest) {
 
   // Admin route protection (SEC-01)
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    // D-02: Unauthenticated -> redirect to login with redirect param
+    // D-02: Unauthenticated -> redirect to homepage (admin login is handled by AdminAuthGate)
     if (!user) {
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('redirect', request.nextUrl.pathname)
-      return NextResponse.redirect(loginUrl)
+      return NextResponse.redirect(new URL('/', request.url))
     }
 
     // D-04: Query profiles table for admin status (session client, RLS allows own row)
@@ -76,24 +74,6 @@ export async function middleware(request: NextRequest) {
     // D-03: Authenticated but not admin -> redirect to homepage
     if (!profile?.is_admin) {
       return NextResponse.redirect(new URL('/', request.url))
-    }
-  }
-
-  // Protect /compte/* routes — authenticated users only
-  if (request.nextUrl.pathname.startsWith('/compte')) {
-    if (!user) {
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('redirect', request.nextUrl.pathname)
-      return NextResponse.redirect(loginUrl)
-    }
-  }
-
-  // Protect /occasion/vendre route — authenticated users only
-  if (request.nextUrl.pathname === '/occasion/vendre') {
-    if (!user) {
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('redirect', '/occasion/vendre')
-      return NextResponse.redirect(loginUrl)
     }
   }
 

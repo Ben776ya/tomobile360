@@ -9,11 +9,9 @@ import { formatPrice } from '@/lib/utils'
 import { VehicleSpecs } from '@/components/vehicles/VehicleSpecs'
 import { ImageGallery } from '@/components/vehicles/ImageGallery'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
-import { FavoriteButton } from '@/components/shared/FavoriteButton'
 import { ShareButton } from '@/components/shared/ShareButton'
 import { ContactDealerDialog } from '@/components/shared/ContactDealerDialog'
 import { TestDriveDialog } from '@/components/shared/TestDriveDialog'
-import { checkIsFavorite } from '@/lib/actions/favorites'
 
 export const revalidate = 60
 
@@ -92,9 +90,6 @@ export default async function VehicleDetailPage({ params }: PageProps) {
   if (!vehicle) {
     notFound()
   }
-
-  // Check if favorited
-  const isFavorite = await checkIsFavorite(params.id, 'new')
 
   // Increment view count
   void supabase.rpc('increment_vehicle_views', { vehicle_id: vehicle.id })
@@ -211,11 +206,6 @@ export default async function VehicleDetailPage({ params }: PageProps) {
 
                 {/* Action Buttons */}
                 <div className="flex gap-2">
-                  <FavoriteButton
-                    vehicleId={vehicle.id}
-                    vehicleType="new"
-                    initialIsFavorite={isFavorite}
-                  />
                   <ShareButton
                     url={`/neuf/${params.brand}/${params.model}/${params.id}`}
                     title={`${brandName} ${modelName} ${vehicle.year}`}

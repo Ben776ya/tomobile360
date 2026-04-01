@@ -6,7 +6,6 @@ import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { formatRelativeTime } from '@/lib/utils'
 import { LinkifyText } from '@/components/shared/LinkifyText'
-import { VideoLikeButton } from '@/components/videos/VideoLikeButton'
 import { VideoShareButton } from '@/components/videos/VideoShareButton'
 
 export const revalidate = 30
@@ -161,7 +160,6 @@ export default async function VideoDetailPage({ params }: PageProps) {
 
                   {/* Action Buttons */}
                   <div className="flex gap-2">
-                    <VideoLikeButton videoId={params.id} initialLikes={video.likes || 0} />
                     <VideoShareButton videoId={params.id} title={video.title} />
                   </div>
                 </div>
