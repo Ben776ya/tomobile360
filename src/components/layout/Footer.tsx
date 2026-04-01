@@ -93,8 +93,8 @@ export default function Footer() {
       {/* Subtle grid texture */}
       <div className="absolute inset-0 bg-grid pointer-events-none opacity-50" />
       {/* Main Footer */}
-      <div className="container mx-auto px-4 py-12 lg:py-16 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+      <div className="container mx-auto px-4 py-8 sm:py-12 lg:py-16 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
           {/* Column 1: Company Info */}
           <div className="lg:col-span-1">
             <Link href="/" className="inline-block mb-6">
@@ -134,7 +134,7 @@ export default function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
+                  className="group relative w-11 h-11 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
                   style={{ backgroundColor: social.color }}
                   aria-label={social.label}
                   title={social.label}
