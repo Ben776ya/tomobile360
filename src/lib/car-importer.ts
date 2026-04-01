@@ -571,11 +571,3 @@ export function normalizeBrandName(brand: string): string {
   return brandMap[normalized] || brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase()
 }
 
-/**
- * Get category from car data (for models table)
- */
-export function getCategoryFromCar(car: ImportedCar): string | null {
-  // If we have carrosserie info, use it
-  // Otherwise return null and it will be set later
-  return null
-}

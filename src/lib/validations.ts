@@ -105,10 +105,6 @@ export const UpdatePromotionSchema = z.object({
 export type UpdateVideoInput = z.infer<typeof UpdateVideoSchema>
 export type UpdateVehicleInput = z.infer<typeof UpdateVehicleSchema>
 export type UpdatePromotionInput = z.infer<typeof UpdatePromotionSchema>
-export type ForumTopicInput = z.infer<typeof ForumTopicSchema>
-export type ForumReplyInput = z.infer<typeof ForumReplySchema>
-export type LoginInput = z.infer<typeof LoginSchema>
-export type SignupInput = z.infer<typeof SignupSchema>
 
 // === Validation Helper ===
 

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { Car, Users, FileText, Video, MessageSquare, TrendingUp, Calendar } from 'lucide-react'
+import { Car, Users, FileText, Video, MessageSquare, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export const dynamic = 'force-dynamic'

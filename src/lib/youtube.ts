@@ -13,31 +13,9 @@ export interface YouTubeVideo {
 }
 
 /**
- * Extracts channel ID from YouTube channel URL
- */
-export function extractChannelId(url: string): string | null {
-  // Handle different YouTube channel URL formats
-  const patterns = [
-    /youtube\.com\/channel\/(UC[\w-]+)/,
-    /youtube\.com\/c\/([\w-]+)/,
-    /youtube\.com\/@([\w-]+)/,
-    /youtube\.com\/user\/([\w-]+)/,
-  ]
-
-  for (const pattern of patterns) {
-    const match = url.match(pattern)
-    if (match) {
-      return match[1]
-    }
-  }
-
-  return null
-}
-
-/**
  * Converts ISO 8601 duration to readable format (MM:SS or HH:MM:SS)
  */
-export function parseDuration(isoDuration: string): string {
+function parseDuration(isoDuration: string): string {
   const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
   if (!match) return '0:00'
 
