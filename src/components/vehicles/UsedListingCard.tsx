@@ -77,8 +77,8 @@ export function UsedListingCard({ listing }: UsedListingCardProps) {
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <h3 className="font-bold text-primary mb-2 text-base md:text-lg group-hover:text-secondary transition-colors line-clamp-1">
+      <div className="p-3 sm:p-4">
+        <h3 className="font-bold text-primary mb-2 text-sm sm:text-base md:text-lg group-hover:text-secondary transition-colors line-clamp-1">
           {brandName} {modelName} {listing.year}
         </h3>
 

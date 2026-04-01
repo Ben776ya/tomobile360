@@ -88,8 +88,8 @@ export function VehicleCard({ vehicle, showBadges = true }: VehicleCardProps) {
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <h3 className="font-bold text-primary mb-1 text-base md:text-lg group-hover:text-secondary transition-colors line-clamp-1">
+      <div className="p-3 sm:p-4">
+        <h3 className="font-bold text-primary mb-1 text-sm sm:text-base md:text-lg group-hover:text-secondary transition-colors line-clamp-1">
           {brandName} {modelName}
         </h3>
         <p className="text-sm text-gray-500 mb-3 line-clamp-1">
