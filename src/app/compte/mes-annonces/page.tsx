@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Plus, Car } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -44,12 +43,12 @@ export default async function MyListingsPage() {
             Gérez toutes vos annonces de véhicules
           </p>
         </div>
-        <Link href="/occasion/vendre">
+        <a href="https://www.m-occaz.ma/vendez-votre-vehicule" target="_blank" rel="noopener noreferrer">
           <Button className="gap-2 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
             <Plus className="h-5 w-5" />
             Nouvelle annonce
           </Button>
-        </Link>
+        </a>
       </div>
 
       {/* Stats Summary */}
@@ -149,12 +148,12 @@ export default async function MyListingsPage() {
           <p className="text-gray-500 mb-6">
             Commencez à vendre votre véhicule dès maintenant
           </p>
-          <Link href="/occasion/vendre">
+          <a href="https://www.m-occaz.ma/vendez-votre-vehicule" target="_blank" rel="noopener noreferrer">
             <Button className="gap-2 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
               <Plus className="h-5 w-5" />
               Créer ma première annonce
             </Button>
-          </Link>
+          </a>
         </div>
       )}
     </div>
