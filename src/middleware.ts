@@ -79,6 +79,24 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Protect /compte/* routes — authenticated users only
+  if (request.nextUrl.pathname.startsWith('/compte')) {
+    if (!user) {
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', request.nextUrl.pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+  }
+
+  // Protect /occasion/vendre route — authenticated users only
+  if (request.nextUrl.pathname === '/occasion/vendre') {
+    if (!user) {
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', '/occasion/vendre')
+      return NextResponse.redirect(loginUrl)
+    }
+  }
+
   return response
 }
 
