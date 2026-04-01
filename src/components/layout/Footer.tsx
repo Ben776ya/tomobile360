@@ -48,7 +48,7 @@ const neufLinks = [
 
 const occasionLinks = [
   { href: '/occasion', label: 'Toutes les annonces' },
-  { href: '/occasion/vendre', label: 'Vendre ma voiture' },
+  { href: 'https://www.m-occaz.ma/vendez-votre-vehicule', label: 'Vendre ma voiture', external: true },
   { href: '/occasion/estimation', label: 'Estimation' },
   { href: '/occasion?type=pro', label: 'Professionnels' },
 ]
@@ -176,12 +176,23 @@ export default function Footer() {
             <ul className="space-y-3 mb-8">
               {occasionLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-dark-300 hover:text-secondary hover:translate-x-1 inline-block transition-all duration-300"
-                  >
-                    {link.label}
-                  </Link>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-dark-300 hover:text-secondary hover:translate-x-1 inline-block transition-all duration-300"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="text-sm text-dark-300 hover:text-secondary hover:translate-x-1 inline-block transition-all duration-300"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -254,12 +265,14 @@ export default function Footer() {
             </p>
 
             {/* CTA Button */}
-            <Link
-              href="/occasion/vendre"
+            <a
+              href="https://www.m-occaz.ma/vendez-votre-vehicule"
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-6 inline-flex items-center justify-center w-full px-6 py-3 bg-secondary hover:bg-secondary-400 hover:shadow-glow-cyan hover:-translate-y-0.5 text-white font-semibold rounded-xl transition-all duration-300"
             >
               Déposer votre annonce
-            </Link>
+            </a>
           </div>
         </div>
       </div>
