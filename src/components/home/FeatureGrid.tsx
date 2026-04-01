@@ -193,7 +193,7 @@ export function FeatureGrid() {
               </>
             )
 
-            const cardClass = `group p-5 rounded-2xl border transition-all duration-200 flex flex-col cursor-pointer ${
+            const cardClass = `group p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex flex-col cursor-pointer ${
               isActive ? 'border-opacity-30 shadow-md' : 'border-gray-200 hover:-translate-y-0.5 hover:shadow-md'
             }`
 
@@ -284,7 +284,7 @@ export function FeatureGrid() {
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
           comparatorOpen ? 'max-h-[2000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
         }`}>
-          <div className="rounded-2xl border p-6 lg:p-8" style={{ background: 'linear-gradient(180deg, #006EFE0d 0%, #ffffff 28%)', borderColor: '#006EFE30' }}>
+          <div className="rounded-2xl border p-4 sm:p-6 lg:p-8" style={{ background: 'linear-gradient(180deg, #006EFE0d 0%, #ffffff 28%)', borderColor: '#006EFE30' }}>
             <p className="text-sm text-center mb-8 font-medium" style={{ color: '#006EFE99' }}>
               Comparez jusqu&apos;à 3 véhicules côte à côte
             </p>
@@ -366,7 +366,7 @@ export function FeatureGrid() {
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
           cdcOpen ? 'max-h-[1200px] opacity-100 mt-4' : 'max-h-0 opacity-0'
         }`}>
-          <div className="rounded-2xl border p-6 lg:p-8" style={{ background: 'linear-gradient(180deg, #F43F5E0d 0%, #ffffff 30%)', borderColor: '#F43F5E30' }}>
+          <div className="rounded-2xl border p-4 sm:p-6 lg:p-8" style={{ background: 'linear-gradient(180deg, #F43F5E0d 0%, #ffffff 30%)', borderColor: '#F43F5E30' }}>
 
             {/* Header + tabs row */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -422,7 +422,7 @@ export function FeatureGrid() {
                         style={{ minHeight: 220 }}
                       >
                         {/* Left: image — takes 55% */}
-                        <div className="relative flex-shrink-0 overflow-hidden bg-gray-100" style={{ width: '55%' }}>
+                        <div className="relative flex-shrink-0 overflow-hidden bg-gray-100 w-[45%] sm:w-[55%]">
                           {vehicle?.images?.[0] ? (
                             <Image
                               src={vehicle.images[0]}
@@ -441,7 +441,7 @@ export function FeatureGrid() {
                         </div>
 
                         {/* Right: text — takes 45% */}
-                        <div className="flex-1 px-5 py-5 flex flex-col justify-between">
+                        <div className="flex-1 px-3 sm:px-5 py-4 sm:py-5 flex flex-col justify-between">
                           {vehicle ? (
                             <>
                               <div>
