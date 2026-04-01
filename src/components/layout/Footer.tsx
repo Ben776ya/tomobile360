@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Send } from 'lucide-react'
+import { subscribeNewsletter } from '@/lib/actions/newsletter'
 
 const socialLinks = [
   {
@@ -68,29 +69,21 @@ export default function Footer() {
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      setMessage({ type: 'error', text: 'Veuillez entrer une adresse email valide' })
-      return
-    }
-
     setIsSubmitting(true)
     setMessage(null)
 
     try {
-      // TODO: Replace with actual API endpoint for newsletter subscription
-      // For now, simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      setMessage({ type: 'success', text: 'Merci pour votre inscription !' })
-      setEmail('')
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Une erreur est survenue. Réessayez plus tard.' })
+      const result = await subscribeNewsletter({ email })
+      if (result.error) {
+        setMessage({ type: 'error', text: result.error })
+      } else {
+        setMessage({ type: 'success', text: 'Merci pour votre inscription !' })
+        setEmail('')
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Une erreur est survenue. Reessayez plus tard.' })
     } finally {
       setIsSubmitting(false)
-      // Clear message after 5 seconds
       setTimeout(() => setMessage(null), 5000)
     }
   }
