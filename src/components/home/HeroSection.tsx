@@ -180,7 +180,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
   const sliderThumbClass = 'absolute w-full h-6 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#006EFE] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#006EFE] [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer'
 
   return (
-    <section className="relative min-h-[62vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[50vh] sm:min-h-[62vh] flex items-center overflow-hidden">
 
       {/* Static hero background */}
       <div className="absolute inset-0">
@@ -207,7 +207,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
       {/* Content */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10 py-12 lg:py-16">
         {/* Search panel — dark overlay card anchored left */}
-        <div className="w-full max-w-xl bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 p-6 lg:p-8">
+        <div className="w-full max-w-xl bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 p-4 sm:p-6 lg:p-8">
 
           {/* Title */}
           <h1 className="font-display text-2xl lg:text-3xl font-bold text-white leading-tight mb-1">
@@ -221,7 +221,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
           <div className="inline-flex rounded-xl bg-white/10 p-1 mb-5">
             <button
               onClick={() => setVehicleCondition('neuf')}
-              className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+              className={`px-4 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                 vehicleCondition === 'neuf'
                   ? 'bg-[#006EFE] text-white shadow-sm'
                   : 'text-white/70 hover:text-white'
@@ -231,7 +231,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
             </button>
             <button
               onClick={() => setVehicleCondition('occasion')}
-              className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+              className={`px-4 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                 vehicleCondition === 'occasion'
                   ? 'bg-[#006EFE] text-white shadow-sm'
                   : 'text-white/70 hover:text-white'
@@ -242,7 +242,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
           </div>
 
           {/* Vehicle Type Icons */}
-          <div className="grid grid-cols-5 gap-2 mb-4">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-4">
             {vehicleTypes.map((type) => (
               <button
                 key={type.id}
