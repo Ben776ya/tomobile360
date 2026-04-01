@@ -59,8 +59,8 @@ export function FloatingSocialBubble() {
 
       const footerRect = footer.getBoundingClientRect()
       const windowHeight = window.innerHeight
-      // The bubble sits at bottom: 32px, it's 56px tall, so its top edge is at:
-      const bubbleTopEdge = windowHeight - 32 - 56
+      // The bubble sits at bottom: 32px, it's 48-56px tall (responsive), so its top edge is at:
+      const bubbleTopEdge = windowHeight - 32 - 48
 
       if (footerRect.top < bubbleTopEdge + 16) {
         // Footer overlaps with bubble position — push bubble above footer
@@ -95,7 +95,7 @@ export function FloatingSocialBubble() {
   return (
     <div
       ref={bubbleRef}
-      className="fixed right-6 z-40 hidden xl:flex transition-all duration-200"
+      className="fixed right-4 sm:right-6 z-40 flex transition-all duration-200"
       style={{ bottom: `${bottomOffset}px` }}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
@@ -122,7 +122,7 @@ export function FloatingSocialBubble() {
             href={social.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 ease-out"
+            className="absolute w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 ease-out"
             style={{
               background: social.isGradient ? social.color : undefined,
               backgroundColor: !social.isGradient ? social.color : undefined,
@@ -134,8 +134,8 @@ export function FloatingSocialBubble() {
               zIndex: 10,
               top: '50%',
               left: '50%',
-              marginTop: '-24px',
-              marginLeft: '-24px',
+              marginTop: '-20px',
+              marginLeft: '-20px',
             }}
             aria-label={social.label}
             title={social.label}
@@ -147,7 +147,7 @@ export function FloatingSocialBubble() {
 
       {/* Main Bubble Button */}
       <button
-        className={`relative z-20 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
+        className={`relative z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
           isExpanded
             ? 'bg-primary text-white rotate-180 scale-110 shadow-glow-indigo'
             : 'bg-secondary text-white hover:bg-secondary-400 hover:scale-110 shadow-glow-cyan animate-glow-pulse'
