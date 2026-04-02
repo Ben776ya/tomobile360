@@ -8,6 +8,11 @@ export type Brand = {
   created_at: string
 }
 
+export type BrandWithCounts = Brand & {
+  model_count: number
+  vehicle_count: number
+}
+
 export type Model = {
   id: string
   brand_id: string

@@ -1,162 +1,138 @@
-'use client'
-
-import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import Image from 'next/image'
-import { createClient } from '@/lib/supabase/client'
-import { updateBrand } from '@/lib/actions/brands'
-import type { Brand } from '@/lib/types'
+import { createClient } from '@/lib/supabase/server'
+import { Tag } from 'lucide-react'
+import type { BrandWithCounts } from '@/lib/types'
+import { BrandCreateForm } from './BrandCreateForm'
 
-export default function AdminBrandsPage() {
-  const [brands, setBrands] = useState<Brand[]>([])
-  const [loading, setLoading] = useState(true)
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editValue, setEditValue] = useState('')
-  const [saving, setSaving] = useState(false)
-  const [success, setSuccess] = useState('')
-  const [error, setError] = useState('')
+export const revalidate = 30
 
-  const fetchBrands = useCallback(async () => {
-    const supabase = createClient()
-    const { data, error: fetchError } = await supabase
+export default async function AdminBrandsPage() {
+  const supabase = await createClient()
+
+  const [brandsResult, modelsResult, vehiclesResult] = await Promise.all([
+    supabase
       .from('brands')
       .select('id, name, logo_url, description, created_at')
-      .order('name', { ascending: true })
+      .order('name', { ascending: true }),
+    supabase
+      .from('models')
+      .select('brand_id'),
+    supabase
+      .from('vehicles_new')
+      .select('brand_id'),
+  ])
 
-    if (fetchError) {
-      setError(fetchError.message)
-    } else {
-      setBrands(data || [])
-    }
-    setLoading(false)
-  }, [])
+  const brands = brandsResult.data ?? []
 
-  useEffect(() => {
-    fetchBrands()
-  }, [fetchBrands])
-
-  const handleEdit = (brand: Brand) => {
-    setEditingId(brand.id)
-    setEditValue(brand.description || '')
-    setError('')
-    setSuccess('')
+  // Build count maps
+  const modelCountMap: Record<string, number> = {}
+  for (const row of modelsResult.data ?? []) {
+    modelCountMap[row.brand_id] = (modelCountMap[row.brand_id] ?? 0) + 1
   }
 
-  const handleSave = async (brandId: string) => {
-    setSaving(true)
-    setError('')
-    setSuccess('')
-
-    const result = await updateBrand(brandId, {
-      description: editValue.trim() || null,
-    })
-
-    if (result.error) {
-      setError(result.error)
-    } else {
-      setSuccess('Description mise à jour')
-      setEditingId(null)
-      fetchBrands()
-    }
-    setSaving(false)
+  const vehicleCountMap: Record<string, number> = {}
+  for (const row of vehiclesResult.data ?? []) {
+    vehicleCountMap[row.brand_id] = (vehicleCountMap[row.brand_id] ?? 0) + 1
   }
 
-  const handleCancel = () => {
-    setEditingId(null)
-    setEditValue('')
-  }
-
-  if (loading) {
-    return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Marques</h1>
-        <p className="text-gray-500">Chargement...</p>
-      </div>
-    )
-  }
+  const brandsWithCounts: BrandWithCounts[] = brands.map((brand) => ({
+    ...brand,
+    model_count: modelCountMap[brand.id] ?? 0,
+    vehicle_count: vehicleCountMap[brand.id] ?? 0,
+  }))
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Marques</h1>
-
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm">
-          {error}
+    <>
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              Gestion des marques
+            </h1>
+            <p className="text-dark-200">
+              {brandsWithCounts.length} marque{brandsWithCounts.length !== 1 ? 's' : ''} enregistrée{brandsWithCounts.length !== 1 ? 's' : ''}
+            </p>
+          </div>
+          <BrandCreateForm />
         </div>
-      )}
-      {success && (
-        <div className="mb-4 p-3 bg-green-50 text-green-600 rounded-lg text-sm">
-          {success}
-        </div>
-      )}
+      </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
-        {brands.map((brand) => (
-          <div key={brand.id} className="p-4 flex items-start gap-4">
-            {/* Brand logo */}
-            <div className="relative w-12 h-12 flex-shrink-0 bg-gray-50 rounded-lg overflow-hidden">
-              {brand.logo_url ? (
-                <Image
-                  src={brand.logo_url}
-                  alt={brand.name}
-                  fill
-                  className="object-contain p-1"
-                  sizes="48px"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                  N/A
+      {/* Grid */}
+      {brandsWithCounts.length === 0 ? (
+        <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 p-12 text-center">
+          <Tag className="h-16 w-16 mx-auto mb-4 text-dark-300" />
+          <h3 className="text-xl font-semibold text-white mb-2">
+            Aucune marque enregistrée
+          </h3>
+          <p className="text-dark-300">
+            Commencez par ajouter votre première marque
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {brandsWithCounts.map((brand) => (
+            <Link
+              key={brand.id}
+              href={`/admin/brands/${brand.id}`}
+              className="bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 p-5 hover:border-secondary/40 hover:shadow-dark-elevated transition-all duration-200 group"
+            >
+              <div className="flex items-start gap-4">
+                {/* Logo */}
+                <div className="relative w-14 h-14 flex-shrink-0 bg-dark-600/50 rounded-lg overflow-hidden">
+                  {brand.logo_url ? (
+                    <Image
+                      src={brand.logo_url}
+                      alt={brand.name}
+                      fill
+                      className="object-contain p-1.5"
+                      sizes="56px"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-dark-400 text-xs font-medium">
+                      N/A
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* Brand info */}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-sm">{brand.name}</h3>
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-white group-hover:text-secondary transition-colors">
+                    {brand.name}
+                  </h3>
+                  {brand.description ? (
+                    <p className="text-sm text-dark-200 mt-1 line-clamp-2">
+                      {brand.description}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-dark-400 mt-1 italic">
+                      Aucune description
+                    </p>
+                  )}
 
-              {editingId === brand.id ? (
-                <div className="mt-2">
-                  <textarea
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    placeholder="Ajouter une description de la marque..."
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none focus:border-[#006EFE] focus:ring-1 focus:ring-[#006EFE]/20 outline-none"
-                    rows={3}
-                  />
-                  <div className="flex gap-2 mt-2">
-                    <button
-                      onClick={() => handleSave(brand.id)}
-                      disabled={saving}
-                      className="px-3 py-1.5 bg-[#006EFE] text-white text-sm font-medium rounded-lg hover:bg-[#005BD4] disabled:opacity-50 transition-colors"
-                    >
-                      {saving ? 'Enregistrement...' : 'Enregistrer'}
-                    </button>
-                    <button
-                      onClick={handleCancel}
-                      className="px-3 py-1.5 bg-gray-100 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
-                    >
-                      Annuler
-                    </button>
+                  {/* Counts */}
+                  <div className="flex items-center gap-3 mt-3">
+                    <span className="text-xs text-dark-300">
+                      <span className="font-semibold text-dark-200">
+                        {brand.model_count}
+                      </span>{' '}
+                      modèle{brand.model_count !== 1 ? 's' : ''}
+                    </span>
+                    <span className="text-dark-400">·</span>
+                    <span className="text-xs text-dark-300">
+                      <span className="font-semibold text-dark-200">
+                        {brand.vehicle_count}
+                      </span>{' '}
+                      véhicule{brand.vehicle_count !== 1 ? 's' : ''}
+                    </span>
                   </div>
                 </div>
-              ) : (
-                <div className="mt-1">
-                  {brand.description ? (
-                    <p className="text-sm text-gray-500">{brand.description}</p>
-                  ) : (
-                    <p className="text-sm text-gray-300 italic">Aucune description</p>
-                  )}
-                  <button
-                    onClick={() => handleEdit(brand)}
-                    className="mt-1 text-xs text-[#006EFE] hover:underline"
-                  >
-                    Modifier
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </>
   )
 }
