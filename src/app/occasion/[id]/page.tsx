@@ -194,32 +194,32 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
               </div>
 
               {/* Key Specs */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="p-4 bg-gray-100 rounded-md">
-                  <div className="flex items-center gap-2 text-gray-400 mb-1">
-                    <Calendar className="h-4 w-4" />
-                    <span className="text-sm">Année</span>
+              <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-6">
+                <div className="p-2.5 sm:p-4 bg-gray-100 rounded-md">
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-gray-400 mb-1">
+                    <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <span className="text-xs sm:text-sm">Année</span>
                   </div>
-                  <p className="font-semibold text-primary">{listing.year}</p>
+                  <p className="font-semibold text-primary text-sm sm:text-base">{listing.year}</p>
                 </div>
-                <div className="p-4 bg-gray-100 rounded-md">
-                  <div className="flex items-center gap-2 text-gray-400 mb-1">
-                    <Gauge className="h-4 w-4" />
-                    <span className="text-sm">Kilométrage</span>
+                <div className="p-2.5 sm:p-4 bg-gray-100 rounded-md">
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-gray-400 mb-1">
+                    <Gauge className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <span className="text-xs sm:text-sm">Kilométrage</span>
                   </div>
-                  <p className="font-semibold text-primary">{listing.mileage.toLocaleString()} km</p>
+                  <p className="font-semibold text-primary text-sm sm:text-base">{listing.mileage.toLocaleString()} km</p>
                 </div>
-                <div className="p-4 bg-gray-100 rounded-md">
-                  <div className="flex items-center gap-2 text-gray-400 mb-1">
-                    <span className="text-sm">Carburant</span>
+                <div className="p-2.5 sm:p-4 bg-gray-100 rounded-md">
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-gray-400 mb-1">
+                    <span className="text-xs sm:text-sm">Carburant</span>
                   </div>
-                  <p className="font-semibold text-primary">{listing.fuel_type}</p>
+                  <p className="font-semibold text-primary text-sm sm:text-base">{listing.fuel_type}</p>
                 </div>
-                <div className="p-4 bg-gray-100 rounded-md">
-                  <div className="flex items-center gap-2 text-gray-400 mb-1">
-                    <span className="text-sm">Transmission</span>
+                <div className="p-2.5 sm:p-4 bg-gray-100 rounded-md">
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-gray-400 mb-1">
+                    <span className="text-xs sm:text-sm">Transmission</span>
                   </div>
-                  <p className="font-semibold text-primary">{listing.transmission}</p>
+                  <p className="font-semibold text-primary text-sm sm:text-base">{listing.transmission}</p>
                 </div>
               </div>
 
@@ -350,7 +350,7 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
       </div>
 
       {/* Sticky mobile contact bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3">
+      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex items-center gap-3">
         <div className="flex-1 min-w-0">
           <p className="text-xs text-gray-500 truncate">{brandName} {modelName} {listing.year}</p>
           <p className="font-bold text-secondary text-sm">{formatPrice(listing.price)}</p>

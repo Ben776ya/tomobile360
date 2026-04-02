@@ -190,7 +190,7 @@ export default async function UsedVehiclesPage({
                 <Link
                   key={f.params}
                   href={`/occasion?${f.params}`}
-                  className="px-4 py-1.5 text-sm font-medium rounded-full border border-gray-200 text-gray-600 hover:border-[#006EFE] hover:text-[#006EFE] hover:bg-[#006EFE]/5 transition-all duration-150"
+                  className="px-3 sm:px-4 py-2 sm:py-1.5 text-xs sm:text-sm font-medium rounded-full border border-gray-200 text-gray-600 hover:border-[#006EFE] hover:text-[#006EFE] hover:bg-[#006EFE]/5 transition-all duration-150"
                 >
                   {f.label}
                 </Link>
@@ -199,7 +199,7 @@ export default async function UsedVehiclesPage({
 
             {/* Listings grid — first 3 cars, then ad banner, then cars 4-19 */}
             {moccazListings.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                 {moccazListings.slice(0, 3).map((listing) => (
                   <MOccazCard key={listing.slug} listing={listing} />
                 ))}
@@ -209,7 +209,7 @@ export default async function UsedVehiclesPage({
                   href="https://m-occaz.ma"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative overflow-hidden rounded-xl border border-gray-200 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 bg-[#1a0f6e] block min-h-[200px]"
+                  className="relative overflow-hidden rounded-xl border border-gray-200 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 bg-[#1a0f6e] block min-h-[140px] sm:min-h-[200px]"
                 >
                   <Image
                     src="/moccaz-ad.png"

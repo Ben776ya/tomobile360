@@ -187,7 +187,7 @@ export default function Header() {
                   if (e.key === 'Enter' && searchQuery.trim()) { router.push(`/actu?q=${encodeURIComponent(searchQuery.trim())}`); setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
                 }}
                 placeholder="Rechercher articles, vidéos..."
-                className="w-44 px-2 py-1.5 text-sm bg-transparent text-gray-800 placeholder-gray-500 outline-none"
+                className="w-32 sm:w-40 md:w-44 px-2 py-1.5 text-sm bg-transparent text-gray-800 placeholder-gray-500 outline-none"
               />
               {searchQuery && (
                 <button onClick={() => { setSearchQuery(''); setSearchResults([]); setVideoResults([]); setSearchOpen(false) }} className="mr-2 text-gray-400 hover:text-gray-600">
@@ -198,7 +198,7 @@ export default function Header() {
 
             {/* Results Dropdown */}
             {searchOpen && (searchResults.length > 0 || videoResults.length > 0 || searchLoading) && (
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 animate-fade-in">
+              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 animate-fade-in">
                 {searchLoading ? (
                   <div className="px-4 py-3 text-sm text-gray-400 text-center">Recherche...</div>
                 ) : (

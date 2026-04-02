@@ -256,7 +256,7 @@ export default function Footer() {
                 </div>
               )}
             </form>
-            <p className="text-xs text-dark-400 mt-3">
+            <p className="text-[11px] sm:text-xs text-dark-400 mt-3">
               En vous inscrivant, vous acceptez notre{' '}
               <Link href="/confidentialite" className="text-secondary hover:text-secondary-600 hover:underline transition-all duration-300">
                 politique de confidentialité

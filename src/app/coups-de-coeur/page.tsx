@@ -103,7 +103,7 @@ export default async function CoupsDeCoeurPage({
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm mb-5 shadow-lg">
             <activeCat.Icon className="w-8 h-8 text-white" />
           </div>
-          <p className="text-white/70 text-sm font-semibold tracking-widest uppercase mb-2">
+          <p className="text-white/70 text-xs sm:text-sm font-semibold tracking-widest uppercase mb-2">
             Nos Coups de Cœur
           </p>
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-3 font-display">

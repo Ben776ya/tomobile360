@@ -45,7 +45,7 @@ export function MobileCarousel({
   }, [isMobile, autoPlayMs, items.length, dragging])
 
   const goTo = useCallback((index: number) => {
-    setCurrent(Math.max(0, Math.min(index, items.length - 1)))
+    setCurrent(((index % items.length) + items.length) % items.length)
   }, [items.length])
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -108,16 +108,14 @@ export function MobileCarousel({
         <>
           <button
             onClick={() => goTo(current - 1)}
-            disabled={current === 0}
-            className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center disabled:opacity-0 transition-opacity"
+            className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center transition-opacity"
             aria-label="Précédent"
           >
             <ChevronLeft className="w-4 h-4 text-gray-700" />
           </button>
           <button
             onClick={() => goTo(current + 1)}
-            disabled={current === items.length - 1}
-            className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center disabled:opacity-0 transition-opacity"
+            className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center transition-opacity"
             aria-label="Suivant"
           >
             <ChevronRight className="w-4 h-4 text-gray-700" />

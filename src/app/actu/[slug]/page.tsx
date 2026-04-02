@@ -223,9 +223,9 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                 )}
 
                 {/* Article Body */}
-                <div className="mx-auto max-w-[65ch]">
+                <div className="mx-auto max-w-[65ch] px-1 sm:px-0">
                   <div
-                    className="text-gray-600 leading-relaxed text-base [&>p]:mb-5 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:text-primary [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:font-display [&>h3]:text-lg [&>h3]:font-bold [&>h3]:text-primary [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:font-display [&>img]:rounded-xl [&>img]:my-6 [&>a]:text-[#006EFE] [&>a]:hover:underline [&>blockquote]:border-l-4 [&>blockquote]:border-[#006EFE] [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-gray-500 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:mb-5 [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:mb-5"
+                    className="text-gray-600 leading-relaxed text-[15px] sm:text-base [&>p]:mb-5 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:text-primary [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:font-display [&>h3]:text-lg [&>h3]:font-bold [&>h3]:text-primary [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:font-display [&>img]:rounded-xl [&>img]:my-6 [&>a]:text-[#006EFE] [&>a]:hover:underline [&>blockquote]:border-l-4 [&>blockquote]:border-[#006EFE] [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-gray-500 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:mb-5 [&>ol]:list-decimal [&>ol]:pl-6 [&>ol]:mb-5"
                     dangerouslySetInnerHTML={{
                       __html: sanitizeHtml(article.content, {
                         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2']),

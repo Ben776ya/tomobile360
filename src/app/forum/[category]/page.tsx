@@ -119,7 +119,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
           <div className="flex gap-2 mt-6">
             <Link
               href={`/forum/${params.category}?sort=recent`}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition ${
+              className={`px-3 sm:px-4 py-2.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition ${
                 sort === 'recent'
                   ? 'bg-secondary text-white shadow-glow-cyan'
                   : 'bg-gray-50/50 text-gray-600 hover:bg-gray-100'
@@ -129,7 +129,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             </Link>
             <Link
               href={`/forum/${params.category}?sort=popular`}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition ${
+              className={`px-3 sm:px-4 py-2.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition ${
                 sort === 'popular'
                   ? 'bg-secondary text-white shadow-glow-cyan'
                   : 'bg-gray-50/50 text-gray-600 hover:bg-gray-100'
@@ -139,7 +139,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             </Link>
             <Link
               href={`/forum/${params.category}?sort=unanswered`}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition ${
+              className={`px-3 sm:px-4 py-2.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition ${
                 sort === 'unanswered'
                   ? 'bg-secondary text-white shadow-glow-cyan'
                   : 'bg-gray-50/50 text-gray-600 hover:bg-gray-100'

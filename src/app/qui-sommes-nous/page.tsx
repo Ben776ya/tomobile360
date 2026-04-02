@@ -248,7 +248,7 @@ export default function QuiSommesNousPage() {
             >
               {/* ── Photo / Banner area */}
               <div
-                className="relative h-52 flex flex-col items-center justify-center overflow-hidden"
+                className="relative h-36 sm:h-44 md:h-52 flex flex-col items-center justify-center overflow-hidden"
                 style={{ background: `linear-gradient(145deg, ${member.gradientFrom} 0%, ${member.gradientTo} 100%)` }}
               >
                 {/* Subtle mesh dots overlay */}

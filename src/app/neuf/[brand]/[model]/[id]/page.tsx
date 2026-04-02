@@ -140,7 +140,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 pb-20 lg:pb-8">
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-gray-500 mb-6">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm text-gray-500 mb-6 overflow-x-auto scrollbar-hide pb-1">
           <Link href="/" className="hover:text-[#006EFE] transition-colors">Accueil</Link>
           <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
           <Link href="/neuf" className="hover:text-[#006EFE] transition-colors">Voitures Neuves</Link>
@@ -361,7 +361,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
       </div>
 
       {/* Sticky Mobile Contact Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 px-4 py-3 flex gap-3 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex gap-3 shadow-lg">
         <a
           href={`https://wa.me/${TOMOBILE_PHONE}?text=${whatsappText}`}
           target="_blank"
