@@ -850,7 +850,7 @@ export function VehicleForm({
         <Button
           type="button"
           variant="outline"
-          onClick={() => onCancel ? onCancel() : router.push('/admin/vehicles')}
+          onClick={() => onCancel ? onCancel() : router.push('/admin/brands')}
           className="shadow-dark-card hover:shadow-dark-elevated transition-all duration-300 border-white/10 text-dark-200 hover:text-white hover:bg-dark-600/50"
         >
           Annuler
