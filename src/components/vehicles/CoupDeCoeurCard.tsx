@@ -84,7 +84,7 @@ const STYLES = {
 export function CoupDeCoeurCard({ vehicle, category, variant = 'grid' }: CoupDeCoeurCardProps) {
   const s = STYLES[category]
   const CategoryIcon = s.Icon
-  const mainImage = vehicle.images?.[0] || '/placeholder-car.jpg'
+  const mainImage = vehicle.images?.[0] || '/placeholder-car.svg'
   const brandName = vehicle.brands?.name || 'Unknown'
   const modelName = vehicle.models?.name || 'Unknown'
 

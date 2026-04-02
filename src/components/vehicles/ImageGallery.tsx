@@ -16,7 +16,7 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
   // Use placeholder if no images
-  const displayImages = images.length > 0 ? images : ['/placeholder-car.jpg']
+  const displayImages = images.length > 0 ? images : ['/placeholder-car.svg']
 
   const goToPrevious = () => {
     setCurrentIndex((prev) =>

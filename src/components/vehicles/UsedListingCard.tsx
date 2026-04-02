@@ -14,7 +14,7 @@ interface UsedListingCardProps {
 }
 
 export function UsedListingCard({ listing }: UsedListingCardProps) {
-  const mainImage = listing.images?.[0] || '/placeholder-car.jpg'
+  const mainImage = listing.images?.[0] || '/placeholder-car.svg'
   const brandName = listing.brands?.name || 'Unknown'
   const modelName = listing.models?.name || 'Unknown'
 

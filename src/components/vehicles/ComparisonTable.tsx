@@ -162,7 +162,7 @@ export function ComparisonTable({ vehicleIds }: ComparisonTableProps) {
               </td>
               {vehicles.map((vehicle) => {
                 if (row.type === 'image') {
-                  const mainImage = vehicle.images?.[0] || '/placeholder-car.jpg'
+                  const mainImage = vehicle.images?.[0] || '/placeholder-car.svg'
                   return (
                     <td key={vehicle.id} className="p-4">
                       <div className="relative aspect-video rounded-md overflow-hidden bg-muted mx-auto max-w-[200px]">

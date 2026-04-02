@@ -16,7 +16,7 @@ interface VehicleCardProps {
 
 export function VehicleCard({ vehicle, showBadges = true }: VehicleCardProps) {
   const activePromo = vehicle.promotions?.find(p => p.discount_percentage && p.discount_percentage > 0 && p.is_active !== false)
-  const mainImage = vehicle.images?.[0] || '/placeholder-car.jpg'
+  const mainImage = vehicle.images?.[0] || '/placeholder-car.svg'
   const brandName = vehicle.brands?.name || 'Unknown'
   const modelName = vehicle.models?.name || 'Unknown'
 

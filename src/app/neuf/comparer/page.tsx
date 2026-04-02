@@ -154,7 +154,7 @@ export default function ComparePage() {
                         {/* Vehicle Image */}
                         <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
                           <Image
-                            src={vehicle.images?.[0] || '/placeholder-car.jpg'}
+                            src={vehicle.images?.[0] || '/placeholder-car.svg'}
                             alt={`${vehicle.brands?.name} ${vehicle.models?.name}`}
                             fill
                             className="object-cover"

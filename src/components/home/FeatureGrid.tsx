@@ -311,7 +311,7 @@ export function FeatureGrid() {
                           ) : vehicle ? (
                             <div className="space-y-3">
                               <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100">
-                                <Image src={vehicle.images?.[0] || '/placeholder-car.jpg'} alt={`${vehicle.brands?.name} ${vehicle.models?.name}`} fill className="object-cover" />
+                                <Image src={vehicle.images?.[0] || '/placeholder-car.svg'} alt={`${vehicle.brands?.name} ${vehicle.models?.name}`} fill className="object-cover" />
                               </div>
                               <div className="space-y-0.5">
                                 <div className="flex items-center gap-1.5">

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { VehicleCard } from '@/components/vehicles/VehicleCard'
+import { ModelCard, type ModelGroup } from '@/components/vehicles/ModelCard'
 import { VehicleFilters } from '@/components/vehicles/VehicleFilters'
 import { BrandHeader } from '@/components/vehicles/BrandHeader'
 import { Loader2, SlidersHorizontal } from 'lucide-react'
@@ -41,27 +41,25 @@ export default async function NewVehiclesPage({
   const priceMin = searchParams.priceMin ? parseInt(searchParams.priceMin) : undefined
   const priceMax = searchParams.priceMax ? parseInt(searchParams.priceMax) : undefined
   const yearMin = searchParams.yearMin ? parseInt(searchParams.yearMin) : undefined
-  // Default to price ascending when filtering by brand (guide d'achat)
   const sort = searchParams.sort || (brand ? 'price-asc' : 'newest')
   const page = searchParams.page ? parseInt(searchParams.page) : 1
   const itemsPerPage = 12
 
-  // Build query
+  // Build query — fetch ALL matching vehicles (we group by model server-side)
   let query = supabase
     .from('vehicles_new')
     .select(`
-      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, horsepower, brand_id, model_id,
+      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, horsepower, brand_id, model_id, created_at, views,
       brands:brand_id (name, logo_url),
       models:model_id (name),
       promotions (discount_percentage, is_active)
-    `, { count: 'exact' })
+    `)
     .eq('is_available', true)
 
   // Apply filters
   if (brand) query = query.eq('brand_id', brand)
   if (model) query = query.eq('model_id', model)
   if (category) {
-    // Filter by model category
     const { data: categoryModels } = await supabase
       .from('models')
       .select('id')
@@ -78,29 +76,94 @@ export default async function NewVehiclesPage({
   if (priceMax) query = query.lte('price_min', priceMax)
   if (yearMin) query = query.gte('year', yearMin)
 
-  // Apply sorting
+  // Sort at DB level for consistent ordering within groups
+  query = query.order('price_min', { ascending: true })
+
+  const { data: vehicles } = await query
+
+  // Group vehicles by model
+  type VehicleRow = NonNullable<typeof vehicles>[number]
+  const modelMap: Record<string, VehicleRow[]> = {}
+  for (const v of vehicles ?? []) {
+    const key = v.model_id
+    if (!modelMap[key]) modelMap[key] = []
+    modelMap[key].push(v)
+  }
+
+  // Build model groups
+  const modelGroups: ModelGroup[] = []
+  for (const key of Object.keys(modelMap)) {
+    const groupVehicles = modelMap[key]
+    const representative = groupVehicles[0] // cheapest (sorted by price_min asc)
+    const brandsRaw = representative.brands as unknown
+    const brandData = (Array.isArray(brandsRaw) ? brandsRaw[0] : brandsRaw) as { name: string; logo_url: string | null } | null
+    const modelsRaw = representative.models as unknown
+    const modelData = (Array.isArray(modelsRaw) ? modelsRaw[0] : modelsRaw) as { name: string } | null
+
+    if (!brandData || !modelData) continue
+
+    const prices = groupVehicles.map((v: VehicleRow) => v.price_min).filter((p): p is number => p !== null)
+    const minPrice = prices.length > 0 ? Math.min(...prices) : null
+
+    const maxPrices = groupVehicles.map((v: VehicleRow) => v.price_max ?? v.price_min).filter((p): p is number => p !== null)
+    const maxPrice = maxPrices.length > 0 ? Math.max(...maxPrices) : null
+
+    const fuelSet: Record<string, boolean> = {}
+    const transSet: Record<string, boolean> = {}
+    for (const v of groupVehicles) {
+      if (v.fuel_type) fuelSet[v.fuel_type] = true
+      if (v.transmission) transSet[v.transmission] = true
+    }
+    const fuelTypes = Object.keys(fuelSet)
+    const transmissions = Object.keys(transSet)
+
+    const hasPromo = groupVehicles.some((v: VehicleRow) => {
+      const promos = v.promotions as { discount_percentage: number | null; is_active?: boolean }[] | null
+      return promos?.some((p: { discount_percentage: number | null; is_active?: boolean }) => p.discount_percentage && p.discount_percentage > 0 && p.is_active !== false)
+    })
+
+    modelGroups.push({
+      brandId: representative.brand_id,
+      brandName: brandData.name,
+      brandLogo: brandData.logo_url,
+      modelId: representative.model_id,
+      modelName: modelData.name,
+      minPrice,
+      maxPrice,
+      mainImage: representative.images?.[0] || '/placeholder-car.svg',
+      versionCount: groupVehicles.length,
+      fuelTypes,
+      transmissions,
+      hasNewRelease: groupVehicles.some((v: VehicleRow) => v.is_new_release),
+      hasPopular: groupVehicles.some((v: VehicleRow) => v.is_popular),
+      hasPromo,
+      singleVehicleId: groupVehicles.length === 1 ? groupVehicles[0].id : undefined,
+    })
+  }
+
+  // Sort model groups
   switch (sort) {
     case 'price-asc':
-      query = query.order('price_min', { ascending: true })
+      modelGroups.sort((a, b) => (a.minPrice ?? Infinity) - (b.minPrice ?? Infinity))
       break
     case 'price-desc':
-      query = query.order('price_min', { ascending: false })
+      modelGroups.sort((a, b) => (b.minPrice ?? 0) - (a.minPrice ?? 0))
       break
     case 'popular':
-      query = query.order('views', { ascending: false })
+      // Models with popular badge first, then by version count
+      modelGroups.sort((a, b) => (b.hasPopular ? 1 : 0) - (a.hasPopular ? 1 : 0) || b.versionCount - a.versionCount)
       break
     case 'newest':
     default:
-      query = query.order('created_at', { ascending: false })
+      modelGroups.sort((a, b) => (b.hasNewRelease ? 1 : 0) - (a.hasNewRelease ? 1 : 0))
       break
   }
 
-  // Apply pagination
+  // Paginate model groups
+  const totalModels = modelGroups.length
+  const totalPages = Math.ceil(totalModels / itemsPerPage)
   const from = (page - 1) * itemsPerPage
-  const to = from + itemsPerPage - 1
-  query = query.range(from, to)
-
-  const { data: vehicles, count } = await query
+  const paginatedModels = modelGroups.slice(from, from + itemsPerPage)
 
   // Fetch filter options
   const [
@@ -113,12 +176,9 @@ export default async function NewVehiclesPage({
     supabase.from('models').select('id, brand_id, name, category').order('name'),
   ])
 
-  // Get unique categories
   const uniqueCategories = categories
     ? Array.from(new Set(categories.map(c => c.category).filter(Boolean)))
     : []
-
-  const totalPages = count ? Math.ceil(count / itemsPerPage) : 0
 
   const quickFilters = [
     { label: 'Moins de 100 000 DH', key: 'priceMax', value: '100000' },
@@ -128,10 +188,8 @@ export default async function NewVehiclesPage({
     { label: 'Moins de 200 000 DH', key: 'priceMax', value: '200000' },
   ]
 
-  // Build quick filter hrefs that preserve existing filters
   const buildQuickFilterHref = (key: string, value: string) => {
     const params = new URLSearchParams()
-    // Preserve existing filters
     if (brand) params.set('brand', brand)
     if (model) params.set('model', model)
     if (category && key !== 'category') params.set('category', category)
@@ -141,12 +199,10 @@ export default async function NewVehiclesPage({
     if (priceMax && key !== 'priceMax' && key !== 'priceMin') params.set('priceMax', priceMax.toString())
     if (yearMin && key !== 'yearMin') params.set('yearMin', yearMin.toString())
     if (searchParams.sort) params.set('sort', searchParams.sort)
-    // Toggle: if already active, remove it; otherwise set it
     const currentValue = searchParams[key as keyof SearchParams]
     if (currentValue !== value) {
       params.set(key, value)
     }
-    // Reset page
     return `/neuf?${params.toString()}`
   }
 
@@ -224,7 +280,7 @@ export default async function NewVehiclesPage({
 
           {/* Results */}
           <main className="lg:col-span-3">
-            {/* Brand header when brand filter is active (D-36) */}
+            {/* Brand header when brand filter is active */}
             {brand && (() => {
               const activeBrand = brands?.find((b) => b.id === brand)
               return activeBrand ? <BrandHeader brand={activeBrand as any} /> : null
@@ -253,17 +309,11 @@ export default async function NewVehiclesPage({
             {/* Results Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 bg-white p-4 rounded-lg shadow-card border border-gray-200">
               <p className="text-sm text-gray-500">
-                {count !== null ? (
-                  <>
-                    <span className="font-semibold text-secondary">{count}</span> véhicule
-                    {count > 1 ? 's' : ''} trouvé{count > 1 ? 's' : ''}
-                  </>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-secondary" />
-                    <span>Recherche en cours...</span>
-                  </span>
-                )}
+                <span className="font-semibold text-secondary">{totalModels}</span> modèle
+                {totalModels > 1 ? 's' : ''} trouvé{totalModels > 1 ? 's' : ''}
+                <span className="text-gray-400 ml-1">
+                  ({(vehicles ?? []).length} version{(vehicles ?? []).length !== 1 ? 's' : ''})
+                </span>
               </p>
 
               {/* Quick Links */}
@@ -291,22 +341,17 @@ export default async function NewVehiclesPage({
               </div>
             </div>
 
-            {/* Vehicle Grid */}
-            {vehicles && vehicles.length > 0 ? (
+            {/* Model Grid */}
+            {paginatedModels.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
-                  {vehicles.map((vehicle) => (
-                    <VehicleCard
-                      key={vehicle.id}
-                      vehicle={vehicle as any}
-                      showBadges
-                    />
+                  {paginatedModels.map((mg) => (
+                    <ModelCard key={mg.modelId} model={mg} />
                   ))}
                 </div>
 
                 {/* Pagination */}
                 {totalPages > 1 && (() => {
-                  // Sliding window: show 5 pages centered on current page
                   const windowSize = 5
                   let startPage = Math.max(1, page - Math.floor(windowSize / 2))
                   const endPage = Math.min(totalPages, startPage + windowSize - 1)
