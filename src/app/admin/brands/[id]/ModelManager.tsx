@@ -8,33 +8,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { createModel, updateModel, deleteModel } from '@/lib/actions/brands'
+import { VEHICLE_CATEGORIES, CATEGORY_COLORS } from '@/lib/constants'
 import type { Model, VehicleCategory } from '@/lib/types'
-
-const CATEGORIES: VehicleCategory[] = [
-  'Citadine',
-  'Compacte',
-  'Berline',
-  'SUV',
-  'Monospace',
-  'Break',
-  'Coupé',
-  'Cabriolet',
-  'Pick-up',
-  'Utilitaire',
-]
-
-const CATEGORY_COLORS: Record<VehicleCategory, string> = {
-  Citadine: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
-  Compacte: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-  Berline: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
-  SUV: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-  Monospace: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-  Break: 'bg-teal-500/20 text-teal-300 border-teal-500/30',
-  'Coupé': 'bg-rose-500/20 text-rose-300 border-rose-500/30',
-  Cabriolet: 'bg-pink-500/20 text-pink-300 border-pink-500/30',
-  'Pick-up': 'bg-orange-500/20 text-orange-300 border-orange-500/30',
-  Utilitaire: 'bg-gray-500/20 text-gray-300 border-gray-500/30',
-}
 
 type ModelWithCount = Model & { vehicle_count: number }
 
@@ -43,10 +18,8 @@ interface ModelManagerProps {
   initialModels: ModelWithCount[]
 }
 
-export function ModelManager({ brandId, initialModels }: ModelManagerProps) {
+export function ModelManager({ brandId, initialModels: models }: ModelManagerProps) {
   const router = useRouter()
-
-  const [models] = useState<ModelWithCount[]>(initialModels)
   const [showAddForm, setShowAddForm] = useState(false)
   const [newName, setNewName] = useState('')
   const [newCategory, setNewCategory] = useState<VehicleCategory>('Berline')
@@ -210,7 +183,7 @@ export function ModelManager({ brandId, initialModels }: ModelManagerProps) {
                 onChange={(e) => setNewCategory(e.target.value as VehicleCategory)}
                 className="w-full h-9 px-2 bg-dark-600/50 border border-white/10 rounded-md text-white text-sm focus:border-secondary/50 focus:outline-none"
               >
-                {CATEGORIES.map((cat) => (
+                {VEHICLE_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat} className="bg-dark-700">
                     {cat}
                   </option>
@@ -277,7 +250,7 @@ export function ModelManager({ brandId, initialModels }: ModelManagerProps) {
                         onChange={(e) => setEditCategory(e.target.value as VehicleCategory)}
                         className="h-8 px-2 bg-dark-600/50 border border-white/10 rounded-md text-white text-sm focus:border-secondary/50 focus:outline-none w-36"
                       >
-                        {CATEGORIES.map((cat) => (
+                        {VEHICLE_CATEGORIES.map((cat) => (
                           <option key={cat} value={cat} className="bg-dark-700">
                             {cat}
                           </option>
