@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import type { Brand, Model } from '@/lib/types'
+import type { Brand } from '@/lib/types'
 import {
   validateAction,
   CreateBrandSchema,
@@ -44,49 +44,6 @@ export async function getBrands(): Promise<{ error: string | null; data: Brand[]
   return { error: null, data }
 }
 
-export async function getBrandWithModels(brandId: string): Promise<{
-  error: string | null
-  data: {
-    brand: Brand
-    models: (Model & { vehicle_count: number })[]
-    totalVehicles: number
-  } | null
-}> {
-  const { error: authError } = await checkAdmin()
-  if (authError) return { error: authError, data: null }
-
-  const supabase = await createClient()
-
-  const { data: brand, error: brandError } = await supabase
-    .from('brands')
-    .select('id, name, logo_url, description, created_at')
-    .eq('id', brandId)
-    .single()
-
-  if (brandError || !brand) return { error: brandError?.message ?? 'Marque introuvable', data: null }
-
-  const { data: models, error: modelsError } = await supabase
-    .from('models')
-    .select('id, brand_id, name, category, created_at')
-    .eq('brand_id', brandId)
-    .order('name', { ascending: true })
-
-  if (modelsError) return { error: modelsError.message, data: null }
-
-  const modelsWithCounts: (Model & { vehicle_count: number })[] = await Promise.all(
-    (models ?? []).map(async (model) => {
-      const { count } = await supabase
-        .from('vehicles_new')
-        .select('id', { count: 'exact', head: true })
-        .eq('model_id', model.id)
-      return { ...model, vehicle_count: count ?? 0 }
-    })
-  )
-
-  const totalVehicles = modelsWithCounts.reduce((sum, m) => sum + m.vehicle_count, 0)
-
-  return { error: null, data: { brand, models: modelsWithCounts, totalVehicles } }
-}
 
 export async function createBrand(data: CreateBrandInput): Promise<{ error?: string; success?: boolean }> {
   const { error: authError } = await checkAdmin()
@@ -212,6 +169,7 @@ export async function createModel(data: CreateModelInput): Promise<{ error?: str
   }
 
   revalidatePath('/admin/brands')
+  revalidatePath(`/admin/brands/${brand_id}`)
   revalidatePath('/neuf')
   return { success: true }
 }
@@ -248,6 +206,7 @@ export async function updateModel(
   }
 
   revalidatePath('/admin/brands')
+  revalidatePath(`/admin/brands/${brandId}`)
   revalidatePath('/neuf')
   return { success: true }
 }
@@ -277,6 +236,7 @@ export async function deleteModel(id: string, brandId: string): Promise<{ error?
   if (error) return { error: error.message }
 
   revalidatePath('/admin/brands')
+  revalidatePath(`/admin/brands/${brandId}`)
   revalidatePath('/neuf')
   return { success: true }
 }

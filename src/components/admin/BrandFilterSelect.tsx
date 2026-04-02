@@ -1,23 +1,22 @@
 'use client'
 
-interface Brand {
-  id: string
-  name: string
-}
+import { useRouter } from 'next/navigation'
 
 interface BrandFilterSelectProps {
-  brands: Brand[]
+  brands: Array<{ id: string; name: string }>
   currentBrand?: string
   tab: string
 }
 
 export function BrandFilterSelect({ brands, currentBrand, tab }: BrandFilterSelectProps) {
+  const router = useRouter()
+
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const value = e.target.value
     const params = new URLSearchParams()
     params.set('tab', tab)
     if (value) params.set('brand', value)
-    window.location.href = `/admin/vehicles?${params.toString()}`
+    router.push(`/admin/vehicles?${params.toString()}`)
   }
 
   return (

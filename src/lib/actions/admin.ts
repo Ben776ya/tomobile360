@@ -559,12 +559,16 @@ export async function updateUserProfile(userId: string, data: {
 
   const supabase = await createClient()
 
+  const updateData: Record<string, string> = {
+    updated_at: new Date().toISOString(),
+  }
+  if (data.full_name !== undefined) updateData.full_name = data.full_name
+  if (data.phone !== undefined) updateData.phone = data.phone
+  if (data.city !== undefined) updateData.city = data.city
+
   const { error } = await supabase
     .from('profiles')
-    .update({
-      ...data,
-      updated_at: new Date().toISOString(),
-    })
+    .update(updateData)
     .eq('id', userId)
 
   if (error) return { error: error.message }
