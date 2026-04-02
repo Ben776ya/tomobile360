@@ -62,7 +62,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className={`${sora.variable} ${montserratAlternates.variable}`}>
-      <body className={sora.className}>
+      <body>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
