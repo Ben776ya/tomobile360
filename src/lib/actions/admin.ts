@@ -316,6 +316,13 @@ export async function updateVehicle(id: string, data: UpdateVehicleInput) {
 
   const supabase = await createClient()
 
+  // Get current brand_id for revalidation
+  const { data: currentVehicle } = await supabase
+    .from('vehicles_new')
+    .select('brand_id')
+    .eq('id', id)
+    .single()
+
   const { error } = await supabase
     .from('vehicles_new')
     .update(updateData)
@@ -326,6 +333,8 @@ export async function updateVehicle(id: string, data: UpdateVehicleInput) {
   revalidatePath('/neuf')
   revalidatePath('/admin/vehicles')
   revalidatePath('/')
+  if (currentVehicle?.brand_id) revalidatePath(`/admin/brands/${currentVehicle.brand_id}`)
+  if (d.brand_id && d.brand_id !== currentVehicle?.brand_id) revalidatePath(`/admin/brands/${d.brand_id}`)
   return { success: true }
 }
 
@@ -336,12 +345,20 @@ export async function deleteVehicle(id: string, type: 'new' | 'used') {
   const supabase = await createClient()
   const table = type === 'new' ? 'vehicles_new' : 'vehicles_used'
 
+  // Get brand_id before deleting (for revalidation)
+  let brandId: string | null = null
+  if (type === 'new') {
+    const { data: vehicle } = await supabase.from('vehicles_new').select('brand_id').eq('id', id).single()
+    brandId = vehicle?.brand_id ?? null
+  }
+
   const { error } = await supabase.from(table).delete().eq('id', id)
 
   if (error) return { error: error.message }
 
   revalidatePath(type === 'new' ? '/neuf' : '/occasion')
   revalidatePath('/admin/vehicles')
+  if (brandId) revalidatePath(`/admin/brands/${brandId}`)
   return { success: true }
 }
 
