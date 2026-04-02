@@ -19,6 +19,7 @@ interface SearchParams {
   transmission?: string
   priceMin?: string
   priceMax?: string
+  yearMin?: string
   sort?: string
   page?: string
 }
@@ -37,7 +38,9 @@ export default async function NewVehiclesPage({
   const transmission = searchParams.transmission
   const priceMin = searchParams.priceMin ? parseInt(searchParams.priceMin) : undefined
   const priceMax = searchParams.priceMax ? parseInt(searchParams.priceMax) : undefined
-  const sort = searchParams.sort || 'newest'
+  const yearMin = searchParams.yearMin ? parseInt(searchParams.yearMin) : undefined
+  // Default to price ascending when filtering by brand (guide d'achat)
+  const sort = searchParams.sort || (brand ? 'price-asc' : 'newest')
   const page = searchParams.page ? parseInt(searchParams.page) : 1
   const itemsPerPage = 12
 
@@ -50,6 +53,7 @@ export default async function NewVehiclesPage({
       models:model_id (name),
       promotions (discount_percentage, is_active)
     `, { count: 'exact' })
+    .eq('is_available', true)
 
   // Apply filters
   if (brand) query = query.eq('brand_id', brand)
@@ -69,6 +73,7 @@ export default async function NewVehiclesPage({
   if (transmission) query = query.eq('transmission', transmission)
   if (priceMin) query = query.gte('price_min', priceMin)
   if (priceMax) query = query.lte('price_max', priceMax)
+  if (yearMin) query = query.gte('year', yearMin)
 
   // Apply sorting
   switch (sort) {
@@ -251,44 +256,69 @@ export default async function NewVehiclesPage({
                 </div>
 
                 {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex justify-center gap-2">
-                    {page > 1 && (
-                      <Link
-                        href={`?${new URLSearchParams({ ...searchParams, page: (page - 1).toString() }).toString()}`}
-                        className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold transition-all duration-300"
-                      >
-                        Précédent
-                      </Link>
-                    )}
+                {totalPages > 1 && (() => {
+                  // Sliding window: show 5 pages centered on current page
+                  const windowSize = 5
+                  let startPage = Math.max(1, page - Math.floor(windowSize / 2))
+                  const endPage = Math.min(totalPages, startPage + windowSize - 1)
+                  startPage = Math.max(1, endPage - windowSize + 1)
 
-                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                      const pageNum = i + 1
-                      return (
+                  const buildHref = (p: number) =>
+                    `?${new URLSearchParams({ ...searchParams, page: p.toString() }).toString()}`
+
+                  return (
+                    <div className="flex justify-center gap-2">
+                      {page > 1 && (
                         <Link
-                          key={pageNum}
-                          href={`?${new URLSearchParams({ ...searchParams, page: pageNum.toString() }).toString()}`}
-                          className={`px-4 py-2 rounded-md transition-all duration-300 ${
-                            pageNum === page
-                              ? 'bg-secondary text-white font-semibold shadow-gold ring-2 ring-secondary/50'
-                              : 'bg-white border border-gray-200 text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold'
-                          }`}
+                          href={buildHref(page - 1)}
+                          className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold transition-all duration-300"
                         >
-                          {pageNum}
+                          Précédent
                         </Link>
-                      )
-                    })}
+                      )}
 
-                    {page < totalPages && (
-                      <Link
-                        href={`?${new URLSearchParams({ ...searchParams, page: (page + 1).toString() }).toString()}`}
-                        className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold transition-all duration-300"
-                      >
-                        Suivant
-                      </Link>
-                    )}
-                  </div>
-                )}
+                      {startPage > 1 && (
+                        <>
+                          <Link href={buildHref(1)} className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold transition-all duration-300">1</Link>
+                          {startPage > 2 && <span className="px-2 py-2 text-gray-400">…</span>}
+                        </>
+                      )}
+
+                      {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+                        const pageNum = startPage + i
+                        return (
+                          <Link
+                            key={pageNum}
+                            href={buildHref(pageNum)}
+                            className={`px-4 py-2 rounded-md transition-all duration-300 ${
+                              pageNum === page
+                                ? 'bg-secondary text-white font-semibold shadow-gold ring-2 ring-secondary/50'
+                                : 'bg-white border border-gray-200 text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold'
+                            }`}
+                          >
+                            {pageNum}
+                          </Link>
+                        )
+                      })}
+
+                      {endPage < totalPages && (
+                        <>
+                          {endPage < totalPages - 1 && <span className="px-2 py-2 text-gray-400">…</span>}
+                          <Link href={buildHref(totalPages)} className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold transition-all duration-300">{totalPages}</Link>
+                        </>
+                      )}
+
+                      {page < totalPages && (
+                        <Link
+                          href={buildHref(page + 1)}
+                          className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold transition-all duration-300"
+                        >
+                          Suivant
+                        </Link>
+                      )}
+                    </div>
+                  )
+                })()}
               </>
             ) : (
               <div className="bg-white rounded-lg p-12 text-center border border-gray-200">
