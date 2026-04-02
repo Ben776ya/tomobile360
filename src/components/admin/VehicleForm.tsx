@@ -71,8 +71,16 @@ export function VehicleForm({
   const [intColor, setIntColor] = useState(vehicle?.interior_color || '')
 
   // Features
-  const [features, setFeatures] = useState<string[]>(vehicle?.features || [])
-  const [safetyFeatures, setSafetyFeatures] = useState<string[]>(vehicle?.safety_features || [])
+  const [features, setFeatures] = useState<string[]>(
+    Array.isArray(vehicle?.features) ? vehicle.features : []
+  )
+  const [safetyFeatures, setSafetyFeatures] = useState<string[]>(
+    Array.isArray(vehicle?.safety_features) ? vehicle.safety_features : []
+  )
+  // Preserve structured features object (from CSV import) — don't overwrite with array on edit
+  const [structuredFeatures] = useState<Record<string, unknown> | null>(
+    vehicle?.features && !Array.isArray(vehicle.features) ? vehicle.features as Record<string, unknown> : null
+  )
   const [newFeature, setNewFeature] = useState('')
   const [newSafety, setNewSafety] = useState('')
 
@@ -207,7 +215,7 @@ export function VehicleForm({
       cargo_capacity: numOrNull(cargo),
       exterior_color: extColor || undefined,
       interior_color: intColor || undefined,
-      features: features,
+      features: features.length > 0 ? features : (structuredFeatures ?? []),
       safety_features: safetyFeatures,
       images: images,
       is_available: isAvailable,
