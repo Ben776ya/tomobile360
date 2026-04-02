@@ -34,3 +34,8 @@ export function formatRelativeTime(date: Date | string): string {
   if (seconds < 31536000) return `Il y a ${Math.floor(seconds / 2592000)} mois`
   return `Il y a ${Math.floor(seconds / 31536000)} ans`
 }
+
+/** Safely serialize JSON-LD — prevents </script> injection */
+export function safeJsonLd(data: Record<string, unknown>): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c')
+}

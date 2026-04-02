@@ -1,5 +1,23 @@
 import { z } from 'zod'
 
+// === Article Schemas ===
+
+export const ArticleSchema = z.object({
+  title: z.string().min(1, 'Titre requis').max(255, 'Titre trop long'),
+  slug: z.string().min(1, 'Slug requis').max(255).regex(/^[a-z0-9-]+$/, 'Slug invalide (lettres minuscules, chiffres, tirets)'),
+  excerpt: z.string().max(500, 'Résumé trop long').default(''),
+  content: z.string().min(1, 'Contenu requis').max(500000, 'Contenu trop volumineux'),
+  featured_image: z.string().nullable().optional(),
+  category: z.string().min(1, 'Catégorie requise').refine(
+    (val) => ['morocco', 'international', 'market', 'review', 'news'].includes(val),
+    { message: 'Catégorie invalide' }
+  ),
+  tags: z.array(z.string().max(50)).max(20, 'Maximum 20 tags').default([]),
+  is_published: z.boolean(),
+})
+
+export type ArticleInput = z.infer<typeof ArticleSchema>
+
 // === Admin Update Schemas ===
 
 export const UpdateVideoSchema = z.object({
@@ -54,13 +72,13 @@ export const UpdateVehicleSchema = z.object({
 
 export const UpdatePromotionSchema = z.object({
   vehicle_id: z.string().uuid().optional(),
-  title: z.string().min(1).optional(),
-  description: z.string().nullable().optional(),
-  discount_percentage: z.number().nullable().optional(),
-  discount_amount: z.number().nullable().optional(),
+  title: z.string().min(1).max(255).optional(),
+  description: z.string().max(2000).nullable().optional(),
+  discount_percentage: z.number().min(0).max(100).nullable().optional(),
+  discount_amount: z.number().min(0).nullable().optional(),
   valid_from: z.string().optional(),
   valid_until: z.string().optional(),
-  terms: z.string().nullable().optional(),
+  terms: z.string().max(5000).nullable().optional(),
   is_active: z.boolean().optional(),
 }).strict()
 

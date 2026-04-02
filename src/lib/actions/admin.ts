@@ -4,8 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 import type { CoupDeCoeurCategory } from '@/lib/types'
-import type { UpdateVideoInput, UpdateVehicleInput, UpdatePromotionInput } from '@/lib/validations'
-import { validateAction, UpdateVideoSchema, UpdateVehicleSchema, UpdatePromotionSchema } from '@/lib/validations'
+import type { UpdateVideoInput, UpdateVehicleInput, UpdatePromotionInput, ArticleInput } from '@/lib/validations'
+import { validateAction, UpdateVideoSchema, UpdateVehicleSchema, UpdatePromotionSchema, ArticleSchema } from '@/lib/validations'
 
 // Check if user is admin
 async function checkAdmin() {
@@ -45,6 +45,9 @@ export async function createArticle(data: {
   const adminCheck = await checkAdmin()
   if (adminCheck.error) return { error: adminCheck.error }
 
+  const validated = validateAction(ArticleSchema, data)
+  if (!validated.success) return { error: validated.error }
+
   const supabase = await createClient()
 
   const { data: article, error } = await supabase
@@ -83,6 +86,9 @@ export async function updateArticle(id: string, data: {
 }) {
   const adminCheck = await checkAdmin()
   if (adminCheck.error) return { error: adminCheck.error }
+
+  const validated = validateAction(ArticleSchema, data)
+  if (!validated.success) return { error: validated.error }
 
   const supabase = await createClient()
 
@@ -411,6 +417,17 @@ export async function createPromotion(data: {
 }) {
   const adminCheck = await checkAdmin()
   if (adminCheck.error) return { error: adminCheck.error }
+
+  // Validate discount bounds
+  if (data.discount_percentage != null && (data.discount_percentage < 0 || data.discount_percentage > 100)) {
+    return { error: 'Le pourcentage de réduction doit être entre 0 et 100' }
+  }
+  if (data.discount_amount != null && data.discount_amount < 0) {
+    return { error: 'Le montant de réduction doit être positif' }
+  }
+  if (data.valid_from && data.valid_until && data.valid_from > data.valid_until) {
+    return { error: 'La date de début doit précéder la date de fin' }
+  }
 
   const supabase = await createClient()
 

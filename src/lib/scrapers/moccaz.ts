@@ -1,5 +1,10 @@
 import * as cheerio from 'cheerio'
 
+/** Strip HTML tags and limit length for scraped text */
+function cleanText(text: string, maxLen = 200): string {
+  return text.replace(/<[^>]*>/g, '').trim().slice(0, maxLen)
+}
+
 export type MoccazListing = {
   title: string
   subtitle: string
@@ -123,15 +128,15 @@ export async function getMoccazListings(): Promise<MoccazListing[]> {
       const price = priceNumber ? `${priceNumber} ${priceCurrency}` : ''
 
       result.push({
-        title,
-        subtitle,
-        year,
-        power,
-        mileage,
-        gearbox,
-        fuel,
-        price,
-        slug,
+        title: cleanText(title),
+        subtitle: cleanText(subtitle),
+        year: cleanText(year, 20),
+        power: cleanText(power, 50),
+        mileage: cleanText(mileage, 50),
+        gearbox: cleanText(gearbox, 50),
+        fuel: cleanText(fuel, 50),
+        price: cleanText(price, 50),
+        slug: slug.slice(0, 200),
         url: href.startsWith('http') ? href : `${BASE_URL}${href}`,
         image,
       })

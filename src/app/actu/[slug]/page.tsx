@@ -6,7 +6,7 @@ import { ChevronLeft, Calendar, Clock, Share2, Facebook, Twitter } from 'lucide-
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { formatRelativeTime } from '@/lib/utils'
+import { formatRelativeTime, safeJsonLd } from '@/lib/utils'
 import sanitizeHtml from 'sanitize-html'
 
 export const revalidate = 30
@@ -115,7 +115,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: safeJsonLd({
             '@context': 'https://schema.org',
             '@graph': [
               {
@@ -231,8 +231,12 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2']),
                         allowedAttributes: {
                           ...sanitizeHtml.defaults.allowedAttributes,
-                          img: ['src', 'alt', 'width', 'height', 'loading'],
+                          img: ['src', 'alt', 'width', 'height'],
+                          a: ['href', 'target', 'rel'],
                         },
+                        allowedSchemes: ['http', 'https'],
+                        disallowedTagsMode: 'discard',
+                        allowedIframeHostnames: [],
                       }),
                     }}
                   />

@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Eye } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { formatPrice } from '@/lib/utils'
+import { formatPrice, safeJsonLd } from '@/lib/utils'
 import { VehicleSpecs } from '@/components/vehicles/VehicleSpecs'
 import { ImageGallery } from '@/components/vehicles/ImageGallery'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
@@ -87,7 +87,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
     .eq('id', params.id)
     .single()
 
-  if (!vehicle) {
+  if (!vehicle || !vehicle.is_available) {
     notFound()
   }
 
@@ -311,7 +311,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: safeJsonLd({
               '@context': 'https://schema.org',
               '@graph': [
                 {

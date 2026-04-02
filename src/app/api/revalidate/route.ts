@@ -38,9 +38,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Path is required' }, { status: 400 })
     }
 
-    // Validate path format
-    if (!path.startsWith('/')) {
+    // Validate path format and whitelist
+    const ALLOWED_PREFIXES = ['/', '/actu', '/neuf', '/occasion', '/videos', '/coups-de-coeur', '/forum', '/services', '/admin']
+    if (!path.startsWith('/') || path.includes('..') || path.length > 255) {
       return NextResponse.json({ error: 'Invalid path format' }, { status: 400 })
+    }
+    if (!ALLOWED_PREFIXES.some(prefix => path === prefix || path.startsWith(prefix + '/'))) {
+      return NextResponse.json({ error: 'Path not allowed' }, { status: 400 })
     }
 
     revalidatePath(path)
