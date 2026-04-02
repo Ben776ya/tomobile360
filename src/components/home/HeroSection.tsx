@@ -197,13 +197,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
       {/* Dark gradient overlay — left darker, right lighter so car is visible */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20 pointer-events-none" />
 
-      {/* Bottom wave transition — high on left (search side), low on right */}
-      <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden leading-none">
-        <svg viewBox="0 0 1440 72" preserveAspectRatio="none" className="w-full block h-12">
-          <path d="M0,18 C400,68 1040,0 1440,52 L1440,72 L0,72 Z" className="fill-background" />
-        </svg>
-      </div>
-
       {/* Content */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10 pt-6 lg:pt-8 pb-14 lg:pb-16">
         {/* Search panel — dark overlay card anchored left */}

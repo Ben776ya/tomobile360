@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface BrandCarouselProps {
   brands: Array<{
@@ -58,9 +59,6 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
     ? [...visibleBrands, ...brands.slice(0, brandsPerPage - visibleBrands.length)]
     : visibleBrands
 
-  const totalPages = Math.ceil(brands.length / brandsPerPage)
-  const currentPage = Math.floor(currentIndex / brandsPerPage)
-
   return (
     <section
       className="pt-1 pb-4 md:pb-6"
@@ -83,7 +81,18 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
             )}
 
             {/* Carousel */}
-            <div className="relative">
+            <div className="relative flex items-center gap-3 sm:gap-4">
+              {/* Previous */}
+              <button
+                onClick={() => setCurrentIndex((prev) =>
+                  prev === 0 ? Math.max(0, brands.length - brandsPerPage) : Math.max(0, prev - brandsPerPage)
+                )}
+                className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-secondary hover:text-secondary transition-all duration-200"
+                aria-label="Marques précédentes"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+
               {/* Brands Container */}
               <div className="flex-1">
                 <div
@@ -120,23 +129,16 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
                 </div>
               </div>
 
-              {/* Dot indicators */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-5">
-                  {Array.from({ length: totalPages }, (_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setCurrentIndex(i * brandsPerPage)}
-                      className={`rounded-full transition-all duration-300 ${
-                        i === currentPage
-                          ? 'w-6 h-2 bg-secondary'
-                          : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
-                      }`}
-                      aria-label={`Page ${i + 1}`}
-                    />
-                  ))}
-                </div>
-              )}
+              {/* Next */}
+              <button
+                onClick={() => setCurrentIndex((prev) =>
+                  prev + brandsPerPage >= brands.length ? 0 : prev + brandsPerPage
+                )}
+                className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-secondary hover:text-secondary transition-all duration-200"
+                aria-label="Marques suivantes"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
         </div>
