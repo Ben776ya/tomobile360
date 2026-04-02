@@ -14,6 +14,7 @@ export const metadata = {
 
 interface SearchParams {
   brand?: string
+  model?: string
   category?: string
   fuel?: string
   transmission?: string
@@ -33,6 +34,7 @@ export default async function NewVehiclesPage({
 
   // Parse filters
   const brand = searchParams.brand
+  const model = searchParams.model
   const category = searchParams.category
   const fuel = searchParams.fuel
   const transmission = searchParams.transmission
@@ -57,6 +59,7 @@ export default async function NewVehiclesPage({
 
   // Apply filters
   if (brand) query = query.eq('brand_id', brand)
+  if (model) query = query.eq('model_id', model)
   if (category) {
     // Filter by model category
     const { data: categoryModels } = await supabase
@@ -103,9 +106,11 @@ export default async function NewVehiclesPage({
   const [
     { data: brands },
     { data: categories },
+    { data: allModels },
   ] = await Promise.all([
     supabase.from('brands').select('id, name, logo_url, description, created_at').order('name'),
     supabase.from('models').select('category').order('category'),
+    supabase.from('models').select('id, brand_id, name, category').order('name'),
   ])
 
   // Get unique categories
@@ -116,12 +121,40 @@ export default async function NewVehiclesPage({
   const totalPages = count ? Math.ceil(count / itemsPerPage) : 0
 
   const quickFilters = [
-    { label: 'Moins de 100 000 DH', params: 'priceMax=100000' },
-    { label: 'SUV / 4x4', params: 'category=SUV' },
-    { label: 'Électrique', params: 'fuel=Electric' },
-    { label: `Récent (< 3 ans)`, params: `yearMin=${new Date().getFullYear() - 3}` },
-    { label: 'Moins de 200 000 DH', params: 'priceMax=200000' },
+    { label: 'Moins de 100 000 DH', key: 'priceMax', value: '100000' },
+    { label: 'SUV / 4x4', key: 'category', value: 'SUV' },
+    { label: 'Électrique', key: 'fuel', value: 'Electric' },
+    { label: `Récent (< 3 ans)`, key: 'yearMin', value: `${new Date().getFullYear() - 3}` },
+    { label: 'Moins de 200 000 DH', key: 'priceMax', value: '200000' },
   ]
+
+  // Build quick filter hrefs that preserve existing filters
+  const buildQuickFilterHref = (key: string, value: string) => {
+    const params = new URLSearchParams()
+    // Preserve existing filters
+    if (brand) params.set('brand', brand)
+    if (model) params.set('model', model)
+    if (category && key !== 'category') params.set('category', category)
+    if (fuel && key !== 'fuel') params.set('fuel', fuel)
+    if (transmission) params.set('transmission', transmission)
+    if (priceMin && key !== 'priceMax' && key !== 'priceMin') params.set('priceMin', priceMin.toString())
+    if (priceMax && key !== 'priceMax' && key !== 'priceMin') params.set('priceMax', priceMax.toString())
+    if (yearMin && key !== 'yearMin') params.set('yearMin', yearMin.toString())
+    if (searchParams.sort) params.set('sort', searchParams.sort)
+    // Toggle: if already active, remove it; otherwise set it
+    const currentValue = searchParams[key as keyof SearchParams]
+    if (currentValue !== value) {
+      params.set(key, value)
+    }
+    // Reset page
+    return `/neuf?${params.toString()}`
+  }
+
+  const isQuickFilterActive = (key: string, value: string) => {
+    return searchParams[key as keyof SearchParams] === value
+  }
+
+  const activeFilterCount = [brand, model, category, fuel, transmission, priceMin, priceMax, yearMin].filter(Boolean).length
 
   return (
     <div className="min-h-screen bg-background">
@@ -142,14 +175,21 @@ export default async function NewVehiclesPage({
               <span className="flex items-center gap-2">
                 <SlidersHorizontal className="h-5 w-5 text-[#006EFE]" />
                 Filtres
+                {activeFilterCount > 0 && (
+                  <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-[#006EFE] rounded-full">
+                    {activeFilterCount}
+                  </span>
+                )}
               </span>
             </summary>
             <div className="border-t border-gray-200">
               <VehicleFilters
                 brands={brands || []}
+                models={allModels || []}
                 categories={uniqueCategories}
                 currentFilters={{
                   brand,
+                  model,
                   category,
                   fuel,
                   transmission,
@@ -167,9 +207,11 @@ export default async function NewVehiclesPage({
           <aside className="hidden lg:block lg:col-span-1">
             <VehicleFilters
               brands={brands || []}
+              models={allModels || []}
               categories={uniqueCategories}
               currentFilters={{
                 brand,
+                model,
                 category,
                 fuel,
                 transmission,
@@ -190,15 +232,22 @@ export default async function NewVehiclesPage({
 
             {/* Quick-filter pills */}
             <div className="flex flex-wrap gap-2 mb-6">
-              {quickFilters.map((f) => (
-                <Link
-                  key={f.params}
-                  href={`/neuf?${f.params}`}
-                  className="px-4 py-1.5 text-sm font-medium rounded-full border border-gray-200 text-gray-600 hover:border-[#006EFE] hover:text-[#006EFE] hover:bg-[#006EFE]/5 transition-all duration-150"
-                >
-                  {f.label}
-                </Link>
-              ))}
+              {quickFilters.map((f) => {
+                const active = isQuickFilterActive(f.key, f.value)
+                return (
+                  <Link
+                    key={`${f.key}-${f.value}`}
+                    href={buildQuickFilterHref(f.key, f.value)}
+                    className={`px-4 py-1.5 text-sm font-medium rounded-full border transition-all duration-150 ${
+                      active
+                        ? 'border-[#006EFE] bg-[#006EFE] text-white'
+                        : 'border-gray-200 text-gray-600 hover:border-[#006EFE] hover:text-[#006EFE] hover:bg-[#006EFE]/5'
+                    }`}
+                  >
+                    {f.label}
+                  </Link>
+                )
+              })}
             </div>
 
             {/* Results Header */}
