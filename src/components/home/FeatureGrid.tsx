@@ -155,9 +155,9 @@ export function FeatureGrid() {
   }
 
   return (
-    <section className="py-6 bg-muted/50">
+    <section className="relative -mt-4 sm:-mt-6 z-20 pt-0 pb-6">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
           {features.map((feature) => {
             const isExpandCard = feature.action === 'expand'
             const isActive = isExpandCard && (

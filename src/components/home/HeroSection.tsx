@@ -176,11 +176,11 @@ export function HeroSection({ brands }: HeroSectionProps) {
     router.push(`/neuf?${params.toString()}`)
   }
 
-  const selectClassName = 'w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white focus:border-[#006EFE] focus:ring-1 focus:ring-[#006EFE]/40 outline-none transition-all duration-200 appearance-none cursor-pointer placeholder-white/50'
+  const selectClassName = 'w-full px-2.5 py-2 bg-white/10 border border-white/20 rounded-xl text-xs text-white focus:border-[#006EFE] focus:ring-1 focus:ring-[#006EFE]/40 outline-none transition-all duration-200 appearance-none cursor-pointer placeholder-white/50'
   const sliderThumbClass = 'absolute w-full h-6 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#006EFE] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#006EFE] [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer'
 
   return (
-    <section className="relative min-h-[50vh] sm:min-h-[62vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[50vh] sm:min-h-[60vh] flex items-center overflow-hidden">
 
       {/* Static hero background */}
       <div className="absolute inset-0">
@@ -199,29 +199,29 @@ export function HeroSection({ brands }: HeroSectionProps) {
 
       {/* Bottom wave transition — high on left (search side), low on right */}
       <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden leading-none">
-        <svg viewBox="0 0 1440 72" preserveAspectRatio="none" className="w-full block h-16">
+        <svg viewBox="0 0 1440 72" preserveAspectRatio="none" className="w-full block h-12">
           <path d="M0,18 C400,68 1040,0 1440,52 L1440,72 L0,72 Z" className="fill-background" />
         </svg>
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 lg:px-8 relative z-10 py-12 lg:py-16">
+      <div className="container mx-auto px-4 lg:px-8 relative z-10 pt-8 lg:pt-10 pb-16 lg:pb-20">
         {/* Search panel — dark overlay card anchored left */}
-        <div className="w-full max-w-xl bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-xl bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 p-3 sm:p-5 lg:p-6">
 
           {/* Title */}
-          <h1 className="font-display text-2xl lg:text-3xl font-bold text-white leading-tight mb-1">
+          <h1 className="font-display text-xl lg:text-2xl font-bold text-white leading-tight mb-0.5">
             Trouvez la voiture idéale au Maroc
           </h1>
-          <p className="text-white/60 text-sm mb-5">
+          <p className="text-white/60 text-xs mb-3">
             Neuf et occasion — comparez les prix, faites le bon choix
           </p>
 
           {/* NEUF / OCCASION Toggle */}
-          <div className="inline-flex rounded-xl bg-white/10 p-1 mb-5">
+          <div className="inline-flex rounded-xl bg-white/10 p-1 mb-3">
             <button
               onClick={() => setVehicleCondition('neuf')}
-              className={`px-4 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+              className={`px-4 sm:px-5 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                 vehicleCondition === 'neuf'
                   ? 'bg-[#006EFE] text-white shadow-sm'
                   : 'text-white/70 hover:text-white'
@@ -231,7 +231,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
             </button>
             <button
               onClick={() => setVehicleCondition('occasion')}
-              className={`px-4 sm:px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+              className={`px-4 sm:px-5 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                 vehicleCondition === 'occasion'
                   ? 'bg-[#006EFE] text-white shadow-sm'
                   : 'text-white/70 hover:text-white'
@@ -242,31 +242,31 @@ export function HeroSection({ brands }: HeroSectionProps) {
           </div>
 
           {/* Vehicle Type Icons */}
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-4">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 mb-3">
             {vehicleTypes.map((type) => (
               <button
                 key={type.id}
                 onClick={() => setSelectedType(selectedType === type.id ? '' : type.id)}
-                className={`flex flex-col items-center py-1.5 px-1 rounded-lg transition-all duration-200 border ${
+                className={`flex flex-col items-center py-1 px-1 rounded-lg transition-all duration-200 border ${
                   selectedType === type.id
                     ? 'bg-[#006EFE]/20 text-[#006EFE] border-[#006EFE]/50 scale-[1.03]'
                     : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-white hover:border-white/25'
                 }`}
               >
-                <div className="w-5 h-5 flex items-center justify-center">
+                <div className="w-4 h-4 flex items-center justify-center">
                   {type.id === 'Utilitaire' ? (
-                    <Truck className="w-4 h-4" />
+                    <Truck className="w-3.5 h-3.5" />
                   ) : (
-                    <Car className="w-4 h-4" />
+                    <Car className="w-3.5 h-3.5" />
                   )}
                 </div>
-                <span className="text-[9px] font-medium leading-tight mt-0.5">{type.label}</span>
+                <span className="text-[8px] font-medium leading-tight mt-0.5">{type.label}</span>
               </button>
             ))}
           </div>
 
           {/* Filter Dropdowns */}
-          <div className="grid grid-cols-2 gap-2 mb-4">
+          <div className="grid grid-cols-2 gap-1.5 mb-3">
             <select
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
@@ -311,7 +311,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
           </div>
 
           {/* Price Slider + Search Button */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             {/* Price Range Slider */}
             <div>
               <div className="flex justify-between items-center mb-1.5">
@@ -358,7 +358,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
               )}
               <button
                 onClick={handleSearch}
-                className="w-full px-8 py-3 bg-[#006EFE] hover:bg-[#005BD4] text-white font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 justify-center"
+                className="w-full px-6 py-2.5 bg-[#006EFE] hover:bg-[#005BD4] text-white text-sm font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 justify-center"
               >
                 <Search className="h-4 w-4" />
                 Rechercher
