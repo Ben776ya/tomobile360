@@ -155,9 +155,9 @@ export function FeatureGrid() {
   }
 
   return (
-    <section className="relative -mt-4 sm:-mt-6 z-20 pt-0 pb-6">
+    <section className="relative -mt-8 sm:-mt-10 z-20 pt-0 pb-4">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 bg-white/90 backdrop-blur-sm rounded-2xl p-3 shadow-lg">
           {features.map((feature) => {
             const isExpandCard = feature.action === 'expand'
             const isActive = isExpandCard && (
@@ -170,30 +170,30 @@ export function FeatureGrid() {
               <>
                 <div
                   data-icon
-                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-all duration-200"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center mb-2 transition-all duration-200"
                   style={{
                     backgroundColor: isActive ? c : `${c}18`,
                     color: isActive ? '#fff' : c,
                   }}
                 >
-                  <feature.icon className="h-5 w-5" />
+                  <feature.icon className="h-4 w-4" />
                 </div>
-                <h3 className="font-bold font-display text-base mb-1 text-primary transition-colors duration-200">
+                <h3 className="font-bold font-display text-sm mb-0.5 text-primary transition-colors duration-200">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-gray-500 leading-snug">{feature.tagline}</p>
+                <p className="text-xs text-gray-500 leading-snug">{feature.tagline}</p>
                 <div
                   data-cta
-                  className="mt-4 flex items-center gap-1 text-sm font-medium transition-colors duration-200"
+                  className="mt-2 flex items-center gap-1 text-xs font-medium transition-colors duration-200"
                   style={{ color: isActive ? c : '#9ca3af' }}
                 >
                   <span>{isExpandCard ? (isActive ? 'Fermer' : 'Ouvrir') : 'Voir'}</span>
-                  <ChevronRight className="h-3.5 w-3.5" />
+                  <ChevronRight className="h-3 w-3" />
                 </div>
               </>
             )
 
-            const cardClass = `group p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex flex-col cursor-pointer ${
+            const cardClass = `group p-3 sm:p-4 rounded-2xl border transition-all duration-200 flex flex-col cursor-pointer ${
               isActive ? 'border-opacity-30 shadow-md' : 'border-gray-200 hover:-translate-y-0.5 hover:shadow-md'
             }`
 

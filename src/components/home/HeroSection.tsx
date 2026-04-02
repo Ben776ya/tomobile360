@@ -180,7 +180,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
   const sliderThumbClass = 'absolute w-full h-6 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#006EFE] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#006EFE] [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer'
 
   return (
-    <section className="relative min-h-[50vh] sm:min-h-[60vh] flex items-center overflow-hidden">
+    <section className="relative flex items-center overflow-hidden">
 
       {/* Static hero background */}
       <div className="absolute inset-0">
@@ -205,20 +205,20 @@ export function HeroSection({ brands }: HeroSectionProps) {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 lg:px-8 relative z-10 pt-8 lg:pt-10 pb-16 lg:pb-20">
+      <div className="container mx-auto px-4 lg:px-8 relative z-10 pt-6 lg:pt-8 pb-14 lg:pb-16">
         {/* Search panel — dark overlay card anchored left */}
-        <div className="w-full max-w-xl bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 p-3 sm:p-5 lg:p-6">
+        <div className="w-full max-w-xl bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 p-3 sm:p-4 lg:p-5">
 
           {/* Title */}
-          <h1 className="font-display text-xl lg:text-2xl font-bold text-white leading-tight mb-0.5">
+          <h1 className="font-display text-lg lg:text-xl font-bold text-white leading-tight mb-0.5">
             Trouvez la voiture idéale au Maroc
           </h1>
-          <p className="text-white/60 text-xs mb-3">
+          <p className="text-white/60 text-[11px] mb-2">
             Neuf et occasion — comparez les prix, faites le bon choix
           </p>
 
           {/* NEUF / OCCASION Toggle */}
-          <div className="inline-flex rounded-xl bg-white/10 p-1 mb-3">
+          <div className="inline-flex rounded-xl bg-white/10 p-0.5 mb-2">
             <button
               onClick={() => setVehicleCondition('neuf')}
               className={`px-4 sm:px-5 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
@@ -242,7 +242,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
           </div>
 
           {/* Vehicle Type Icons */}
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 mb-3">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-1 mb-2">
             {vehicleTypes.map((type) => (
               <button
                 key={type.id}
@@ -266,7 +266,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
           </div>
 
           {/* Filter Dropdowns */}
-          <div className="grid grid-cols-2 gap-1.5 mb-3">
+          <div className="grid grid-cols-2 gap-1.5 mb-2">
             <select
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
@@ -311,10 +311,10 @@ export function HeroSection({ brands }: HeroSectionProps) {
           </div>
 
           {/* Price Slider + Search Button */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5">
             {/* Price Range Slider */}
             <div>
-              <div className="flex justify-between items-center mb-1.5">
+              <div className="flex justify-between items-center mb-1">
                 <span className="text-xs font-medium text-white/70">{formatPrice(priceRange[0])}</span>
                 <span className="text-xs font-medium text-white/40">Prix</span>
                 <span className="text-xs font-medium text-white/70">{formatPrice(priceRange[1])}</span>
@@ -350,7 +350,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
             </div>
 
             {/* Search Button + Result Count */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               {resultCount !== null && (
                 <p className="text-sm text-white/60 text-center">
                   {resultCount.toLocaleString('fr-FR')} résultat{resultCount !== 1 ? 's' : ''}
@@ -358,7 +358,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
               )}
               <button
                 onClick={handleSearch}
-                className="w-full px-6 py-2.5 bg-[#006EFE] hover:bg-[#005BD4] text-white text-sm font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 justify-center"
+                className="w-full px-6 py-2 bg-[#006EFE] hover:bg-[#005BD4] text-white text-sm font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 justify-center"
               >
                 <Search className="h-4 w-4" />
                 Rechercher
