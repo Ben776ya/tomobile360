@@ -6,12 +6,14 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
 import { VehicleActions } from '@/components/admin/VehicleActions'
+import { BrandFilterSelect } from '@/components/admin/BrandFilterSelect'
 
 export const revalidate = 30
 
 interface SearchParams {
   tab?: string
   page?: string
+  brand?: string
 }
 
 export default async function AdminVehiclesPage({
@@ -24,21 +26,28 @@ export default async function AdminVehiclesPage({
   const tab = searchParams.tab || 'new'
   const page = parseInt(searchParams.page || '1')
   const itemsPerPage = 20
+  const brandFilter = searchParams.brand
 
   // Fetch vehicles based on tab
   let vehicles: any[] = []
   let count = 0
 
   if (tab === 'new') {
-    const { data, count: total } = await supabase
+    let query = supabase
       .from('vehicles_new')
       .select(`
-        id, year, price_min, price_max, is_popular, is_new_release, is_coup_de_coeur, coup_de_coeur_category, is_featured_offer, images, created_at,
+        id, year, price_min, price_max, is_popular, is_new_release, is_coup_de_coeur, coup_de_coeur_category, is_featured_offer, is_available, images, created_at, brand_id,
         brands:brand_id (name, logo_url),
         models:model_id (name)
       `, { count: 'exact' })
       .order('created_at', { ascending: false })
       .range((page - 1) * itemsPerPage, page * itemsPerPage - 1)
+
+    if (brandFilter) {
+      query = query.eq('brand_id', brandFilter)
+    }
+
+    const { data, count: total } = await query
 
     vehicles = data || []
     count = total || 0
@@ -58,7 +67,14 @@ export default async function AdminVehiclesPage({
     count = total || 0
   }
 
+  const { data: allBrands } = await supabase
+    .from('brands')
+    .select('id, name')
+    .order('name', { ascending: true })
+
   const totalPages = Math.ceil(count / itemsPerPage)
+
+  const brandParam = brandFilter ? `&brand=${brandFilter}` : ''
 
   return (
     <>
@@ -107,6 +123,13 @@ export default async function AdminVehiclesPage({
             </Link>
           </div>
         </div>
+
+        {/* Brand Filter */}
+        {tab === 'new' && allBrands && allBrands.length > 0 && (
+          <div className="mb-4">
+            <BrandFilterSelect brands={allBrands} currentBrand={brandFilter} tab={tab} />
+          </div>
+        )}
 
         {/* Vehicles Table */}
         <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
@@ -206,7 +229,11 @@ export default async function AdminVehiclesPage({
                     )}
                     <td className="px-6 py-4">
                       {tab === 'new' ? (
-                        <Badge variant="default">Actif</Badge>
+                        vehicle.is_available ? (
+                          <Badge variant="default">Actif</Badge>
+                        ) : (
+                          <Badge variant="outline" className="border-white/10 text-dark-400">Inactif</Badge>
+                        )
                       ) : vehicle.is_active ? (
                         vehicle.is_sold ? (
                           <Badge variant="secondary">Vendu</Badge>
@@ -263,7 +290,7 @@ export default async function AdminVehiclesPage({
         {totalPages > 1 && (
           <div className="flex justify-center gap-2 mt-6">
             {page > 1 && (
-              <Link href={`/admin/vehicles?tab=${tab}&page=${page - 1}`}>
+              <Link href={`/admin/vehicles?tab=${tab}&page=${page - 1}${brandParam}`}>
                 <Button variant="outline" className="shadow-dark-card hover:shadow-dark-elevated transition-all border-white/10 text-dark-200 hover:text-white">Précédent</Button>
               </Link>
             )}
@@ -271,7 +298,7 @@ export default async function AdminVehiclesPage({
               {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
                 const p = i + 1 + Math.max(0, page - 3)
                 return p <= totalPages ? (
-                  <Link key={p} href={`/admin/vehicles?tab=${tab}&page=${p}`}>
+                  <Link key={p} href={`/admin/vehicles?tab=${tab}&page=${p}${brandParam}`}>
                     <Button variant={p === page ? 'default' : 'outline'} size="sm" className={`shadow-dark-card hover:shadow-dark-elevated transition-all ${p !== page ? 'border-white/10 text-dark-200 hover:text-white' : ''}`}>
                       {p}
                     </Button>
@@ -280,7 +307,7 @@ export default async function AdminVehiclesPage({
               })}
             </div>
             {page < totalPages && (
-              <Link href={`/admin/vehicles?tab=${tab}&page=${page + 1}`}>
+              <Link href={`/admin/vehicles?tab=${tab}&page=${page + 1}${brandParam}`}>
                 <Button variant="outline" className="shadow-dark-card hover:shadow-dark-elevated transition-all border-white/10 text-dark-200 hover:text-white">Suivant</Button>
               </Link>
             )}

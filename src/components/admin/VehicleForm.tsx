@@ -714,7 +714,7 @@ export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps)
 
       {/* Error/Success Messages */}
       {error && (
-        <div className="bg-[#78350f]/30 border border-[#32B75C]/30 text-[#32B75C] text-sm px-4 py-3 rounded-lg">
+        <div className="bg-red-900/30 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
