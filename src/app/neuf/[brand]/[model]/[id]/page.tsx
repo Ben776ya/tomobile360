@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight, Eye } from 'lucide-react'
+import { ChevronRight, Eye } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice, safeJsonLd } from '@/lib/utils'
-import { VehicleSpecs } from '@/components/vehicles/VehicleSpecs'
+import { VehicleSpecs, KeySpecsStrip } from '@/components/vehicles/VehicleSpecs'
 import { ImageGallery } from '@/components/vehicles/ImageGallery'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
 import { ShareButton } from '@/components/shared/ShareButton'
@@ -138,7 +138,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 pb-20 lg:pb-8">
+      <div className="container mx-auto px-6 lg:px-8 py-8 pb-20 lg:pb-8">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm text-gray-500 mb-6 overflow-x-auto scrollbar-hide pb-1">
           <Link href="/" className="hover:text-[#006EFE] transition-colors">Accueil</Link>
@@ -152,17 +152,17 @@ export default async function VehicleDetailPage({ params }: PageProps) {
           <span className="text-gray-800 font-medium">{modelName}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Image Gallery */}
+            {/* Image Gallery Card */}
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden p-4">
               <ImageGallery images={images} alt={`${brandName} ${modelName}`} />
             </div>
 
-            {/* Vehicle Info */}
+            {/* Title + Brand + Badges Card */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     {vehicle.brands?.logo_url && (
@@ -178,11 +178,14 @@ export default async function VehicleDetailPage({ params }: PageProps) {
                       <h1 className="text-3xl font-bold text-primary">
                         {brandName} {modelName}
                       </h1>
-                      <p className="text-gray-400">{vehicle.year}</p>
+                      <p className="text-gray-400">
+                        {vehicle.year}
+                        {vehicle.version && <span> &bull; {vehicle.version}</span>}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2 mb-4">
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
                     {vehicle.is_new_release && (
                       <Badge variant="success">NOUVEAU</Badge>
                     )}
@@ -197,14 +200,10 @@ export default async function VehicleDetailPage({ params }: PageProps) {
                         PROMOTION -{promotion.discount_percentage}%
                       </Badge>
                     )}
-                    <div className="flex items-center gap-1.5 text-sm text-gray-400 ml-1">
-                      <Eye className="h-4 w-4" />
-                      <span>Vu {vehicle.views?.toLocaleString() || 0} fois</span>
-                    </div>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
+                {/* Share Button */}
                 <div className="flex gap-2">
                   <ShareButton
                     url={`/neuf/${params.brand}/${params.model}/${params.id}`}
@@ -213,24 +212,24 @@ export default async function VehicleDetailPage({ params }: PageProps) {
                   />
                 </div>
               </div>
+            </div>
 
-              {/* Version */}
-              {vehicle.version && (
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-primary mb-2">Version</h3>
-                  <p className="text-gray-500">{vehicle.version}</p>
-                </div>
-              )}
+            {/* Key Specs Strip Card — only render if vehicle has key spec data */}
+            {(vehicle.horsepower || vehicle.fuel_type || vehicle.transmission || vehicle.acceleration || vehicle.fuel_consumption_combined || vehicle.co2_emissions) && (
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <KeySpecsStrip vehicle={vehicle} />
+              </div>
+            )}
 
-              {/* Specifications */}
+            {/* Fiche Technique Card */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
               <VehicleSpecs vehicle={vehicle} />
             </div>
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Price Card */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-4">
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-4 shadow-card hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-300">
               <h3 className="text-lg font-semibold text-primary mb-4">Prix</h3>
 
               {promotion ? (
@@ -268,7 +267,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
               )}
 
               <div className="space-y-3">
-                {/* WhatsApp CTA — primary contact */}
+                {/* WhatsApp CTA */}
                 <a
                   href={`https://wa.me/${TOMOBILE_PHONE}?text=${whatsappText}`}
                   target="_blank"
@@ -296,7 +295,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
                 </Link>
               </div>
 
-              {/* Stats */}
+              {/* View Count — single location */}
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <div className="flex items-center gap-1.5 text-sm text-gray-400">
                   <Eye className="h-4 w-4" />

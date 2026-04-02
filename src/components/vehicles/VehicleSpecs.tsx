@@ -5,8 +5,6 @@ import {
   Zap,
   Wind,
   Cog,
-  Users,
-  Package,
   Ruler,
   Shield,
   Sofa,
@@ -14,10 +12,63 @@ import {
   Check,
   X,
   Car,
+  Droplets,
 } from 'lucide-react'
 
 interface VehicleSpecsProps {
   vehicle: VehicleNew
+}
+
+type KeySpec = {
+  icon: any
+  label: string
+  value: string
+}
+
+export function KeySpecsStrip({ vehicle }: VehicleSpecsProps) {
+  const specs: KeySpec[] = []
+
+  if (vehicle.horsepower) {
+    specs.push({ icon: Zap, label: 'Puissance', value: `${vehicle.horsepower} ch` })
+  }
+  if (vehicle.fuel_type) {
+    specs.push({ icon: Fuel, label: 'Carburant', value: vehicle.fuel_type })
+  }
+  if (vehicle.transmission) {
+    specs.push({ icon: Cog, label: 'Boîte', value: vehicle.transmission })
+  }
+  if (vehicle.acceleration) {
+    specs.push({ icon: Gauge, label: '0-100', value: `${vehicle.acceleration}s` })
+  }
+  if (vehicle.fuel_consumption_combined) {
+    specs.push({ icon: Droplets, label: 'Consommation', value: `${vehicle.fuel_consumption_combined} L/100km` })
+  }
+  if (vehicle.co2_emissions) {
+    specs.push({ icon: Wind, label: 'CO2', value: `${vehicle.co2_emissions} g/km` })
+  }
+
+  if (specs.length === 0) return null
+
+  return (
+    <div>
+      <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3">Points Clés</h3>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        {specs.map((spec) => {
+          const Icon = spec.icon
+          return (
+            <div
+              key={spec.label}
+              className="flex flex-col items-center text-center p-3 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl"
+            >
+              <Icon className="h-5 w-5 text-secondary mb-1.5" />
+              <span className="text-xs text-muted-foreground">{spec.label}</span>
+              <span className="text-sm font-bold text-dark-800">{spec.value}</span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
 }
 
 // Icons for each spec category
@@ -134,30 +185,73 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
   }
 
   // Fallback: render from individual columns (legacy data)
-  const legacySpecs = [
+  // Organized into categories matching the structured path visual style
+  const legacyCategories = [
     {
-      category: 'Motorisation',
+      name: 'MOTEUR & PERFORMANCES',
+      icon: Cog,
+      color: 'text-blue-600 bg-blue-50 border-blue-200',
       items: [
-        { icon: Fuel, label: 'Carburant', value: vehicle.fuel_type },
-        { icon: Gauge, label: 'Transmission', value: vehicle.transmission },
-        { icon: Cog, label: 'Cylindrée', value: vehicle.engine_size ? `${vehicle.engine_size}L` : null },
-        { icon: Wind, label: 'Cylindres', value: vehicle.cylinders },
-        { icon: Zap, label: 'Puissance', value: vehicle.horsepower ? `${vehicle.horsepower} ch` : null },
-        { icon: Zap, label: 'Couple', value: vehicle.torque ? `${vehicle.torque} Nm` : null },
-      ].filter((item) => item.value),
+        { label: 'Carburant', value: vehicle.fuel_type },
+        { label: 'Transmission', value: vehicle.transmission },
+        { label: 'Cylindrée', value: vehicle.engine_size ? `${vehicle.engine_size}L` : null },
+        { label: 'Cylindres', value: vehicle.cylinders },
+        { label: 'Puissance', value: vehicle.horsepower ? `${vehicle.horsepower} ch` : null },
+        { label: 'Puissance (kW)', value: vehicle.power_kw ? `${vehicle.power_kw} kW` : null },
+        { label: 'Couple', value: vehicle.torque ? `${vehicle.torque} Nm` : null },
+        { label: '0-100 km/h', value: vehicle.acceleration ? `${vehicle.acceleration}s` : null },
+        { label: 'Vitesse max', value: vehicle.top_speed ? `${vehicle.top_speed} km/h` : null },
+      ].filter((item) => item.value != null),
     },
     {
-      category: 'Capacités',
+      name: 'CONSOMMATION & ÉMISSIONS',
+      icon: Fuel,
+      color: 'text-green-600 bg-green-50 border-green-200',
       items: [
-        { icon: Users, label: 'Places', value: vehicle.seating_capacity },
-        { icon: Package, label: 'Volume coffre', value: vehicle.cargo_capacity ? `${vehicle.cargo_capacity} L` : null },
-      ].filter((item) => item.value),
+        { label: 'Conso. ville', value: vehicle.fuel_consumption_city ? `${vehicle.fuel_consumption_city} L/100km` : null },
+        { label: 'Conso. autoroute', value: vehicle.fuel_consumption_highway ? `${vehicle.fuel_consumption_highway} L/100km` : null },
+        { label: 'Conso. mixte', value: vehicle.fuel_consumption_combined ? `${vehicle.fuel_consumption_combined} L/100km` : null },
+        { label: 'Émissions CO2', value: vehicle.co2_emissions ? `${vehicle.co2_emissions} g/km` : null },
+        { label: 'Norme Euro', value: vehicle.euro_norm },
+      ].filter((item) => item.value != null),
+    },
+    {
+      name: 'DIMENSIONS & CAPACITÉS',
+      icon: Ruler,
+      color: 'text-purple-600 bg-purple-50 border-purple-200',
+      items: [
+        { label: 'Longueur', value: vehicle.dimensions?.length ? `${vehicle.dimensions.length} mm` : null },
+        { label: 'Largeur', value: vehicle.dimensions?.width ? `${vehicle.dimensions.width} mm` : null },
+        { label: 'Hauteur', value: vehicle.dimensions?.height ? `${vehicle.dimensions.height} mm` : null },
+        { label: 'Empattement', value: vehicle.dimensions?.wheelbase ? `${vehicle.dimensions.wheelbase} mm` : null },
+        { label: 'Portes', value: vehicle.doors },
+        { label: 'Places', value: vehicle.seating_capacity },
+        { label: 'Volume coffre', value: vehicle.cargo_capacity ? `${vehicle.cargo_capacity} L` : null },
+      ].filter((item) => item.value != null),
+    },
+    {
+      name: 'APPARENCE',
+      icon: Paintbrush,
+      color: 'text-amber-600 bg-amber-50 border-amber-200',
+      items: [
+        { label: 'Couleur extérieure', value: vehicle.exterior_color },
+        { label: 'Couleur intérieure', value: vehicle.interior_color },
+      ].filter((item) => item.value != null),
+    },
+    {
+      name: 'GARANTIE & DIVERS',
+      icon: Shield,
+      color: 'text-[#d4921f] bg-[#fef3c7] border-[#fde68a]',
+      items: [
+        { label: 'Garantie', value: vehicle.warranty_months ? `${vehicle.warranty_months} mois` : null },
+        { label: 'TVA déductible', value: vehicle.vat_deductible != null ? vehicle.vat_deductible : null },
+      ].filter((item) => item.value != null),
     },
   ]
 
-  const visibleSpecs = legacySpecs.filter((cat) => cat.items.length > 0)
+  const visibleCategories = legacyCategories.filter((cat) => cat.items.length > 0)
 
-  if (visibleSpecs.length === 0) {
+  if (visibleCategories.length === 0) {
     return (
       <div className="p-4 bg-muted rounded-md">
         <p className="text-sm text-muted-foreground text-center">
@@ -168,29 +262,59 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <h3 className="text-xl font-semibold">Spécifications Techniques</h3>
-      {visibleSpecs.map((category) => (
-        <div key={category.category}>
-          <h4 className="text-lg font-semibold text-primary mb-3">{category.category}</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {category.items.map((item, index) => {
-              const Icon = item.icon
-              return (
-                <div key={index} className="flex items-center gap-3 p-3 bg-muted/50 rounded-md">
-                  <div className="flex-shrink-0 w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-accent" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">{item.label}</p>
-                    <p className="font-semibold">{item.value}</p>
-                  </div>
+    <div className="space-y-8">
+      <h3 className="text-xl font-semibold text-slate-700">Fiche Technique</h3>
+
+      {visibleCategories.map((category) => {
+        const Icon = category.icon
+        const colorClasses = category.color.split(' ')
+
+        return (
+          <div key={category.name} className="border border-border rounded-xl overflow-hidden">
+            {/* Category Header */}
+            <div className={`flex items-center gap-3 px-5 py-3.5 ${colorClasses[1]} border-b ${colorClasses[2]}`}>
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${colorClasses[1]}`}>
+                <Icon className={`h-5 w-5 ${colorClasses[0]}`} />
+              </div>
+              <h4 className={`text-base font-bold ${colorClasses[0]}`}>
+                {category.name}
+              </h4>
+            </div>
+
+            {/* Spec Rows */}
+            <div className="divide-y divide-border">
+              {category.items.map((item, index) => (
+                <div
+                  key={item.label}
+                  className={`flex items-center justify-between px-5 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}
+                >
+                  <span className="text-sm text-muted-foreground">{item.label}</span>
+                  <span className="text-sm text-right max-w-[60%]">
+                    {renderValue(item.value)}
+                  </span>
                 </div>
-              )
-            })}
+              ))}
+            </div>
           </div>
+        )
+      })}
+
+      {/* Source URL if available */}
+      {vehicle.source_url && (
+        <div className="pt-4 border-t border-border">
+          <p className="text-xs text-muted-foreground">
+            Source:{' '}
+            <a
+              href={vehicle.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:underline"
+            >
+              Voir la fiche complète
+            </a>
+          </p>
         </div>
-      ))}
+      )}
     </div>
   )
 }
