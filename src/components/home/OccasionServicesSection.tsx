@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Car, Calculator, Search, Gauge, Calendar, Fuel, ChevronRight, Zap, GitFork, ExternalLink } from 'lucide-react'
 import { getMoccazListings, type MoccazListing } from '@/lib/scrapers/moccaz'
+import { MobileCarousel } from '@/components/shared/MobileCarousel'
 
 const serviceButtons = [
   { href: '/occasion', label: 'Parcourir les annonces', icon: Search, external: false },
@@ -145,7 +146,7 @@ export async function OccasionServicesSection() {
           </div>
 
           {/* 4-column grid: 3 live car cards + 1 ad banner */}
-          <div className="grid grid-cols-4 gap-4 mb-7">
+          <MobileCarousel desktopClassName="grid grid-cols-4 gap-4 mb-7" autoPlayMs={4000}>
             {featured.map((listing) => (
               <MOccazCard key={listing.slug} listing={listing} />
             ))}
@@ -165,10 +166,13 @@ export async function OccasionServicesSection() {
                 sizes="246px"
               />
             </a>
-          </div>
+          </MobileCarousel>
 
-          {/* Service Buttons — 4 columns aligned with cards above */}
-          <div className="grid grid-cols-4 gap-4">
+          {/* Spacer for mobile (MobileCarousel has no mb) */}
+          <div className="mb-7 md:hidden" />
+
+          {/* Service Buttons */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             {/* Voir sur M.OCCAZ — red, external */}
             <a
               href="https://m-occaz.ma/notre-parc-de-vehicules"

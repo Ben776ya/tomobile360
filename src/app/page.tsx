@@ -17,6 +17,7 @@ import { ServicesSection } from '@/components/home/ServicesSection'
 import { PromoBanner } from '@/components/home/PromoBanner'
 import { VideoSection } from '@/components/home/VideoSection'
 import { NewsSection } from '@/components/home/NewsSection'
+import { MobileCarousel } from '@/components/shared/MobileCarousel'
 
 export const revalidate = 60 // Revalidate every 60 seconds
 
@@ -129,11 +130,11 @@ export default async function HomePage() {
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <MobileCarousel desktopClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" autoPlayMs={4000}>
               {latestUsedListings.map((listing) => (
                 <UsedListingCard key={listing.id} listing={listing as unknown as HomeUsedListing} />
               ))}
-            </div>
+            </MobileCarousel>
             </div>
           </div>
         </section>

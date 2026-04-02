@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Play, Eye, ChevronRight } from 'lucide-react'
 import { Video } from '@/lib/types'
+import { MobileCarousel } from '@/components/shared/MobileCarousel'
 
 interface VideoSectionProps {
   videos: Video[]
@@ -39,57 +40,59 @@ export function VideoSection({ videos }: VideoSectionProps) {
           </div>
 
           {/* Videos Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 relative z-10">
-            {displayVideos.map((video) => (
-              <Link
-                key={video.id}
-                href={`/videos/${video.id}`}
-                className="group block"
-              >
-                {/* Thumbnail */}
-                <div className="relative aspect-video rounded-xl overflow-hidden mb-3 border border-gray-700 group-hover:border-secondary/30 transition-all">
-                  <Image
-                    src={video.thumbnail_url || '/placeholder-video.jpg'}
-                    alt={video.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  {/* Play Button Overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
-                    <div className="w-14 h-14 rounded-full bg-secondary/90 flex items-center justify-center group-hover:scale-110 group-hover:shadow-gold transition-all shadow-lg">
-                      <Play className="h-6 w-6 text-primary ml-1" fill="currentColor" />
+          <div className="mb-8 relative z-10">
+            <MobileCarousel desktopClassName="grid grid-cols-1 md:grid-cols-3 gap-5" autoPlayMs={5000}>
+              {displayVideos.map((video) => (
+                <Link
+                  key={video.id}
+                  href={`/videos/${video.id}`}
+                  className="group block"
+                >
+                  {/* Thumbnail */}
+                  <div className="relative aspect-video rounded-xl overflow-hidden mb-3 border border-gray-700 group-hover:border-secondary/30 transition-all">
+                    <Image
+                      src={video.thumbnail_url || '/placeholder-video.jpg'}
+                      alt={video.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                    {/* Play Button Overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                      <div className="w-14 h-14 rounded-full bg-secondary/90 flex items-center justify-center group-hover:scale-110 group-hover:shadow-gold transition-all shadow-lg">
+                        <Play className="h-6 w-6 text-primary ml-1" fill="currentColor" />
+                      </div>
                     </div>
+                    {/* Duration Badge */}
+                    {video.duration && (
+                      <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs font-medium px-2 py-0.5 rounded">
+                        {video.duration}
+                      </div>
+                    )}
+                    {/* Category Badge */}
+                    {video.category && (
+                      <div className="absolute top-2 left-2 bg-primary text-white text-xs font-semibold px-2 py-0.5 rounded shadow-glow-indigo-sm">
+                        {video.category}
+                      </div>
+                    )}
                   </div>
-                  {/* Duration Badge */}
-                  {video.duration && (
-                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs font-medium px-2 py-0.5 rounded">
-                      {video.duration}
-                    </div>
-                  )}
-                  {/* Category Badge */}
-                  {video.category && (
-                    <div className="absolute top-2 left-2 bg-primary text-white text-xs font-semibold px-2 py-0.5 rounded shadow-glow-indigo-sm">
-                      {video.category}
-                    </div>
-                  )}
-                </div>
 
-                {/* Content */}
-                <h3 className="font-bold text-white text-sm md:text-base mb-1.5 line-clamp-2 group-hover:text-secondary transition-colors">
-                  {video.title}
-                </h3>
-                {video.description && (
-                  <p className="text-gray-400 text-xs line-clamp-2 mb-1.5">
-                    {video.description}
-                  </p>
-                )}
-                <div className="flex items-center gap-1 text-xs text-gray-500">
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>{video.views.toLocaleString()} vues</span>
-                </div>
-              </Link>
-            ))}
+                  {/* Content */}
+                  <h3 className="font-bold text-white text-sm md:text-base mb-1.5 line-clamp-2 group-hover:text-secondary transition-colors">
+                    {video.title}
+                  </h3>
+                  {video.description && (
+                    <p className="text-gray-400 text-xs line-clamp-2 mb-1.5">
+                      {video.description}
+                    </p>
+                  )}
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>{video.views.toLocaleString()} vues</span>
+                  </div>
+                </Link>
+              ))}
+            </MobileCarousel>
           </div>
 
           {/* View All Link */}

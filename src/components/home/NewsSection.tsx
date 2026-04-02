@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Calendar, ChevronRight, ArrowRight, Play } from 'lucide-react'
 import { Article } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
+import { MobileCarousel } from '@/components/shared/MobileCarousel'
 
 interface NewsSectionProps {
   articles: Article[]
@@ -46,7 +47,8 @@ export function NewsSection({ articles }: NewsSectionProps) {
         </div>
 
         {/* Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div className="mb-10">
+          <MobileCarousel desktopClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" autoPlayMs={5000}>
           {displayArticles.map((article) => {
             const cat = categoryConfig[article.category || 'news'] || categoryConfig.news
             const excerpt = article.excerpt || ''
@@ -126,6 +128,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
               </Link>
             )
           })}
+          </MobileCarousel>
         </div>
 
         {/* View All Button */}

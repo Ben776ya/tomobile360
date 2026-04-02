@@ -24,7 +24,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
-        setBrandsPerPage(3)
+        setBrandsPerPage(1)
       } else if (window.innerWidth < 768) {
         setBrandsPerPage(4)
       } else if (window.innerWidth < 1024) {
@@ -120,20 +120,23 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
                                  transition-all duration-300"
                     >
                       {brand.logo_url ? (
-                        <div className="relative w-full h-16 md:h-[72px]">
+                        <div className="relative w-full h-20 sm:h-16 md:h-[72px]">
                           <Image
                             src={brand.logo_url}
                             alt={brand.name}
                             fill
                             className="object-contain opacity-60 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110"
-                            sizes="(max-width: 768px) 80px, 100px"
+                            sizes="(max-width: 640px) 120px, (max-width: 768px) 80px, 100px"
                           />
                         </div>
                       ) : (
-                        <span className="text-sm md:text-base font-semibold text-gray-500 group-hover:text-secondary transition-colors">
+                        <span className="text-base sm:text-sm md:text-base font-semibold text-gray-500 group-hover:text-secondary transition-colors">
                           {brand.name}
                         </span>
                       )}
+                      <span className="text-xs sm:text-[10px] font-medium text-gray-400 mt-1 group-hover:text-secondary transition-colors">
+                        {brand.name}
+                      </span>
                     </Link>
                   ))}
                 </div>
