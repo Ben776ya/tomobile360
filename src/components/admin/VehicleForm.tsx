@@ -44,31 +44,43 @@ export function VehicleForm({
   const [year, setYear] = useState(vehicle?.year || new Date().getFullYear())
 
   // Pricing
-  const [priceMin, setPriceMin] = useState(vehicle?.price_min || '')
-  const [priceMax, setPriceMax] = useState(vehicle?.price_max || '')
+  const [priceMin, setPriceMin] = useState<string | number>(vehicle?.price_min ?? '')
+  const [priceMax, setPriceMax] = useState<string | number>(vehicle?.price_max ?? '')
 
   // Engine
-  const [fuelType, setFuelType] = useState(vehicle?.fuel_type || '')
-  const [transmission, setTransmission] = useState(vehicle?.transmission || '')
-  const [engineSize, setEngineSize] = useState(vehicle?.engine_size || '')
-  const [cylinders, setCylinders] = useState(vehicle?.cylinders || '')
-  const [horsepower, setHorsepower] = useState(vehicle?.horsepower || '')
-  const [torque, setTorque] = useState(vehicle?.torque || '')
-  const [acceleration, setAcceleration] = useState(vehicle?.acceleration || '')
-  const [topSpeed, setTopSpeed] = useState(vehicle?.top_speed || '')
+  const [fuelType, setFuelType] = useState(vehicle?.fuel_type ?? '')
+  const [transmission, setTransmission] = useState(vehicle?.transmission ?? '')
+  const [engineSize, setEngineSize] = useState<string | number>(vehicle?.engine_size ?? '')
+  const [cylinders, setCylinders] = useState<string | number>(vehicle?.cylinders ?? '')
+  const [horsepower, setHorsepower] = useState<string | number>(vehicle?.horsepower ?? '')
+  const [torque, setTorque] = useState<string | number>(vehicle?.torque ?? '')
+  const [acceleration, setAcceleration] = useState<string | number>(vehicle?.acceleration ?? '')
+  const [topSpeed, setTopSpeed] = useState<string | number>(vehicle?.top_speed ?? '')
 
   // Efficiency
-  const [fuelCity, setFuelCity] = useState(vehicle?.fuel_consumption_city || '')
-  const [fuelHighway, setFuelHighway] = useState(vehicle?.fuel_consumption_highway || '')
-  const [fuelCombined, setFuelCombined] = useState(vehicle?.fuel_consumption_combined || '')
-  const [co2, setCo2] = useState(vehicle?.co2_emissions || '')
+  const [fuelCity, setFuelCity] = useState<string | number>(vehicle?.fuel_consumption_city ?? '')
+  const [fuelHighway, setFuelHighway] = useState<string | number>(vehicle?.fuel_consumption_highway ?? '')
+  const [fuelCombined, setFuelCombined] = useState<string | number>(vehicle?.fuel_consumption_combined ?? '')
+  const [co2, setCo2] = useState<string | number>(vehicle?.co2_emissions ?? '')
 
   // Body
-  const [doors, setDoors] = useState(vehicle?.doors || '')
-  const [seats, setSeats] = useState(vehicle?.seating_capacity || '')
-  const [cargo, setCargo] = useState(vehicle?.cargo_capacity || '')
-  const [extColor, setExtColor] = useState(vehicle?.exterior_color || '')
-  const [intColor, setIntColor] = useState(vehicle?.interior_color || '')
+  const [doors, setDoors] = useState<string | number>(vehicle?.doors ?? '')
+  const [seats, setSeats] = useState<string | number>(vehicle?.seating_capacity ?? '')
+  const [cargo, setCargo] = useState<string | number>(vehicle?.cargo_capacity ?? '')
+  const [extColor, setExtColor] = useState(vehicle?.exterior_color ?? '')
+  const [intColor, setIntColor] = useState(vehicle?.interior_color ?? '')
+
+  // Additional fields
+  const [warrantyMonths, setWarrantyMonths] = useState<string | number>(vehicle?.warranty_months ?? '')
+  const [euroNorm, setEuroNorm] = useState(vehicle?.euro_norm ?? '')
+  const [mileage, setMileage] = useState<string | number>(vehicle?.mileage ?? '')
+
+  // Dimensions
+  const dims = vehicle?.dimensions as Record<string, number> | null
+  const [dimLength, setDimLength] = useState<string | number>(dims?.length ?? '')
+  const [dimWidth, setDimWidth] = useState<string | number>(dims?.width ?? '')
+  const [dimHeight, setDimHeight] = useState<string | number>(dims?.height ?? '')
+  const [dimWheelbase, setDimWheelbase] = useState<string | number>(dims?.wheelbase ?? '')
 
   // Features
   const [features, setFeatures] = useState<string[]>(
@@ -106,9 +118,10 @@ export function VehicleForm({
   // Section toggles
   const [showEngine, setShowEngine] = useState(!!vehicle?.horsepower)
   const [showEfficiency, setShowEfficiency] = useState(!!vehicle?.fuel_consumption_combined)
-  const [showBody, setShowBody] = useState(!!vehicle?.doors)
+  const [showBody, setShowBody] = useState(!!vehicle?.doors || !!dims)
   const [showFeatures, setShowFeatures] = useState(!!(vehicle?.features?.length))
   const [showPromo, setShowPromo] = useState(false)
+  const [showDimensions, setShowDimensions] = useState(!!dims)
 
   // Filter models by selected brand
   const filteredModels = useMemo(() => {
@@ -186,20 +199,25 @@ export function VehicleForm({
       return
     }
 
-    const numOrNull = (val: any) => {
+    const numOrNull = (val: string | number): number | null => {
+      if (val === '' || val === undefined || val === null) return null
       const n = Number(val)
-      return val !== '' && !isNaN(n) ? n : undefined
+      return isNaN(n) ? null : n
+    }
+
+    const strOrNull = (val: string): string | null => {
+      return val.trim() || null
     }
 
     const vehicleData = {
       brand_id: brandId,
       model_id: modelId,
       year: Number(year),
-      version: version || undefined,
+      version: strOrNull(version),
       price_min: numOrNull(priceMin),
       price_max: numOrNull(priceMax),
-      fuel_type: fuelType || undefined,
-      transmission: transmission || undefined,
+      fuel_type: strOrNull(fuelType),
+      transmission: strOrNull(transmission),
       engine_size: numOrNull(engineSize),
       cylinders: numOrNull(cylinders),
       horsepower: numOrNull(horsepower),
@@ -213,8 +231,19 @@ export function VehicleForm({
       doors: numOrNull(doors),
       seating_capacity: numOrNull(seats),
       cargo_capacity: numOrNull(cargo),
-      exterior_color: extColor || undefined,
-      interior_color: intColor || undefined,
+      exterior_color: strOrNull(extColor),
+      interior_color: strOrNull(intColor),
+      warranty_months: numOrNull(warrantyMonths),
+      euro_norm: strOrNull(euroNorm),
+      mileage: numOrNull(mileage),
+      dimensions: dimLength || dimWidth || dimHeight || dimWheelbase
+        ? {
+            length: numOrNull(dimLength) ?? 0,
+            width: numOrNull(dimWidth) ?? 0,
+            height: numOrNull(dimHeight) ?? 0,
+            wheelbase: numOrNull(dimWheelbase) ?? 0,
+          }
+        : null,
       features: features.length > 0 ? features : (structuredFeatures ?? []),
       safety_features: safetyFeatures,
       images: images,
@@ -223,7 +252,7 @@ export function VehicleForm({
       is_new_release: isNewRelease,
       is_coming_soon: isComingSoon,
       is_featured_offer: isFeaturedOffer,
-      coup_de_coeur_reason: coupDeCoeurReason || null,
+      coup_de_coeur_reason: strOrNull(coupDeCoeurReason),
     }
 
     let result: any
@@ -628,6 +657,59 @@ export function VehicleForm({
               <div>
                 <Label className="text-dark-100">Couleur intérieure</Label>
                 <Input value={intColor} onChange={(e) => setIntColor(e.target.value)} className="mt-1 bg-dark-700/80 border-white/10 text-white focus:ring-secondary/50" />
+              </div>
+              <div>
+                <Label className="text-dark-100">Garantie (mois)</Label>
+                <Input type="number" value={warrantyMonths} onChange={(e) => setWarrantyMonths(e.target.value)} className="mt-1 bg-dark-700/80 border-white/10 text-white focus:ring-secondary/50" />
+              </div>
+              <div>
+                <Label className="text-dark-100">Norme Euro</Label>
+                <select
+                  value={euroNorm}
+                  onChange={(e) => setEuroNorm(e.target.value)}
+                  className="mt-1 flex h-10 w-full rounded-md border border-white/10 bg-dark-700/80 px-3 py-2 text-sm text-white focus:ring-secondary/50 focus:ring-2 focus:outline-none"
+                >
+                  <option value="">--</option>
+                  <option value="Euro 3">Euro 3</option>
+                  <option value="Euro 4">Euro 4</option>
+                  <option value="Euro 5">Euro 5</option>
+                  <option value="Euro 6">Euro 6</option>
+                  <option value="Euro 6d">Euro 6d</option>
+                  <option value="Euro 7">Euro 7</option>
+                </select>
+              </div>
+              <div>
+                <Label className="text-dark-100">Kilométrage</Label>
+                <Input type="number" value={mileage} onChange={(e) => setMileage(e.target.value)} placeholder="0 pour neuf" className="mt-1 bg-dark-700/80 border-white/10 text-white placeholder-dark-400 focus:ring-secondary/50" />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Dimensions - Collapsible */}
+      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
+        <div className="p-4">
+          <SectionToggle label="Dimensions (mm)" open={showDimensions} onToggle={() => setShowDimensions(!showDimensions)} />
+        </div>
+        {showDimensions && (
+          <div className="px-6 pb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <Label className="text-dark-100">Longueur</Label>
+                <Input type="number" value={dimLength} onChange={(e) => setDimLength(e.target.value)} placeholder="ex: 4500" className="mt-1 bg-dark-700/80 border-white/10 text-white placeholder-dark-400 focus:ring-secondary/50" />
+              </div>
+              <div>
+                <Label className="text-dark-100">Largeur</Label>
+                <Input type="number" value={dimWidth} onChange={(e) => setDimWidth(e.target.value)} placeholder="ex: 1800" className="mt-1 bg-dark-700/80 border-white/10 text-white placeholder-dark-400 focus:ring-secondary/50" />
+              </div>
+              <div>
+                <Label className="text-dark-100">Hauteur</Label>
+                <Input type="number" value={dimHeight} onChange={(e) => setDimHeight(e.target.value)} placeholder="ex: 1500" className="mt-1 bg-dark-700/80 border-white/10 text-white placeholder-dark-400 focus:ring-secondary/50" />
+              </div>
+              <div>
+                <Label className="text-dark-100">Empattement</Label>
+                <Input type="number" value={dimWheelbase} onChange={(e) => setDimWheelbase(e.target.value)} placeholder="ex: 2700" className="mt-1 bg-dark-700/80 border-white/10 text-white placeholder-dark-400 focus:ring-secondary/50" />
               </div>
             </div>
           </div>
