@@ -75,7 +75,7 @@ export default async function NewVehiclesPage({
   if (fuel) query = query.eq('fuel_type', fuel)
   if (transmission) query = query.eq('transmission', transmission)
   if (priceMin) query = query.gte('price_min', priceMin)
-  if (priceMax) query = query.lte('price_max', priceMax)
+  if (priceMax) query = query.lte('price_min', priceMax)
   if (yearMin) query = query.gte('year', yearMin)
 
   // Apply sorting
@@ -231,14 +231,14 @@ export default async function NewVehiclesPage({
             })()}
 
             {/* Quick-filter pills */}
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide sm:flex-wrap sm:overflow-visible sm:pb-0">
               {quickFilters.map((f) => {
                 const active = isQuickFilterActive(f.key, f.value)
                 return (
                   <Link
                     key={`${f.key}-${f.value}`}
                     href={buildQuickFilterHref(f.key, f.value)}
-                    className={`px-4 py-1.5 text-sm font-medium rounded-full border transition-all duration-150 ${
+                    className={`whitespace-nowrap px-4 py-1.5 text-sm font-medium rounded-full border transition-all duration-150 ${
                       active
                         ? 'border-[#006EFE] bg-[#006EFE] text-white'
                         : 'border-gray-200 text-gray-600 hover:border-[#006EFE] hover:text-[#006EFE] hover:bg-[#006EFE]/5'
@@ -251,7 +251,7 @@ export default async function NewVehiclesPage({
             </div>
 
             {/* Results Header */}
-            <div className="flex items-center justify-between mb-6 bg-white p-4 rounded-lg shadow-card border border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 bg-white p-4 rounded-lg shadow-card border border-gray-200">
               <p className="text-sm text-gray-500">
                 {count !== null ? (
                   <>
@@ -267,24 +267,24 @@ export default async function NewVehiclesPage({
               </p>
 
               {/* Quick Links */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 text-xs sm:text-sm">
                 <Link
                   href="/neuf/nouveautes"
-                  className="text-sm text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
+                  className="text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
                 >
                   Nouveautés
                 </Link>
                 <span className="text-gray-400">•</span>
                 <Link
                   href="/neuf/populaires"
-                  className="text-sm text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
+                  className="text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
                 >
                   Populaires
                 </Link>
                 <span className="text-gray-400">•</span>
                 <Link
                   href="/neuf/promotions"
-                  className="text-sm text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
+                  className="text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
                 >
                   Promotions
                 </Link>
@@ -316,7 +316,7 @@ export default async function NewVehiclesPage({
                     `?${new URLSearchParams({ ...searchParams, page: p.toString() }).toString()}`
 
                   return (
-                    <div className="flex justify-center gap-2">
+                    <div className="flex flex-wrap justify-center gap-2">
                       {page > 1 && (
                         <Link
                           href={buildHref(page - 1)}
