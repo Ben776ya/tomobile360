@@ -82,11 +82,55 @@ export const UpdatePromotionSchema = z.object({
   is_active: z.boolean().optional(),
 }).strict()
 
+// === Brand Schemas ===
+
+export const CreateBrandSchema = z.object({
+  name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long'),
+  logo_url: z.string().nullable().optional(),
+  description: z.string().max(1000, 'Description trop longue').nullable().optional(),
+})
+
+export const UpdateBrandSchema = z.object({
+  name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long').optional(),
+  logo_url: z.string().nullable().optional(),
+  description: z.string().max(1000, 'Description trop longue').nullable().optional(),
+})
+
+// === Model Schemas ===
+
+const VehicleCategoryEnum = z.enum([
+  'Citadine',
+  'Compacte',
+  'Berline',
+  'SUV',
+  'Monospace',
+  'Break',
+  'Coupé',
+  'Cabriolet',
+  'Pick-up',
+  'Utilitaire',
+])
+
+export const CreateModelSchema = z.object({
+  brand_id: z.string().uuid('brand_id doit être un UUID valide'),
+  name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long'),
+  category: VehicleCategoryEnum,
+})
+
+export const UpdateModelSchema = z.object({
+  name: z.string().min(1, 'Nom requis').max(100, 'Nom trop long').optional(),
+  category: VehicleCategoryEnum.optional(),
+})
+
 // === Inferred Types ===
 
 export type UpdateVideoInput = z.infer<typeof UpdateVideoSchema>
 export type UpdateVehicleInput = z.infer<typeof UpdateVehicleSchema>
 export type UpdatePromotionInput = z.infer<typeof UpdatePromotionSchema>
+export type CreateBrandInput = z.infer<typeof CreateBrandSchema>
+export type UpdateBrandInput = z.infer<typeof UpdateBrandSchema>
+export type CreateModelInput = z.infer<typeof CreateModelSchema>
+export type UpdateModelInput = z.infer<typeof UpdateModelSchema>
 
 // === Validation Helper ===
 

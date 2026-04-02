@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { updateBrand } from '@/lib/actions/admin'
+import { updateBrand } from '@/lib/actions/brands'
 import type { Brand } from '@/lib/types'
 
 export default function AdminBrandsPage() {
