@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface BrandCarouselProps {
   brands: Array<{
@@ -52,24 +51,15 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
     return () => clearInterval(interval)
   }, [brands.length, brandsPerPage, isHovered])
 
-  const handlePrevious = useCallback(() => {
-    setCurrentIndex((prev) =>
-      prev === 0 ? Math.max(0, brands.length - brandsPerPage) : Math.max(0, prev - brandsPerPage)
-    )
-  }, [brands.length, brandsPerPage])
-
-  const handleNext = useCallback(() => {
-    setCurrentIndex((prev) =>
-      prev + brandsPerPage >= brands.length ? 0 : prev + brandsPerPage
-    )
-  }, [brands.length, brandsPerPage])
-
   const visibleBrands = brands.slice(currentIndex, currentIndex + brandsPerPage)
 
   // If there aren't enough brands to fill, add from the beginning
   const displayBrands = visibleBrands.length < brandsPerPage
     ? [...visibleBrands, ...brands.slice(0, brandsPerPage - visibleBrands.length)]
     : visibleBrands
+
+  const totalPages = Math.ceil(brands.length / brandsPerPage)
+  const currentPage = Math.floor(currentIndex / brandsPerPage)
 
   return (
     <section
@@ -93,16 +83,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
             )}
 
             {/* Carousel */}
-            <div className="relative flex items-center">
-              {/* Previous Button */}
-              <button
-                onClick={handlePrevious}
-                className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white mr-2 sm:mr-5"
-                aria-label="Marques précédentes"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-
+            <div className="relative">
               {/* Brands Container */}
               <div className="flex-1">
                 <div
@@ -115,12 +96,12 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
                       href={`/neuf?brand=${brand.id}`}
                       className="group flex flex-col items-center justify-center
                                  bg-white border border-gray-100 rounded-xl p-3 sm:p-4 md:p-5
-                                 min-h-[80px] sm:min-h-[96px] md:min-h-[116px]
+                                 min-h-[64px] sm:min-h-[72px] md:min-h-[80px]
                                  hover:border-secondary/30 hover:shadow-glow-cyan-sm
                                  transition-all duration-300"
                     >
                       {brand.logo_url ? (
-                        <div className="relative w-full h-20 sm:h-16 md:h-[72px]">
+                        <div className="relative w-full h-14 sm:h-12 md:h-14">
                           <Image
                             src={brand.logo_url}
                             alt={brand.name}
@@ -134,22 +115,28 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
                           {brand.name}
                         </span>
                       )}
-                      <span className="text-xs sm:text-[10px] font-medium text-gray-400 mt-1 group-hover:text-secondary transition-colors">
-                        {brand.name}
-                      </span>
                     </Link>
                   ))}
                 </div>
               </div>
 
-              {/* Next Button */}
-              <button
-                onClick={handleNext}
-                className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-[#32B75C] text-white hover:bg-[#28a34e] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#32B75C] focus:ring-offset-2 focus:ring-offset-white ml-2 sm:ml-5"
-                aria-label="Marques suivantes"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
+              {/* Dot indicators */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-5">
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentIndex(i * brandsPerPage)}
+                      className={`rounded-full transition-all duration-300 ${
+                        i === currentPage
+                          ? 'w-6 h-2 bg-secondary'
+                          : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
+                      }`}
+                      aria-label={`Page ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
