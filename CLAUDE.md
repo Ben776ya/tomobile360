@@ -261,16 +261,7 @@ tomobile360/
 - [x] **Global UI polish** — all heading titles (`h1`/`h2`/`h3`) switched from `text-gray-900` to `text-slate-700` (dark navy blue) across 21 files; Actualités section bumped from 3 to 4 posts (query + grid); brand carousel arrow spacing increased.
 
 ### Pending / Incomplete
-- [ ] Contact form (`/contact`) — UI exists, form submission not implemented (TODO)
-- [ ] Profile page (`/compte/profil`) — avatar upload may be incomplete
-- [ ] Vehicle detail page `/neuf/[brand]/[model]/[id]` — has TODO comments
-- [ ] Services pages (`/services/controle`, etc.) — placeholder content
-- [ ] Footer — has TODO comment, links may be incomplete
-- [ ] Forum moderation tools — admin cannot pin/lock topics from admin panel
-- [ ] No email notification system (Nodemailer was considered but not integrated)
-- [ ] No image upload in PostListingForm (Supabase storage bucket setup required)
-- [ ] Vroom.be scraper in `scripts/vroom-scraper.js` is not wired into the app UI
-- [ ] **⚠️ Coups de Cœur section needs more planning and editing** — the homepage `CoupsDeCoeurSection` and `/coups-de-coeur` page display `CoupDeCoeurCard` components that are still being iterated on (card dimensions, spec chip styles, category color schemes). The current implementation works but the visual design and UX behaviour (auto-play, pagination, category tab switching) need a dedicated design review pass before being considered final.
+- [ ] Vehicle detail page `/neuf/[brand]/[model]/[id]` — has TODO comments, fiche technique rework needed
 
 ---
 
@@ -794,7 +785,80 @@ For database setup: run SQL files in `migrations/` via Supabase SQL Editor, star
 
 ---
 
-## 11. Code Quality Rules (Agents Must Follow)
+## 11. Workflow: ZorkFlow (Superpowers + GSD Hybrid)
+
+You operate in two modes that you switch between automatically based on the task. **Superpowers** handles thinking (planning, analysis, architecture, debugging across files). **GSD** handles shipping (building, styling, implementing, executing known steps). Both frameworks are installed — use their skills together, not in isolation.
+
+### Mode Detection
+
+- If the task involves PLANNING, ANALYZING, DEBUGGING across files, ARCHITECTURE, or understanding how systems connect → engage **Superpowers Mode**
+- If the task involves BUILDING, STYLING, IMPLEMENTING a specific component, fixing a specific bug, or executing a known step → engage **GSD Mode**
+- If given a feature request without a plan → START in Superpowers, produce the plan, then ask before switching to GSD execution
+
+### Superpowers Mode (Think)
+
+Use Superpowers skills (`superpowers:brainstorming`, `superpowers:writing-plans`, `superpowers:systematic-debugging`, `superpowers:verification-before-completion`, `superpowers:requesting-code-review`).
+
+- Read and analyze relevant files before proposing changes
+- Map out dependencies and side effects
+- Produce a numbered implementation plan
+- Don't write code until the plan is approved
+- When debugging: trace the issue across the full stack before patching
+
+### GSD Mode (Ship)
+
+Use GSD skills (`gsd:execute-phase`, `gsd:fast`, `gsd:quick`, `gsd:ui-phase`, `gsd:ui-review`, `gsd:verify-work`).
+
+- One task at a time, verify before moving on
+- Keep changes scoped and minimal
+- Show the result after each step
+- Don't redesign architecture mid-task — flag it and continue
+- If you hit a problem that needs broad reasoning, STOP and say "switching to Superpowers mode" before continuing
+
+### Shared Context: `ZORKFLOW.md`
+
+All state lives in **`ZORKFLOW.md`** at the project root. This is the single bridge between Superpowers and GSD.
+
+**At session start:**
+1. Read `ZORKFLOW.md` to pick up where the last session left off (check the `Carry-Forward` section)
+2. Set the `Current Mode` based on what's needed
+
+**During the session:**
+- Superpowers writes the numbered plan into the `Active Plan` section (with checkboxes)
+- GSD checks off tasks as they're completed and logs changes in `Completed This Session`
+- Mode switches and blockers are logged in their sections
+- Non-obvious decisions go in `Decisions Made`
+
+**At session end (MANDATORY):**
+1. Move any unfinished plan items and important decisions to `Carry-Forward`
+2. Clear out `Completed This Session`, `Blockers`, and `Decisions Made` (this work is done)
+3. Update `Last updated` timestamp
+4. If the active plan is fully complete, clear it and set mode to `IDLE`
+
+This keeps the file small — only what the next session needs to know survives.
+
+### Auto-Transition Rules
+
+1. **After a Superpowers plan is approved** → write it to `ZORKFLOW.md` Active Plan with checkboxes, switch to GSD and execute step by step
+2. **If GSD execution hits a cross-cutting issue** → log it in Blockers, switch to Superpowers
+3. **After all GSD steps are done** → do a Superpowers review pass, then update `ZORKFLOW.md`
+4. **Always announce which mode you're in** at the start of your response
+
+### Skill Mapping Reference
+
+| Phase | Use Superpowers Skill | Use GSD Skill |
+|---|---|---|
+| New feature request | `superpowers:brainstorming` → `superpowers:writing-plans` | — |
+| Plan approved, ready to build | — | `gsd:execute-phase` or `gsd:quick` |
+| Frontend/UI design needed | `superpowers:brainstorming` (for UX decisions) | `gsd:ui-phase` (for design spec) → `gsd:execute-phase` |
+| Bug found | `superpowers:systematic-debugging` | `gsd:fast` (if fix is obvious) |
+| Implementation done | `superpowers:verification-before-completion` | `gsd:verify-work` |
+| Code review | `superpowers:requesting-code-review` | `gsd:ui-review` (for frontend) |
+| Ship to PR | — | `gsd:ship` |
+
+---
+
+## 12. Code Quality Rules (Agents Must Follow)
 
 - NEVER leave unused imports in any file
 - NEVER leave dead code or commented-out code blocks
@@ -808,18 +872,7 @@ For database setup: run SQL files in `migrations/` via Supabase SQL Editor, star
 
 ---
 
-## 12. Priority Task List for Agents
+## 13. Priority Task List for Agents
 
-### High Priority (Fix First)
-1. Complete `contact/page.tsx` — form submission not implemented
-2. Fix image upload in `PostListingForm.tsx`
-3. Complete avatar upload in `compte/profil/page.tsx`
-
-### Medium Priority
-1. Replace all `as any` with proper TypeScript types
-2. Fix Footer.tsx incomplete links
-
-### Low Priority
-1. Complete `services/controle/page.tsx` placeholder
-2. Add video likes to `Video` type in types.ts
-3. Refactor admin pages to centralize RLS bypass logic
+### High Priority
+1. Vehicle detail page `/neuf/[brand]/[model]/[id]` — fiche technique rework

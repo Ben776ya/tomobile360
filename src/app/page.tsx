@@ -87,13 +87,13 @@ export default async function HomePage() {
       {/* 1. Hero Section with Search Form */}
       <HeroSection brands={brands || []} models={models || []} />
 
-      {/* 2. Brand Carousel */}
+      {/* 2. Feature grid — comparateur, offres, top ventes, coups de cœur */}
+      <FeatureGrid />
+
+      {/* 3. Brand Carousel */}
       {allBrands && allBrands.length > 0 && (
         <BrandCarousel brands={allBrands} />
       )}
-
-      {/* 3. Feature grid — comparateur, offres, top ventes, coups de cœur */}
-      <FeatureGrid />
 
       {/* 4. OCCASION Services Section */}
       <OccasionServicesSection />
