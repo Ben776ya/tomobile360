@@ -16,17 +16,30 @@ interface VehicleFormProps {
   models: Model[]
   vehicle?: VehicleNew
   mode: 'create' | 'edit'
+  onSuccess?: () => void
+  onCancel?: () => void
+  defaultBrandId?: string
+  defaultModelId?: string
 }
 
-export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps) {
+export function VehicleForm({
+  brands,
+  models,
+  vehicle,
+  mode,
+  onSuccess,
+  onCancel,
+  defaultBrandId,
+  defaultModelId,
+}: VehicleFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
   // Basic info
-  const [brandId, setBrandId] = useState(vehicle?.brand_id || '')
-  const [modelId, setModelId] = useState(vehicle?.model_id || '')
+  const [brandId, setBrandId] = useState(vehicle?.brand_id || defaultBrandId || '')
+  const [modelId, setModelId] = useState(vehicle?.model_id || defaultModelId || '')
   const [version, setVersion] = useState(vehicle?.version || '')
   const [year, setYear] = useState(vehicle?.year || new Date().getFullYear())
 
@@ -239,10 +252,14 @@ export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps)
     setSuccess(mode === 'create' ? 'Véhicule créé avec succès!' : 'Véhicule modifié avec succès!')
     setLoading(false)
 
-    setTimeout(() => {
-      router.push('/admin/vehicles')
-      router.refresh()
-    }, 1000)
+    if (onSuccess) {
+      setTimeout(() => onSuccess(), 800)
+    } else {
+      setTimeout(() => {
+        router.push('/admin/vehicles')
+        router.refresh()
+      }, 1000)
+    }
   }
 
   const SectionToggle = ({ label, open, onToggle }: { label: string; open: boolean; onToggle: () => void }) => (
@@ -262,6 +279,7 @@ export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps)
       <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Informations de base</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {!defaultBrandId && (
           <div>
             <Label htmlFor="brand" className="text-dark-100">Marque *</Label>
             <select
@@ -277,6 +295,8 @@ export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps)
               ))}
             </select>
           </div>
+          )}
+          {!defaultModelId && (
           <div>
             <Label htmlFor="model" className="text-dark-100">Modèle *</Label>
             <select
@@ -293,6 +313,7 @@ export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps)
               ))}
             </select>
           </div>
+          )}
           <div>
             <Label htmlFor="version" className="text-dark-100">Version</Label>
             <Input
@@ -739,7 +760,7 @@ export function VehicleForm({ brands, models, vehicle, mode }: VehicleFormProps)
         <Button
           type="button"
           variant="outline"
-          onClick={() => router.push('/admin/vehicles')}
+          onClick={() => onCancel ? onCancel() : router.push('/admin/vehicles')}
           className="shadow-dark-card hover:shadow-dark-elevated transition-all duration-300 border-white/10 text-dark-200 hover:text-white hover:bg-dark-600/50"
         >
           Annuler
