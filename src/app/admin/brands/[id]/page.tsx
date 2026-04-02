@@ -6,7 +6,7 @@ import { ArrowLeft } from 'lucide-react'
 import type { Brand, Model, VehicleNew } from '@/lib/types'
 import { BrandEditForm } from './BrandEditForm'
 import { ModelManager } from './ModelManager'
-import { VehicleCatalog } from './VehicleCatalog'
+import { VehicleCatalog } from '@/components/admin/VehicleCatalog'
 
 export const revalidate = 30
 
