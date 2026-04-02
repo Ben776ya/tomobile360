@@ -4,8 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 import type { CoupDeCoeurCategory } from '@/lib/types'
-import type { UpdateVideoInput, UpdateVehicleInput, UpdatePromotionInput, ArticleInput } from '@/lib/validations'
-import { validateAction, UpdateVideoSchema, UpdateVehicleSchema, UpdatePromotionSchema, ArticleSchema } from '@/lib/validations'
+import type { UpdateVideoInput, UpdateVehicleInput, CreateVehicleInput, UpdatePromotionInput, ArticleInput } from '@/lib/validations'
+import { validateAction, UpdateVideoSchema, UpdateVehicleSchema, CreateVehicleSchema, UpdatePromotionSchema, ArticleSchema } from '@/lib/validations'
 
 // Check if user is admin
 async function checkAdmin() {
@@ -205,55 +205,55 @@ export async function deleteVideo(id: string) {
 }
 
 // Vehicle Actions
-export async function createVehicle(data: {
-  brand_id: string
-  model_id: string
-  year: number
-  version?: string
-  price_min?: number
-  price_max?: number
-  fuel_type?: string
-  transmission?: string
-  engine_size?: number
-  cylinders?: number
-  horsepower?: number
-  torque?: number
-  acceleration?: number
-  top_speed?: number
-  fuel_consumption_city?: number
-  fuel_consumption_highway?: number
-  fuel_consumption_combined?: number
-  co2_emissions?: number
-  doors?: number
-  seating_capacity?: number
-  cargo_capacity?: number
-  exterior_color?: string
-  interior_color?: string
-  warranty_months?: number
-  euro_norm?: string
-  mileage?: number
-  features?: string[]
-  safety_features?: string[]
-  images?: string[]
-  is_available?: boolean
-  is_popular?: boolean
-  is_new_release?: boolean
-  is_coming_soon?: boolean
-  dimensions?: Record<string, number>
-}) {
+export async function createVehicle(data: CreateVehicleInput) {
   const adminCheck = await checkAdmin()
   if (adminCheck.error) return { error: adminCheck.error }
 
+  const validated = validateAction(CreateVehicleSchema, data)
+  if (!validated.success) return { error: validated.error }
+
+  const d = validated.data
   const supabase = await createClient()
 
   const { data: vehicle, error } = await supabase
     .from('vehicles_new')
     .insert({
-      ...data,
-      is_available: data.is_available ?? true,
-      is_popular: data.is_popular ?? false,
-      is_new_release: data.is_new_release ?? false,
-      is_coming_soon: data.is_coming_soon ?? false,
+      brand_id: d.brand_id,
+      model_id: d.model_id,
+      year: d.year,
+      version: d.version || null,
+      price_min: d.price_min ?? null,
+      price_max: d.price_max ?? null,
+      fuel_type: d.fuel_type || null,
+      transmission: d.transmission || null,
+      engine_size: d.engine_size ?? null,
+      cylinders: d.cylinders ?? null,
+      horsepower: d.horsepower ?? null,
+      torque: d.torque ?? null,
+      acceleration: d.acceleration ?? null,
+      top_speed: d.top_speed ?? null,
+      fuel_consumption_city: d.fuel_consumption_city ?? null,
+      fuel_consumption_highway: d.fuel_consumption_highway ?? null,
+      fuel_consumption_combined: d.fuel_consumption_combined ?? null,
+      co2_emissions: d.co2_emissions ?? null,
+      doors: d.doors ?? null,
+      seating_capacity: d.seating_capacity ?? null,
+      cargo_capacity: d.cargo_capacity ?? null,
+      exterior_color: d.exterior_color || null,
+      interior_color: d.interior_color || null,
+      warranty_months: d.warranty_months ?? null,
+      euro_norm: d.euro_norm || null,
+      mileage: d.mileage ?? null,
+      features: d.features || [],
+      safety_features: d.safety_features || [],
+      images: d.images || [],
+      dimensions: d.dimensions ?? null,
+      is_available: d.is_available ?? true,
+      is_popular: d.is_popular ?? false,
+      is_new_release: d.is_new_release ?? false,
+      is_coming_soon: d.is_coming_soon ?? false,
+      is_featured_offer: d.is_featured_offer ?? false,
+      coup_de_coeur_reason: d.coup_de_coeur_reason || null,
     })
     .select()
     .single()
@@ -262,6 +262,7 @@ export async function createVehicle(data: {
 
   revalidatePath('/neuf')
   revalidatePath('/admin/vehicles')
+  revalidatePath(`/admin/brands/${d.brand_id}`)
   revalidatePath('/')
   return { success: true, vehicleId: vehicle.id }
 }
@@ -273,14 +274,51 @@ export async function updateVehicle(id: string, data: UpdateVehicleInput) {
   const validated = validateAction(UpdateVehicleSchema, data)
   if (!validated.success) return { error: validated.error }
 
+  const d = validated.data
+  const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() }
+
+  if (d.brand_id !== undefined) updateData.brand_id = d.brand_id
+  if (d.model_id !== undefined) updateData.model_id = d.model_id
+  if (d.year !== undefined) updateData.year = d.year
+  if (d.version !== undefined) updateData.version = d.version || null
+  if (d.price_min !== undefined) updateData.price_min = d.price_min ?? null
+  if (d.price_max !== undefined) updateData.price_max = d.price_max ?? null
+  if (d.fuel_type !== undefined) updateData.fuel_type = d.fuel_type || null
+  if (d.transmission !== undefined) updateData.transmission = d.transmission || null
+  if (d.engine_size !== undefined) updateData.engine_size = d.engine_size ?? null
+  if (d.cylinders !== undefined) updateData.cylinders = d.cylinders ?? null
+  if (d.horsepower !== undefined) updateData.horsepower = d.horsepower ?? null
+  if (d.torque !== undefined) updateData.torque = d.torque ?? null
+  if (d.acceleration !== undefined) updateData.acceleration = d.acceleration ?? null
+  if (d.top_speed !== undefined) updateData.top_speed = d.top_speed ?? null
+  if (d.fuel_consumption_city !== undefined) updateData.fuel_consumption_city = d.fuel_consumption_city ?? null
+  if (d.fuel_consumption_highway !== undefined) updateData.fuel_consumption_highway = d.fuel_consumption_highway ?? null
+  if (d.fuel_consumption_combined !== undefined) updateData.fuel_consumption_combined = d.fuel_consumption_combined ?? null
+  if (d.co2_emissions !== undefined) updateData.co2_emissions = d.co2_emissions ?? null
+  if (d.doors !== undefined) updateData.doors = d.doors ?? null
+  if (d.seating_capacity !== undefined) updateData.seating_capacity = d.seating_capacity ?? null
+  if (d.cargo_capacity !== undefined) updateData.cargo_capacity = d.cargo_capacity ?? null
+  if (d.exterior_color !== undefined) updateData.exterior_color = d.exterior_color || null
+  if (d.interior_color !== undefined) updateData.interior_color = d.interior_color || null
+  if (d.warranty_months !== undefined) updateData.warranty_months = d.warranty_months ?? null
+  if (d.euro_norm !== undefined) updateData.euro_norm = d.euro_norm || null
+  if (d.mileage !== undefined) updateData.mileage = d.mileage ?? null
+  if (d.features !== undefined) updateData.features = d.features || []
+  if (d.safety_features !== undefined) updateData.safety_features = d.safety_features || []
+  if (d.images !== undefined) updateData.images = d.images || []
+  if (d.dimensions !== undefined) updateData.dimensions = d.dimensions ?? null
+  if (d.is_available !== undefined) updateData.is_available = d.is_available
+  if (d.is_popular !== undefined) updateData.is_popular = d.is_popular
+  if (d.is_new_release !== undefined) updateData.is_new_release = d.is_new_release
+  if (d.is_coming_soon !== undefined) updateData.is_coming_soon = d.is_coming_soon
+  if (d.is_featured_offer !== undefined) updateData.is_featured_offer = d.is_featured_offer
+  if (d.coup_de_coeur_reason !== undefined) updateData.coup_de_coeur_reason = d.coup_de_coeur_reason || null
+
   const supabase = await createClient()
 
   const { error } = await supabase
     .from('vehicles_new')
-    .update({
-      ...validated.data,
-      updated_at: new Date().toISOString(),
-    })
+    .update(updateData)
     .eq('id', id)
 
   if (error) return { error: error.message }
@@ -434,7 +472,14 @@ export async function createPromotion(data: {
   const { data: promotion, error } = await supabase
     .from('promotions')
     .insert({
-      ...data,
+      vehicle_id: data.vehicle_id,
+      title: data.title,
+      description: data.description || null,
+      discount_percentage: data.discount_percentage ?? null,
+      discount_amount: data.discount_amount ?? null,
+      valid_from: data.valid_from,
+      valid_until: data.valid_until,
+      terms: data.terms || null,
       is_active: data.is_active ?? true,
     })
     .select()

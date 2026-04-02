@@ -122,10 +122,52 @@ export const UpdateModelSchema = z.object({
   category: VehicleCategoryEnum.optional(),
 })
 
+// === Vehicle Create Schema ===
+
+export const CreateVehicleSchema = z.object({
+  brand_id: z.string().uuid('brand_id doit être un UUID valide'),
+  model_id: z.string().uuid('model_id doit être un UUID valide'),
+  year: z.number().int().min(1990, 'Année invalide').max(2035, 'Année invalide'),
+  version: z.string().nullable().optional(),
+  price_min: z.number().nullable().optional(),
+  price_max: z.number().nullable().optional(),
+  fuel_type: z.string().nullable().optional(),
+  transmission: z.string().nullable().optional(),
+  engine_size: z.number().nullable().optional(),
+  cylinders: z.number().int().nullable().optional(),
+  horsepower: z.number().nullable().optional(),
+  torque: z.number().nullable().optional(),
+  acceleration: z.number().nullable().optional(),
+  top_speed: z.number().nullable().optional(),
+  fuel_consumption_city: z.number().nullable().optional(),
+  fuel_consumption_highway: z.number().nullable().optional(),
+  fuel_consumption_combined: z.number().nullable().optional(),
+  co2_emissions: z.number().nullable().optional(),
+  doors: z.number().int().nullable().optional(),
+  seating_capacity: z.number().int().nullable().optional(),
+  cargo_capacity: z.number().nullable().optional(),
+  exterior_color: z.string().nullable().optional(),
+  interior_color: z.string().nullable().optional(),
+  warranty_months: z.number().int().nullable().optional(),
+  euro_norm: z.string().nullable().optional(),
+  mileage: z.number().nullable().optional(),
+  features: z.array(z.string()).nullable().optional(),
+  safety_features: z.array(z.string()).nullable().optional(),
+  images: z.array(z.string()).nullable().optional(),
+  dimensions: z.record(z.string(), z.number()).nullable().optional(),
+  is_available: z.boolean().optional(),
+  is_popular: z.boolean().optional(),
+  is_new_release: z.boolean().optional(),
+  is_coming_soon: z.boolean().optional(),
+  is_featured_offer: z.boolean().optional(),
+  coup_de_coeur_reason: z.string().nullable().optional(),
+}).strict()
+
 // === Inferred Types ===
 
 export type UpdateVideoInput = z.infer<typeof UpdateVideoSchema>
 export type UpdateVehicleInput = z.infer<typeof UpdateVehicleSchema>
+export type CreateVehicleInput = z.infer<typeof CreateVehicleSchema>
 export type UpdatePromotionInput = z.infer<typeof UpdatePromotionSchema>
 export type CreateBrandInput = z.infer<typeof CreateBrandSchema>
 export type UpdateBrandInput = z.infer<typeof UpdateBrandSchema>
