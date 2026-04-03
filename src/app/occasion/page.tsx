@@ -45,6 +45,7 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
             width={18}
             height={18}
             className="object-contain"
+            sizes="18px"
           />
           <span className="text-white text-[10px] font-bold tracking-wide">M-CHECK</span>
         </div>
@@ -107,6 +108,7 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
               width={32}
               height={32}
               className="object-contain flex-shrink-0"
+              sizes="32px"
             />
             <span style={{ color: '#290054' }}>CHECK</span>
           </div>
@@ -187,6 +189,7 @@ export default async function UsedVehiclesPage({
                   width={160}
                   height={44}
                   className="h-10 w-auto"
+                  sizes="160px"
                 />
                 <div className="h-8 w-px bg-gray-300 hidden sm:block" />
                 <p className="text-sm text-gray-500 font-medium">

@@ -104,6 +104,7 @@ export default function ServicesPage() {
                         width={56}
                         height={56}
                         className="w-14 h-14 object-contain"
+                        sizes="56px"
                       />
                     ) : (
                       <service.icon className="h-8 w-8 text-white" />

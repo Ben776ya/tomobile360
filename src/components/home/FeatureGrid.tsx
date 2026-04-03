@@ -306,12 +306,12 @@ export function FeatureGrid() {
                           </div>
                           {loading && !vehicle ? (
                             <div className="flex items-center justify-center py-8">
-                              <p className="text-sm text-gray-400 animate-pulse">Chargement...</p>
+                              <div className="h-5 w-5 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
                             </div>
                           ) : vehicle ? (
                             <div className="space-y-3">
                               <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100">
-                                <Image src={vehicle.images?.[0] || '/placeholder-car.svg'} alt={`${vehicle.brands?.name} ${vehicle.models?.name}`} fill className="object-cover" />
+                                <Image src={vehicle.images?.[0] || '/placeholder-car.svg'} alt={`${vehicle.brands?.name} ${vehicle.models?.name}`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 300px" />
                               </div>
                               <div className="space-y-0.5">
                                 <div className="flex items-center gap-1.5">
@@ -395,7 +395,7 @@ export function FeatureGrid() {
             {/* Car cards */}
             {cdcLoading ? (
               <div className="flex items-center justify-center py-16">
-                <p className="text-sm animate-pulse" style={{ color: '#F43F5E60' }}>Chargement...</p>
+                <div className="h-5 w-5 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (() => {
               const vehicles = cdcByCategory[cdcCategory] || []
