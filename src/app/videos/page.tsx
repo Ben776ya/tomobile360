@@ -1,14 +1,18 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { Play, Eye, Clock } from 'lucide-react'
 import { formatRelativeTime } from '@/lib/utils'
 
 export const revalidate = 60
 
 export const metadata = {
-  title: 'Vidéos Automobiles | Tomobile 360 TV',
-  description: 'Regardez nos essais, comparatifs et actualités automobiles en vidéo. La chaîne YouTube automobile du Maroc.',
+  title: 'Essais Auto et Tests Vidéo au Maroc',
+  description: 'Regardez nos essais, comparatifs et guides automobiles en vidéo. Tomobile 360 TV — la référence auto en vidéo au Maroc.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/videos',
+  },
 }
 
 interface SearchParams {
@@ -55,6 +59,7 @@ export default async function VideosPage({
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
+        <Breadcrumbs items={[{ name: 'Vidéos', href: '/videos' }]} />
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-2">
@@ -62,6 +67,15 @@ export default async function VideosPage({
           </h1>
           <p className="text-gray-600">
             Essais, comparatifs, actualités et guides en vidéo
+          </p>
+        </div>
+
+        {/* SEO Intro Text */}
+        <div className="mb-6 bg-white rounded-xl border border-gray-100 p-6">
+          <p className="text-gray-600 text-sm leading-relaxed">
+            Tomobile 360 TV vous propose des essais routiers, des comparatifs détaillés et des reportages
+            sur les dernières nouveautés automobiles au Maroc. Notre équipe teste les véhicules sur les routes
+            marocaines pour vous donner un avis concret et objectif avant votre achat.
           </p>
         </div>
 
