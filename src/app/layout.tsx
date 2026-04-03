@@ -56,6 +56,13 @@ export const metadata: Metadata = {
     description: 'Découvrez les prix et fiches techniques de toutes les voitures neuves au Maroc.',
     images: ['/og-image.png'],
   },
+  alternates: {
+    canonical: 'https://tomobile360.ma',
+    languages: {
+      'fr-MA': 'https://tomobile360.ma',
+      'fr': 'https://tomobile360.ma',
+    },
+  },
 }
 
 export default function RootLayout({
