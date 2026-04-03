@@ -149,6 +149,39 @@ export default async function VehicleDetailPage({ params }: PageProps) {
           ]}
         />
 
+        <JsonLd
+          data={{
+            '@type': 'Car',
+            name: `${brandName} ${modelName}`,
+            brand: { '@type': 'Brand', name: brandName },
+            model: modelName,
+            ...(vehicle.year ? { vehicleModelDate: vehicle.year.toString() } : {}),
+            ...(vehicle.fuel_type ? { fuelType: vehicle.fuel_type } : {}),
+            ...(vehicle.transmission ? { vehicleTransmission: vehicle.transmission } : {}),
+            ...(vehicle.horsepower ? {
+              vehicleEngine: {
+                '@type': 'EngineSpecification',
+                enginePower: {
+                  '@type': 'QuantitativeValue',
+                  value: vehicle.horsepower,
+                  unitCode: 'BHP',
+                },
+              },
+            } : {}),
+            ...(vehicle.price_min && vehicle.price_min > 0 ? {
+              offers: {
+                '@type': 'Offer',
+                price: vehicle.price_min,
+                priceCurrency: 'MAD',
+                availability: 'https://schema.org/InStock',
+                seller: { '@type': 'Organization', name: 'Tomobile 360' },
+              },
+            } : {}),
+            ...(images.length > 0 ? { image: images[0] } : {}),
+            url: `https://tomobile360.ma/neuf/${params.brand}/${params.model}/${params.id}`,
+          }}
+        />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
@@ -302,29 +335,6 @@ export default async function VehicleDetailPage({ params }: PageProps) {
             </div>
           </div>
         </div>
-
-        {/* Structured Data */}
-        <JsonLd
-          data={{
-            '@type': 'Car',
-            name: `${brandName} ${modelName}`,
-            brand: { '@type': 'Brand', name: brandName },
-            model: modelName,
-            vehicleModelDate: String(vehicle.year),
-            ...(vehicle.fuel_type ? { fuelType: vehicle.fuel_type } : {}),
-            ...(vehicle.transmission ? { vehicleTransmission: vehicle.transmission } : {}),
-            ...(vehicle.price_min ? {
-              offers: {
-                '@type': 'Offer',
-                price: vehicle.price_min,
-                priceCurrency: 'MAD',
-                availability: 'https://schema.org/InStock',
-              },
-            } : {}),
-            ...(vehicle.images?.[0] ? { image: vehicle.images[0] } : {}),
-            url: `https://tomobile360.ma/neuf/${params.brand}/${params.model}/${params.id}`,
-          }}
-        />
 
         {/* Similar Vehicles */}
         {similarVehicles && similarVehicles.length > 0 && (
