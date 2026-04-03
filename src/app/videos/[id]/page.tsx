@@ -27,10 +27,10 @@ export async function generateMetadata({ params }: PageProps) {
     .eq('is_published', true)
     .single()
 
-  if (!video) return { title: 'Vidéo non trouvée | Tomobile 360' }
+  if (!video) return { title: 'Vidéo non trouvée' }
 
   return {
-    title: `${video.title} | Tomobile 360 TV`,
+    title: `${video.title} — Tomobile 360 TV`,
     description: video.description?.substring(0, 155) || 'Regardez les meilleures vidéos automobile du Maroc sur Tomobile 360 TV.',
     alternates: {
       canonical: `https://tomobile360.ma/videos/${params.id}`,
@@ -96,6 +96,15 @@ export default async function VideoDetailPage({ params }: PageProps) {
 
   const embedUrl = getVideoEmbedUrl((video as any).embed_url || (video as any).video_url || '')
 
+  // Convert "MM:SS" or "H:MM:SS" to ISO 8601 duration
+  const toIsoDuration = (display: string | null | undefined): string | undefined => {
+    if (!display) return undefined
+    const parts = display.split(':').map(Number)
+    if (parts.length === 2) return `PT${parts[0]}M${parts[1]}S`
+    if (parts.length === 3) return `PT${parts[0]}H${parts[1]}M${parts[2]}S`
+    return undefined
+  }
+
   const categoryLabels: { [key: string]: string } = {
     review: 'Essai',
     comparison: 'Comparatif',
@@ -111,10 +120,18 @@ export default async function VideoDetailPage({ params }: PageProps) {
           '@type': 'VideoObject',
           name: video.title,
           description: video.description?.substring(0, 200) || '',
-          thumbnailUrl: video.thumbnail_url || 'https://tomobile360.ma/og-image.png',
+          thumbnailUrl: [video.thumbnail_url || 'https://tomobile360.ma/og-image.png'],
           uploadDate: video.created_at,
-          ...(video.duration ? { duration: video.duration } : {}),
+          ...(video.duration ? { duration: toIsoDuration(video.duration) } : {}),
           ...(embedUrl ? { embedUrl } : {}),
+          publisher: {
+            '@type': 'Organization',
+            name: 'Tomobile 360',
+            logo: {
+              '@type': 'ImageObject',
+              url: 'https://tomobile360.ma/logo_tomobil360.png',
+            },
+          },
         }}
       />
       <div className="container mx-auto px-4 py-8">

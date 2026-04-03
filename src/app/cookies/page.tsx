@@ -1,9 +1,12 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Politique de Cookies | Tomobile 360',
+  title: 'Politique de Cookies',
   description: "Politique d'utilisation des cookies sur la plateforme Tomobile 360.",
   robots: { index: false, follow: true },
+  alternates: {
+    canonical: 'https://tomobile360.ma/cookies',
+  },
 }
 
 export default function CookiesPage() {

@@ -57,7 +57,6 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   alternates: {
-    canonical: 'https://tomobile360.ma',
     languages: {
       'fr-MA': 'https://tomobile360.ma',
       'fr': 'https://tomobile360.ma',
@@ -81,30 +80,38 @@ export default function RootLayout({
               '@graph': [
                 {
                   '@type': 'WebSite',
+                  '@id': 'https://tomobile360.ma/#website',
                   name: 'Tomobile 360',
                   url: 'https://tomobile360.ma',
+                  inLanguage: 'fr-MA',
                   potentialAction: {
                     '@type': 'SearchAction',
-                    target: 'https://tomobile360.ma/neuf?q={search_term_string}',
+                    target: {
+                      '@type': 'EntryPoint',
+                      urlTemplate: 'https://tomobile360.ma/neuf?q={search_term_string}',
+                    },
                     'query-input': 'required name=search_term_string',
                   },
                 },
                 {
-                  '@type': 'Organization',
+                  '@type': 'AutoDealer',
+                  '@id': 'https://tomobile360.ma/#organization',
                   name: 'Tomobile 360',
                   url: 'https://tomobile360.ma',
-                  logo: 'https://tomobile360.ma/logo_tomobil360.png',
+                  logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://tomobile360.ma/logo_tomobil360.png',
+                  },
+                  email: 'contact@tomobile360.ma',
                   contactPoint: {
                     '@type': 'ContactPoint',
-                    telephone: '+212-522-123456',
                     contactType: 'customer service',
+                    email: 'contact@tomobile360.ma',
                     availableLanguage: 'French',
                   },
                   address: {
                     '@type': 'PostalAddress',
-                    streetAddress: '123 Boulevard Mohammed V',
                     addressLocality: 'Casablanca',
-                    postalCode: '20250',
                     addressCountry: 'MA',
                   },
                 },

@@ -5,8 +5,11 @@ import { createClient } from '@/lib/supabase/server'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
 
 export const metadata: Metadata = {
-  title: 'Voitures Populaires au Maroc | Tomobile 360',
+  title: 'Voitures Populaires au Maroc',
   description: 'Les voitures neuves les plus populaires au Maroc. Comparez les modèles les plus vendus et trouvez votre prochaine voiture.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/neuf/populaires',
+  },
 }
 
 export const revalidate = 60

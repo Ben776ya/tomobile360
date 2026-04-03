@@ -5,8 +5,11 @@ import { createClient } from '@/lib/supabase/server'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
 
 export const metadata: Metadata = {
-  title: 'Nouveautés Automobiles au Maroc | Tomobile 360',
+  title: 'Nouveautés Automobiles au Maroc',
   description: 'Découvrez les dernières nouveautés automobiles disponibles au Maroc. Nouvelles sorties, premiers prix et fiches techniques.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/neuf/nouveautes',
+  },
 }
 
 export const revalidate = 60

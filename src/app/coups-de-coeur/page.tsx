@@ -7,8 +7,11 @@ import type { CoupDeCoeurCategory } from '@/lib/types'
 export const revalidate = 60
 
 export const metadata = {
-  title: 'Nos Coups de Cœur | Tomobile 360',
+  title: 'Nos Coups de Coeur',
   description: 'Notre sélection des meilleurs véhicules par segment : Voiture, SUV, Pick-up et Électrique.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/coups-de-coeur',
+  },
 }
 
 type CategoryConfig = {

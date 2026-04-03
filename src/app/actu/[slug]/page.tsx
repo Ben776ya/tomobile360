@@ -28,11 +28,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     .single()
 
   if (!article) {
-    return { title: 'Article non trouvé | Tomobile 360' }
+    return { title: 'Article non trouvé' }
   }
 
   return {
-    title: `${article.title} | Tomobile 360`,
+    title: article.title,
     description: article.excerpt || undefined,
     alternates: {
       canonical: `https://tomobile360.ma/actu/${article.slug}`,
@@ -120,9 +120,18 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             '@context': 'https://schema.org',
             '@type': 'NewsArticle',
             headline: article.title,
-            description: article.excerpt,
-            image: article.featured_image || 'https://tomobile360.ma/og-image.png',
+            ...(article.excerpt ? { description: article.excerpt } : {}),
+            image: [{
+              '@type': 'ImageObject',
+              url: article.featured_image || 'https://tomobile360.ma/og-image.png',
+              width: 1200,
+              height: 630,
+            }],
             datePublished: article.published_at,
+            dateModified: article.published_at,
+            author: (article as any).profiles?.full_name
+              ? { '@type': 'Person', name: (article as any).profiles.full_name }
+              : { '@type': 'Organization', name: 'Tomobile 360' },
             publisher: {
               '@type': 'Organization',
               name: 'Tomobile 360',
@@ -132,6 +141,10 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               },
             },
             url: `https://tomobile360.ma/actu/${article.slug}`,
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': `https://tomobile360.ma/actu/${article.slug}`,
+            },
           }),
         }}
       />

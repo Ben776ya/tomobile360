@@ -1,9 +1,12 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Conditions Générales d'Utilisation | Tomobile 360",
+  title: "Conditions Générales d'Utilisation",
   description: "Consultez les conditions générales d'utilisation de la plateforme Tomobile 360.",
   robots: { index: false, follow: true },
+  alternates: {
+    canonical: 'https://tomobile360.ma/conditions',
+  },
 }
 
 export default function ConditionsPage() {

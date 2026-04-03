@@ -3,9 +3,12 @@ import Image from 'next/image'
 import { AtSign, Camera } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Qui Sommes-Nous | Tomobile 360',
+  title: 'Qui Sommes-Nous',
   description:
     "Découvrez l'équipe de passionnés derrière Tomobile 360, la plateforme de référence pour l'automobile au Maroc.",
+  alternates: {
+    canonical: 'https://tomobile360.ma/qui-sommes-nous',
+  },
 }
 
 // ── Data ────────────────────────────────────────────────────────────────────

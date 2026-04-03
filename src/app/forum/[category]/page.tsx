@@ -13,10 +13,10 @@ export async function generateMetadata({ params }: { params: { category: string 
     .eq('id', params.category)
     .single()
 
-  if (!category) return { title: 'Forum | Tomobile 360' }
+  if (!category) return { title: 'Forum' }
 
   return {
-    title: `${category.name} — Forum Automobile Maroc | Tomobile 360`,
+    title: `${category.name} — Forum Automobile Maroc`,
     description: category.description || `Discussions et conseils sur ${category.name} dans le forum automobile Tomobile 360.`,
   }
 }

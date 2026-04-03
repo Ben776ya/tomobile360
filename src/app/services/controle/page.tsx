@@ -4,7 +4,7 @@ import { ClipboardCheck, Check, ChevronRight, ArrowLeft, MapPin, Calendar, Clock
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const metadata: Metadata = {
-  title: 'Contrôle Technique Voiture au Maroc | Tomobile 360',
+  title: 'Contrôle Technique Voiture au Maroc',
   description: 'Passez votre contrôle technique dans plus de 40 centres partenaires agréés au Maroc. Réservation en ligne, 350 DH.',
   alternates: {
     canonical: 'https://tomobile360.ma/services/controle',

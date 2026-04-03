@@ -4,8 +4,11 @@ import { createClient } from '@/lib/supabase/server'
 import { MessageSquare, Users, TrendingUp, Search } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Forum Automobile Maroc — Discussions & Conseils | Tomobile 360',
+  title: 'Forum Automobile Maroc — Discussions & Conseils',
   description: 'Rejoignez la communauté automobile marocaine. Posez vos questions, partagez vos expériences et obtenez des conseils sur votre voiture.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/forum',
+  },
 }
 import { Input } from '@/components/ui/input'
 import { formatRelativeTime } from '@/lib/utils'

@@ -8,6 +8,8 @@ import { formatPrice, formatRelativeTime } from '@/lib/utils'
 import { ImageGallery } from '@/components/vehicles/ImageGallery'
 import { UsedListingCard } from '@/components/vehicles/UsedListingCard'
 import { ShareButton } from '@/components/shared/ShareButton'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 // Use dynamic rendering to ensure newly created listings are immediately available
 export const dynamic = 'force-dynamic'
@@ -30,7 +32,7 @@ export async function generateMetadata({ params }: PageProps) {
     .eq('id', params.id)
     .single()
 
-  if (!listing) return { title: 'Annonce non trouvée | Tomobile 360' }
+  if (!listing) return { title: 'Annonce non trouvée' }
 
   const brandName = (listing.brands as any)?.name || ''
   const modelName = (listing.models as any)?.name || ''
@@ -120,19 +122,49 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      <JsonLd
+        data={{
+          '@type': 'Car',
+          name: `${brandName} ${modelName} ${listing.year}`,
+          brand: { '@type': 'Brand', name: brandName },
+          model: modelName,
+          vehicleModelDate: listing.year?.toString(),
+          ...(listing.mileage ? {
+            mileageFromOdometer: {
+              '@type': 'QuantitativeValue',
+              value: listing.mileage,
+              unitCode: 'KMT',
+            },
+          } : {}),
+          ...(listing.fuel_type ? { fuelType: listing.fuel_type } : {}),
+          ...(listing.transmission ? { vehicleTransmission: listing.transmission } : {}),
+          ...(listing.color ? { color: listing.color } : {}),
+          image: images.length > 0 ? images.slice(0, 3) : ['https://tomobile360.ma/og-image.png'],
+          ...(listing.description ? { description: listing.description } : {}),
+          url: `https://tomobile360.ma/occasion/${params.id}`,
+          offers: {
+            '@type': 'Offer',
+            price: listing.price,
+            priceCurrency: 'MAD',
+            availability: 'https://schema.org/InStock',
+            url: `https://tomobile360.ma/occasion/${params.id}`,
+            itemCondition: 'https://schema.org/UsedCondition',
+            seller: {
+              '@type': 'Person',
+              name: seller?.full_name || 'Vendeur particulier',
+            },
+          },
+        }}
+      />
       <div className="container mx-auto px-4 py-8 pb-20 lg:pb-8">
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-gray-500 mb-6">
-          <Link href="/" className="hover:text-[#006EFE] transition-colors">Accueil</Link>
-          <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-          <Link href="/occasion" className="hover:text-[#006EFE] transition-colors">Occasion</Link>
-          <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-          <Link href={`/occasion?brand=${listing.brand_id}`} className="hover:text-[#006EFE] transition-colors">
-            {brandName}
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-          <span className="text-gray-800 font-medium">{modelName}</span>
-        </nav>
+        <Breadcrumbs
+          items={[
+            { name: 'Occasion', href: '/occasion' },
+            { name: brandName, href: `/occasion?brand=${listing.brand_id}` },
+            { name: `${brandName} ${modelName}` },
+          ]}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}

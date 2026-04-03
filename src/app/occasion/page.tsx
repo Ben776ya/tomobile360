@@ -8,7 +8,7 @@ export const revalidate = 0
 
 export const metadata = {
   title: 'Voitures d\'Occasion Vérifiées au Maroc — M-OCCAZ',
-  description: 'Parcourez les voitures d\'occasion vérifiées et garanties M-OCCAZ. Historique, contrôle qualité et prix transparents.',
+  description: 'Trouvez votre voiture d\'occasion vérifiée au Maroc. Véhicules M-OCCAZ contrôlés et garantis : prix, kilométrage, historique complet sur Tomobile 360.',
   alternates: {
     canonical: 'https://tomobile360.ma/occasion',
   },
@@ -163,6 +163,9 @@ export default async function UsedVehiclesPage({
       {/* SEO Intro Text */}
       <div className="container mx-auto px-4 mb-6">
         <div className="bg-white rounded-xl border border-gray-100 p-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-3">
+            Voitures d&apos;Occasion Vérifiées au Maroc
+          </h1>
           <p className="text-gray-600 text-sm leading-relaxed">
             Retrouvez une sélection de voitures d&apos;occasion vérifiées par notre partenaire M-OCCAZ.
             Chaque véhicule bénéficie du contrôle qualité M-CHECK couvrant plus de 100 points d&apos;inspection

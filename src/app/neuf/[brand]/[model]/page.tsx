@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps) {
   const modelSlug = decodeURIComponent(params.model)
 
   return {
-    title: `${brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1)} ${modelSlug.charAt(0).toUpperCase() + modelSlug.slice(1)} - Versions | Tomobile 360`,
+    title: `${brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1)} ${modelSlug.charAt(0).toUpperCase() + modelSlug.slice(1)} — Versions au Maroc`,
     description: `Comparez toutes les versions du ${brandSlug} ${modelSlug} disponibles au Maroc. Prix, équipements et fiches techniques.`,
   }
 }

@@ -6,8 +6,11 @@ import { VehicleCard } from '@/components/vehicles/VehicleCard'
 import type { VehicleNew } from '@/lib/types'
 
 export const metadata: Metadata = {
-  title: 'Promotions Voitures Neuves au Maroc | Tomobile 360',
+  title: 'Promotions Voitures Neuves au Maroc',
   description: 'Profitez des meilleures promotions sur les voitures neuves au Maroc. Remises, offres spéciales et prix barrés chez les concessionnaires.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/neuf/promotions',
+  },
 }
 
 export const revalidate = 60

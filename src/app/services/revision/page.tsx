@@ -5,7 +5,7 @@ import { Check, ArrowLeft, Truck, ShieldCheck, Zap } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const metadata: Metadata = {
-  title: 'Révision & Entretien Voiture au Maroc | Tomobile 360',
+  title: 'Révision & Entretien Voiture au Maroc',
   description: 'Révisez et entretenez votre voiture dans nos centres partenaires agréés au Maroc. Prise de rendez-vous en ligne.',
   alternates: {
     canonical: 'https://tomobile360.ma/services/revision',

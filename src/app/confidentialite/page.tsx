@@ -1,9 +1,12 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Politique de Confidentialité | Tomobile 360',
+  title: 'Politique de Confidentialité',
   description: 'Consultez la politique de confidentialité de Tomobile 360 concernant la collecte et le traitement de vos données personnelles.',
   robots: { index: false, follow: true },
+  alternates: {
+    canonical: 'https://tomobile360.ma/confidentialite',
+  },
 }
 
 export default function ConfidentialitePage() {
