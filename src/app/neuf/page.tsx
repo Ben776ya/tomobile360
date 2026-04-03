@@ -3,13 +3,17 @@ import { createClient } from '@/lib/supabase/server'
 import { ModelCard, type ModelGroup } from '@/components/vehicles/ModelCard'
 import { VehicleFilters } from '@/components/vehicles/VehicleFilters'
 import { BrandHeader } from '@/components/vehicles/BrandHeader'
-import { Loader2, SlidersHorizontal } from 'lucide-react'
+import { SlidersHorizontal } from 'lucide-react'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const revalidate = 60
 
 export const metadata = {
-  title: 'Voitures Neuves au Maroc | Tomobile 360',
-  description: 'Découvrez toutes les voitures neuves disponibles au Maroc. Comparez les prix, les modèles et les équipements des véhicules neufs de toutes les marques.',
+  title: 'Voitures Neuves au Maroc 2026 — Prix, Fiches Techniques et Comparatifs',
+  description: 'Consultez le catalogue complet des voitures neuves au Maroc : prix, équipements, puissance fiscale. Comparez et trouvez le modèle idéal.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/neuf',
+  },
 }
 
 interface SearchParams {
@@ -215,6 +219,7 @@ export default async function NewVehiclesPage({
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
+        <Breadcrumbs items={[{ name: 'Voitures Neuves', href: '/neuf' }]} />
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-2">
@@ -222,6 +227,17 @@ export default async function NewVehiclesPage({
           </h1>
           <p className="text-gray-500">
             Trouvez des véhicules correspondant à votre budget parmi notre catalogue complet
+          </p>
+        </div>
+
+        {/* SEO Intro Text */}
+        <div className="mb-8 bg-white rounded-xl border border-gray-200 p-6">
+          <p className="text-gray-600 text-sm leading-relaxed">
+            Bienvenue sur le catalogue de voitures neuves de Tomobile 360. Retrouvez l&apos;ensemble des marques et modèles
+            disponibles au Maroc avec leurs prix actualisés, fiches techniques détaillées et équipements de série.
+            Que vous cherchiez une citadine économique, un SUV familial ou une berline premium, utilisez nos filtres
+            pour affiner votre recherche par budget, type de carburant, puissance fiscale ou catégorie de véhicule.
+            Comparez les versions et trouvez l&apos;offre qui correspond à vos besoins et à votre budget.
           </p>
         </div>
 
