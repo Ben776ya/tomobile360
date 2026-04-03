@@ -5,28 +5,29 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Send } from 'lucide-react'
 import { subscribeNewsletter } from '@/lib/actions/newsletter'
+import { EXTERNAL_LINKS } from '@/lib/links'
 
 const socialLinks = [
   {
-    href: 'https://facebook.com',
+    href: EXTERNAL_LINKS.FACEBOOK,
     label: 'Facebook',
     color: '#1877F2',
     icon: Facebook,
   },
   {
-    href: 'https://youtube.com',
+    href: EXTERNAL_LINKS.YOUTUBE,
     label: 'YouTube',
     color: '#FF0000',
     icon: Youtube,
   },
   {
-    href: 'https://instagram.com',
+    href: EXTERNAL_LINKS.INSTAGRAM,
     label: 'Instagram',
     color: '#E4405F',
     icon: Instagram,
   },
   {
-    href: 'https://tiktok.com',
+    href: EXTERNAL_LINKS.TIKTOK,
     label: 'TikTok',
     color: '#000000',
     customIcon: (
@@ -48,7 +49,7 @@ const neufLinks = [
 
 const occasionLinks = [
   { href: '/occasion', label: 'Toutes les annonces' },
-  { href: 'https://www.m-occaz.ma/vendez-votre-vehicule', label: 'Vendre ma voiture', external: true },
+  { href: EXTERNAL_LINKS.SELL_CAR, label: 'Vendre ma voiture', external: true },
   { href: '/occasion/estimation', label: 'Estimation' },
   { href: '/occasion?type=pro', label: 'Professionnels' },
 ]
@@ -266,7 +267,7 @@ export default function Footer() {
 
             {/* CTA Button */}
             <a
-              href="https://www.m-occaz.ma/vendez-votre-vehicule"
+              href={EXTERNAL_LINKS.SELL_CAR}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-6 inline-flex items-center justify-center w-full px-6 py-3 bg-secondary hover:bg-secondary-400 hover:shadow-glow-cyan hover:-translate-y-0.5 text-white font-semibold rounded-xl transition-all duration-300"
