@@ -186,7 +186,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
       <div className="absolute inset-0">
         <Image
           src={HERO_IMAGE}
-          alt=""
+          alt="Guide d'achat automobile Maroc — recherche de voitures neuves et occasion"
           fill
           className="object-cover"
           priority
@@ -200,18 +200,19 @@ export function HeroSection({ brands }: HeroSectionProps) {
       {/* Content */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10 pt-6 lg:pt-8 pb-14 lg:pb-16">
         {/* Search panel — dark overlay card anchored left */}
-        <div className="w-full max-w-xl bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 p-3 sm:p-4 lg:p-5">
+        <div className="w-full max-w-xl bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 p-4 sm:p-5 lg:p-6">
 
           {/* Title */}
-          <h1 className="font-display text-lg lg:text-xl font-bold text-white leading-tight mb-0.5">
+          <h2 className="font-display text-lg lg:text-xl font-bold text-white leading-tight mb-0.5 text-center">
             Trouvez la voiture idéale au Maroc
-          </h1>
-          <p className="text-white/60 text-[11px] mb-2">
+          </h2>
+          <p className="text-white/60 text-[11px] mb-3 text-center">
             Neuf et occasion — comparez les prix, faites le bon choix
           </p>
 
           {/* NEUF / OCCASION Toggle */}
-          <div className="inline-flex rounded-xl bg-white/10 p-0.5 mb-2">
+          <div className="flex justify-center mb-3">
+          <div className="inline-flex rounded-xl bg-white/10 p-0.5">
             <button
               onClick={() => setVehicleCondition('neuf')}
               className={`px-4 sm:px-5 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
@@ -232,6 +233,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
             >
               OCCAZ
             </button>
+          </div>
           </div>
 
           {/* Vehicle Type Icons */}
