@@ -107,7 +107,7 @@ export default function Footer() {
               />
             </Link>
             <p className="text-dark-300 text-sm mb-6 leading-relaxed">
-              Tomobile 360 est la plateforme leader au Maroc pour l&apos;achat et la vente de véhicules neufs et d&apos;occasion.
+              Tomobile 360 est votre guide d&apos;achat automobile au Maroc — prix, fiches techniques, comparatifs et essais de voitures neuves.
             </p>
             {/* Contact Info */}
             <ul className="space-y-3">

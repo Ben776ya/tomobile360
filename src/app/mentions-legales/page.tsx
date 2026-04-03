@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Mentions Légales | Tomobile 360',
-  description: 'Mentions légales de la plateforme Tomobile 360, marketplace automobile au Maroc.',
+  description: 'Mentions légales de Tomobile 360, guide d\'achat automobile au Maroc.',
   robots: { index: false, follow: true },
 }
 
