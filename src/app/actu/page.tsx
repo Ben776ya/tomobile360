@@ -8,8 +8,11 @@ import { formatDate } from '@/lib/utils'
 export const revalidate = 60
 
 export const metadata = {
-  title: 'Actualités & Essais Auto au Maroc | Tomobile 360',
-  description: 'Toute l\'actualité automobile au Maroc : essais, nouveautés, marchés et tendances. Restez informé avec Tomobile 360.',
+  title: 'Actualités Automobile Maroc 2026 — Nouveautés et Tendances',
+  description: 'Toute l\'actualité automobile au Maroc : essais, nouveautés, tendances du marché et comparatifs. Restez informé avec Tomobile 360.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/actu',
+  },
 }
 
 interface SearchParams {
@@ -93,6 +96,16 @@ export default async function NewsPage({
           </h1>
           <p className="text-gray-500">
             Toute l&apos;actualité du monde de l&apos;automobile au Maroc et à l&apos;international
+          </p>
+        </div>
+
+        {/* SEO Intro Text */}
+        <div className="mb-6 bg-white rounded-xl border border-gray-100 p-6">
+          <p className="text-gray-600 text-sm leading-relaxed">
+            Suivez toute l&apos;actualité du monde automobile au Maroc et à l&apos;international.
+            Essais détaillés des derniers modèles, analyses du marché marocain, comparatifs entre véhicules concurrents
+            et guides d&apos;achat pour vous aider à faire le meilleur choix. L&apos;équipe Tomobile 360 décrypte
+            pour vous les tendances, les lancements et les évolutions du secteur automobile.
           </p>
         </div>
 
