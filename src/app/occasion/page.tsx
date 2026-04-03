@@ -158,6 +158,19 @@ export default async function UsedVehiclesPage({
         <Breadcrumbs items={[{ name: 'Occasion', href: '/occasion' }]} />
       </div>
 
+      {/* SEO Intro Text */}
+      <div className="container mx-auto px-4 mb-6">
+        <div className="bg-white rounded-xl border border-gray-100 p-6">
+          <p className="text-gray-600 text-sm leading-relaxed">
+            Retrouvez une sélection de voitures d&apos;occasion vérifiées par notre partenaire M-OCCAZ.
+            Chaque véhicule bénéficie du contrôle qualité M-CHECK couvrant plus de 100 points d&apos;inspection
+            mécanique et esthétique. Filtrez par budget, kilométrage, type de carburant ou ville pour trouver
+            le véhicule qui vous correspond. Toutes les annonces incluent un historique complet, des photos
+            détaillées et un prix transparent sans surprise.
+          </p>
+        </div>
+      </div>
+
       {/* ── M-OCCAZ PARTNERSHIP SECTION ── */}
       <section className="py-10">
         <div className="container mx-auto px-4">
