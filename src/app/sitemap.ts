@@ -8,12 +8,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static pages — use fixed dates, not new Date(), to avoid misleading crawlers
   const staticPages: MetadataRoute.Sitemap = [
-    { url: BASE_URL, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
-    { url: `${BASE_URL}/neuf`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
-    { url: `${BASE_URL}/occasion`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
-    { url: `${BASE_URL}/actu`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
-    { url: `${BASE_URL}/videos`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${BASE_URL}/forum`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.6 },
+    { url: BASE_URL, changeFrequency: 'daily', priority: 1 },
+    { url: `${BASE_URL}/neuf`, changeFrequency: 'daily', priority: 0.9 },
+    { url: `${BASE_URL}/occasion`, changeFrequency: 'daily', priority: 0.9 },
+    { url: `${BASE_URL}/actu`, changeFrequency: 'daily', priority: 0.8 },
+    { url: `${BASE_URL}/videos`, changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${BASE_URL}/forum`, changeFrequency: 'daily', priority: 0.6 },
     { url: `${BASE_URL}/coups-de-coeur`, changeFrequency: 'weekly', priority: 0.7 },
     { url: `${BASE_URL}/neuf/nouveautes`, changeFrequency: 'weekly', priority: 0.7 },
     { url: `${BASE_URL}/neuf/populaires`, changeFrequency: 'weekly', priority: 0.7 },
