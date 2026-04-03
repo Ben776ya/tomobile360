@@ -4,7 +4,8 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { formatPrice } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import { ChevronRight, Fuel, Gauge, Zap, Calendar } from 'lucide-react'
+import { Fuel, Gauge, Zap, Calendar } from 'lucide-react'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const revalidate = 60
 
@@ -71,21 +72,12 @@ export default async function ModelVersionsPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-6">
-          <Link href="/neuf" className="hover:text-secondary transition-colors">
-            Véhicules neufs
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <Link
-            href={`/neuf?brand=${brand.id}`}
-            className="hover:text-secondary transition-colors"
-          >
-            {brand.name}
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-primary font-medium">{model.name}</span>
-        </nav>
+        <Breadcrumbs
+          items={[
+            { name: 'Voitures Neuves', href: '/neuf' },
+            { name: brand.name },
+          ]}
+        />
 
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
