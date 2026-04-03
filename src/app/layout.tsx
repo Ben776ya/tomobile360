@@ -29,11 +29,14 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://tomobile360.ma'),
-  title: 'Tomobile 360 - Marketplace Automobile au Maroc',
-  description: 'Trouvez votre voiture neuve ou d\'occasion au Maroc. Comparez les prix, consultez les avis, et contactez les vendeurs.',
+  title: {
+    default: 'Tomobile 360 — Guide d\'Achat Automobile au Maroc : Voitures Neuves, Prix et Fiches Techniques',
+    template: '%s | Tomobile 360',
+  },
+  description: 'Découvrez les prix et fiches techniques de toutes les voitures neuves au Maroc. Comparatifs, essais vidéo et guide d\'achat complet sur Tomobile 360.',
   openGraph: {
-    title: 'Tomobile 360 - Marketplace Automobile au Maroc',
-    description: 'Trouvez votre voiture neuve ou d\'occasion au Maroc. Comparez les prix, consultez les avis, et contactez les vendeurs.',
+    title: 'Tomobile 360 — Guide d\'Achat Automobile au Maroc',
+    description: 'Découvrez les prix et fiches techniques de toutes les voitures neuves au Maroc. Comparatifs, essais vidéo et guide d\'achat complet sur Tomobile 360.',
     url: 'https://tomobile360.ma',
     siteName: 'Tomobile 360',
     images: [
@@ -41,7 +44,7 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Tomobile 360 - Marketplace Automobile au Maroc',
+        alt: 'Tomobile 360 — Guide d\'Achat Automobile au Maroc',
       },
     ],
     locale: 'fr_MA',
@@ -49,8 +52,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tomobile 360 - Marketplace Automobile au Maroc',
-    description: 'Trouvez votre voiture neuve ou d\'occasion au Maroc.',
+    title: 'Tomobile 360 — Guide d\'Achat Automobile au Maroc',
+    description: 'Découvrez les prix et fiches techniques de toutes les voitures neuves au Maroc.',
     images: ['/og-image.png'],
   },
 }
