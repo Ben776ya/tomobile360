@@ -2,12 +2,16 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ExternalLink, Calendar, Gauge, Fuel, Zap, GitFork, Car } from 'lucide-react'
 import { getMoccazListings, type MoccazListing } from '@/lib/scrapers/moccaz'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const revalidate = 0
 
 export const metadata = {
-  title: 'Voitures d\'Occasion au Maroc | Tomobile 360',
-  description: 'Trouvez votre voiture d\'occasion au Maroc parmi des milliers d\'annonces vérifiées.',
+  title: 'Voitures d\'Occasion Vérifiées au Maroc — M-OCCAZ',
+  description: 'Parcourez les voitures d\'occasion vérifiées et garanties M-OCCAZ. Historique, contrôle qualité et prix transparents.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/occasion',
+  },
 }
 
 function MOccazCard({ listing }: { listing: MoccazListing }) {
@@ -150,6 +154,9 @@ export default async function UsedVehiclesPage({
 
   return (
     <div className="min-h-screen bg-[#F2F4F6]">
+      <div className="container mx-auto px-4">
+        <Breadcrumbs items={[{ name: 'Occasion', href: '/occasion' }]} />
+      </div>
 
       {/* ── M-OCCAZ PARTNERSHIP SECTION ── */}
       <section className="py-10">
