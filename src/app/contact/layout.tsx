@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Contactez-Nous | Tomobile 360',
-  description: 'Contactez l\'équipe Tomobile 360 pour toute question sur la plateforme, vos annonces ou nos services automobiles au Maroc.',
+  title: 'Contactez Tomobile 360 — Votre Guide Automobile au Maroc',
+  description: 'Contactez l\'équipe Tomobile 360 pour toute question sur les voitures neuves au Maroc, nos services ou un partenariat.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/contact',
+  },
 }
 
 export default function ContactLayout({ children }: { children: React.ReactNode }) {

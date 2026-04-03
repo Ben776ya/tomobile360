@@ -4,8 +4,11 @@ import Image from 'next/image'
 import { CreditCard, Shield, Wrench, ClipboardCheck, ChevronRight, Car, Calculator, FileCheck } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Services Auto au Maroc — Crédit, Assurance, Révision | Tomobile 360',
-  description: 'Crédit auto, assurance, révision, contrôle technique : tous les services automobiles au Maroc réunis sur Tomobile 360.',
+  title: 'Services Automobiles au Maroc — Crédit, Assurance, Entretien',
+  description: 'Crédit auto, assurance, révision et contrôle technique : tous les services automobiles au Maroc réunis sur Tomobile 360.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/services',
+  },
 }
 
 const services = [
