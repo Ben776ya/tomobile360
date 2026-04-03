@@ -1,0 +1,256 @@
+<h2>Hybrid Layout — Gallery-First + Immersive</h2>
+<p class="subtitle">Combines A's card separation with B's visual impact, plus generous side padding. Does this feel right?</p>
+
+<div class="options">
+  <div class="option" data-choice="hybrid" onclick="toggleSelect(this)">
+    <div class="letter">!</div>
+    <div class="content">
+      <h3>The Hybrid Approach</h3>
+      <p>Large immersive gallery (from B) but title/specs/fiche in separate clean cards below (from A). Wider side padding throughout so nothing hugs the page edge. Sidebar stays sticky for price/CTA.</p>
+
+      <!-- Full mockup -->
+      <div style="margin-top:16px; border:2px solid #e2e8f0; border-radius:12px; overflow:hidden; background:#f1f5f9;">
+
+        <!-- Breadcrumb with padding -->
+        <div style="padding:10px 40px; font-size:11px; color:#94a3b8; background:#fff; border-bottom:1px solid #e2e8f0;">
+          Accueil &rsaquo; Voitures Neuves &rsaquo; Dacia &rsaquo; Duster
+        </div>
+
+        <!-- Padded container -->
+        <div style="padding:20px 40px;">
+
+          <!-- Large Gallery Section -->
+          <div style="background:white; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden; margin-bottom:16px;">
+            <!-- Main image — large and immersive -->
+            <div style="background:linear-gradient(135deg,#475569,#1e293b); height:220px; display:flex; align-items:center; justify-content:center; color:white; font-weight:600; font-size:15px; position:relative;">
+              Large Immersive Main Image
+              <!-- Nav arrows -->
+              <div style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:32px; height:32px; background:rgba(255,255,255,0.8); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; color:#334155;">&lt;</div>
+              <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%); width:32px; height:32px; background:rgba(255,255,255,0.8); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; color:#334155;">&gt;</div>
+              <!-- Counter -->
+              <div style="position:absolute; bottom:10px; right:12px; background:rgba(0,0,0,0.5); color:white; padding:3px 10px; border-radius:8px; font-size:11px;">1 / 12</div>
+            </div>
+            <!-- Thumbnail grid — bigger thumbnails -->
+            <div style="display:flex; gap:6px; padding:10px 12px;">
+              <div style="flex:1; height:52px; background:linear-gradient(135deg,#64748b,#475569); border-radius:8px; border:2px solid #006EFE;"></div>
+              <div style="flex:1; height:52px; background:#e2e8f0; border-radius:8px; opacity:0.7;"></div>
+              <div style="flex:1; height:52px; background:#e2e8f0; border-radius:8px; opacity:0.7;"></div>
+              <div style="flex:1; height:52px; background:#e2e8f0; border-radius:8px; opacity:0.7;"></div>
+              <div style="flex:1; height:52px; background:#e2e8f0; border-radius:8px; opacity:0.7;"></div>
+              <div style="flex:1; height:52px; background:#e2e8f0; border-radius:8px; opacity:0.7;"></div>
+            </div>
+          </div>
+
+          <!-- 2 column layout below gallery -->
+          <div style="display:flex; gap:16px;">
+
+            <!-- Left column -->
+            <div style="flex:2; display:flex; flex-direction:column; gap:16px;">
+
+              <!-- Title + Brand Card -->
+              <div style="background:white; border-radius:12px; border:1px solid #e2e8f0; padding:20px;">
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+                  <div style="width:44px; height:44px; background:#f1f5f9; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#94a3b8;">Logo</div>
+                  <div>
+                    <div style="font-weight:800; font-size:18px; color:#1C2541;">Dacia Duster</div>
+                    <div style="font-size:12px; color:#94a3b8;">2025 &bull; Version Extreme TCe 150</div>
+                  </div>
+                </div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                  <span style="background:#dcfce7; color:#16a34a; font-size:10px; padding:3px 8px; border-radius:6px; font-weight:600;">NOUVEAU</span>
+                  <span style="background:#dbeafe; color:#2563eb; font-size:10px; padding:3px 8px; border-radius:6px; font-weight:600;">POPULAIRE</span>
+                  <span style="background:#f1f5f9; color:#64748b; font-size:10px; padding:3px 8px; border-radius:6px;">SUV</span>
+                </div>
+              </div>
+
+              <!-- Key Specs Strip Card -->
+              <div style="background:white; border-radius:12px; border:1px solid #e2e8f0; padding:16px 20px;">
+                <div style="font-size:12px; font-weight:700; color:#1C2541; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">Points Cles</div>
+                <div style="display:flex; gap:8px;">
+                  <div style="flex:1; text-align:center; padding:12px 8px; background:linear-gradient(135deg,#eff6ff,#dbeafe); border-radius:10px;">
+                    <div style="font-size:18px; margin-bottom:4px;">&#9889;</div>
+                    <div style="font-size:10px; color:#64748b; margin-bottom:2px;">Puissance</div>
+                    <div style="font-size:14px; font-weight:800; color:#1C2541;">150 ch</div>
+                  </div>
+                  <div style="flex:1; text-align:center; padding:12px 8px; background:linear-gradient(135deg,#eff6ff,#dbeafe); border-radius:10px;">
+                    <div style="font-size:18px; margin-bottom:4px;">&#9981;</div>
+                    <div style="font-size:10px; color:#64748b; margin-bottom:2px;">Carburant</div>
+                    <div style="font-size:14px; font-weight:800; color:#1C2541;">Diesel</div>
+                  </div>
+                  <div style="flex:1; text-align:center; padding:12px 8px; background:linear-gradient(135deg,#eff6ff,#dbeafe); border-radius:10px;">
+                    <div style="font-size:18px; margin-bottom:4px;">&#9881;</div>
+                    <div style="font-size:10px; color:#64748b; margin-bottom:2px;">Boite</div>
+                    <div style="font-size:14px; font-weight:800; color:#1C2541;">Auto</div>
+                  </div>
+                  <div style="flex:1; text-align:center; padding:12px 8px; background:linear-gradient(135deg,#eff6ff,#dbeafe); border-radius:10px;">
+                    <div style="font-size:18px; margin-bottom:4px;">&#128168;</div>
+                    <div style="font-size:10px; color:#64748b; margin-bottom:2px;">CO2</div>
+                    <div style="font-size:14px; font-weight:800; color:#1C2541;">135 g</div>
+                  </div>
+                  <div style="flex:1; text-align:center; padding:12px 8px; background:linear-gradient(135deg,#eff6ff,#dbeafe); border-radius:10px;">
+                    <div style="font-size:18px; margin-bottom:4px;">&#128663;</div>
+                    <div style="font-size:10px; color:#64748b; margin-bottom:2px;">0-100</div>
+                    <div style="font-size:14px; font-weight:800; color:#1C2541;">9.5s</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Fiche Technique Card -->
+              <div style="background:white; border-radius:12px; border:1px solid #e2e8f0; padding:20px;">
+                <div style="font-size:15px; font-weight:800; color:#1C2541; margin-bottom:16px;">Fiche Technique</div>
+
+                <!-- Category: Moteur -->
+                <div style="border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:12px;">
+                  <div style="background:#eff6ff; padding:10px 14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #dbeafe;">
+                    <div style="width:28px; height:28px; background:#dbeafe; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:13px;">&#9881;</div>
+                    <span style="font-weight:700; font-size:12px; color:#2563eb;">MOTEUR & INFOS TECHNIQUES</span>
+                  </div>
+                  <div style="font-size:11px;">
+                    <div style="display:flex; justify-content:space-between; padding:8px 14px; background:#fff;">
+                      <span style="color:#64748b;">Cylindree</span>
+                      <span style="font-weight:700; color:#1C2541;">1.5 L</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:8px 14px; background:#f8fafc;">
+                      <span style="color:#64748b;">Puissance</span>
+                      <span style="font-weight:700; color:#1C2541;">150 ch / 110 kW</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:8px 14px; background:#fff;">
+                      <span style="color:#64748b;">Couple</span>
+                      <span style="font-weight:700; color:#1C2541;">250 Nm</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:8px 14px; background:#f8fafc;">
+                      <span style="color:#64748b;">Norme Euro</span>
+                      <span style="font-weight:700; color:#1C2541;">Euro 6</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Category: Securite -->
+                <div style="border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:12px;">
+                  <div style="background:#fefce8; padding:10px 14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #fde68a;">
+                    <div style="width:28px; height:28px; background:#fef9c3; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:13px;">&#128737;</div>
+                    <span style="font-weight:700; font-size:12px; color:#a16207;">SECURITE</span>
+                  </div>
+                  <div style="font-size:11px;">
+                    <div style="display:flex; justify-content:space-between; padding:8px 14px; background:#fff;">
+                      <span style="color:#64748b;">ABS</span>
+                      <span style="font-weight:700; color:#16a34a;">&#10003; Oui</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:8px 14px; background:#f8fafc;">
+                      <span style="color:#64748b;">Airbags</span>
+                      <span style="font-weight:700; color:#16a34a;">&#10003; Oui</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="font-size:10px; color:#94a3b8; text-align:center; padding:4px;">+ Dimensions, Confort, Esthetique...</div>
+              </div>
+            </div>
+
+            <!-- Right sidebar -->
+            <div style="flex:1;">
+              <div style="background:white; border-radius:12px; border:1px solid #e2e8f0; padding:20px; position:sticky; top:20px;">
+                <div style="font-size:12px; font-weight:600; color:#64748b; margin-bottom:4px;">Prix</div>
+                <div style="font-size:22px; font-weight:800; color:#006EFE; margin-bottom:4px;">250 000 DH</div>
+                <div style="font-size:11px; color:#94a3b8; margin-bottom:16px;">a partir de</div>
+
+                <!-- Promo banner -->
+                <div style="background:#fef3c7; border:1px solid #fde68a; border-radius:8px; padding:10px; margin-bottom:16px;">
+                  <div style="font-size:11px; font-weight:700; color:#a16207;">-10% Offre Speciale</div>
+                  <div style="font-size:10px; color:#a16207; opacity:0.8;">Jusqu'au 30 avril 2026</div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                  <div style="background:#25D366; color:white; text-align:center; padding:12px; border-radius:10px; font-size:12px; font-weight:700;">WhatsApp</div>
+                  <div style="background:#006EFE; color:white; text-align:center; padding:12px; border-radius:10px; font-size:12px; font-weight:700;">Contacter le vendeur</div>
+                  <div style="background:white; border:1px solid #e2e8f0; color:#1C2541; text-align:center; padding:12px; border-radius:10px; font-size:12px; font-weight:700;">Essai routier</div>
+                  <div style="background:#f8fafc; border:1px solid #e2e8f0; color:#64748b; text-align:center; padding:10px; border-radius:10px; font-size:11px;">Comparer</div>
+                </div>
+
+                <div style="margin-top:16px; padding-top:12px; border-top:1px solid #e2e8f0; display:flex; align-items:center; gap:6px; font-size:11px; color:#94a3b8;">
+                  &#128065; Vu 1 234 fois
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Similar Vehicles -->
+          <div style="margin-top:20px;">
+            <div style="font-size:15px; font-weight:800; color:#1C2541; margin-bottom:12px;">Vehicules Similaires</div>
+            <div style="display:flex; gap:12px;">
+              <div style="flex:1; background:white; border-radius:10px; border:1px solid #e2e8f0; overflow:hidden;">
+                <div style="height:60px; background:#e2e8f0;"></div>
+                <div style="padding:8px;">
+                  <div style="font-size:11px; font-weight:700; color:#1C2541;">Renault Duster</div>
+                  <div style="font-size:11px; color:#006EFE; font-weight:700;">230 000 DH</div>
+                </div>
+              </div>
+              <div style="flex:1; background:white; border-radius:10px; border:1px solid #e2e8f0; overflow:hidden;">
+                <div style="height:60px; background:#e2e8f0;"></div>
+                <div style="padding:8px;">
+                  <div style="font-size:11px; font-weight:700; color:#1C2541;">Hyundai Tucson</div>
+                  <div style="font-size:11px; color:#006EFE; font-weight:700;">320 000 DH</div>
+                </div>
+              </div>
+              <div style="flex:1; background:white; border-radius:10px; border:1px solid #e2e8f0; overflow:hidden;">
+                <div style="height:60px; background:#e2e8f0;"></div>
+                <div style="padding:8px;">
+                  <div style="font-size:11px; font-weight:700; color:#1C2541;">Kia Sportage</div>
+                  <div style="font-size:11px; color:#006EFE; font-weight:700;">310 000 DH</div>
+                </div>
+              </div>
+              <div style="flex:1; background:white; border-radius:10px; border:1px solid #e2e8f0; overflow:hidden;">
+                <div style="height:60px; background:#e2e8f0;"></div>
+                <div style="padding:8px;">
+                  <div style="font-size:11px; font-weight:700; color:#1C2541;">Toyota RAV4</div>
+                  <div style="font-size:11px; color:#006EFE; font-weight:700;">380 000 DH</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- end padded container -->
+      </div><!-- end mockup -->
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <h3>What this hybrid combines</h3>
+  <table style="width:100%; border-collapse:collapse; font-size:13px;">
+    <thead>
+      <tr style="border-bottom:2px solid #e2e8f0;">
+        <th style="text-align:left; padding:8px;">Element</th>
+        <th style="text-align:left; padding:8px;">From</th>
+        <th style="text-align:left; padding:8px;">Detail</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #f1f5f9;">
+        <td style="padding:8px;">Large immersive gallery</td>
+        <td style="padding:8px;">B</td>
+        <td style="padding:8px;">Bigger main image, larger thumbnails, more visual impact</td>
+      </tr>
+      <tr style="border-bottom:1px solid #f1f5f9;">
+        <td style="padding:8px;">Separate section cards</td>
+        <td style="padding:8px;">A</td>
+        <td style="padding:8px;">Title, key specs, fiche technique each in own card</td>
+      </tr>
+      <tr style="border-bottom:1px solid #f1f5f9;">
+        <td style="padding:8px;">Key specs highlight strip</td>
+        <td style="padding:8px;">A</td>
+        <td style="padding:8px;">5 key stats with icons in blue gradient cards</td>
+      </tr>
+      <tr style="border-bottom:1px solid #f1f5f9;">
+        <td style="padding:8px;">Generous side padding</td>
+        <td style="padding:8px;">New</td>
+        <td style="padding:8px;">Content breathes — doesn't hug page edges</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;">View count consolidated</td>
+        <td style="padding:8px;">New</td>
+        <td style="padding:8px;">Only shown once in sidebar, removed from badges area</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

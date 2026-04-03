@@ -1,0 +1,119 @@
+<h2>Vehicle Detail Page — Layout Rework</h2>
+<p class="subtitle">How should the page sections flow from top to bottom?</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Gallery-First Layout</h3>
+      <p>Full-width image gallery at top (bigger thumbnails, main image takes more space). Then below: title + key specs summary strip, then full fiche technique. Sidebar stays for price/CTA.</p>
+      <div style="margin-top:12px; padding:12px; background:#f1f5f9; border-radius:8px; font-size:13px; font-family:monospace; line-height:1.8">
+        ┌─────────────────────────────────────────┐<br>
+        │ Breadcrumb                              │<br>
+        ├───────────────────────────┬─────────────┤<br>
+        │ 🖼 Large Gallery          │ 💰 Price    │<br>
+        │ + bigger thumbnails       │ + CTA       │<br>
+        │ + image counter           │ + Promo     │<br>
+        ├───────────────────────────┤ (sticky)    │<br>
+        │ 🏷 Title + Brand + Badges │             │<br>
+        ├───────────────────────────┤             │<br>
+        │ ⚡ Key Specs Strip        │             │<br>
+        │ (4-6 highlights in row)   │             │<br>
+        ├───────────────────────────┤             │<br>
+        │ 📋 Full Fiche Technique   │             │<br>
+        │ (categories with icons)   │             │<br>
+        ├───────────────────────────┴─────────────┤<br>
+        │ 🚗 Similar Vehicles                     │<br>
+        └─────────────────────────────────────────┘
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Hero Header Layout</h3>
+      <p>Full-width hero section with gallery + title + key specs overlaid. Then 2-column below for fiche technique + sidebar. More immersive but complex.</p>
+      <div style="margin-top:12px; padding:12px; background:#f1f5f9; border-radius:8px; font-size:13px; font-family:monospace; line-height:1.8">
+        ┌─────────────────────────────────────────┐<br>
+        │ Breadcrumb                              │<br>
+        ├─────────────────────────────────────────┤<br>
+        │ 🖼 FULL-WIDTH HERO GALLERY              │<br>
+        │ Title + Brand overlaid on image         │<br>
+        │ Key specs badges overlaid at bottom     │<br>
+        ├───────────────────────────┬─────────────┤<br>
+        │ ⚡ Key Specs Strip        │ 💰 Price    │<br>
+        ├───────────────────────────┤ + CTA       │<br>
+        │ 📋 Full Fiche Technique   │ + Promo     │<br>
+        │ (categories with icons)   │ (sticky)    │<br>
+        ├───────────────────────────┴─────────────┤<br>
+        │ 🚗 Similar Vehicles                     │<br>
+        └─────────────────────────────────────────┘
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Current Layout Enhanced</h3>
+      <p>Keep existing 2-column structure but: bigger gallery with grid thumbnails, add a key specs strip below title, improve fiche technique card styling. Least disruption.</p>
+      <div style="margin-top:12px; padding:12px; background:#f1f5f9; border-radius:8px; font-size:13px; font-family:monospace; line-height:1.8">
+        ┌─────────────────────────────────────────┐<br>
+        │ Breadcrumb                              │<br>
+        ├───────────────────────────┬─────────────┤<br>
+        │ 🖼 Gallery (enhanced)     │ 💰 Price    │<br>
+        │ + grid thumbnails         │ + CTA       │<br>
+        ├───────────────────────────┤ + Promo     │<br>
+        │ 🏷 Title + Brand + Badges │ (sticky)    │<br>
+        │ ⚡ Key Specs Strip        │             │<br>
+        ├───────────────────────────┤             │<br>
+        │ 📋 Full Fiche Technique   │             │<br>
+        │ (improved styling)        │             │<br>
+        ├───────────────────────────┴─────────────┤<br>
+        │ 🚗 Similar Vehicles                     │<br>
+        └─────────────────────────────────────────┘
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <h3>Key differences</h3>
+  <table style="width:100%; border-collapse:collapse; font-size:14px;">
+    <thead>
+      <tr style="border-bottom:2px solid #e2e8f0;">
+        <th style="text-align:left; padding:8px;">Aspect</th>
+        <th style="text-align:center; padding:8px;">A: Gallery-First</th>
+        <th style="text-align:center; padding:8px;">B: Hero Header</th>
+        <th style="text-align:center; padding:8px;">C: Enhanced Current</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #f1f5f9;">
+        <td style="padding:8px;">Visual impact</td>
+        <td style="text-align:center; padding:8px;">⭐⭐⭐</td>
+        <td style="text-align:center; padding:8px;">⭐⭐⭐⭐</td>
+        <td style="text-align:center; padding:8px;">⭐⭐</td>
+      </tr>
+      <tr style="border-bottom:1px solid #f1f5f9;">
+        <td style="padding:8px;">Implementation effort</td>
+        <td style="text-align:center; padding:8px;">Medium</td>
+        <td style="text-align:center; padding:8px;">High</td>
+        <td style="text-align:center; padding:8px;">Low</td>
+      </tr>
+      <tr style="border-bottom:1px solid #f1f5f9;">
+        <td style="padding:8px;">Mobile experience</td>
+        <td style="text-align:center; padding:8px;">Great</td>
+        <td style="text-align:center; padding:8px;">Tricky (overlay text)</td>
+        <td style="text-align:center; padding:8px;">Good</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;">Similar to</td>
+        <td style="text-align:center; padding:8px;">Wandaloo, AutoScout24</td>
+        <td style="text-align:center; padding:8px;">Tesla, Porsche configurator</td>
+        <td style="text-align:center; padding:8px;">Current + polish</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
