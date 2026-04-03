@@ -220,6 +220,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
                               alt={related.title}
                               fill
                               className="object-cover"
+                              sizes="128px"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
