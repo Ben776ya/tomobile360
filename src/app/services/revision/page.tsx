@@ -2,10 +2,14 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Check, ArrowLeft, Truck, ShieldCheck, Zap } from 'lucide-react'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Révision & Entretien Voiture au Maroc | Tomobile 360',
   description: 'Révisez et entretenez votre voiture dans nos centres partenaires agréés au Maroc. Prise de rendez-vous en ligne.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/services/revision',
+  },
 }
 
 const DABAPNEU_WEBSITE = 'https://www.dabapneu.ma'
@@ -70,6 +74,12 @@ const benefits = [
 export default function RevisionPage() {
   return (
     <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 pt-6">
+        <Breadcrumbs items={[
+          { name: 'Services', href: '/services' },
+          { name: 'Révision & Entretien' },
+        ]} />
+      </div>
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-[#FDF6E3] via-white to-white py-16 md:py-24">

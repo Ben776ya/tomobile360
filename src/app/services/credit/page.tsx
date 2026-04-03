@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Check, ArrowLeft, Clock, BadgePercent, Handshake } from 'lucide-react'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 const BOA_WEBSITE = 'https://www.bankofafrica.ma'
 
@@ -66,6 +67,12 @@ const benefits = [
 export default function CreditAutoPage() {
   return (
     <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 pt-6">
+        <Breadcrumbs items={[
+          { name: 'Services', href: '/services' },
+          { name: 'Crédit Auto' },
+        ]} />
+      </div>
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-[#EAF1FB] via-white to-white py-16 md:py-24">

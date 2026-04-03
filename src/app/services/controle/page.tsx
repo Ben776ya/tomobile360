@@ -1,10 +1,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ClipboardCheck, Check, ChevronRight, ArrowLeft, MapPin, Calendar, Clock } from 'lucide-react'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Contrôle Technique Voiture au Maroc | Tomobile 360',
   description: 'Passez votre contrôle technique dans plus de 40 centres partenaires agréés au Maroc. Réservation en ligne, 350 DH.',
+  alternates: {
+    canonical: 'https://tomobile360.ma/services/controle',
+  },
 }
 
 const checkpoints = [
@@ -31,6 +35,12 @@ const centers = [
 export default function ControlePage() {
   return (
     <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 pt-6">
+        <Breadcrumbs items={[
+          { name: 'Services', href: '/services' },
+          { name: 'Contrôle Technique' },
+        ]} />
+      </div>
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-black/30 via-white to-white py-16 md:py-24">
         <div className="container mx-auto px-4">

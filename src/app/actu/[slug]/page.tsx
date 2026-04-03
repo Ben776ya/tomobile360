@@ -2,11 +2,12 @@ import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronLeft, Calendar, Clock, Share2, Facebook, Twitter } from 'lucide-react'
+import { Calendar, Clock, Share2, Facebook, Twitter } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatRelativeTime, safeJsonLd } from '@/lib/utils'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import sanitizeHtml from 'sanitize-html'
 
 export const revalidate = 30
@@ -117,46 +118,30 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{
           __html: safeJsonLd({
             '@context': 'https://schema.org',
-            '@graph': [
-              {
-                '@type': 'NewsArticle',
-                headline: article.title,
-                description: article.excerpt,
-                image: article.featured_image || 'https://tomobile360.ma/og-image.png',
-                datePublished: article.published_at,
-                publisher: {
-                  '@type': 'Organization',
-                  name: 'Tomobile 360',
-                  logo: {
-                    '@type': 'ImageObject',
-                    url: 'https://tomobile360.ma/logo_tomobil360.png',
-                  },
-                },
-                url: `https://tomobile360.ma/actu/${article.slug}`,
+            '@type': 'NewsArticle',
+            headline: article.title,
+            description: article.excerpt,
+            image: article.featured_image || 'https://tomobile360.ma/og-image.png',
+            datePublished: article.published_at,
+            publisher: {
+              '@type': 'Organization',
+              name: 'Tomobile 360',
+              logo: {
+                '@type': 'ImageObject',
+                url: 'https://tomobile360.ma/logo_tomobil360.png',
               },
-              {
-                '@type': 'BreadcrumbList',
-                itemListElement: [
-                  { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://tomobile360.ma' },
-                  { '@type': 'ListItem', position: 2, name: 'Actualités', item: 'https://tomobile360.ma/actu' },
-                  { '@type': 'ListItem', position: 3, name: article.title },
-                ],
-              },
-            ],
+            },
+            url: `https://tomobile360.ma/actu/${article.slug}`,
           }),
         }}
       />
       <div className="container mx-auto px-4 py-8">
-        {/* Breadcrumb */}
-        <div className="mb-6">
-          <Link
-            href="/actu"
-            className="inline-flex items-center gap-2 text-secondary hover:text-secondary-400"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Retour aux actualités
-          </Link>
-        </div>
+        <Breadcrumbs
+          items={[
+            { name: 'Actualités', href: '/actu' },
+            { name: article.title },
+          ]}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Check, ArrowLeft, Car, Umbrella, Headphones, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 const CURRENT_YEAR = new Date().getFullYear()
 const YEARS = Array.from({ length: 25 }, (_, i) => String(CURRENT_YEAR - i))
@@ -123,6 +124,12 @@ export default function AssurancePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 pt-6">
+        <Breadcrumbs items={[
+          { name: 'Services', href: '/services' },
+          { name: 'Assurance' },
+        ]} />
+      </div>
       {/* Hero */}
       <section className="bg-gradient-to-br from-[#E8F0FE] via-white to-white py-16 md:py-24">
         <div className="container mx-auto px-4">
