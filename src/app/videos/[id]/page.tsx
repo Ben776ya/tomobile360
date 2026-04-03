@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronLeft, Eye, Calendar } from 'lucide-react'
+import { Eye, Calendar } from 'lucide-react'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { formatRelativeTime } from '@/lib/utils'
@@ -104,17 +106,24 @@ export default async function VideoDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      <JsonLd
+        data={{
+          '@type': 'VideoObject',
+          name: video.title,
+          description: video.description?.substring(0, 200) || '',
+          thumbnailUrl: video.thumbnail_url || 'https://tomobile360.ma/og-image.png',
+          uploadDate: video.created_at,
+          ...(video.duration ? { duration: video.duration } : {}),
+          ...(embedUrl ? { embedUrl } : {}),
+        }}
+      />
       <div className="container mx-auto px-4 py-8">
-        {/* Breadcrumb */}
-        <div className="mb-6">
-          <Link
-            href="/videos"
-            className="inline-flex items-center gap-2 text-secondary hover:text-secondary-400 hover:underline transition-all duration-300"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Retour aux vidéos
-          </Link>
-        </div>
+        <Breadcrumbs
+          items={[
+            { name: 'Vidéos', href: '/videos' },
+            { name: video.title },
+          ]}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
