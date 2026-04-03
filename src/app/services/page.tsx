@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { CreditCard, Shield, Wrench, ClipboardCheck, ChevronRight, Car, Calculator, FileCheck } from 'lucide-react'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Services Automobiles au Maroc — Crédit, Assurance, Entretien',
@@ -69,6 +70,9 @@ const additionalServices = [
 export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 pt-6">
+        <Breadcrumbs items={[{ name: 'Services' }]} />
+      </div>
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-black/30 via-white to-white py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">

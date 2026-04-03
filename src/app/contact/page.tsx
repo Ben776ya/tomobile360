@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Mail, Phone, MapPin, Send, Clock, MessageCircle, AlertCircle } from 'lucide-react'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 interface FormErrors {
   name?: string
@@ -103,6 +104,9 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 pt-6">
+        <Breadcrumbs items={[{ name: 'Contact' }]} />
+      </div>
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-gray-50 via-white to-gray-50 py-10 sm:py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">

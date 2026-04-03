@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Calendar, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/utils'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const revalidate = 60
 
@@ -89,6 +90,7 @@ export default async function NewsPage({
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
+        <Breadcrumbs items={[{ name: 'Actualités' }]} />
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-primary font-display mb-2">
