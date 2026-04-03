@@ -1,11 +1,13 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRight, Eye } from 'lucide-react'
+import { Eye } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { formatPrice, safeJsonLd } from '@/lib/utils'
+import { formatPrice } from '@/lib/utils'
 import { VehicleSpecs, KeySpecsStrip } from '@/components/vehicles/VehicleSpecs'
 import { ImageGallery } from '@/components/vehicles/ImageGallery'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
@@ -139,18 +141,13 @@ export default async function VehicleDetailPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-6 lg:px-8 py-8 pb-20 lg:pb-8">
-        {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm text-gray-500 mb-6 overflow-x-auto scrollbar-hide pb-1">
-          <Link href="/" className="hover:text-[#006EFE] transition-colors">Accueil</Link>
-          <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-          <Link href="/neuf" className="hover:text-[#006EFE] transition-colors">Voitures Neuves</Link>
-          <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-          <Link href={`/neuf?brand=${vehicle.brand_id}`} className="hover:text-[#006EFE] transition-colors">
-            {brandName}
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-          <span className="text-gray-800 font-medium">{modelName}</span>
-        </nav>
+        <Breadcrumbs
+          items={[
+            { name: 'Voitures Neuves', href: '/neuf' },
+            { name: brandName, href: `/neuf/${params.brand}/${params.model}` },
+            { name: `${brandName} ${modelName}` },
+          ]}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content */}
@@ -307,40 +304,25 @@ export default async function VehicleDetailPage({ params }: PageProps) {
         </div>
 
         {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: safeJsonLd({
-              '@context': 'https://schema.org',
-              '@graph': [
-                {
-                  '@type': 'Car',
-                  name: `${brandName} ${modelName}`,
-                  brand: { '@type': 'Brand', name: brandName },
-                  model: modelName,
-                  vehicleModelDate: vehicle.year?.toString(),
-                  fuelType: vehicle.fuel_type,
-                  offers: {
-                    '@type': 'AggregateOffer',
-                    priceCurrency: 'MAD',
-                    lowPrice: vehicle.price_min,
-                    highPrice: vehicle.price_max || vehicle.price_min,
-                    availability: vehicle.is_available
-                      ? 'https://schema.org/InStock'
-                      : 'https://schema.org/OutOfStock',
-                  },
-                },
-                {
-                  '@type': 'BreadcrumbList',
-                  itemListElement: [
-                    { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://tomobile360.ma' },
-                    { '@type': 'ListItem', position: 2, name: 'Voitures Neuves', item: 'https://tomobile360.ma/neuf' },
-                    { '@type': 'ListItem', position: 3, name: brandName, item: `https://tomobile360.ma/neuf?brand=${vehicle.brand_id}` },
-                    { '@type': 'ListItem', position: 4, name: `${brandName} ${modelName}` },
-                  ],
-                },
-              ],
-            }),
+        <JsonLd
+          data={{
+            '@type': 'Car',
+            name: `${brandName} ${modelName}`,
+            brand: { '@type': 'Brand', name: brandName },
+            model: modelName,
+            vehicleModelDate: String(vehicle.year),
+            ...(vehicle.fuel_type ? { fuelType: vehicle.fuel_type } : {}),
+            ...(vehicle.transmission ? { vehicleTransmission: vehicle.transmission } : {}),
+            ...(vehicle.price_min ? {
+              offers: {
+                '@type': 'Offer',
+                price: vehicle.price_min,
+                priceCurrency: 'MAD',
+                availability: 'https://schema.org/InStock',
+              },
+            } : {}),
+            ...(vehicle.images?.[0] ? { image: vehicle.images[0] } : {}),
+            url: `https://tomobile360.ma/neuf/${params.brand}/${params.model}/${params.id}`,
           }}
         />
 
