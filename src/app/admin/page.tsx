@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { Car, Users, FileText, Video, MessageSquare, TrendingUp } from 'lucide-react'
+import { Car, Users, PenSquare, Video, MessageSquare, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export const dynamic = 'force-dynamic'
@@ -13,14 +13,14 @@ export default async function AdminDashboardPage() {
     { count: totalNewVehicles },
     { count: totalUsedVehicles },
     { count: totalUsers },
-    { count: totalArticles },
+    { count: totalBlogPosts },
     { count: totalVideos },
     { count: totalForumTopics },
   ] = await Promise.all([
     supabase.from('vehicles_new').select('id', { count: 'exact', head: true }),
     supabase.from('vehicles_used').select('id', { count: 'exact', head: true }),
     supabase.from('profiles').select('id', { count: 'exact', head: true }),
-    supabase.from('articles').select('id', { count: 'exact', head: true }),
+    supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
     supabase.from('videos').select('id', { count: 'exact', head: true }),
     supabase.from('forum_topics').select('id', { count: 'exact', head: true }),
   ])
@@ -56,7 +56,7 @@ export default async function AdminDashboardPage() {
             { label: 'Véhicules neufs', count: totalNewVehicles, icon: Car },
             { label: "Annonces d'occasion", count: totalUsedVehicles, icon: Car },
             { label: 'Utilisateurs', count: totalUsers, icon: Users },
-            { label: 'Articles', count: totalArticles, icon: FileText },
+            { label: 'Blog posts', count: totalBlogPosts, icon: PenSquare },
             { label: 'Vidéos', count: totalVideos, icon: Video },
             { label: 'Sujets forum', count: totalForumTopics, icon: MessageSquare },
           ].map((stat) => (
@@ -89,10 +89,10 @@ export default async function AdminDashboardPage() {
                   Gérer les véhicules
                 </Button>
               </Link>
-              <Link href="/admin/content">
+              <Link href="/admin/blog">
                 <Button variant="outline" className="w-full justify-start shadow-sm hover:shadow-glow-indigo-sm">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Gérer le contenu
+                  <PenSquare className="h-4 w-4 mr-2" />
+                  Gérer le blog
                 </Button>
               </Link>
               <Link href="/admin/users">

@@ -13,9 +13,9 @@ interface ArticleResult {
   id: string
   title: string
   slug: string
-  excerpt: string | null
+  subtitle: string | null
   category: string | null
-  featured_image: string | null
+  hero_image_url: string | null
 }
 
 interface VideoResult {
@@ -72,10 +72,10 @@ export default function Header() {
       setSearchLoading(true)
       const [{ data: articles }, { data: videos }] = await Promise.all([
         supabase
-          .from('articles')
-          .select('id, title, slug, excerpt, category, featured_image')
-          .eq('is_published', true)
-          .or(`title.ilike.%${searchQuery}%,excerpt.ilike.%${searchQuery}%`)
+          .from('blog_posts')
+          .select('id, title, slug, subtitle, category, hero_image_url')
+          .eq('status', 'published')
+          .or(`title.ilike.%${searchQuery}%,subtitle.ilike.%${searchQuery}%`)
           .limit(3),
         supabase
           .from('videos')
@@ -215,8 +215,8 @@ export default function Header() {
                             onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
                             className="flex items-start gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors"
                           >
-                            {article.featured_image && (
-                              <Image src={article.featured_image} alt={article.title} width={40} height={40} className="w-10 h-10 object-cover rounded-lg flex-shrink-0" />
+                            {article.hero_image_url && (
+                              <Image src={article.hero_image_url} alt={article.title} width={40} height={40} className="w-10 h-10 object-cover rounded-lg flex-shrink-0" />
                             )}
                             <div className="min-w-0">
                               {article.category && (

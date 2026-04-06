@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   Car,
-  FileText,
+  PenSquare,
   Users,
   TrendingUp,
   Upload,
@@ -20,7 +20,7 @@ const menuItems = [
   { href: '/admin', icon: LayoutDashboard, label: 'Tableau de bord', exact: true },
   { href: '/admin/brands', icon: Car, label: 'Catalogue' },
   { href: '/admin/coups-de-coeur', icon: Heart, label: 'Coups de Cœur' },
-  { href: '/admin/content', icon: FileText, label: 'Contenu' },
+  { href: '/admin/blog', icon: PenSquare, label: 'Blog' },
   { href: '/admin/users', icon: Users, label: 'Utilisateurs' },
   { href: '/admin/promotions', icon: TrendingUp, label: 'Promotions' },
   { href: '/admin/import-cars', icon: Upload, label: 'Importer véhicules' },

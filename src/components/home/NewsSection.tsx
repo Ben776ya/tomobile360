@@ -3,20 +3,20 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Calendar, ChevronRight, ArrowRight } from 'lucide-react'
-import { Article } from '@/lib/types'
+import type { BlogListItem } from '@/lib/types/blog'
 import { formatDate } from '@/lib/utils'
 import { MobileCarousel } from '@/components/shared/MobileCarousel'
 
 interface NewsSectionProps {
-  articles: Article[]
+  articles: BlogListItem[]
 }
 
 const categoryConfig: Record<string, { label: string; bg: string }> = {
-  morocco:       { label: 'MAROC',         bg: 'bg-blue-500' },
-  international: { label: 'INTERNATIONAL', bg: 'bg-purple-500' },
-  market:        { label: 'MARCHÉ',        bg: 'bg-emerald-500' },
-  review:        { label: 'ESSAI',         bg: 'bg-orange-500' },
-  news:          { label: 'ACTUALITÉ',     bg: 'bg-[#32B75C]' },
+  marche:        { label: 'MARCHÉ',        bg: 'bg-emerald-500' },
+  nouveautes:    { label: 'NOUVEAUTÉS',    bg: 'bg-secondary' },
+  pratique:      { label: 'PRATIQUE',      bg: 'bg-orange-500' },
+  tendances:     { label: 'TENDANCES',     bg: 'bg-purple-500' },
+  interview:     { label: 'INTERVIEW',     bg: 'bg-rose-500' },
 }
 
 export function NewsSection({ articles }: NewsSectionProps) {
@@ -42,17 +42,17 @@ export function NewsSection({ articles }: NewsSectionProps) {
         {/* Articles Grid */}
         <div className="mb-10">
           <MobileCarousel desktopClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" autoPlayMs={5000}>
-          {displayArticles.map((article) => {
-            const cat = categoryConfig[article.category || 'news'] || categoryConfig.news
-            const excerpt = article.excerpt || ''
+          {displayArticles.map((post) => {
+            const cat = categoryConfig[post.category] || { label: post.category.toUpperCase(), bg: 'bg-gray-500' }
+            const excerpt = post.subtitle || ''
 
             return (
-              <Link key={article.id} href={`/actu/${article.slug}`} className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <Link key={post.id} href={`/actu/${post.slug}`} className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 {/* Image */}
                 <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
                   <Image
-                    src={article.featured_image || '/placeholder-article.jpg'}
-                    alt={article.title}
+                    src={post.hero_image_url || '/placeholder-article.jpg'}
+                    alt={post.title}
                     fill
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -60,23 +60,21 @@ export function NewsSection({ articles }: NewsSectionProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
                   {/* Category tag */}
-                  {article.category && (
-                    <span className={`tag absolute top-3 left-3 ${cat.bg} text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-md`}>
-                      {cat.label}
-                    </span>
-                  )}
+                  <span className={`tag absolute top-3 left-3 ${cat.bg} text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-md`}>
+                    {cat.label}
+                  </span>
                 </div>
 
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-1">
-                  {article.published_at && (
+                  {post.published_at && (
                     <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-2.5">
                       <Calendar className="w-3.5 h-3.5" />
-                      <span>{formatDate(article.published_at)}</span>
+                      <span>{formatDate(post.published_at)}</span>
                     </div>
                   )}
                   <h3 className="font-bold text-slate-700 text-base md:text-lg leading-snug line-clamp-2 mb-2 group-hover:text-[#006EFE] transition-colors duration-200">
-                    {article.title}
+                    {post.title}
                   </h3>
                   {excerpt && (
                     <p className="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed flex-1">

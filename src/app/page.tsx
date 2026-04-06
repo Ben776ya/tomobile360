@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
-import type { VehicleUsed, Video, Article } from '@/lib/types'
+import type { VehicleUsed, Video } from '@/lib/types'
+import type { BlogListItem } from '@/lib/types/blog'
 
 type HomeUsedListing = VehicleUsed & {
   brands?: { name: string; logo_url: string | null }
@@ -29,7 +30,7 @@ export default async function HomePage() {
     { data: brands },
     { data: models },
     { data: latestUsedListings },
-    { data: recentArticles },
+    { data: recentBlogPosts },
     { data: latestVideos },
     { data: allBrands },
   ] = await Promise.all([
@@ -59,11 +60,11 @@ export default async function HomePage() {
       .order('created_at', { ascending: false })
       .limit(6),
 
-    // Recent articles for ACTUS & ESSAIS
+    // Recent blog posts for ACTUS & ESSAIS
     supabase
-      .from('articles')
-      .select('id, title, slug, excerpt, featured_image, category, content, published_at')
-      .eq('is_published', true)
+      .from('blog_posts')
+      .select('id, title, slug, subtitle, hero_image_url, category, published_at, views, featured, tags, author')
+      .eq('status', 'published')
       .order('published_at', { ascending: false })
       .limit(4),
 
@@ -110,8 +111,8 @@ export default async function HomePage() {
       )}
 
       {/* 10. News Section - "ACTUS & ESSAIS" */}
-      {recentArticles && recentArticles.length > 0 && (
-        <NewsSection articles={recentArticles as unknown as Article[]} />
+      {recentBlogPosts && recentBlogPosts.length > 0 && (
+        <NewsSection articles={recentBlogPosts as unknown as BlogListItem[]} />
       )}
 
       {/* 11. Used Listings Section */}
