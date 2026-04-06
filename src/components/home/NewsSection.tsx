@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Calendar, ChevronRight, ArrowRight, Play } from 'lucide-react'
+import { Calendar, ChevronRight, ArrowRight } from 'lucide-react'
 import { Article } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { MobileCarousel } from '@/components/shared/MobileCarousel'
@@ -19,17 +19,10 @@ const categoryConfig: Record<string, { label: string; bg: string }> = {
   news:          { label: 'ACTUALITÉ',     bg: 'bg-[#32B75C]' },
 }
 
-const isYouTube = (url: string | null | undefined) =>
-  !!url && (url.includes('youtube.com') || url.includes('youtu.be'))
-
 export function NewsSection({ articles }: NewsSectionProps) {
   if (!articles || articles.length === 0) return null
 
   const displayArticles = articles.slice(0, 4)
-
-  const getExternalUrl = (article: Article) => {
-    return article.content?.startsWith('http') ? article.content : null
-  }
 
   return (
     <section className="py-4 md:py-6">
@@ -52,11 +45,9 @@ export function NewsSection({ articles }: NewsSectionProps) {
           {displayArticles.map((article) => {
             const cat = categoryConfig[article.category || 'news'] || categoryConfig.news
             const excerpt = article.excerpt || ''
-            const externalUrl = getExternalUrl(article)
-            const isVideo = isYouTube(externalUrl)
 
-            const cardContent = (
-              <>
+            return (
+              <Link key={article.id} href={`/actu/${article.slug}`} className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 {/* Image */}
                 <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
                   <Image
@@ -73,15 +64,6 @@ export function NewsSection({ articles }: NewsSectionProps) {
                     <span className={`tag absolute top-3 left-3 ${cat.bg} text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-md`}>
                       {cat.label}
                     </span>
-                  )}
-
-                  {/* Video play overlay */}
-                  {isVideo && (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                        <Play className="w-5 h-5 text-[#32B75C] fill-[#32B75C] ml-0.5" />
-                      </div>
-                    </div>
                   )}
                 </div>
 
@@ -102,29 +84,13 @@ export function NewsSection({ articles }: NewsSectionProps) {
                     </p>
                   )}
                   <div className="flex items-center gap-1 text-sm font-semibold text-[#006EFE] group-hover:gap-2 transition-all duration-200 mt-auto">
-                    {isVideo ? 'Voir la vidéo' : "Lire l'article"}
+                    Lire l&apos;article
                     <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
 
                 {/* Bottom accent line */}
                 <div className="h-[2px] bg-gradient-to-r from-[#006EFE] to-[#0284FE] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-              </>
-            )
-
-            const cardClass = "group flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-
-            if (externalUrl) {
-              return (
-                <a key={article.id} href={externalUrl} target="_blank" rel="noopener noreferrer" className={cardClass}>
-                  {cardContent}
-                </a>
-              )
-            }
-
-            return (
-              <Link key={article.id} href={`/actu/${article.slug}`} className={cardClass}>
-                {cardContent}
               </Link>
             )
           })}
