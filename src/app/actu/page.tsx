@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Calendar, Eye, ChevronLeft, ChevronRight } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { formatDate } from '@/lib/utils'
@@ -45,6 +44,14 @@ const categoryColors: Record<string, string> = {
   interview: 'bg-rose-500 text-white',
 }
 
+const categoryTextColors: Record<string, string> = {
+  marche: 'text-emerald-400',
+  nouveautes: 'text-secondary',
+  pratique: 'text-orange-400',
+  tendances: 'text-purple-400',
+  interview: 'text-rose-400',
+}
+
 interface SearchParams {
   category?: string
   page?: string
@@ -58,7 +65,7 @@ function ArticleCard({ post }: { post: BlogListItem }) {
   return (
     <Link
       href={`/actu/${post.slug}`}
-      className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300"
+      className="group bg-white rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300"
     >
       {/* Image */}
       <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
@@ -68,56 +75,46 @@ function ArticleCard({ post }: { post: BlogListItem }) {
             alt={post.title}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 768px) 100vw, 50vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
             <Calendar className="h-10 w-10 text-gray-300" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
         <div className="absolute top-3 left-3">
-          <Badge className={`border-0 shadow-md text-xs ${color}`}>
+          <span
+            className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase ${color}`}
+          >
             {label}
-          </Badge>
+          </span>
         </div>
       </div>
 
       {/* Content */}
       <div className="p-5">
-        <h3 className="font-bold text-primary text-base md:text-lg leading-snug mb-2 line-clamp-2 group-hover:text-secondary transition-colors">
+        <h3 className="font-bold text-primary text-[15px] leading-snug mb-2 line-clamp-2 group-hover:text-secondary transition-colors">
           {post.title}
         </h3>
         {post.subtitle && (
-          <p className="text-sm text-gray-500 line-clamp-2 mb-3 leading-relaxed">
+          <p className="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed">
             {post.subtitle.length > 150
               ? post.subtitle.slice(0, 150) + '...'
               : post.subtitle}
           </p>
         )}
-        <div className="flex items-center justify-between text-xs text-gray-400">
-          <div className="flex items-center gap-3">
-            {post.published_at && (
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                {formatDate(post.published_at)}
-              </span>
-            )}
-            {post.views > 0 && (
-              <span className="flex items-center gap-1">
-                <Eye className="h-3 w-3" />
-                {post.views.toLocaleString()}
-              </span>
-            )}
-          </div>
-          <span className="text-secondary font-semibold group-hover:translate-x-0.5 transition-transform">
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+          {post.published_at && (
+            <span className="flex items-center gap-1 text-[11px] text-gray-400">
+              <Calendar className="h-3 w-3" />
+              {formatDate(post.published_at)}
+            </span>
+          )}
+          <span className="text-secondary font-bold text-[13px]">
             Lire &rarr;
           </span>
         </div>
       </div>
-
-      {/* Bottom accent */}
-      <div className="h-[2px] bg-gradient-to-r from-secondary via-secondary-400 to-secondary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
     </Link>
   )
 }
@@ -142,13 +139,12 @@ export default async function ActuPage({
 
   const totalPages = Math.ceil(count / ITEMS_PER_PAGE)
 
-  // Exclude featured from the grid if it appears in the list
   const gridPosts = featured
     ? posts.filter((p) => p.id !== featured.id)
     : posts
 
-  const featuredColor = featured
-    ? categoryColors[featured.category] || 'bg-gray-500 text-white'
+  const featuredCategoryTextColor = featured
+    ? categoryTextColors[featured.category] || 'text-gray-400'
     : ''
   const featuredLabel = featured
     ? CATEGORIES.find((c) => c.value === featured.category)?.label ||
@@ -176,44 +172,38 @@ export default async function ActuPage({
       />
 
       <div className="container mx-auto px-4 py-8">
-        <Breadcrumbs items={[{ name: 'Actualités' }]} />
+        {/* Dark Gradient Header */}
+        <div className="bg-gradient-to-br from-primary to-[#0a1628] rounded-2xl px-6 sm:px-8 py-10 sm:py-12 mb-8">
+          <Breadcrumbs items={[{ name: 'Actualités' }]} />
 
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-primary font-display mb-2">
-            Explorez l&apos;actu auto : Tout ce que vous devez savoir !
+          <h1 className="text-3xl sm:text-4xl font-bold text-white font-display mb-2 mt-4">
+            L&apos;actu auto{' '}
+            <span className="text-secondary">au Maroc</span>
           </h1>
-          <p className="text-gray-500">
-            Toute l&apos;actualité du monde de l&apos;automobile au Maroc et
-            à l&apos;international
+          <p className="text-white/60 text-sm sm:text-base mb-6">
+            Tendances, nouveautés et conseils pour les passionnés
           </p>
-        </div>
 
-        {/* SEO Intro */}
-        <div className="mb-6 bg-white rounded-xl border border-gray-100 p-6">
-          <p className="text-gray-600 text-sm leading-relaxed">
+          <p className="text-white/40 text-xs leading-relaxed max-w-2xl mb-8">
             Suivez toute l&apos;actualité du monde automobile au Maroc et à
             l&apos;international. Essais détaillés des derniers modèles,
             analyses du marché marocain, comparatifs entre véhicules
             concurrents et guides d&apos;achat pour vous aider à faire le
-            meilleur choix. L&apos;équipe Tomobile 360 décrypte pour vous les
-            tendances, les lancements et les évolutions du secteur automobile.
+            meilleur choix.
           </p>
-        </div>
 
-        {/* Category Filter */}
-        <div className="bg-white rounded-xl shadow-card p-4 mb-8 border border-gray-100">
-          <div className="flex flex-wrap gap-2">
+          {/* Category Pills */}
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             {CATEGORIES.map((cat) => (
               <Link
                 key={cat.value}
                 href={
                   cat.value === 'all' ? '/actu' : `/actu?category=${cat.value}`
                 }
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                className={`px-5 py-2.5 rounded-full text-sm font-semibold uppercase tracking-wide transition-all duration-200 ${
                   category === cat.value
-                    ? 'bg-secondary text-white font-semibold shadow-md'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-secondary text-white font-bold shadow-[0_4px_15px_rgba(0,110,254,0.4)]'
+                    : 'bg-white/[0.08] text-white/70 border border-white/10 hover:bg-white/[0.15] hover:text-white'
                 }`}
               >
                 {cat.label}
@@ -226,56 +216,62 @@ export default async function ActuPage({
         {featured && (
           <Link
             href={`/actu/${featured.slug}`}
-            className="block bg-white rounded-2xl shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300 mb-8 border border-gray-100 hover:border-secondary/20 group"
+            className="block rounded-2xl overflow-hidden mb-8 group transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)]"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-              <div className="relative h-48 sm:h-64 md:h-80 bg-gray-100 overflow-hidden">
-                {featured.hero_image_url ? (
-                  <Image
-                    src={featured.hero_image_url}
-                    alt={featured.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    priority
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Calendar className="h-16 w-16 text-gray-300" />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                <div className="absolute top-4 left-4">
-                  <Badge className="bg-secondary text-white border-0 shadow-gold font-bold">
-                    À LA UNE
-                  </Badge>
-                </div>
-              </div>
-              <div className="p-4 sm:p-6 md:p-8 flex flex-col justify-center">
-                <Badge
-                  className={`w-fit mb-3 border-0 ${featuredColor}`}
+            <div className="grid grid-cols-1 md:grid-cols-2 bg-gradient-to-r from-primary to-[#2a3a5c]">
+              {/* Content */}
+              <div className="p-8 sm:p-10 flex flex-col justify-center order-2 md:order-1">
+                <span className="inline-block bg-secondary text-white text-[11px] font-bold tracking-widest px-4 py-1.5 rounded-full w-fit mb-4">
+                  À LA UNE
+                </span>
+                <span
+                  className={`text-xs font-semibold uppercase tracking-wider mb-2 ${featuredCategoryTextColor}`}
                 >
                   {featuredLabel}
-                </Badge>
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-primary mb-3 group-hover:text-secondary transition-colors line-clamp-3">
+                </span>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-white leading-tight mb-3 group-hover:text-secondary/90 transition-colors line-clamp-3">
                   {featured.title}
                 </h2>
                 {featured.subtitle && (
-                  <p className="text-gray-500 mb-4 line-clamp-3 text-sm">
+                  <p className="text-white/60 text-sm leading-relaxed line-clamp-3 mb-5">
                     {featured.subtitle}
                   </p>
                 )}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4 mb-4">
                   {featured.published_at && (
-                    <div className="flex items-center gap-1 text-sm text-gray-400">
-                      <Calendar className="h-4 w-4" />
-                      <span>{formatDate(featured.published_at)}</span>
-                    </div>
+                    <span className="text-white/50 text-xs flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {formatDate(featured.published_at)}
+                    </span>
                   )}
-                  <span className="inline-flex items-center gap-1 text-secondary text-sm font-medium">
-                    Lire l&apos;article &rarr;
-                  </span>
                 </div>
+                <span className="text-secondary font-bold text-sm group-hover:text-secondary-300 transition-colors inline-flex items-center gap-1">
+                  Lire l&apos;article{' '}
+                  <span className="text-lg group-hover:translate-x-1 transition-transform">
+                    &rarr;
+                  </span>
+                </span>
+              </div>
+
+              {/* Image */}
+              <div className="relative h-56 sm:h-64 md:h-auto md:min-h-[320px] overflow-hidden order-1 md:order-2">
+                {featured.hero_image_url ? (
+                  <>
+                    <Image
+                      src={featured.hero_image_url}
+                      alt={featured.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      priority
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/50 to-transparent md:block hidden" />
+                  </>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#374a6d] to-[#2a3a5c]">
+                    <Calendar className="h-16 w-16 text-white/10" />
+                  </div>
+                )}
               </div>
             </div>
           </Link>
@@ -283,13 +279,15 @@ export default async function ActuPage({
 
         {/* Articles Grid */}
         {gridPosts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {gridPosts.map((post) => (
-              <ArticleCard key={post.id} post={post} />
-            ))}
+          <div className="bg-gray-50 rounded-2xl p-6 sm:p-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {gridPosts.map((post) => (
+                <ArticleCard key={post.id} post={post} />
+              ))}
+            </div>
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-card p-12 text-center border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-card p-12 text-center border border-gray-100">
             <Calendar className="h-16 w-16 mx-auto mb-4 text-gray-300" />
             <h3 className="text-xl font-semibold text-primary mb-2">
               Aucun article disponible
@@ -306,7 +304,7 @@ export default async function ActuPage({
             {page > 1 && (
               <Link
                 href={`/actu?page=${page - 1}${category !== 'all' ? `&category=${category}` : ''}`}
-                className="px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-card hover:bg-secondary/10 hover:border-secondary hover:shadow-gold transition-all duration-300 text-gray-600 flex items-center gap-1"
+                className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-secondary/10 hover:border-secondary transition-all duration-300 flex items-center gap-1 text-sm"
               >
                 <ChevronLeft className="h-4 w-4" />
                 Précédent
@@ -343,10 +341,10 @@ export default async function ActuPage({
                     <Link
                       key={p}
                       href={`/actu?page=${p}${category !== 'all' ? `&category=${category}` : ''}`}
-                      className={`px-3.5 py-2 rounded-lg text-sm transition-all duration-300 ${
+                      className={`px-4 py-2 rounded-xl text-sm transition-all duration-300 ${
                         p === page
-                          ? 'bg-secondary text-white font-bold shadow-gold ring-2 ring-secondary/30'
-                          : 'bg-white border border-gray-200 text-gray-600 hover:bg-secondary/10 hover:border-secondary hover:shadow-gold'
+                          ? 'bg-secondary text-white font-bold shadow-[0_0_12px_rgba(0,110,254,0.25)] ring-2 ring-secondary/30'
+                          : 'bg-white border border-gray-200 text-gray-600 hover:bg-secondary/10 hover:border-secondary'
                       }`}
                     >
                       {p}
@@ -359,7 +357,7 @@ export default async function ActuPage({
             {page < totalPages && (
               <Link
                 href={`/actu?page=${page + 1}${category !== 'all' ? `&category=${category}` : ''}`}
-                className="px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-card hover:bg-secondary/10 hover:border-secondary hover:shadow-gold transition-all duration-300 text-gray-600 flex items-center gap-1"
+                className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-secondary/10 hover:border-secondary transition-all duration-300 flex items-center gap-1 text-sm"
               >
                 Suivant
                 <ChevronRight className="h-4 w-4" />

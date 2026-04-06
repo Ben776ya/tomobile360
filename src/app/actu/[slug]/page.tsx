@@ -2,14 +2,12 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Calendar, Clock, Eye, User } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { Calendar, Clock, Eye } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
 import { formatDate, formatRelativeTime } from '@/lib/utils'
 import { getPostBySlug, getRelatedPosts, incrementViews } from '@/lib/blog'
-import { createClient } from '@/lib/supabase/server'
 import type { BlogListItem } from '@/lib/types/blog'
 
 export const revalidate = 30
@@ -43,6 +41,15 @@ function estimateReadTime(content: string): string {
   return `${minutes} min`
 }
 
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const post = await getPostBySlug(params.slug)
   if (!post) return { title: 'Article non trouvé' }
@@ -71,7 +78,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export async function generateStaticParams() {
-  const supabase = createClient()
+  const { createClient: createDirectClient } = await import('@supabase/supabase-js')
+  const supabase = createDirectClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
+
   const { data } = await supabase
     .from('blog_posts')
     .select('slug')
@@ -128,162 +140,183 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         }}
       />
 
-      <div className="container mx-auto px-4 py-8">
-        <Breadcrumbs
-          items={[
-            { name: 'Actualités', href: '/actu' },
-            { name: post.title },
-          ]}
-        />
+      {/* Full-Bleed Hero */}
+      <div className="relative w-full min-h-[320px] sm:min-h-[400px] bg-primary overflow-hidden">
+        {/* Background image */}
+        {post.hero_image_url && (
+          <Image
+            src={post.hero_image_url}
+            alt={post.title}
+            fill
+            className="object-cover"
+            sizes="100vw"
+            priority
+          />
+        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <article className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-card overflow-hidden border border-gray-100">
-              {/* Hero Image */}
-              {post.hero_image_url && (
-                <div className="relative w-full aspect-[16/9] bg-gray-100">
-                  <Image
-                    src={post.hero_image_url}
-                    alt={post.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 66vw"
-                    priority
-                  />
-                </div>
-              )}
-              {post.hero_image_caption && (
-                <p className="px-6 pt-3 text-xs text-gray-400 italic">
-                  {post.hero_image_caption}
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/50 to-primary/20" />
+
+        {/* Content overlay */}
+        <div className="relative z-10 container mx-auto px-4 flex flex-col justify-end h-full pb-10 pt-20 sm:pt-28 min-h-[320px] sm:min-h-[400px]">
+          <Breadcrumbs
+            items={[
+              { name: 'Actualités', href: '/actu' },
+              { name: post.title },
+            ]}
+          />
+
+          {/* Category + Meta row */}
+          <div className="flex flex-wrap items-center gap-3 mb-3 mt-4">
+            <span
+              className={`inline-block px-3 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase ${categoryColor}`}
+            >
+              {categoryLabel}
+            </span>
+            {post.published_at && (
+              <span className="flex items-center gap-1 text-xs sm:text-sm text-white/50">
+                <Calendar className="h-3.5 w-3.5" />
+                {formatDate(post.published_at)}
+              </span>
+            )}
+            <span className="flex items-center gap-1 text-xs sm:text-sm text-white/50">
+              <Clock className="h-3.5 w-3.5" />
+              {estimateReadTime(post.content)} de lecture
+            </span>
+            <span className="flex items-center gap-1 text-xs sm:text-sm text-white/50">
+              <Eye className="h-3.5 w-3.5" />
+              {post.views.toLocaleString()} vues
+            </span>
+          </div>
+
+          {/* Title */}
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white font-display leading-tight max-w-3xl">
+            {post.title}
+          </h1>
+
+          {/* Subtitle */}
+          {post.subtitle && (
+            <p className="text-white/60 text-base sm:text-lg leading-relaxed mt-3 max-w-2xl">
+              {post.subtitle}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Hero image caption */}
+      {post.hero_image_caption && (
+        <p className="text-xs text-gray-400 italic text-center py-2">
+          {post.hero_image_caption}
+        </p>
+      )}
+
+      {/* Body + Sidebar Grid */}
+      <div className="container mx-auto px-4 py-8 sm:py-12">
+        <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-8">
+          {/* Main Article */}
+          <article className="max-w-[720px]">
+            {/* Author bar */}
+            <div className="flex items-center gap-3 pb-6 mb-8 border-b border-gray-100">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-secondary/70 flex items-center justify-center text-white font-bold text-sm">
+                {getInitials(post.author)}
+              </div>
+              <div>
+                <p className="font-semibold text-primary text-sm">
+                  {post.author}
                 </p>
-              )}
-
-              <div className="p-6 md:p-8">
-                {/* Category + Meta */}
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                  <Badge className={`border-0 ${categoryColor}`}>
-                    {categoryLabel}
-                  </Badge>
-                  {post.published_at && (
-                    <span className="flex items-center gap-1 text-sm text-gray-400">
-                      <Calendar className="h-3.5 w-3.5" />
-                      {formatDate(post.published_at)}
-                    </span>
-                  )}
-                  <span className="flex items-center gap-1 text-sm text-gray-400">
-                    <Clock className="h-3.5 w-3.5" />
-                    {estimateReadTime(post.content)} de lecture
-                  </span>
-                  <span className="flex items-center gap-1 text-sm text-gray-400">
-                    <Eye className="h-3.5 w-3.5" />
-                    {post.views.toLocaleString()} vues
-                  </span>
-                </div>
-
-                {/* Title */}
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary font-display leading-tight mb-4">
-                  {post.title}
-                </h1>
-
-                {/* Subtitle */}
-                {post.subtitle && (
-                  <div className="bg-gray-50/50 border-l-4 border-secondary p-4 mb-6 rounded-r-lg">
-                    <p className="text-lg text-gray-600 italic leading-relaxed">
-                      {post.subtitle}
-                    </p>
-                  </div>
+                {post.published_at && (
+                  <p className="text-xs text-gray-400">
+                    Publié {formatRelativeTime(post.published_at)}
+                  </p>
                 )}
-
-                {/* Markdown Body */}
-                <MarkdownRenderer content={post.content} />
-
-                {/* Tags */}
-                {post.tags && post.tags.length > 0 && (
-                  <div className="mt-8 pt-6 border-t border-gray-200">
-                    <h3 className="text-sm font-semibold text-gray-500 mb-3">
-                      Tags :
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {post.tags.map((tag) => (
-                        <Badge key={tag} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Author Box */}
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary/10 text-secondary">
-                      <User className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-primary text-sm">
-                        {post.author}
-                      </p>
-                      {post.published_at && (
-                        <p className="text-xs text-gray-400">
-                          Publié {formatRelativeTime(post.published_at)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
+
+            {/* Markdown Body */}
+            <MarkdownRenderer content={post.content} />
+
+            {/* Tags */}
+            {post.tags && post.tags.length > 0 && (
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <div className="flex flex-wrap gap-2">
+                  {post.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="border border-gray-200 text-gray-500 px-4 py-1.5 rounded-full text-xs font-medium"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </article>
 
-          {/* Sidebar */}
-          <aside className="lg:col-span-1">
-            {related.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-card p-6 sticky top-4 border border-gray-100">
-                <h2 className="text-lg font-bold text-primary mb-4">
+          {/* Sidebar — hidden on mobile, sticky on desktop */}
+          {related.length > 0 && (
+            <aside className="mt-10 lg:mt-0">
+              <div className="sticky top-6 bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-secondary/[0.08]">
+                <h2 className="text-[15px] font-bold text-primary pb-3 border-b-2 border-secondary inline-block mb-5">
                   Articles similaires
                 </h2>
-                <div className="space-y-4">
-                  {related.map((r) => (
-                    <RelatedCard key={r.id} post={r} />
+                <div>
+                  {related.map((r, idx) => (
+                    <RelatedCard
+                      key={r.id}
+                      post={r}
+                      isLast={idx === related.length - 1}
+                    />
                   ))}
                 </div>
                 <Link
                   href="/actu"
-                  className="mt-5 block text-center text-sm font-medium text-secondary hover:text-secondary-600 transition-colors"
+                  className="mt-4 block text-center text-secondary font-bold text-[13px] py-2.5 bg-secondary/[0.04] rounded-xl hover:bg-secondary/[0.08] transition-colors"
                 >
-                  Voir toutes les actualités &rarr;
+                  Voir tous les articles &rarr;
                 </Link>
               </div>
-            )}
-          </aside>
+            </aside>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-function RelatedCard({ post }: { post: BlogListItem }) {
+function RelatedCard({
+  post,
+  isLast,
+}: {
+  post: BlogListItem
+  isLast: boolean
+}) {
   return (
-    <Link href={`/actu/${post.slug}`} className="block group">
+    <Link
+      href={`/actu/${post.slug}`}
+      className={`block group ${isLast ? '' : 'pb-4 mb-4 border-b border-gray-100'}`}
+    >
       <div className="flex gap-3">
-        {post.hero_image_url && (
-          <div className="relative w-24 aspect-video bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+        {post.hero_image_url ? (
+          <div className="relative w-[72px] h-[52px] bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
             <Image
               src={post.hero_image_url}
               alt={post.title}
               fill
               className="object-cover"
-              sizes="96px"
+              sizes="72px"
             />
+          </div>
+        ) : (
+          <div className="w-[72px] h-[52px] rounded-xl bg-gradient-to-br from-gray-100 to-gray-50 flex-shrink-0 flex items-center justify-center">
+            <Calendar className="h-4 w-4 text-gray-300" />
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm text-primary line-clamp-2 group-hover:text-secondary transition-colors">
+          <h3 className="font-semibold text-[13px] text-primary line-clamp-2 group-hover:text-secondary transition-colors leading-snug">
             {post.title}
           </h3>
           {post.published_at && (
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-[11px] text-gray-400 mt-1">
               {formatRelativeTime(post.published_at)}
             </p>
           )}
