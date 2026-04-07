@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { CreditCard, Shield, Wrench, ClipboardCheck, ChevronRight, Car, Calculator, FileCheck } from 'lucide-react'
+import { CreditCard, Shield, Car, Wrench, CalendarCheck, ShieldCheck, ChevronRight, Calculator, FileCheck } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Services Automobiles au Maroc — Crédit, Assurance, Entretien',
-  description: 'Crédit auto, assurance, révision et contrôle technique : tous les services automobiles au Maroc réunis sur Tomobile 360.',
+  description: 'Crédit auto SOFAC, assurance Atlanta Sanad, DabaPneus, contrôle technique, sécurité routière NARSA : tous les services automobiles au Maroc réunis sur Tomobile 360.',
   alternates: {
     canonical: 'https://tomobile360.ma/services',
   },
@@ -15,12 +15,12 @@ export const metadata: Metadata = {
 const services = [
   {
     icon: CreditCard,
-    logoSrc: '/bank_of_africa.PNG',
-    title: 'Bank of Africa',
-    description: 'Financez votre véhicule avec Bank of Africa — simulation gratuite en ligne, réponse rapide.',
+    logoSrc: '/sofac_logo.png',
+    title: 'SOFAC — Crédit Auto',
+    description: 'Financez votre véhicule avec SOFAC — leader du crédit auto au Maroc, réponse rapide.',
     href: '/services/credit',
-    color: 'bg-[#EAF1FB]',
-    features: ['Taux préférentiels', 'Simulation gratuite', 'Réponse en 24h'],
+    color: 'bg-[#EBF1FD]',
+    features: ['Taux personnalisés', 'Durée 12–72 mois', 'Réponse rapide'],
   },
   {
     icon: Shield,
@@ -32,20 +32,38 @@ const services = [
     features: ['Tous risques', 'Tiers collision', 'Assistance 24/7'],
   },
   {
-    icon: Wrench,
-    title: 'Révision & Entretien',
-    description: 'Entretenez votre véhicule chez nos partenaires agréés à des prix avantageux.',
-    href: '/services/revision',
-    color: 'bg-orange-500',
-    features: ['Pièces d\'origine', 'Garantie constructeur', 'Devis gratuit'],
+    icon: Car,
+    title: 'Demande de Test Drive',
+    description: 'Essayez le véhicule de votre choix avant de vous décider — réservez un essai gratuit.',
+    href: '/contact',
+    color: 'bg-[#F3E8FF]',
+    features: ['Essai gratuit', 'Sur rendez-vous', 'Tous modèles'],
   },
   {
-    icon: ClipboardCheck,
+    icon: Wrench,
+    logoSrc: '/daba_pneu.png',
+    title: 'DabaPneus',
+    description: 'Pneus et entretien rapide avec notre partenaire DabaPneu — livraison et montage inclus.',
+    href: '/services/revision',
+    color: 'bg-[#FDF6E3]',
+    features: ['Pneus toutes marques', 'Montage inclus', 'Livraison rapide'],
+  },
+  {
+    icon: CalendarCheck,
     title: 'Contrôle Technique',
     description: 'Passez votre contrôle technique en toute sérénité dans nos centres partenaires.',
     href: '/services/controle',
-    color: 'bg-purple-500',
+    color: 'bg-[#FFF3E0]',
     features: ['Rendez-vous en ligne', 'Centres agréés', 'Contre-visite incluse'],
+  },
+  {
+    icon: ShieldCheck,
+    logoSrc: '/narsa_logo.png',
+    title: 'Sécurité Routière',
+    description: 'Conseils et actualités NARSA pour une route plus sûre au Maroc.',
+    href: '/services/securite-routiere',
+    color: 'bg-[#E8EBF5]',
+    features: ['Conseils sécurité', 'Actualités NARSA', 'Vidéos sensibilisation'],
   },
 ]
 
