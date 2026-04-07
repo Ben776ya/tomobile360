@@ -8,7 +8,7 @@ export async function getPublishedPosts(
   limit = 18,
   offset = 0,
 ): Promise<{ posts: BlogListItem[]; count: number }> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   let query = supabase
     .from('blog_posts')
@@ -31,7 +31,7 @@ export async function getPublishedPosts(
 export async function getPostBySlug(
   slug: string,
 ): Promise<(BlogPost & { images: BlogImage[] }) | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data: post, error } = await supabase
     .from('blog_posts')
@@ -52,7 +52,7 @@ export async function getPostBySlug(
 }
 
 export async function getFeaturedPost(): Promise<BlogListItem | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('blog_posts')
@@ -72,8 +72,9 @@ export async function getRelatedPosts(
   category: string,
   limit = 3,
 ): Promise<BlogListItem[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
+  // Try same category first
   const { data, error } = await supabase
     .from('blog_posts')
     .select(LIST_COLUMNS)
@@ -84,16 +85,34 @@ export async function getRelatedPosts(
     .limit(limit)
 
   if (error) return []
-  return (data as BlogListItem[]) ?? []
+  const posts = (data as BlogListItem[]) ?? []
+
+  // Fall back to recent posts from any category if not enough same-category results
+  if (posts.length < limit) {
+    const excludeIds = [postId, ...posts.map((p) => p.id)]
+    const { data: fallback } = await supabase
+      .from('blog_posts')
+      .select(LIST_COLUMNS)
+      .eq('status', 'published')
+      .not('id', 'in', `(${excludeIds.join(',')})`)
+      .order('published_at', { ascending: false })
+      .limit(limit - posts.length)
+
+    if (fallback) {
+      posts.push(...(fallback as BlogListItem[]))
+    }
+  }
+
+  return posts
 }
 
 export async function incrementViews(postId: string): Promise<void> {
-  const supabase = createClient()
+  const supabase = await createClient()
   void supabase.rpc('increment_blog_post_views', { post_id: postId })
 }
 
 export async function getCategories(): Promise<BlogCategory[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('blog_posts')

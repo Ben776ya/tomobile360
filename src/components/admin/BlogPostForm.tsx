@@ -12,7 +12,6 @@ import {
   Loader2,
   Plus,
   X,
-  Upload,
   Eye,
   Edit,
   Save,
@@ -46,6 +45,7 @@ function slugify(text: string): string {
 export function BlogPostForm({ post, mode }: BlogPostFormProps) {
   const router = useRouter()
   const mdFileRef = useRef<HTMLInputElement>(null)
+  const contentRef = useRef<HTMLTextAreaElement>(null)
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -107,6 +107,29 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
     }
     reader.readAsText(file)
   }
+
+  const insertInlineImage = useCallback(
+    (url: string) => {
+      if (!url) return
+      const markdown = `\n![image](${url})\n`
+      const ta = contentRef.current
+      if (ta) {
+        const start = ta.selectionStart ?? content.length
+        const before = content.slice(0, start)
+        const after = content.slice(start)
+        setContent(before + markdown + after)
+        // Restore focus + cursor after the inserted text
+        requestAnimationFrame(() => {
+          ta.focus()
+          const pos = start + markdown.length
+          ta.setSelectionRange(pos, pos)
+        })
+      } else {
+        setContent(content + markdown)
+      }
+    },
+    [content],
+  )
 
   const submit = async (status: 'draft' | 'published') => {
     setLoading(true)
@@ -387,6 +410,7 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
           </div>
         ) : (
           <textarea
+            ref={contentRef}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Écrivez votre article en Markdown..."
@@ -394,11 +418,11 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
           />
         )}
 
-        {/* Inline image upload */}
-        {mode === 'edit' && (
+        {/* Inline image upload — inserts ![image](url) at cursor */}
+        {!previewMode && (
           <div className="mt-4 pt-4 border-t border-white/10">
             <ImageUploader
-              onUpload={() => {}}
+              onUpload={insertInlineImage}
               showMarkdownCopy
               label="Ajouter une image dans le contenu"
             />

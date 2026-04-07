@@ -10,7 +10,7 @@ export default async function EditBlogPostPage({
 }: {
   params: { id: string }
 }) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data: post } = await supabase
     .from('blog_posts')

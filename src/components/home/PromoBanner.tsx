@@ -41,7 +41,7 @@ export function PromoBanner() {
                 </li>
                 <li className="flex items-center gap-2 text-sm text-gray-700">
                   <Check className="w-4 h-4 text-secondary flex-shrink-0" />
-                  <span>Durée flexible jusqu&apos;à 84 mois</span>
+                  <span>Durée flexible jusqu&apos;à 72 mois</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm text-gray-700">
                   <Check className="w-4 h-4 text-secondary flex-shrink-0" />

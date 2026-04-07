@@ -12,7 +12,18 @@ export const metadata: Metadata = {
   },
 }
 
-const services = [
+type ServiceItem = {
+  icon: React.ComponentType<{ className?: string }>
+  logoSrc?: string
+  title: string
+  description: string
+  href: string
+  color: string
+  iconColor: string
+  features: string[]
+}
+
+const services: ServiceItem[] = [
   {
     icon: CreditCard,
     logoSrc: '/sofac_logo.png',
@@ -20,6 +31,7 @@ const services = [
     description: 'Financez votre véhicule avec SOFAC — leader du crédit auto au Maroc, réponse rapide.',
     href: '/services/credit',
     color: 'bg-[#EBF1FD]',
+    iconColor: 'text-[#4488ee]',
     features: ['Taux personnalisés', 'Durée 12–72 mois', 'Réponse rapide'],
   },
   {
@@ -29,6 +41,7 @@ const services = [
     description: 'Obtenez votre devis d\'assurance auto avec notre partenaire Atlanta Sanad — leader de l\'assurance au Maroc.',
     href: '/services/assurance',
     color: 'bg-[#EEF3FF]',
+    iconColor: 'text-[#3b82f6]',
     features: ['Tous risques', 'Tiers collision', 'Assistance 24/7'],
   },
   {
@@ -37,6 +50,7 @@ const services = [
     description: 'Essayez le véhicule de votre choix avant de vous décider — réservez un essai gratuit.',
     href: '/contact',
     color: 'bg-[#F3E8FF]',
+    iconColor: 'text-purple-600',
     features: ['Essai gratuit', 'Sur rendez-vous', 'Tous modèles'],
   },
   {
@@ -46,6 +60,7 @@ const services = [
     description: 'Pneus et entretien rapide avec notre partenaire DabaPneu — livraison et montage inclus.',
     href: '/services/revision',
     color: 'bg-[#FDF6E3]',
+    iconColor: 'text-[#d4af37]',
     features: ['Pneus toutes marques', 'Montage inclus', 'Livraison rapide'],
   },
   {
@@ -54,6 +69,7 @@ const services = [
     description: 'Passez votre contrôle technique en toute sérénité dans nos centres partenaires.',
     href: '/services/controle',
     color: 'bg-[#FFF3E0]',
+    iconColor: 'text-orange-500',
     features: ['Rendez-vous en ligne', 'Centres agréés', 'Contre-visite incluse'],
   },
   {
@@ -63,6 +79,7 @@ const services = [
     description: 'Conseils et actualités NARSA pour une route plus sûre au Maroc.',
     href: '/services/securite-routiere',
     color: 'bg-[#E8EBF5]',
+    iconColor: 'text-[#4057aa]',
     features: ['Conseils sécurité', 'Actualités NARSA', 'Vidéos sensibilisation'],
   },
 ]
@@ -115,9 +132,9 @@ export default function ServicesPage() {
               >
                 <div className="flex items-start gap-3 sm:gap-4 md:gap-6">
                   <div className={`${service.color} p-4 rounded-xl flex-shrink-0 flex items-center justify-center`}>
-                    {(service as any).logoSrc ? (
+                    {service.logoSrc ? (
                       <Image
-                        src={(service as any).logoSrc}
+                        src={service.logoSrc}
                         alt={service.title}
                         width={56}
                         height={56}
@@ -125,7 +142,7 @@ export default function ServicesPage() {
                         sizes="56px"
                       />
                     ) : (
-                      <service.icon className="h-8 w-8 text-white" />
+                      <service.icon className={`h-8 w-8 ${service.iconColor}`} />
                     )}
                   </div>
                   <div className="flex-1">

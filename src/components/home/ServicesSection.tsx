@@ -2,18 +2,18 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { CreditCard, Shield, Car, Wrench, CalendarCheck, Truck, ChevronRight } from 'lucide-react'
+import { CreditCard, Shield, Car, Wrench, CalendarCheck, ShieldCheck, ChevronRight } from 'lucide-react'
 
 const services = [
   {
     id: 'credit',
     icon: CreditCard,
-    logoSrc: '/boa_small_logo.PNG',
+    logoSrc: '/sofac_logo.png',
     title: 'Financement',
-    description: 'Financez votre véhicule avec Bank of Africa — simulation gratuite en ligne.',
+    description: 'Financez votre véhicule avec SOFAC — leader du crédit auto au Maroc.',
     link: '/services/credit',
-    color: 'bg-[#EAF1FB]',
-    glowColor: 'group-hover:shadow-[0_0_15px_rgba(0,110,254,0.2)]',
+    color: 'bg-[#EBF1FD]',
+    glowColor: 'group-hover:shadow-[0_0_15px_rgba(68,136,238,0.2)]',
   },
   {
     id: 'assurance',
@@ -54,13 +54,14 @@ const services = [
     glowColor: 'group-hover:shadow-[0_0_15px_rgba(245,158,11,0.3)]',
   },
   {
-    id: 'livraison',
-    icon: Truck,
-    title: 'Livraison',
-    description: 'Livraison partout au Maroc.',
-    link: '/services/livraison',
-    color: 'bg-secondary',
-    glowColor: 'group-hover:shadow-glow-cyan-sm',
+    id: 'securite-routiere',
+    icon: ShieldCheck,
+    logoSrc: '/narsa_logo.png',
+    title: 'Sécurité Routière',
+    description: 'Conseils et actualités NARSA pour une route plus sûre au Maroc.',
+    link: '/services/securite-routiere',
+    color: 'bg-[#E8EBF5]',
+    glowColor: 'group-hover:shadow-[0_0_15px_rgba(64,87,170,0.2)]',
   },
 ]
 

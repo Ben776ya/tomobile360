@@ -212,9 +212,9 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
       {/* Body + Sidebar Grid */}
       <div className="container mx-auto px-4 py-8 sm:py-12">
-        <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-8">
+        <div className="lg:grid lg:grid-cols-[1fr_400px] lg:gap-8">
           {/* Main Article */}
-          <article className="max-w-[720px]">
+          <article className="max-w-[720px] mx-auto lg:mx-auto">
             {/* Author bar */}
             <div className="flex items-center gap-3 pb-6 mb-8 border-b border-gray-100">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-secondary/70 flex items-center justify-center text-white font-bold text-sm">
@@ -254,8 +254,8 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
           {/* Sidebar — hidden on mobile, sticky on desktop */}
           {related.length > 0 && (
-            <aside className="mt-10 lg:mt-0">
-              <div className="sticky top-6 bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-secondary/[0.08]">
+            <aside className="mt-10 lg:mt-0 lg:pr-4">
+              <div className="sticky top-[90px] bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-secondary/[0.08]">
                 <h2 className="text-[15px] font-bold text-primary pb-3 border-b-2 border-secondary inline-block mb-5">
                   Articles similaires
                 </h2>

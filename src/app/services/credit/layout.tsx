@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Crédit Auto au Maroc — Financement Voiture',
-  description: 'Simulez et obtenez votre crédit auto au Maroc. Comparez les offres de financement pour votre voiture neuve ou occasion.',
+  title: 'Crédit Auto au Maroc — Financement Voiture | SOFAC',
+  description: 'Simulez et obtenez votre crédit auto au Maroc avec SOFAC, leader du crédit auto. Financement véhicule neuf ou occasion — réponse rapide.',
   alternates: {
     canonical: 'https://tomobile360.ma/services/credit',
   },

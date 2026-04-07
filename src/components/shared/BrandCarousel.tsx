@@ -110,13 +110,13 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
                                  transition-all duration-300"
                     >
                       {brand.logo_url ? (
-                        <div className="relative w-full h-14 sm:h-12 md:h-14">
+                        <div className="relative w-full h-20 sm:h-16 md:h-20">
                           <Image
                             src={brand.logo_url}
                             alt={brand.name}
                             fill
                             className="object-contain opacity-60 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110"
-                            sizes="(max-width: 640px) 120px, (max-width: 768px) 80px, 100px"
+                            sizes="(max-width: 640px) 160px, (max-width: 768px) 120px, 140px"
                           />
                         </div>
                       ) : (

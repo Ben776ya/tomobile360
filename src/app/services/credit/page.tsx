@@ -5,40 +5,40 @@ import Link from 'next/link'
 import { Check, ArrowLeft, Clock, BadgePercent, Handshake } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
-const BOA_WEBSITE = 'https://www.bankofafrica.ma'
+const SOFAC_WEBSITE = 'https://www.sofac.ma/produit/credit-auto/'
 
 const creditProducts = [
   {
-    name: 'Salariés & Fonctionnaires',
-    description: 'Crédit auto exclusif pour les salariés du secteur public et privé, avec domiciliation de salaire.',
+    name: 'Crédit Auto Classique',
+    description: 'Devenez propriétaire de votre véhicule neuf ou d\'occasion avec un plan de remboursement personnalisé.',
     features: [
-      'Taux préférentiel négocié',
-      'Durée jusqu\'à 84 mois',
-      'Domiciliation de salaire',
-      'Sans frais de dossier',
+      'Aucun plafond de financement',
+      'Durée de 12 à 72 mois',
+      'Mensualités fixes',
+      'Remboursement anticipé sans pénalité',
     ],
     featured: true,
     badge: 'Le plus populaire',
   },
   {
-    name: 'Commerçants & Auto-entrepreneurs',
-    description: 'Financement sur mesure pour les professionnels et indépendants avec étude personnalisée.',
+    name: 'Crédit Auto LOA',
+    description: 'Location avec option d\'achat — roulez dès maintenant et décidez plus tard.',
     features: [
-      'Étude personnalisée',
-      'Durée jusqu\'à 72 mois',
-      'Dossier simplifié',
-      'Réponse rapide',
+      'Loyers réduits',
+      'Option d\'achat en fin de contrat',
+      'Entretien simplifié',
+      'Véhicule neuf garanti',
     ],
     featured: false,
     badge: null,
   },
   {
-    name: 'Toutes Professions',
-    description: 'Solution de financement auto accessible à tous les profils, neuf ou occasion.',
+    name: 'Crédit Toutes Professions',
+    description: 'Solution de financement accessible à tous les profils — salariés, indépendants, professions libérales.',
     features: [
-      'Financement jusqu\'à 100%',
-      'Durée de 12 à 84 mois',
-      'Véhicule neuf ou occasion',
+      'Étude personnalisée',
+      'Dossier simplifié',
+      'Réponse rapide',
       'Accompagnement dédié',
     ],
     featured: false,
@@ -55,12 +55,12 @@ const benefits = [
   {
     icon: Clock,
     title: 'Réponse rapide',
-    description: 'Réponse de principe en moins de 24h ouvrées',
+    description: 'Approbation le jour même — financement décaissé rapidement',
   },
   {
     icon: Handshake,
     title: 'Partenaire officiel',
-    description: 'Bank of Africa — Leader bancaire panafricain',
+    description: 'SOFAC — Leader du crédit auto au Maroc',
   },
 ]
 
@@ -75,7 +75,7 @@ export default function CreditAutoPage() {
       </div>
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#EAF1FB] via-white to-white py-16 md:py-24">
+      <section className="bg-gradient-to-br from-[#EBF1FD] via-white to-white py-16 md:py-24">
         <div className="container mx-auto px-4">
           <Link
             href="/services"
@@ -87,22 +87,15 @@ export default function CreditAutoPage() {
           <div className="max-w-3xl">
             <div className="flex items-center gap-4 mb-4">
               <Image
-                src="/boa_small_logo.PNG"
-                alt="Bank of Africa"
-                width={56}
-                height={56}
-                className="w-14 h-14 object-contain"
-              />
-              <Image
-                src="/bank_of_africa.PNG"
-                alt="Bank of Africa"
+                src="/sofac_logo.png"
+                alt="SOFAC"
                 width={200}
-                height={36}
-                className="h-8 w-auto object-contain"
+                height={60}
+                className="h-12 w-auto object-contain"
               />
             </div>
             <p className="text-lg md:text-xl text-gray-500 mt-2">
-              Financez votre véhicule avec Bank of Africa — leader bancaire panafricain.
+              Financez votre véhicule avec SOFAC — leader du crédit auto au Maroc.
               Simulation gratuite et sans engagement directement en ligne.
             </p>
           </div>
@@ -143,7 +136,7 @@ export default function CreditAutoPage() {
                 </ul>
 
                 <a
-                  href={BOA_WEBSITE}
+                  href={SOFAC_WEBSITE}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 mt-auto text-center block ${
@@ -164,12 +157,12 @@ export default function CreditAutoPage() {
       <section className="py-16 md:py-20 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-primary text-center mb-12">
-            Pourquoi choisir Bank of Africa ?
+            Pourquoi choisir SOFAC ?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {benefits.map((benefit, idx) => (
               <div key={idx} className="bg-white rounded-xl p-6 text-center shadow-card border border-blue-100">
-                <div className="w-16 h-16 bg-[#EAF1FB] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#EBF1FD] rounded-full flex items-center justify-center mx-auto mb-4">
                   <benefit.icon className="h-8 w-8 text-secondary" />
                 </div>
                 <h3 className="font-bold text-primary mb-2">{benefit.title}</h3>
@@ -183,30 +176,32 @@ export default function CreditAutoPage() {
       {/* CTA Banner */}
       <section className="py-16 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="bg-gradient-to-r from-secondary to-secondary-600 rounded-2xl p-8 md:p-12 text-center text-white shadow-lg">
+          <div className="bg-gradient-to-r from-secondary to-secondary-700 rounded-2xl p-8 md:p-12 text-center text-white shadow-lg">
             <div className="flex justify-center mb-6">
-              <Image
-                src="/boa_small_logo.PNG"
-                alt="Bank of Africa"
-                width={64}
-                height={64}
-                className="w-16 h-16 object-contain opacity-90"
-              />
+              <div className="bg-white rounded-xl px-6 py-3">
+                <Image
+                  src="/sofac_logo.png"
+                  alt="SOFAC"
+                  width={160}
+                  height={48}
+                  className="w-40 h-auto object-contain"
+                />
+              </div>
             </div>
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
               Simulez votre crédit en ligne
             </h2>
             <p className="text-white/80 mb-8 max-w-xl mx-auto">
-              Accédez directement au site Bank of Africa pour calculer vos mensualités
-              et obtenir une réponse de principe en moins de 24h.
+              Accédez directement au site SOFAC pour calculer vos mensualités
+              et obtenir une réponse rapide.
             </p>
             <a
-              href={BOA_WEBSITE}
+              href={SOFAC_WEBSITE}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-white text-secondary font-bold rounded-xl transition-all duration-300 hover:bg-blue-50 shadow-md"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-secondary font-bold rounded-xl transition-all duration-300 hover:bg-blue-50 shadow-md text-lg"
             >
-              Accéder au site Bank of Africa
+              Accéder au site SOFAC
             </a>
           </div>
         </div>
