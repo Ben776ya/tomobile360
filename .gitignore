@@ -35,11 +35,19 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# tooling
+# tooling & dev-only files
 .claude/
-CLAUDE.md
+.superpowers/
+.mcp.json
 .planning/
 docs/
+CLAUDE.md
+ZORKFLOW.md
+IMPORT_CARS_GUIDE.md
+YOUTUBE_SYNC_SETUP.md
+VIDEOS_SETUP.md
+DEPLOYMENT_CHECKLIST.md
+scripts/
 nul
 
 # vehicle images (served from Supabase Storage, not local files)
