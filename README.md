@@ -1,139 +1,123 @@
-# Tomobile 360 - Marketplace Automobile au Maroc
+# Tomobile 360 — Marketplace Automobile au Maroc
 
-A complete, production-ready automotive marketplace platform built with Next.js 14, TypeScript, Tailwind CSS, and Supabase.
+Plateforme automobile complète pour le marche marocain : catalogue de vehicules neufs, annonces d'occasion, articles, videos, forum communautaire et services partenaires.
 
-## 🚀 Features Completed
+**Site en production** : [tomobile360.ma](https://tomobile360.ma)
 
-### ✅ Phase 1: Foundation & Project Setup
-- Next.js 14 with App Router and TypeScript
-- Tailwind CSS with custom Tomobile 360 brand colors
-- Supabase integration (database, auth, storage)
-- Complete database schema with 13 tables
-- Row Level Security (RLS) policies
-- Responsive Header and Footer components
+## Tech Stack
 
-### ✅ Phase 2: Authentication System
-- **Login Page** (`/login`) - Email/password authentication
-- **Signup Page** (`/signup`) - User registration with profile creation
-- **Forgot Password** (`/forgot-password`) - Password reset via email
-- **Protected Routes** - Middleware guards for `/compte`, `/admin`, `/occasion/vendre`
-- **User Menu** - Dynamic header showing user account dropdown when logged in
-- Automatic profile creation on signup
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 14 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| UI | Radix UI, Lucide Icons |
+| Database | Supabase (PostgreSQL, Auth, Storage, RLS) |
+| Deployment | Vercel |
 
-## 🛠️ Tech Stack
+## Getting Started
 
-- **Frontend**: Next.js 14, React 18, TypeScript
-- **Styling**: Tailwind CSS, Radix UI, Lucide Icons
-- **Backend**: Supabase (PostgreSQL, Auth, Storage)
-- **Forms**: React Hook Form + Zod validation
-- **State**: React hooks + Supabase realtime
+### Prerequisites
 
-## 📦 Installation
+- Node.js 18+
+- A Supabase project with the schema already set up
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+### Installation
 
-3. Configure environment variables (`.env.local`):
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   ```
+```bash
+git clone https://github.com/Ben776ya/tomobile360.git
+cd tomobile360
+npm install
+```
 
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
+### Environment Variables
 
-5. Open [http://localhost:3000](http://localhost:3000)
+Create `.env.local`:
 
-## 🗄️ Database Setup
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+YOUTUBE_API_KEY=your_youtube_api_key
+```
 
-The complete SQL schema is in `supabase-schema.sql`. It includes:
+### Run
 
-- **Tables**: brands, models, vehicles_new, vehicles_used, dealerships, promotions, comparisons, forum_categories, forum_topics, forum_posts, articles, videos, favorites, profiles
-- **RLS Policies**: Public read, user CRUD, admin full access
-- **Functions**: View counters, updated_at triggers
-- **Seed Data**: 20 brands, 5 forum categories
+```bash
+npm run dev       # Development server on localhost:3000
+npm run build     # Production build
+npm run lint      # ESLint check
+```
 
-## 🎨 Brand Colors
+## Features
 
-- **Primary** (#4A4A4A): Main dark gray from "Tomobile"
-- **Accent** (#00A3E0): Bright blue from "360"
-- **Success** (#10B981): Green
-- **Warning** (#F59E0B): Orange
-- **Error** (#EF4444): Red
+### Catalogue Vehicules Neufs (`/neuf`)
+- Browse par marque, modele, carburant, transmission, prix
+- Fiches techniques detaillees avec galerie d'images
+- Comparaison cote a cote
+- 58 marques avec logos
 
-## 📱 Pages Available
+### Vehicules d'Occasion (`/occasion`)
+- Annonces utilisateurs avec filtres (ville, prix, kilometrage)
+- Depot d'annonce avec upload d'images vers Supabase Storage
+- Integration M-Occaz (scraping de listings externes)
 
-### Authentication
-- `/login` - User login
-- `/signup` - User registration
-- `/forgot-password` - Password reset
+### Articles & Actualites (`/actu`)
+- Blog natif avec systeme d'administration complet
+- Categories : Maroc, International, Marche, Review, News
+- Upload d'images via l'admin
 
-### Public (To be implemented)
-- `/` - Homepage
-- `/neuf` - New vehicles browse
-- `/occasion` - Used vehicles browse
-- `/forum` - Community forum
-- `/videos` - Video gallery
-- `/actu` - News/blog
+### Videos (`/videos`)
+- Galerie de videos YouTube synchronisees
+- Categories : Review, Lancement, Comparaison, Tutoriel, News
+- Likes et partage
 
-### Protected (To be implemented)
-- `/compte` - User dashboard
-- `/compte/mes-annonces` - My listings
-- `/compte/favoris` - My favorites
-- `/admin` - Admin panel
+### Forum Communautaire (`/forum`)
+- Categories, sujets, reponses imbriquees
+- Moderation par les admins
 
-## 🔐 Testing Authentication
+### Services Partenaires (`/services`)
+- **SOFAC** — Credit auto
+- **Atlanta Sanad** — Assurance auto
+- **DabaPneus** — Pneus et entretien
+- **NARSA** — Securite routiere
+- Controle technique
+- Demande de test drive
 
-1. **Create an account**: Go to `/signup`
-   - Fill in name, email, password
-   - Optionally add phone and city
-   - Accept terms and create account
+### Coups de Coeur (`/coups-de-coeur`)
+- Selection editoriale de vehicules par categorie
 
-2. **Check email**: Supabase sends confirmation email
-   - For dev: Check Supabase Dashboard > Auth > Users
+### Espace Utilisateur (`/compte`)
+- Profil, annonces, favoris
+- Authentification email/mot de passe via Supabase Auth
 
-3. **Login**: Go to `/login`
-   - Use your email and password
-   - You'll be redirected to homepage
-   - Header will show "Mon Compte" dropdown
+### Administration (`/admin`)
+- CRUD vehicules, articles, promotions, utilisateurs
+- Import CSV en masse
+- Synchronisation YouTube
+- Gestion des marques et modeles
 
-4. **User Menu**: Click "Mon Compte" in header
-   - Tableau de bord
-   - Mes annonces
-   - Mes favoris
-   - Déconnexion
+## Project Structure
 
-## 📝 Next Steps
+```
+src/
+  app/              # Pages et API routes (App Router)
+  components/       # Composants React (admin, home, vehicles, shared, ui)
+  lib/              # Supabase clients, server actions, types, utilitaires
+  hooks/            # Custom React hooks
+public/
+  brands/           # Logos des 58 marques
+  *.png             # Logos partenaires et assets statiques
+```
 
-### Phase 3: Homepage (In Progress)
-- Hero section with search
-- Promotions carousel
-- New releases section
-- Popular vehicles section
-- Latest news and videos
-- Partner brands
+## Database
 
-### Phase 4-7: Remaining Features
-- New vehicles section with filters
-- Used vehicles with posting
-- User dashboard
-- Forum, videos, news
-- Admin panel
+PostgreSQL via Supabase avec 14 tables principales :
+`brands`, `models`, `vehicles_new`, `vehicles_used`, `profiles`, `articles`, `videos`, `favorites`, `promotions`, `dealerships`, `comparisons`, `forum_categories`, `forum_topics`, `forum_posts`
 
-## 🤝 Contributing
+Row Level Security (RLS) active sur toutes les tables. Images stockees dans Supabase Storage.
 
-This is a custom project. Contact the development team for contribution guidelines.
+## License
 
-## 📄 License
-
-Proprietary - All rights reserved to Tomobile 360
-
----
-
-Built with ❤️ by the Tomobile 360 team
+Proprietary — All rights reserved to Tomobile 360
