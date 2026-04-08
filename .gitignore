@@ -41,3 +41,9 @@ CLAUDE.md
 .planning/
 docs/
 nul
+
+# vehicle images (served from Supabase Storage, not local files)
+public/vehicles/
+
+# migrations (one-time SQL scripts, already executed in Supabase)
+migrations/
