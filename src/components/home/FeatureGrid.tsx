@@ -177,7 +177,10 @@ export function FeatureGrid() {
                 />
 
                 {/* Dark gradient overlay — stronger at bottom for text legibility */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 transition-opacity duration-300 group-hover:from-black/85 group-hover:via-black/40" />
+                {/* Base gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+                {/* Hover darkening layer */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                 {/* Active state: slightly darker overlay */}
                 {isActive && (
@@ -205,13 +208,11 @@ export function FeatureGrid() {
               </>
             )
 
-            const cardClass = `group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 ${
+            const cardClass = `group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 min-h-[200px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:outline-none ${
               isActive
                 ? 'ring-2 ring-white/40 shadow-lg'
                 : 'hover:-translate-y-1 hover:shadow-xl'
             }`
-
-            const cardStyle = { minHeight: '200px' }
 
             if (isExpandCard) {
               const handleClick = () => {
@@ -228,7 +229,6 @@ export function FeatureGrid() {
                   key={feature.id}
                   onClick={handleClick}
                   className={cardClass}
-                  style={cardStyle}
                 >
                   {cardContent}
                 </button>
@@ -240,7 +240,6 @@ export function FeatureGrid() {
                 key={feature.id}
                 href={feature.href!}
                 className={cardClass}
-                style={cardStyle}
               >
                 {cardContent}
               </Link>
