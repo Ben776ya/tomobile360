@@ -54,7 +54,7 @@ const features = [
     tagline: 'Comparez jusqu\'à 3 véhicules',
     action: 'expand' as const,
     href: null,
-    color: '#111C32',
+    image: '/features/comparateur.svg',
   },
   {
     id: 'offres',
@@ -63,7 +63,7 @@ const features = [
     tagline: 'Les meilleures promotions',
     action: 'link' as const,
     href: '/neuf/promotions',
-    color: '#111C32',
+    image: '/features/offres.svg',
   },
   {
     id: 'top-ventes',
@@ -72,7 +72,7 @@ const features = [
     tagline: 'Les plus populaires au Maroc',
     action: 'link' as const,
     href: '/neuf/populaires',
-    color: '#111C32',
+    image: '/features/top-ventes.svg',
   },
   {
     id: 'coups-de-coeur',
@@ -81,7 +81,7 @@ const features = [
     tagline: 'Notre sélection du moment',
     action: 'expand' as const,
     href: null,
-    color: '#111C32',
+    image: '/features/coups-de-coeur.svg',
   },
 ]
 
@@ -157,52 +157,61 @@ export function FeatureGrid() {
   return (
     <section className="relative -mt-6 sm:-mt-8 z-20 pt-0 pb-6">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {features.map((feature) => {
             const isExpandCard = feature.action === 'expand'
             const isActive = isExpandCard && (
               (feature.id === 'comparateur' && comparatorOpen) ||
               (feature.id === 'coups-de-coeur' && cdcOpen)
             )
-            const c = feature.color
 
             const cardContent = (
               <>
-                <div
-                  data-icon
-                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-all duration-200"
-                  style={{
-                    backgroundColor: isActive ? c : `${c}18`,
-                    color: isActive ? '#fff' : c,
-                  }}
-                >
-                  <feature.icon className="h-5 w-5" />
+                {/* Background image */}
+                <Image
+                  src={feature.image}
+                  alt={feature.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                />
+
+                {/* Dark gradient overlay — stronger at bottom for text legibility */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 transition-opacity duration-300 group-hover:from-black/85 group-hover:via-black/40" />
+
+                {/* Active state: slightly darker overlay */}
+                {isActive && (
+                  <div className="absolute inset-0 bg-black/20" />
+                )}
+
+                {/* Icon badge — top-left corner */}
+                <div className="absolute top-3 left-3 z-10 w-9 h-9 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
+                  <feature.icon className="h-4 w-4 text-white" />
                 </div>
-                <h3 className="font-bold font-display text-base mb-1 text-primary transition-colors duration-200">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-gray-500 leading-snug">{feature.tagline}</p>
-                <div
-                  data-cta
-                  className="mt-4 flex items-center gap-1 text-sm font-medium transition-colors duration-200"
-                  style={{ color: isActive ? c : '#9ca3af' }}
-                >
-                  <span>{isExpandCard ? (isActive ? 'Fermer' : 'Ouvrir') : 'Voir'}</span>
-                  <ChevronRight className="h-3.5 w-3.5" />
+
+                {/* Text content — bottom, over gradient */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+                  <h3 className="font-bold font-display text-base text-white mb-0.5 drop-shadow-sm">
+                    {feature.title}
+                  </h3>
+                  <p className="text-xs text-white/70 leading-snug drop-shadow-sm">
+                    {feature.tagline}
+                  </p>
+                  <div className="mt-2 flex items-center gap-1 text-xs font-medium text-white/80 transition-colors duration-200 group-hover:text-white">
+                    <span>{isExpandCard ? (isActive ? 'Fermer' : 'Ouvrir') : 'Voir'}</span>
+                    <ChevronRight className="h-3 w-3" />
+                  </div>
                 </div>
               </>
             )
 
-            const cardClass = `group p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex flex-col cursor-pointer ${
-              isActive ? 'border-opacity-30 shadow-md' : 'border-gray-200 hover:-translate-y-0.5 hover:shadow-md'
+            const cardClass = `group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 ${
+              isActive
+                ? 'ring-2 ring-white/40 shadow-lg'
+                : 'hover:-translate-y-1 hover:shadow-xl'
             }`
 
-            const cardStyle = {
-              background: isActive
-                ? `linear-gradient(160deg, ${c}12 0%, #ffffff 55%)`
-                : `linear-gradient(160deg, ${c}0a 0%, #ffffff 50%)`,
-              borderColor: isActive ? `${c}50` : undefined,
-            }
+            const cardStyle = { minHeight: '200px' }
 
             if (isExpandCard) {
               const handleClick = () => {
@@ -220,29 +229,6 @@ export function FeatureGrid() {
                   onClick={handleClick}
                   className={cardClass}
                   style={cardStyle}
-                  onMouseEnter={e => {
-                    const el = e.currentTarget
-                    el.style.background = `linear-gradient(160deg, ${c}18 0%, #ffffff 55%)`
-                    el.style.borderColor = `${c}40`
-                    const icon = el.querySelector<HTMLElement>('[data-icon]')
-                    if (icon) { icon.style.backgroundColor = c; icon.style.color = '#fff' }
-                    const cta = el.querySelector<HTMLElement>('[data-cta]')
-                    if (cta) cta.style.color = c
-                  }}
-                  onMouseLeave={e => {
-                    const el = e.currentTarget
-                    el.style.background = isActive
-                      ? `linear-gradient(160deg, ${c}12 0%, #ffffff 55%)`
-                      : `linear-gradient(160deg, ${c}0a 0%, #ffffff 50%)`
-                    el.style.borderColor = isActive ? `${c}50` : ''
-                    const icon = el.querySelector<HTMLElement>('[data-icon]')
-                    if (icon) {
-                      icon.style.backgroundColor = isActive ? c : `${c}18`
-                      icon.style.color = isActive ? '#fff' : c
-                    }
-                    const cta = el.querySelector<HTMLElement>('[data-cta]')
-                    if (cta) cta.style.color = isActive ? c : '#9ca3af'
-                  }}
                 >
                   {cardContent}
                 </button>
@@ -255,24 +241,6 @@ export function FeatureGrid() {
                 href={feature.href!}
                 className={cardClass}
                 style={cardStyle}
-                onMouseEnter={e => {
-                  const el = e.currentTarget
-                  el.style.background = `linear-gradient(160deg, ${c}18 0%, #ffffff 55%)`
-                  el.style.borderColor = `${c}40`
-                  const icon = el.querySelector<HTMLElement>('[data-icon]')
-                  if (icon) { icon.style.backgroundColor = c; icon.style.color = '#fff' }
-                  const cta = el.querySelector<HTMLElement>('[data-cta]')
-                  if (cta) cta.style.color = c
-                }}
-                onMouseLeave={e => {
-                  const el = e.currentTarget
-                  el.style.background = `linear-gradient(160deg, ${c}0a 0%, #ffffff 50%)`
-                  el.style.borderColor = ''
-                  const icon = el.querySelector<HTMLElement>('[data-icon]')
-                  if (icon) { icon.style.backgroundColor = `${c}18`; icon.style.color = c }
-                  const cta = el.querySelector<HTMLElement>('[data-cta]')
-                  if (cta) cta.style.color = '#9ca3af'
-                }}
               >
                 {cardContent}
               </Link>
