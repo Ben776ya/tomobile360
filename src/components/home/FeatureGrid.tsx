@@ -54,7 +54,7 @@ const features = [
     tagline: 'Comparez jusqu\'à 3 véhicules',
     action: 'expand' as const,
     href: null,
-    color: '#006EFE',
+    color: '#111C32',
   },
   {
     id: 'offres',
@@ -63,7 +63,7 @@ const features = [
     tagline: 'Les meilleures promotions',
     action: 'link' as const,
     href: '/neuf/promotions',
-    color: '#10B981',
+    color: '#111C32',
   },
   {
     id: 'top-ventes',
@@ -72,7 +72,7 @@ const features = [
     tagline: 'Les plus populaires au Maroc',
     action: 'link' as const,
     href: '/neuf/populaires',
-    color: '#8B5CF6',
+    color: '#111C32',
   },
   {
     id: 'coups-de-coeur',
@@ -81,7 +81,7 @@ const features = [
     tagline: 'Notre sélection du moment',
     action: 'expand' as const,
     href: null,
-    color: '#F43F5E',
+    color: '#111C32',
   },
 ]
 
