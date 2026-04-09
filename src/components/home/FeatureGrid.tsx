@@ -170,16 +170,14 @@ export function FeatureGrid() {
                 {/* Background image */}
                 <Image
                   src={feature.image}
-                  alt={feature.title}
+                  alt=""
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                   sizes="(max-width: 768px) 50vw, 25vw"
                 />
 
-                {/* Dark gradient overlay — stronger at bottom for text legibility */}
-                {/* Base gradient */}
+                {/* Gradient overlays — base + hover darkening via opacity transition */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
-                {/* Hover darkening layer */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                 {/* Active state: slightly darker overlay */}
