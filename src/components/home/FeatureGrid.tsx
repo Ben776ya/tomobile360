@@ -54,7 +54,7 @@ const features = [
     tagline: 'Comparez jusqu\'à 3 véhicules',
     action: 'expand' as const,
     href: null,
-    image: '/features/comparateur.svg',
+    image: '/vehicles/bmw/i5/00-BMW-i5-2024-Neuve-Maroc-06.jpg',
   },
   {
     id: 'offres',
@@ -63,7 +63,7 @@ const features = [
     tagline: 'Les meilleures promotions',
     action: 'link' as const,
     href: '/neuf/promotions',
-    image: '/features/offres.svg',
+    image: '/vehicles/renault/5-e-tech/RENAULT-5-E-Tech-2025-Neuve-Maroc-01.jpg',
   },
   {
     id: 'top-ventes',
@@ -72,7 +72,7 @@ const features = [
     tagline: 'Les plus populaires au Maroc',
     action: 'link' as const,
     href: '/neuf/populaires',
-    image: '/features/top-ventes.svg',
+    image: '/vehicles/peugeot/2008/00-PEUGEOT-2008-facelift-2023-Neuve-Maroc-09.jpg',
   },
   {
     id: 'coups-de-coeur',
@@ -81,7 +81,7 @@ const features = [
     tagline: 'Notre sélection du moment',
     action: 'expand' as const,
     href: null,
-    image: '/features/coups-de-coeur.svg',
+    image: '/vehicles/mercedes/cla-coupe/Mercedes-CLA-Coupe-2023-Neuve-Maroc-01.jpg',
   },
 ]
 
