@@ -81,7 +81,7 @@ const features = [
     tagline: 'Notre sélection du moment',
     action: 'expand' as const,
     href: null,
-    image: '/features/coups-de-coeur-selection-automobile-maroc.jpg',
+    image: '/features/coups-de-coeur-selection-automobile-maroc.png',
   },
 ]
 
