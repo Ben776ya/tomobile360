@@ -54,7 +54,7 @@ const features = [
     tagline: 'Comparez jusqu\'à 3 véhicules',
     action: 'expand' as const,
     href: null,
-    image: '/features/comparateur.png',
+    image: '/features/comparateur-voitures-neuves-maroc.png',
   },
   {
     id: 'offres',
@@ -63,7 +63,7 @@ const features = [
     tagline: 'Les meilleures promotions',
     action: 'link' as const,
     href: '/neuf/promotions',
-    image: '/features/offres.png',
+    image: '/features/offres-speciales-automobiles-maroc.png',
   },
   {
     id: 'top-ventes',
@@ -72,7 +72,7 @@ const features = [
     tagline: 'Les plus populaires au Maroc',
     action: 'link' as const,
     href: '/neuf/populaires',
-    image: '/vehicles/peugeot/2008/00-PEUGEOT-2008-facelift-2023-Neuve-Maroc-09.jpg',
+    image: '/features/top-ventes-voitures-populaires-maroc.jpg',
   },
   {
     id: 'coups-de-coeur',
@@ -81,7 +81,7 @@ const features = [
     tagline: 'Notre sélection du moment',
     action: 'expand' as const,
     href: null,
-    image: '/vehicles/mercedes/cla-coupe/Mercedes-CLA-Coupe-2023-Neuve-Maroc-01.jpg',
+    image: '/features/coups-de-coeur-selection-automobile-maroc.jpg',
   },
 ]
 
