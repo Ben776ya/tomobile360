@@ -54,7 +54,7 @@ const features = [
     tagline: 'Comparez jusqu\'à 3 véhicules',
     action: 'expand' as const,
     href: null,
-    image: '/vehicles/bmw/i5/00-BMW-i5-2024-Neuve-Maroc-06.jpg',
+    image: '/features/comparateur.png',
   },
   {
     id: 'offres',
@@ -63,7 +63,7 @@ const features = [
     tagline: 'Les meilleures promotions',
     action: 'link' as const,
     href: '/neuf/promotions',
-    image: '/vehicles/renault/5-e-tech/RENAULT-5-E-Tech-2025-Neuve-Maroc-01.jpg',
+    image: '/features/offres.png',
   },
   {
     id: 'top-ventes',
