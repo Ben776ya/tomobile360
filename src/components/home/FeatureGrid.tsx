@@ -72,7 +72,7 @@ const features = [
     tagline: 'Les plus populaires au Maroc',
     action: 'link' as const,
     href: '/neuf/populaires',
-    image: '/features/top-ventes-voitures-populaires-maroc.jpg',
+    image: '/features/top-ventes-voitures-populaires-maroc.png',
   },
   {
     id: 'coups-de-coeur',
