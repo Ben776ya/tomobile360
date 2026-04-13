@@ -194,13 +194,13 @@ export function HeroSection({ brands }: HeroSectionProps) {
         />
       </div>
 
-      {/* Dark gradient overlay — left darker, right lighter so car is visible */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20 pointer-events-none" />
+      {/* Dark blue gradient overlay — solid at left edge, fades quickly */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#010920] via-[#010920] via-[3%] to-transparent to-[15%] pointer-events-none" />
 
       {/* Content */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10 pt-6 lg:pt-8 pb-14 lg:pb-16">
-        {/* Search panel — dark overlay card anchored left */}
-        <div className="w-full max-w-xl bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 p-4 sm:p-5 lg:p-6">
+        {/* Search panel — dark glass card anchored left */}
+        <div className="w-full max-w-xl bg-[#010920]/50 backdrop-blur-md rounded-2xl border border-white/10 p-4 sm:p-5 lg:p-6">
 
           {/* Title */}
           <h2 className="font-display text-lg lg:text-xl font-bold text-white leading-tight mb-0.5 text-center">
@@ -212,7 +212,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
 
           {/* NEUF / OCCASION Toggle */}
           <div className="flex justify-center mb-3">
-          <div className="inline-flex rounded-xl bg-white/10 p-0.5">
+          <div className="inline-flex rounded-xl bg-white/10 p-0.5 border border-white/5">
             <button
               onClick={() => setVehicleCondition('neuf')}
               className={`px-4 sm:px-5 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
@@ -245,7 +245,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
                 className={`flex flex-col items-center py-1 px-1 rounded-lg transition-all duration-200 border ${
                   selectedType === type.id
                     ? 'bg-[#006EFE]/20 text-[#006EFE] border-[#006EFE]/50 scale-[1.03]'
-                    : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-white hover:border-white/25'
+                    : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/15 hover:text-white hover:border-white/30'
                 }`}
               >
                 <div className="w-4 h-4 flex items-center justify-center">
