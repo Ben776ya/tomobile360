@@ -87,6 +87,37 @@ export async function PUT(
       return NextResponse.json({ error: error.message }, { status: 400 })
     }
 
+    // Sync inline images: delete old, insert new
+    const inlineImages = body.inline_images
+    if (inlineImages && Array.isArray(inlineImages)) {
+      await supabase
+        .from('blog_images')
+        .delete()
+        .eq('blog_post_id', params.id)
+
+      if (inlineImages.length > 0) {
+        const imageRows = inlineImages.map((img: {
+          image_url: string
+          alt_text: string | null
+          caption: string | null
+          display_order: number
+          size: string
+          float_position: string
+        }) => ({
+          blog_post_id: params.id,
+          image_url: img.image_url,
+          alt_text: img.alt_text,
+          caption: img.caption,
+          display_order: img.display_order,
+          size: img.size || 'full',
+          float_position: img.float_position || 'none',
+        }))
+
+        const { error: imgError } = await supabase.from('blog_images').insert(imageRows)
+        if (imgError) console.error('Failed to sync blog images:', imgError.message)
+      }
+    }
+
     revalidatePath('/actu')
     revalidatePath(`/actu/${post.slug}`)
     revalidatePath('/admin/blog')

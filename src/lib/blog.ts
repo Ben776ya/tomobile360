@@ -44,7 +44,7 @@ export async function getPostBySlug(
 
   const { data: images } = await supabase
     .from('blog_images')
-    .select('id, blog_post_id, image_url, alt_text, caption, display_order, created_at')
+    .select('id, blog_post_id, image_url, alt_text, caption, display_order, size, float_position, created_at')
     .eq('blog_post_id', post.id)
     .order('display_order', { ascending: true })
 

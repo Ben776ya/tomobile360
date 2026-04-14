@@ -163,6 +163,19 @@ export const CreateVehicleSchema = z.object({
   coup_de_coeur_reason: z.string().nullable().optional(),
 }).strict()
 
+// === Fiche Technique Schemas ===
+
+export const UpdateFicheTechniqueSchema = z.object({
+  specs: z.record(z.string(), z.string()).default({}),
+  en_detail: z.record(z.string(), z.array(z.string())).default({}),
+})
+
+export const CreateFicheTechniqueSchema = z.object({
+  model_id: z.string().uuid('model_id doit être un UUID valide'),
+  specs: z.record(z.string(), z.string()).default({}),
+  en_detail: z.record(z.string(), z.array(z.string())).default({}),
+})
+
 // === Inferred Types ===
 
 export type UpdateVideoInput = z.infer<typeof UpdateVideoSchema>
@@ -173,6 +186,8 @@ export type CreateBrandInput = z.infer<typeof CreateBrandSchema>
 export type UpdateBrandInput = z.infer<typeof UpdateBrandSchema>
 export type CreateModelInput = z.infer<typeof CreateModelSchema>
 export type UpdateModelInput = z.infer<typeof UpdateModelSchema>
+export type UpdateFicheTechniqueInput = z.infer<typeof UpdateFicheTechniqueSchema>
+export type CreateFicheTechniqueInput = z.infer<typeof CreateFicheTechniqueSchema>
 
 // === Validation Helper ===
 

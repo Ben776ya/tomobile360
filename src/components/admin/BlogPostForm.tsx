@@ -1,11 +1,14 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ImageUploader } from '@/components/admin/ImageUploader'
+import { BlogImageManager, buildMarkdown } from '@/components/admin/BlogImageManager'
+import type { ManagedImage } from '@/components/admin/BlogImageManager'
+import { cn } from '@/lib/utils'
 import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
 import { parseMarkdownFile } from '@/lib/parseMarkdownFile'
 import {
@@ -17,11 +20,22 @@ import {
   Save,
   Send,
   FileUp,
+  MousePointerClick,
 } from 'lucide-react'
 import type { BlogPost } from '@/lib/types/blog'
 
 interface BlogPostFormProps {
-  post?: BlogPost
+  post?: BlogPost & {
+    images?: Array<{
+      id: string
+      image_url: string
+      alt_text: string | null
+      caption: string | null
+      display_order: number
+      size: string
+      float_position: string
+    }>
+  }
   mode: 'create' | 'edit'
 }
 
@@ -64,6 +78,28 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
   const [heroImageCaption, setHeroImageCaption] = useState(post?.hero_image_caption || '')
   const [content, setContent] = useState(post?.content || '')
   const [featured, setFeatured] = useState(post?.featured ?? false)
+  const [inlineImages, setInlineImages] = useState<ManagedImage[]>(() => {
+    if (!post?.images) return []
+    return post.images.map((img) => ({
+      id: img.id,
+      url: img.image_url,
+      alt: img.alt_text || '',
+      caption: img.caption || '',
+      size: (img.size as ManagedImage['size']) || 'full',
+      float: (img.float_position as ManagedImage['float']) || 'none',
+    }))
+  })
+  const [activeInsertId, setActiveInsertId] = useState<string | null>(null)
+
+  // Escape key cancels placement mode
+  useEffect(() => {
+    if (!activeInsertId) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveInsertId(null)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [activeInsertId])
 
   const handleTitleChange = (value: string) => {
     setTitle(value)
@@ -108,17 +144,14 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
     reader.readAsText(file)
   }
 
-  const insertInlineImage = useCallback(
-    (url: string) => {
-      if (!url) return
-      const markdown = `\n![image](${url})\n`
+  const handleInsertImage = useCallback(
+    (markdown: string) => {
       const ta = contentRef.current
       if (ta) {
         const start = ta.selectionStart ?? content.length
         const before = content.slice(0, start)
         const after = content.slice(start)
         setContent(before + markdown + after)
-        // Restore focus + cursor after the inserted text
         requestAnimationFrame(() => {
           ta.focus()
           const pos = start + markdown.length
@@ -129,6 +162,42 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
       }
     },
     [content],
+  )
+
+  const handleRemoveImage = useCallback(
+    (image: ManagedImage) => {
+      const escapedUrl = image.url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const pattern = new RegExp(`\\n?!\\[[^\\]]*\\]\\(${escapedUrl}[^)]*\\)\\n?`, 'g')
+      setContent((prev) => prev.replace(pattern, '\n').replace(/\n{3,}/g, '\n\n'))
+    },
+    [],
+  )
+
+  // Click-to-place: when an image is in placement mode and user clicks textarea
+  const handleTextareaClick = useCallback(
+    (e: React.MouseEvent<HTMLTextAreaElement>) => {
+      if (!activeInsertId) return
+      const image = inlineImages.find((img) => img.id === activeInsertId)
+      if (!image) return
+
+      const ta = e.currentTarget
+      // Use a small delay so the browser sets the cursor position from the click
+      requestAnimationFrame(() => {
+        const pos = ta.selectionStart ?? content.length
+        const markdown = `\n${buildMarkdown(image)}\n`
+        const before = content.slice(0, pos)
+        const after = content.slice(pos)
+        setContent(before + markdown + after)
+        setActiveInsertId(null)
+
+        requestAnimationFrame(() => {
+          ta.focus()
+          const newPos = pos + markdown.length
+          ta.setSelectionRange(newPos, newPos)
+        })
+      })
+    },
+    [activeInsertId, inlineImages, content],
   )
 
   const submit = async (status: 'draft' | 'published') => {
@@ -155,6 +224,14 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
       author,
       status,
       featured,
+      inline_images: inlineImages.map((img, i) => ({
+        image_url: img.url,
+        alt_text: img.alt || null,
+        caption: img.caption || null,
+        display_order: i,
+        size: img.size,
+        float_position: img.float,
+      })),
     }
 
     try {
@@ -409,22 +486,60 @@ export function BlogPostForm({ post, mode }: BlogPostFormProps) {
             )}
           </div>
         ) : (
-          <textarea
-            ref={contentRef}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Écrivez votre article en Markdown..."
-            className="w-full rounded-md border border-white/10 bg-dark-700/80 px-4 py-3 text-sm font-mono text-white placeholder-dark-400 min-h-[400px] resize-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50"
-          />
+          <div>
+            {activeInsertId && (
+              <div className="mb-3 flex items-center gap-2 rounded-lg bg-secondary/10 border border-secondary/30 px-4 py-2.5 text-sm text-secondary animate-pulse">
+                <MousePointerClick className="h-4 w-4 flex-shrink-0" />
+                <span>Cliquez dans l&apos;editeur pour placer l&apos;image</span>
+                <button
+                  type="button"
+                  onClick={() => setActiveInsertId(null)}
+                  className="ml-auto text-xs text-secondary/60 hover:text-secondary underline"
+                >
+                  Annuler
+                </button>
+              </div>
+            )}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="flex flex-col">
+                <p className="text-xs text-dark-400 mb-2">Editeur Markdown</p>
+                <textarea
+                  ref={contentRef}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  onClick={handleTextareaClick}
+                  placeholder="Ecrivez votre article en Markdown..."
+                  className={cn(
+                    'flex-1 w-full rounded-md border bg-dark-700/80 px-4 py-3 text-sm font-mono text-white placeholder-dark-400 min-h-[400px] resize-y focus-visible:outline-none focus-visible:ring-2',
+                    activeInsertId
+                      ? 'cursor-crosshair border-secondary/50 focus-visible:ring-secondary/70 bg-dark-700/90'
+                      : 'border-white/10 focus-visible:ring-secondary/50',
+                  )}
+                />
+              </div>
+              <div className="flex flex-col">
+                <p className="text-xs text-dark-400 mb-2">Apercu en direct</p>
+                <div className="flex-1 rounded-lg border border-white/10 bg-white p-4 min-h-[400px] max-h-[700px] overflow-y-auto">
+                  {content ? (
+                    <MarkdownRenderer content={content} />
+                  ) : (
+                    <p className="text-gray-400 italic text-sm">L&apos;apercu apparaitra ici...</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
-        {/* Inline image upload — inserts ![image](url) at cursor */}
         {!previewMode && (
           <div className="mt-4 pt-4 border-t border-white/10">
-            <ImageUploader
-              onUpload={insertInlineImage}
-              showMarkdownCopy
-              label="Ajouter une image dans le contenu"
+            <BlogImageManager
+              images={inlineImages}
+              onChange={setInlineImages}
+              onInsert={handleInsertImage}
+              onRemove={handleRemoveImage}
+              activeInsertId={activeInsertId}
+              onActivateInsert={setActiveInsertId}
             />
           </div>
         )}

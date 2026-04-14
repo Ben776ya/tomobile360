@@ -15,27 +15,88 @@ function isExternalUrl(href: string): boolean {
   return href.startsWith('http://') || href.startsWith('https://')
 }
 
+type ImageMeta = {
+  size: 'small' | 'medium' | 'large' | 'full'
+  float: 'left' | 'right' | 'none'
+  caption: string
+}
+
+function parseImageMeta(title?: string): ImageMeta {
+  if (!title) return { size: 'full', float: 'none', caption: '' }
+
+  // Caption may contain pipes, so extract it first (everything after "caption:")
+  let caption = ''
+  let rest = title
+  const captionIdx = title.indexOf('caption:')
+  if (captionIdx >= 0) {
+    caption = title.slice(captionIdx + 'caption:'.length).trim()
+    rest = title.slice(0, captionIdx).replace(/\|$/, '')
+  }
+
+  const meta: Record<string, string> = {}
+  rest.split('|').forEach((part) => {
+    const colonIdx = part.indexOf(':')
+    if (colonIdx > 0) {
+      const key = part.slice(0, colonIdx).trim()
+      const val = part.slice(colonIdx + 1).trim()
+      meta[key] = val
+    }
+  })
+
+  return {
+    size: (['small', 'medium', 'large', 'full'].includes(meta.size) ? meta.size : 'full') as ImageMeta['size'],
+    float: (['left', 'right', 'none'].includes(meta.float) ? meta.float : 'none') as ImageMeta['float'],
+    caption,
+  }
+}
+
+const SIZE_CLASSES: Record<ImageMeta['size'], string> = {
+  small: 'max-w-[200px]',
+  medium: 'max-w-[340px]',
+  large: 'max-w-[500px]',
+  full: 'w-full',
+}
+
+const SIZE_ATTR: Record<ImageMeta['size'], string> = {
+  small: '200px',
+  medium: '340px',
+  large: '500px',
+  full: '(max-width: 768px) 100vw, 720px',
+}
+
 const components: Components = {
   h1: ({ children }) => (
-    <h1 className="relative pl-5 text-2xl md:text-3xl font-bold text-primary font-display mt-10 mb-5 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:rounded-full before:bg-secondary">
+    <h1 className="clear-both relative pl-5 text-2xl md:text-3xl font-bold text-primary font-display mt-10 mb-5 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:rounded-full before:bg-secondary">
       {children}
     </h1>
   ),
   h2: ({ children }) => (
-    <h2 className="relative pl-5 text-xl md:text-2xl font-bold text-primary font-display mt-10 mb-4 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:rounded-full before:bg-secondary">
+    <h2 className="clear-both relative pl-5 text-xl md:text-2xl font-bold text-primary font-display mt-10 mb-4 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:rounded-full before:bg-secondary">
       {children}
     </h2>
   ),
   h3: ({ children }) => (
-    <h3 className="relative pl-4 text-lg md:text-xl font-bold text-primary font-display mt-8 mb-3 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:rounded-full before:bg-secondary/50">
+    <h3 className="clear-both relative pl-4 text-lg md:text-xl font-bold text-primary font-display mt-8 mb-3 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-0.5 before:rounded-full before:bg-secondary/50">
       {children}
     </h3>
   ),
-  p: ({ children }) => (
-    <p className="text-gray-600 leading-relaxed mb-5 text-[15px] md:text-base">
-      {children}
-    </p>
-  ),
+  p: ({ children, node }: any) => {
+    // Unwrap paragraphs containing only an image so float works with sibling text
+    if (
+      node &&
+      node.children &&
+      node.children.length === 1 &&
+      node.children[0].type === 'element' &&
+      (node.children[0] as { tagName?: string }).tagName === 'img'
+    ) {
+      return <>{children}</>
+    }
+    return (
+      <p className="text-gray-600 leading-relaxed mb-5 text-[15px] md:text-base">
+        {children}
+      </p>
+    )
+  },
   a: ({ href, children }) => {
     if (!href) return <>{children}</>
     const external = isExternalUrl(href)
@@ -67,22 +128,49 @@ const components: Components = {
   li: ({ children }) => (
     <li className="leading-relaxed">{children}</li>
   ),
-  img: ({ src, alt }) => {
+  img: ({ src, alt, title }: any) => {
     if (!src) return null
+    const meta = parseImageMeta(title)
+    const caption = meta.caption || alt || ''
+
+    if (meta.float !== 'none') {
+      const floatClass = meta.float === 'left'
+        ? 'sm:float-left sm:mr-5 mb-4'
+        : 'sm:float-right sm:ml-5 mb-4'
+      return (
+        <span className={`${floatClass} ${SIZE_CLASSES[meta.size]} block sm:inline-block`}>
+          <span className="relative block w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100">
+            <Image
+              src={src}
+              alt={alt || ''}
+              fill
+              className="object-cover"
+              sizes={SIZE_ATTR[meta.size]}
+            />
+          </span>
+          {caption && (
+            <span className="block text-center text-xs text-gray-400 mt-2 italic">
+              {caption}
+            </span>
+          )}
+        </span>
+      )
+    }
+
     return (
       <span className="block my-6">
-        <span className="relative block w-full aspect-video rounded-xl overflow-hidden bg-gray-100">
+        <span className={`relative block ${SIZE_CLASSES[meta.size]} ${meta.size !== 'full' ? 'mx-auto' : ''} aspect-[4/3] rounded-xl overflow-hidden bg-gray-100`}>
           <Image
             src={src}
             alt={alt || ''}
             fill
             className="object-cover"
-            sizes="(max-width: 768px) 100vw, 720px"
+            sizes={SIZE_ATTR[meta.size]}
           />
         </span>
-        {alt && (
+        {caption && (
           <span className="block text-center text-xs text-gray-400 mt-2 italic">
-            {alt}
+            {caption}
           </span>
         )}
       </span>
@@ -133,13 +221,13 @@ const components: Components = {
     <pre className="my-6 [&>code]:block">{children}</pre>
   ),
   hr: () => (
-    <hr className="my-8 border-t border-gray-200" />
+    <hr className="clear-both my-8 border-t border-gray-200" />
   ),
 }
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   return (
-    <div className="mx-auto max-w-[65ch] px-1 sm:px-0">
+    <div className="mx-auto max-w-[65ch] px-1 sm:px-0 after:content-[''] after:block after:clear-both">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw, rehypeSlug]}

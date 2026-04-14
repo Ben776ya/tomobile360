@@ -1,55 +1,55 @@
-'use client'
-
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, ShieldCheck, BookOpen, Play, ExternalLink } from 'lucide-react'
+import { ArrowLeft, ShieldCheck, Play } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { NarsaVideoPlayer } from '@/components/narsa/NarsaVideoPlayer'
 
 const NARSA_WEBSITE = 'https://www.narsa.ma/fr'
+const SITE_URL = 'https://tomobile360.ma'
+const SUPABASE_STORAGE_URL = 'https://atbkdxmxuqorebrttzma.supabase.co/storage/v1/object/public/narsa-videos'
 
-const articles = [
+const capsuleVideos = [
   {
-    title: 'Journée Nationale de la Sécurité Routière 2026',
-    description: 'Séminaire international sur le comportement des usagers de deux-roues — sensibilisation et prévention.',
-    href: 'https://www.narsa.ma/fr/actualites',
-    date: '18 février 2026',
+    id: 1,
+    title: 'La sécurité des piétons',
+    description: 'Capsule de sensibilisation sur les bonnes pratiques pour protéger les piétons sur la route.',
+    src: `${SUPABASE_STORAGE_URL}/capsule-1-pietons.mp4`,
   },
   {
-    title: 'Semaine Mondiale de la Sécurité Routière',
-    description: 'La 8ème Semaine mondiale des Nations Unies pour la sécurité routière — focus piétons et cyclistes.',
-    href: 'https://www.narsa.ma/fr/actualites',
-    date: 'Mai 2025',
+    id: 2,
+    title: 'La sécurité des motocyclistes',
+    description: 'Les règles essentielles pour une conduite sécurisée à moto et la cohabitation avec les autres usagers.',
+    src: `${SUPABASE_STORAGE_URL}/capsule-2-motos.mp4`,
   },
   {
-    title: 'Programme d\'action pour la sécurité routière',
-    description: 'Le programme estival de la NARSA pour réduire les accidents sur les routes marocaines.',
-    href: 'https://www.narsa.ma/fr/actualites',
-    date: 'Été 2025',
+    id: 10,
+    title: 'La conduite responsable des taxis',
+    description: 'Sensibilisation des chauffeurs de taxi aux bonnes pratiques de conduite et de sécurité.',
+    src: `${SUPABASE_STORAGE_URL}/capsule-10-taxis.mp4`,
   },
   {
-    title: 'Journée mondiale du souvenir des victimes de la route',
-    description: 'Commémoration et sensibilisation pour honorer les victimes des accidents de la circulation.',
-    href: 'https://www.narsa.ma/fr/actualites',
-    date: 'Novembre 2025',
-  },
-]
-
-// TODO: Replace placeholder youtubeId values with real NARSA video IDs
-const videos = [
-  {
-    title: 'Vidéo NARSA 1',
-    description: 'Vidéo de sensibilisation à la sécurité routière.',
-    youtubeId: 'PLACEHOLDER_1',
+    id: 11,
+    title: 'La distance de sécurité',
+    description: 'L\'importance de maintenir une distance de sécurité suffisante pour éviter les collisions.',
+    src: `${SUPABASE_STORAGE_URL}/capsule-11-distance-securite.mp4`,
   },
   {
-    title: 'Vidéo NARSA 2',
-    description: 'Vidéo de sensibilisation à la sécurité routière.',
-    youtubeId: 'PLACEHOLDER_2',
+    id: 12,
+    title: 'Le respect des couloirs de circulation',
+    description: 'Les règles de circulation dans les couloirs et voies réservées.',
+    src: `${SUPABASE_STORAGE_URL}/capsule-12-couloirs.mp4`,
   },
   {
-    title: 'Vidéo NARSA 3',
-    description: 'Vidéo de sensibilisation à la sécurité routière.',
-    youtubeId: 'PLACEHOLDER_3',
+    id: 13,
+    title: 'Le partage de la route avec les cyclistes',
+    description: 'Comment cohabiter en toute sécurité avec les cyclistes sur la piste cyclable et la chaussée.',
+    src: `${SUPABASE_STORAGE_URL}/capsule-13-piste-cyclable.mp4`,
+  },
+  {
+    id: 14,
+    title: 'Les panneaux de signalisation',
+    description: 'Comprendre et respecter les panneaux de signalisation pour une conduite plus sûre.',
+    src: `${SUPABASE_STORAGE_URL}/capsule-14-panneaux-signalisation.mp4`,
   },
 ]
 
@@ -71,9 +71,45 @@ const safetyTips = [
   },
 ]
 
+function VideoListJsonLd() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Capsules de sensibilisation — Sécurité Routière au Maroc',
+    description: 'Série de capsules vidéo de sensibilisation à la sécurité routière, produites en partenariat avec la NARSA et MFM Radio.',
+    numberOfItems: capsuleVideos.length,
+    itemListElement: capsuleVideos.map((video, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      item: {
+        '@type': 'VideoObject',
+        name: video.title,
+        description: video.description,
+        contentUrl: video.src,
+        thumbnailUrl: `${SITE_URL}/narsa_logo.png`,
+        uploadDate: '2021-07-01',
+        publisher: {
+          '@type': 'Organization',
+          name: 'NARSA — Agence Nationale de la Sécurité Routière',
+          url: 'https://www.narsa.ma',
+        },
+        inLanguage: 'fr',
+      },
+    })),
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  )
+}
+
 export default function SecuriteRoutierePage() {
   return (
     <div className="min-h-screen bg-background">
+      <VideoListJsonLd />
       <div className="container mx-auto px-4 pt-6">
         <Breadcrumbs items={[
           { name: 'Services', href: '/services' },
@@ -102,8 +138,8 @@ export default function SecuriteRoutierePage() {
               />
             </div>
             <p className="text-lg md:text-xl text-gray-500 mt-2">
-              Découvrez les actualités, conseils et vidéos de sensibilisation de la NARSA —
-              Agence Nationale de la Sécurité Routière du Maroc.
+              Découvrez les capsules vidéo de sensibilisation et les conseils de sécurité routière
+              de la NARSA — Agence Nationale de la Sécurité Routière du Maroc.
             </p>
           </div>
         </div>
@@ -129,97 +165,34 @@ export default function SecuriteRoutierePage() {
         </div>
       </section>
 
-      {/* Articles */}
-      <section className="py-16 md:py-20">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center gap-3 mb-12">
-            <BookOpen className="h-7 w-7 text-[#4057aa]" />
-            <h2 className="text-2xl md:text-3xl font-bold text-primary text-center">
-              Actualités & Articles
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {articles.map((article, idx) => (
-              <a
-                key={idx}
-                href={article.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-white rounded-2xl border-2 border-[#4057aa]/10 p-6 shadow-card transition-all hover:shadow-elevated hover:border-[#4057aa]/30 flex flex-col"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-[#4057aa] bg-[#E8EBF5] px-3 py-1 rounded-full">
-                    {article.date}
-                  </span>
-                  <ExternalLink className="h-4 w-4 text-gray-300 group-hover:text-[#4057aa] transition-colors" />
-                </div>
-                <h3 className="text-lg font-bold text-primary mb-2 group-hover:text-[#4057aa] transition-colors">
-                  {article.title}
-                </h3>
-                <p className="text-sm text-gray-400 flex-1">{article.description}</p>
-                <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#4057aa] mt-4 group-hover:gap-2 transition-all">
-                  Lire l&apos;article
-                  <ExternalLink className="h-3 w-3" />
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Videos */}
-      <section className="py-16 md:py-20 bg-white">
+      <section className="py-16 md:py-20">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center gap-3 mb-12">
             <Play className="h-7 w-7 text-[#4057aa]" />
             <h2 className="text-2xl md:text-3xl font-bold text-primary text-center">
-              Vidéos de sensibilisation
+              Capsules de sensibilisation — Sécurité Routière
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {videos.map((video, idx) => (
-              <div
-                key={idx}
-                className="group bg-white rounded-xl overflow-hidden shadow-card border border-[#4057aa]/10"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {capsuleVideos.map((video) => (
+              <article
+                key={video.id}
+                className="bg-white rounded-xl overflow-hidden shadow-card border border-[#4057aa]/10"
               >
-                <div className="relative aspect-video bg-[#E8EBF5] flex items-center justify-center">
-                  {video.youtubeId.startsWith('PLACEHOLDER') ? (
-                    <div className="text-center p-4">
-                      <Play className="h-12 w-12 text-[#4057aa]/30 mx-auto mb-2" />
-                      <p className="text-sm text-[#4057aa]/50 font-medium">Vidéo à venir</p>
-                    </div>
-                  ) : (
-                    <iframe
-                      src={`https://www.youtube.com/embed/${video.youtubeId}`}
-                      title={video.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="w-full h-full"
-                    />
-                  )}
-                </div>
+                <NarsaVideoPlayer src={video.src} title={video.title} />
                 <div className="p-4">
-                  <h3 className="font-bold text-primary mb-1">
+                  <span className="text-xs font-semibold text-[#4057aa] bg-[#E8EBF5] px-2 py-0.5 rounded-full">
+                    Capsule {video.id}
+                  </span>
+                  <h3 className="font-bold text-primary mt-2 mb-1">
                     {video.title}
                   </h3>
                   <p className="text-xs text-gray-400">{video.description}</p>
                 </div>
-              </div>
+              </article>
             ))}
-          </div>
-
-          <div className="text-center mt-8">
-            <a
-              href="https://www.youtube.com/@NARSA20"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[#4057aa] font-semibold hover:underline"
-            >
-              Voir toutes les vidéos sur YouTube
-              <ExternalLink className="h-4 w-4" />
-            </a>
           </div>
         </div>
       </section>

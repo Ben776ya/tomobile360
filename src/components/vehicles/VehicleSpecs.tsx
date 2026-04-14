@@ -1,4 +1,4 @@
-import { VehicleNew } from '@/lib/types'
+import { VehicleNew, FicheTechnique } from '@/lib/types'
 import {
   Fuel,
   Gauge,
@@ -17,6 +17,7 @@ import {
 
 interface VehicleSpecsProps {
   vehicle: VehicleNew
+  fiche?: FicheTechnique | null
 }
 
 type KeySpec = {
@@ -25,26 +26,27 @@ type KeySpec = {
   value: string
 }
 
-export function KeySpecsStrip({ vehicle }: VehicleSpecsProps) {
+export function KeySpecsStrip({ vehicle, fiche }: VehicleSpecsProps) {
   const specs: KeySpec[] = []
+  const ficheSpecs = fiche?.specs || {}
 
-  if (vehicle.horsepower) {
-    specs.push({ icon: Zap, label: 'Puissance', value: `${vehicle.horsepower} ch` })
+  if (vehicle.horsepower || ficheSpecs['Puissance dynamique']) {
+    specs.push({ icon: Zap, label: 'Puissance', value: vehicle.horsepower ? `${vehicle.horsepower} ch` : ficheSpecs['Puissance dynamique'] })
   }
-  if (vehicle.fuel_type) {
-    specs.push({ icon: Fuel, label: 'Carburant', value: vehicle.fuel_type })
+  if (vehicle.fuel_type || ficheSpecs['Motorisation']) {
+    specs.push({ icon: Fuel, label: 'Carburant', value: vehicle.fuel_type || ficheSpecs['Motorisation'] })
   }
-  if (vehicle.transmission) {
-    specs.push({ icon: Cog, label: 'Boîte', value: vehicle.transmission })
+  if (vehicle.transmission || ficheSpecs['Boîte à vitesse']) {
+    specs.push({ icon: Cog, label: 'Boîte', value: vehicle.transmission || ficheSpecs['Boîte à vitesse'] })
   }
-  if (vehicle.acceleration) {
-    specs.push({ icon: Gauge, label: '0-100', value: `${vehicle.acceleration}s` })
+  if (ficheSpecs['Vitesse maxi.'] || vehicle.top_speed) {
+    specs.push({ icon: Car, label: 'V. Max', value: ficheSpecs['Vitesse maxi.'] || `${vehicle.top_speed} km/h` })
   }
-  if (vehicle.fuel_consumption_combined) {
-    specs.push({ icon: Droplets, label: 'Consommation', value: `${vehicle.fuel_consumption_combined} L/100km` })
+  if (ficheSpecs['Volume de coffre'] || vehicle.cargo_capacity) {
+    specs.push({ icon: Ruler, label: 'Coffre', value: ficheSpecs['Volume de coffre'] || `${vehicle.cargo_capacity} L` })
   }
-  if (vehicle.co2_emissions) {
-    specs.push({ icon: Wind, label: 'CO2', value: `${vehicle.co2_emissions} g/km` })
+  if (ficheSpecs['Couple maxi.'] || vehicle.torque) {
+    specs.push({ icon: Gauge, label: 'Couple', value: ficheSpecs['Couple maxi.'] || `${vehicle.torque} Nm` })
   }
 
   if (specs.length === 0) return null
@@ -71,23 +73,6 @@ export function KeySpecsStrip({ vehicle }: VehicleSpecsProps) {
   )
 }
 
-// Icons for each spec category
-const CATEGORY_CONFIG: Record<string, { icon: any; color: string }> = {
-  'MOTEUR & INFOS TECHNIQUES': { icon: Cog, color: 'text-blue-600 bg-blue-50 border-blue-200' },
-  'DIMENSIONS & VOLUMES': { icon: Ruler, color: 'text-purple-600 bg-purple-50 border-purple-200' },
-  'SÉCURITÉ': { icon: Shield, color: 'text-[#d4921f] bg-[#fef3c7] border-[#fde68a]' },
-  'CONFORT': { icon: Sofa, color: 'text-green-600 bg-green-50 border-green-200' },
-  'ESTHÉTIQUE': { icon: Paintbrush, color: 'text-amber-600 bg-amber-50 border-amber-200' },
-}
-
-// Category display order
-const CATEGORY_ORDER = [
-  'MOTEUR & INFOS TECHNIQUES',
-  'DIMENSIONS & VOLUMES',
-  'SÉCURITÉ',
-  'CONFORT',
-  'ESTHÉTIQUE',
-]
 
 function renderValue(value: unknown): React.ReactNode {
   if (value === true) {
@@ -113,50 +98,78 @@ function renderValue(value: unknown): React.ReactNode {
   return <span className="text-muted-foreground">-</span>
 }
 
-export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
-  // The full spec data is stored in features as a structured object
-  const specs = vehicle.features as Record<string, Record<string, unknown>> | null
+function getDetailCategoryConfig(category: string): { icon: typeof Car; color: string } {
+  const normalized = category.toLowerCase()
+  if (normalized.includes('esth'))
+    return { icon: Paintbrush, color: 'text-amber-600 bg-amber-50 border-amber-200' }
+  if (normalized.includes('confort'))
+    return { icon: Sofa, color: 'text-green-600 bg-green-50 border-green-200' }
+  if (normalized.includes('connect') || normalized.includes('multim'))
+    return { icon: Gauge, color: 'text-blue-600 bg-blue-50 border-blue-200' }
+  if (normalized.includes('curit'))
+    return { icon: Shield, color: 'text-[#d4921f] bg-[#fef3c7] border-[#fde68a]' }
+  if (normalized.includes('suppl') || normalized.includes('option'))
+    return { icon: Car, color: 'text-purple-600 bg-purple-50 border-purple-200' }
+  return { icon: Car, color: 'text-gray-600 bg-gray-50 border-gray-200' }
+}
 
-  // If we have structured spec data (from fiches), render it
-  if (specs && typeof specs === 'object' && !Array.isArray(specs) && CATEGORY_ORDER.some(cat => specs[cat])) {
+export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
+  // Priority 1: Render from fiches_techniques table data
+  const hasSpecs = fiche && Object.keys(fiche.specs || {}).length > 0
+  const hasDetail = fiche && Object.keys(fiche.en_detail || {}).length > 0
+
+  if (hasSpecs || hasDetail) {
     return (
       <div className="space-y-8">
-        <h3 className="text-xl font-semibold">Fiche Technique</h3>
+        <h3 className="text-xl font-semibold text-slate-700">Fiche Technique</h3>
 
-        {CATEGORY_ORDER.map((categoryName) => {
-          const categoryData = specs[categoryName]
-          if (!categoryData || typeof categoryData !== 'object') return null
+        {/* Specs: key-value pairs */}
+        {hasSpecs && (
+          <div className="border border-border rounded-xl overflow-hidden">
+            <div className="flex items-center gap-3 px-5 py-3.5 bg-blue-50 border-b border-blue-200">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50">
+                <Cog className="h-5 w-5 text-blue-600" />
+              </div>
+              <h4 className="text-base font-bold text-blue-600">CARACTÉRISTIQUES TECHNIQUES</h4>
+            </div>
+            <div className="divide-y divide-border">
+              {Object.entries(fiche!.specs).map(([key, value], index) => (
+                <div
+                  key={key}
+                  className={`flex items-center justify-between px-5 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}
+                >
+                  <span className="text-sm text-muted-foreground">{key}</span>
+                  <span className="text-sm font-semibold text-dark-800 text-right max-w-[60%]">{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-          const entries = Object.entries(categoryData)
-          if (entries.length === 0) return null
-
-          const config = CATEGORY_CONFIG[categoryName] || { icon: Car, color: 'text-gray-600 bg-gray-50 border-gray-200' }
+        {/* En Detail: categorized lists */}
+        {hasDetail && Object.entries(fiche!.en_detail).map(([category, items]) => {
+          if (!items || items.length === 0) return null
+          const config = getDetailCategoryConfig(category)
           const Icon = config.icon
           const colorClasses = config.color.split(' ')
-
           return (
-            <div key={categoryName} className="border border-border rounded-xl overflow-hidden">
-              {/* Category Header */}
+            <div key={category} className="border border-border rounded-xl overflow-hidden">
               <div className={`flex items-center gap-3 px-5 py-3.5 ${colorClasses[1]} border-b ${colorClasses[2]}`}>
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${colorClasses[1]}`}>
                   <Icon className={`h-5 w-5 ${colorClasses[0]}`} />
                 </div>
                 <h4 className={`text-base font-bold ${colorClasses[0]}`}>
-                  {categoryName}
+                  {category.toUpperCase()}
                 </h4>
               </div>
-
-              {/* Spec Rows */}
               <div className="divide-y divide-border">
-                {entries.map(([key, value], index) => (
+                {items.map((item, index) => (
                   <div
-                    key={key}
-                    className={`flex items-center justify-between px-5 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}
+                    key={index}
+                    className={`flex items-center gap-3 px-5 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}
                   >
-                    <span className="text-sm text-muted-foreground">{key}</span>
-                    <span className="text-sm text-right max-w-[60%]">
-                      {renderValue(value)}
-                    </span>
+                    <Check className="h-4 w-4 text-green-500 shrink-0" />
+                    <span className="text-sm text-dark-800">{item}</span>
                   </div>
                 ))}
               </div>
@@ -164,13 +177,13 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
           )
         })}
 
-        {/* Source URL if available */}
-        {vehicle.source_url && (
+        {/* Source URL */}
+        {fiche?.source_url && (
           <div className="pt-4 border-t border-border">
             <p className="text-xs text-muted-foreground">
               Source:{' '}
               <a
-                href={vehicle.source_url}
+                href={fiche.source_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-accent hover:underline"
@@ -184,7 +197,7 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
     )
   }
 
-  // Fallback: render from individual columns (legacy data)
+  // Priority 2: Fallback to individual vehicle columns (legacy data)
   // Organized into categories matching the structured path visual style
   const legacyCategories = [
     {

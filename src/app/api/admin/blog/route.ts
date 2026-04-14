@@ -86,6 +86,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }
 
+    // Save inline images to blog_images table
+    const inlineImages = body.inline_images
+    if (inlineImages && Array.isArray(inlineImages) && inlineImages.length > 0 && post) {
+      const imageRows = inlineImages.map((img: {
+        image_url: string
+        alt_text: string | null
+        caption: string | null
+        display_order: number
+        size: string
+        float_position: string
+      }) => ({
+        blog_post_id: post.id,
+        image_url: img.image_url,
+        alt_text: img.alt_text,
+        caption: img.caption,
+        display_order: img.display_order,
+        size: img.size || 'full',
+        float_position: img.float_position || 'none',
+      }))
+
+      const { error: imgError } = await supabase.from('blog_images').insert(imageRows)
+      if (imgError) console.error('Failed to save blog images:', imgError.message)
+    }
+
     revalidatePath('/actu')
     revalidatePath('/admin/blog')
 

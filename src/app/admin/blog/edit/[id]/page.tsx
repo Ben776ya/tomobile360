@@ -22,6 +22,12 @@ export default async function EditBlogPostPage({
     notFound()
   }
 
+  const { data: images } = await supabase
+    .from('blog_images')
+    .select('id, blog_post_id, image_url, alt_text, caption, display_order, size, float_position, created_at')
+    .eq('blog_post_id', params.id)
+    .order('display_order', { ascending: true })
+
   return (
     <>
       <div className="mb-6">
@@ -37,7 +43,7 @@ export default async function EditBlogPostPage({
           Modifiez le contenu de l&apos;article
         </p>
       </div>
-      <BlogPostForm post={post as BlogPost} mode="edit" />
+      <BlogPostForm post={{ ...(post as BlogPost), images: images ?? [] }} mode="edit" />
     </>
   )
 }

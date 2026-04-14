@@ -130,7 +130,7 @@ export default function Header() {
       )}
     >
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-[70px]">
+        <div className="flex items-center justify-between h-[70px] lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-4 lg:items-center">
 
           {/* Logo */}
           <Link href="/" className="flex items-center">
@@ -144,9 +144,8 @@ export default function Header() {
             />
           </Link>
 
-          {/* Desktop Navigation + Search grouped together */}
-          <div className="hidden lg:flex items-center gap-4">
-            <nav className="flex items-center">
+          {/* Desktop Navigation (centered) */}
+          <nav className="hidden lg:flex items-center">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href || pathname?.startsWith(link.href + '/')
 
@@ -170,10 +169,10 @@ export default function Header() {
                   </Link>
                 )
               })}
-            </nav>
+          </nav>
 
-          {/* Search Field — right after nav */}
-          <div ref={searchRef} className="relative">
+          {/* Desktop Search Field (right side) */}
+          <div ref={searchRef} className="relative hidden lg:block justify-self-center">
             <div className="flex items-center bg-gray-50 border border-gray-200 rounded-full hover:border-gray-300 focus-within:border-[#006EFE] focus-within:ring-1 focus-within:ring-[#006EFE]/20 transition-all duration-200">
               <Search className="h-4 w-4 text-gray-500 ml-3 flex-shrink-0" />
               <input
@@ -187,7 +186,7 @@ export default function Header() {
                   if (e.key === 'Enter' && searchQuery.trim()) { router.push(`/actu?q=${encodeURIComponent(searchQuery.trim())}`); setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
                 }}
                 placeholder="Rechercher articles, vidéos..."
-                className="w-32 sm:w-40 md:w-44 px-2 py-1.5 text-sm bg-transparent text-gray-800 placeholder-gray-500 outline-none"
+                className="w-52 px-2 py-1.5 text-sm bg-transparent text-gray-800 placeholder-gray-500 outline-none"
               />
               {searchQuery && (
                 <button onClick={() => { setSearchQuery(''); setSearchResults([]); setVideoResults([]); setSearchOpen(false) }} className="mr-2 text-gray-400 hover:text-gray-600">
@@ -291,7 +290,6 @@ export default function Header() {
               </div>
             )}
           </div>
-          </div>{/* end nav+search group */}
 
           {/* Mobile Menu Button */}
           <button

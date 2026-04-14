@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { X, Search } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatPrice } from '@/lib/utils'
 
@@ -20,52 +19,88 @@ export function VehicleSelector({
   excludeIds,
 }: VehicleSelectorProps) {
   const [vehicles, setVehicles] = useState<any[]>([])
-  const [filteredVehicles, setFilteredVehicles] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
 
-  const fetchVehicles = useCallback(async () => {
+  const fetchVehicles = useCallback(async (query: string) => {
+    setLoading(true)
     const supabase = createClient()
 
-    const { data } = await supabase
-      .from('vehicles_new')
-      .select(`
-        id,
-        year,
-        price_min,
-        images,
-        brands:brand_id (name, logo_url),
-        models:model_id (name)
-      `)
-      .order('created_at', { ascending: false })
-      .limit(50)
+    if (query) {
+      // Search for matching brands and models in parallel
+      const [{ data: matchingBrands }, { data: matchingModels }] = await Promise.all([
+        supabase.from('brands').select('id').ilike('name', `%${query}%`),
+        supabase.from('models').select('id, brand_id').ilike('name', `%${query}%`),
+      ])
 
-    if (data) {
-      // Filter out already selected vehicles
-      const filtered = data.filter((v) => !excludeIds.includes(v.id))
-      setVehicles(filtered)
-      setFilteredVehicles(filtered)
+      const brandIdSet = new Set<string>()
+      matchingBrands?.forEach((b) => brandIdSet.add(b.id))
+      matchingModels?.forEach((m) => brandIdSet.add(m.brand_id))
+      const modelIds = matchingModels?.map((m) => m.id) || []
+
+      // No matches found — show empty results
+      if (brandIdSet.size === 0 && modelIds.length === 0) {
+        setVehicles([])
+        setLoading(false)
+        return
+      }
+
+      // Build OR filter parts
+      const filters: string[] = []
+      if (brandIdSet.size > 0) filters.push(`brand_id.in.(${Array.from(brandIdSet).join(',')})`)
+      if (modelIds.length > 0) filters.push(`model_id.in.(${modelIds.join(',')})`)
+
+      const { data } = await supabase
+        .from('vehicles_new')
+        .select(`
+          id,
+          year,
+          price_min,
+          images,
+          brands:brand_id (name, logo_url),
+          models:model_id (name)
+        `)
+        .or(filters.join(','))
+        .order('created_at', { ascending: false })
+        .limit(50)
+
+      setVehicles(data ? data.filter((v) => !excludeIds.includes(v.id)) : [])
+    } else {
+      const { data } = await supabase
+        .from('vehicles_new')
+        .select(`
+          id,
+          year,
+          price_min,
+          images,
+          brands:brand_id (name, logo_url),
+          models:model_id (name)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(50)
+
+      if (data) {
+        setVehicles(data.filter((v) => !excludeIds.includes(v.id)))
+      } else {
+        setVehicles([])
+      }
     }
 
     setLoading(false)
   }, [excludeIds])
 
+  // Initial load
   useEffect(() => {
-    fetchVehicles()
+    fetchVehicles('')
   }, [fetchVehicles])
 
+  // Debounced search
   useEffect(() => {
-    if (searchQuery) {
-      const filtered = vehicles.filter(
-        (v) =>
-          v.brands?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          v.models?.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-      setFilteredVehicles(filtered)
-    } else {
-      setFilteredVehicles(vehicles)
-    }
-  }, [searchQuery, vehicles])
+    const timer = setTimeout(() => {
+      fetchVehicles(searchQuery)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery, fetchVehicles])
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -103,9 +138,9 @@ export function VehicleSelector({
             <div className="flex items-center justify-center py-12">
               <p className="text-muted-foreground">Chargement...</p>
             </div>
-          ) : filteredVehicles.length > 0 ? (
+          ) : vehicles.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredVehicles.map((vehicle) => {
+              {vehicles.map((vehicle) => {
                 const mainImage = vehicle.images?.[0] || '/placeholder-car.svg'
                 const brandName = vehicle.brands?.name || 'Unknown'
                 const modelName = vehicle.models?.name || 'Unknown'

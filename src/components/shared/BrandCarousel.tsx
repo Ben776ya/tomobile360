@@ -115,7 +115,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
                             src={brand.logo_url}
                             alt={brand.name}
                             fill
-                            className="object-contain opacity-60 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110"
+                            className="object-contain transition-all duration-300 group-hover:scale-110"
                             sizes="(max-width: 640px) 160px, (max-width: 768px) 120px, 140px"
                           />
                         </div>

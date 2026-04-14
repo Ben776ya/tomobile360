@@ -66,15 +66,6 @@ const features = [
     image: '/features/offres-speciales-automobiles-maroc.png',
   },
   {
-    id: 'top-ventes',
-    icon: TrendingUp,
-    title: 'Top Ventes',
-    tagline: 'Les plus populaires au Maroc',
-    action: 'link' as const,
-    href: '/neuf/populaires',
-    image: '/features/top-ventes-voitures-populaires-maroc.png',
-  },
-  {
     id: 'coups-de-coeur',
     icon: Heart,
     title: 'Coups de Cœur',
@@ -82,6 +73,15 @@ const features = [
     action: 'expand' as const,
     href: null,
     image: '/features/coups-de-coeur-selection-automobile-maroc.png',
+  },
+  {
+    id: 'top-ventes',
+    icon: TrendingUp,
+    title: 'Top Ventes',
+    tagline: 'Les plus populaires au Maroc',
+    action: 'link' as const,
+    href: '/neuf/populaires',
+    image: '/features/top-ventes-voitures-populaires-maroc.png',
   },
 ]
 
@@ -191,14 +191,14 @@ export function FeatureGrid() {
                 </div>
 
                 {/* Text content — bottom, over gradient */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+                <div className="absolute bottom-0 left-0 right-0 p-4 z-10 text-center">
                   <h3 className="font-bold font-display text-base text-white mb-0.5 drop-shadow-sm">
                     {feature.title}
                   </h3>
                   <p className="text-xs text-white/70 leading-snug drop-shadow-sm">
                     {feature.tagline}
                   </p>
-                  <div className="mt-2 flex items-center gap-1 text-xs font-medium text-white/80 transition-colors duration-200 group-hover:text-white">
+                  <div className="mt-2 flex items-center justify-center gap-1 text-xs font-medium text-white/80 transition-colors duration-200 group-hover:text-white">
                     <span>{isExpandCard ? (isActive ? 'Fermer' : 'Ouvrir') : 'Voir'}</span>
                     <ChevronRight className="h-3 w-3" />
                   </div>

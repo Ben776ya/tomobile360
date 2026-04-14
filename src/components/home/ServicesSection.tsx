@@ -38,7 +38,7 @@ const services = [
     id: 'revision',
     icon: Wrench,
     logoSrc: '/daba_pneu.png',
-    title: 'DabaPneus',
+    title: 'Entretien rapide',
     description: 'Pneus et entretien rapide avec notre partenaire DabaPneu — livraison et montage inclus.',
     link: '/services/revision',
     color: 'bg-[#FDF6E3]',
@@ -47,7 +47,7 @@ const services = [
   {
     id: 'controle',
     icon: CalendarCheck,
-    title: 'Contrôle',
+    title: 'Detailing',
     description: 'Centres agréés, prise en ligne.',
     link: '/services/controle',
     color: 'bg-orange-500',

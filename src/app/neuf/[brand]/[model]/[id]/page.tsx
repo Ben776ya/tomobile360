@@ -93,6 +93,13 @@ export default async function VehicleDetailPage({ params }: PageProps) {
     notFound()
   }
 
+  // Fetch fiche technique for this model
+  const { data: fiche } = await supabase
+    .from('fiches_techniques')
+    .select('id, model_id, specs, en_detail, source_url, created_at, updated_at')
+    .eq('model_id', vehicle.model_id)
+    .single()
+
   // Increment view count
   void supabase.rpc('increment_vehicle_views', { vehicle_id: vehicle.id })
 
@@ -121,10 +128,10 @@ export default async function VehicleDetailPage({ params }: PageProps) {
   const modelName = vehicle.models?.name || 'Unknown'
   const images = vehicle.images || []
 
-  const priceDisplay = vehicle.price_min && vehicle.price_max
+  const priceDisplay = vehicle.price_min && vehicle.price_max && vehicle.price_min !== vehicle.price_max
     ? `${formatPrice(vehicle.price_min)} - ${formatPrice(vehicle.price_max)}`
     : vehicle.price_min
-    ? `À partir de ${formatPrice(vehicle.price_min)}`
+    ? formatPrice(vehicle.price_min)
     : 'Prix sur demande'
 
   // Calculate discounted price if promotion exists
@@ -244,16 +251,16 @@ export default async function VehicleDetailPage({ params }: PageProps) {
               </div>
             </div>
 
-            {/* Key Specs Strip Card — only render if vehicle has key spec data */}
-            {(vehicle.horsepower || vehicle.fuel_type || vehicle.transmission || vehicle.acceleration || vehicle.fuel_consumption_combined || vehicle.co2_emissions) && (
+            {/* Key Specs Strip Card — only render if vehicle has key spec data or fiche */}
+            {(vehicle.horsepower || vehicle.fuel_type || vehicle.transmission || vehicle.acceleration || vehicle.fuel_consumption_combined || vehicle.co2_emissions || fiche) && (
               <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <KeySpecsStrip vehicle={vehicle} />
+                <KeySpecsStrip vehicle={vehicle} fiche={fiche} />
               </div>
             )}
 
             {/* Fiche Technique Card */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <VehicleSpecs vehicle={vehicle} />
+              <VehicleSpecs vehicle={vehicle} fiche={fiche} />
             </div>
           </div>
 

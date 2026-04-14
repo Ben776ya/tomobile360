@@ -25,6 +25,8 @@ export type BlogImage = {
   alt_text: string | null
   caption: string | null
   display_order: number
+  size: 'small' | 'medium' | 'large' | 'full'
+  float_position: 'left' | 'right' | 'none'
   created_at: string
 }
 

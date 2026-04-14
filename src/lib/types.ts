@@ -254,3 +254,27 @@ export type Comparison = {
   is_public: boolean
   created_at: string
 }
+
+export type NarsaVideo = {
+  id: string
+  title: string
+  description: string | null
+  video_url: string
+  thumbnail_url: string | null
+  duration: string | null
+  order_position: number
+  is_published: boolean
+  created_at: string
+  updated_at: string
+}
+
+export type FicheTechnique = {
+  id: string
+  model_id: string
+  specs: Record<string, string>
+  en_detail: Record<string, string[]>
+  source_url: string | null
+  created_at: string
+  updated_at: string
+  models?: Model & { brands?: Brand }
+}
