@@ -9,6 +9,7 @@ const services = [
     id: 'credit',
     icon: CreditCard,
     logoSrc: '/sofac_logo.png',
+    logoSize: 'w-14 h-14 md:w-16 md:h-16',
     title: 'Financement',
     description: 'Financez votre véhicule avec SOFAC — leader du crédit auto au Maroc.',
     link: '/services/credit',
@@ -38,6 +39,7 @@ const services = [
     id: 'revision',
     icon: Wrench,
     logoSrc: '/daba_pneu.png',
+    logoSize: 'w-14 h-14 md:w-16 md:h-16',
     title: 'Entretien rapide',
     description: 'Pneus et entretien rapide avec notre partenaire DabaPneu — livraison et montage inclus.',
     link: '/services/revision',
@@ -57,6 +59,7 @@ const services = [
     id: 'securite-routiere',
     icon: ShieldCheck,
     logoSrc: '/narsa_logo.png',
+    logoSize: 'w-14 h-14 md:w-16 md:h-16',
     title: 'Sécurité Routière',
     description: 'Conseils et actualités NARSA pour une route plus sûre au Maroc.',
     link: '/services/securite-routiere',
@@ -95,9 +98,9 @@ export function ServicesSection() {
                   <Image
                     src={(service as any).logoSrc}
                     alt={service.title}
-                    width={48}
-                    height={48}
-                    className="w-10 h-10 md:w-12 md:h-12 object-contain"
+                    width={(service as any).logoSize ? 64 : 48}
+                    height={(service as any).logoSize ? 64 : 48}
+                    className={`${(service as any).logoSize || 'w-10 h-10 md:w-12 md:h-12'} object-contain`}
                   />
                 ) : (
                   <service.icon className={`${compact ? 'w-7 h-7 md:w-8 md:h-8' : 'w-9 h-9 md:w-11 md:h-11'} text-white`} />

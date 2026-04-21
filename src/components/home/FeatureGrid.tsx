@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Scale, Tag, TrendingUp, Heart, ChevronRight, Plus, X, ArrowRight, Zap, Fuel, Car, Mountain, Truck } from 'lucide-react'
+import { Plus, X, ArrowRight, Zap, Fuel, Car, Mountain, Truck, Heart } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { VehicleSelector } from '@/components/vehicles/VehicleSelector'
 import { ComparisonTable } from '@/components/vehicles/ComparisonTable'
@@ -46,47 +46,74 @@ const FUEL_LABELS: Record<string, string> = {
   Electric: 'Électrique',
 }
 
-const features = [
+/* ─── Feature card data ─── */
+
+type FeatureCard = {
+  key: 'comparateur' | 'offres' | 'coeur' | 'top'
+  label: string
+  sub: string
+  cta: string
+  hue: string
+  hueSoft: string
+  hueMid: string
+  href: string | null
+  image: string
+  action: 'expand' | 'link'
+}
+
+const featureCards: FeatureCard[] = [
   {
-    id: 'comparateur',
-    icon: Scale,
-    title: 'Comparateur',
-    tagline: 'Comparez jusqu\'à 3 véhicules',
-    action: 'expand' as const,
+    key: 'comparateur',
+    label: 'Comparateur',
+    sub: "Comparez jusqu'à 3 véhicules",
+    cta: 'Ouvrir',
+    hue: '#006EFE',
+    hueSoft: '#E6F0FF',
+    hueMid: '#CCE0FF',
     href: null,
     image: '/features/comparateur-voitures-neuves-maroc.png',
+    action: 'expand',
   },
   {
-    id: 'offres',
-    icon: Tag,
-    title: 'Offres Spéciales',
-    tagline: 'Les meilleures promotions',
-    action: 'link' as const,
+    key: 'offres',
+    label: 'Offres Spéciales',
+    sub: 'Les meilleures promotions',
+    cta: 'Voir',
+    hue: '#F97316',
+    hueSoft: '#FFF1E6',
+    hueMid: '#FFD9B8',
     href: '/neuf/promotions',
     image: '/features/offres-speciales-automobiles-maroc.png',
+    action: 'link',
   },
   {
-    id: 'coups-de-coeur',
-    icon: Heart,
-    title: 'Coups de Cœur',
-    tagline: 'Notre sélection du moment',
-    action: 'expand' as const,
+    key: 'coeur',
+    label: 'Coups de Cœur',
+    sub: 'Notre sélection du moment',
+    cta: 'Ouvrir',
+    hue: '#F43F5E',
+    hueSoft: '#FFE9ED',
+    hueMid: '#FFCAD4',
     href: null,
     image: '/features/coups-de-coeur-selection-automobile-maroc.png',
+    action: 'expand',
   },
   {
-    id: 'top-ventes',
-    icon: TrendingUp,
-    title: 'Top Ventes',
-    tagline: 'Les plus populaires au Maroc',
-    action: 'link' as const,
+    key: 'top',
+    label: 'Top Ventes',
+    sub: 'Les plus populaires au Maroc',
+    cta: 'Voir',
+    hue: '#32B75C',
+    hueSoft: '#E6F8EC',
+    hueMid: '#BEEBCE',
     href: '/neuf/populaires',
     image: '/features/top-ventes-voitures-populaires-maroc.png',
+    action: 'link',
   },
 ]
 
 export function FeatureGrid() {
-  // — Comparateur state —
+  /* ─── Comparateur state ─── */
   const [comparatorOpen, setComparatorOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [vehicleData, setVehicleData] = useState<Record<string, VehicleData>>({})
@@ -94,13 +121,26 @@ export function FeatureGrid() {
   const [loading, setLoading] = useState(false)
   const fetchedIdsRef = useRef<Set<string>>(new Set())
 
-  // — Coups de Cœur state —
+  /* ─── Hover state ─── */
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null)
+
+  /* ─── Coups de Coeur state ─── */
   const [cdcOpen, setCdcOpen] = useState(false)
   const [cdcCategory, setCdcCategory] = useState('voiture')
   const [cdcByCategory, setCdcByCategory] = useState<Record<string, CdcVehicle[]>>({})
   const [cdcLoading, setCdcLoading] = useState(false)
 
-  // Comparateur fetch
+  /* ─── Reduced-motion detection ─── */
+  const [reducedMotion, setReducedMotion] = useState(false)
+  useEffect(() => {
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReducedMotion(mql.matches)
+    const handler = () => setReducedMotion(mql.matches)
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [])
+
+  /* ─── Comparateur fetch ─── */
   const fetchVehicleData = useCallback(async (ids: string[]) => {
     const newIds = ids.filter(id => !fetchedIdsRef.current.has(id))
     if (newIds.length === 0) return
@@ -121,7 +161,7 @@ export function FeatureGrid() {
     setLoading(false)
   }, [])
 
-  // CDC fetch
+  /* ─── CDC fetch ─── */
   const fetchCdcVehicles = useCallback(async (category: string) => {
     if (cdcByCategory[category]) return
     setCdcLoading(true)
@@ -157,64 +197,144 @@ export function FeatureGrid() {
   return (
     <section className="relative -mt-6 sm:-mt-8 z-20 pt-0 pb-6">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {features.map((feature) => {
-            const isExpandCard = feature.action === 'expand'
+
+        {/* ══════════════════════════════════════════
+            V2 — Editorial Split Card Grid
+            ══════════════════════════════════════════ */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {featureCards.map((card) => {
+            const isExpandCard = card.action === 'expand'
             const isActive = isExpandCard && (
-              (feature.id === 'comparateur' && comparatorOpen) ||
-              (feature.id === 'coups-de-coeur' && cdcOpen)
+              (card.key === 'comparateur' && comparatorOpen) ||
+              (card.key === 'coeur' && cdcOpen)
             )
+            const isHovered = hoveredKey === card.key
+            const ctaText = isExpandCard
+              ? (isActive ? 'Fermer' : card.cta)
+              : card.cta
+
+            /* Lift & zoom only when motion is allowed */
+            const canAnimate = !reducedMotion
+            const liftY = canAnimate && isHovered && !isActive ? -6 : 0
+            const photoScale = canAnimate && isHovered ? 1.06 : 1
+            const arrowX = canAnimate && isHovered ? 4 : 0
 
             const cardContent = (
               <>
-                {/* Background image */}
-                <Image
-                  src={feature.image}
-                  alt=""
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                />
-
-                {/* Gradient overlays — base + hover darkening via opacity transition */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-                {/* Active state: slightly darker overlay */}
-                {isActive && (
-                  <div className="absolute inset-0 bg-black/20" />
-                )}
-
-                {/* Icon badge — top-left corner */}
-                <div className="absolute top-3 left-3 z-10 w-9 h-9 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
-                  <feature.icon className="h-4 w-4 text-white" />
+                {/* ── Photo zone — 16 : 9 ── */}
+                <div className="relative aspect-video overflow-hidden">
+                  <Image
+                    src={card.image}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    style={{
+                      transform: `scale(${photoScale})`,
+                      transition: 'transform 500ms cubic-bezier(.2,.7,.3,1)',
+                    }}
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                  {/* Accent color wash (12 % opacity, multiply) */}
+                  <div
+                    className="absolute inset-0 mix-blend-multiply pointer-events-none"
+                    style={{ background: `${card.hue}1F` }}
+                  />
+                  {/* Bottom darkening gradient */}
+                  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/15 to-transparent pointer-events-none" />
                 </div>
 
-                {/* Text content — bottom, over gradient */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 z-10 text-center">
-                  <h3 className="font-bold font-display text-base text-white mb-0.5 drop-shadow-sm">
-                    {feature.title}
+                {/* ── Body zone ── */}
+                <div
+                  className="flex flex-col flex-1"
+                  style={{ padding: '16px 18px 18px' }}
+                >
+                  <h3
+                    className="font-display font-extrabold"
+                    style={{
+                      fontSize: '18px',
+                      letterSpacing: '-0.015em',
+                      lineHeight: 1.1,
+                      color: '#1C2541',
+                    }}
+                  >
+                    {card.label}
                   </h3>
-                  <p className="text-xs text-white/70 leading-snug drop-shadow-sm">
-                    {feature.tagline}
+                  <p
+                    className="font-sans font-normal line-clamp-2"
+                    style={{
+                      fontSize: '12.5px',
+                      marginTop: '4px',
+                      color: '#6B7280',
+                    }}
+                  >
+                    {card.sub}
                   </p>
-                  <div className="mt-2 flex items-center justify-center gap-1 text-xs font-medium text-white/80 transition-colors duration-200 group-hover:text-white">
-                    <span>{isExpandCard ? (isActive ? 'Fermer' : 'Ouvrir') : 'Voir'}</span>
-                    <ChevronRight className="h-3 w-3" />
+
+                  {/* Footer row */}
+                  <div
+                    className="flex items-center justify-between"
+                    style={{ marginTop: 'auto', paddingTop: '14px' }}
+                  >
+                    {/* CTA label */}
+                    <span
+                      className="font-sans font-bold"
+                      style={{ fontSize: '12px', color: card.hue }}
+                    >
+                      {ctaText}
+                    </span>
+
+                    {/* Arrow circle */}
+                    <span
+                      className="flex items-center justify-center rounded-full select-none"
+                      style={{
+                        width: 28,
+                        height: 28,
+                        backgroundColor: isHovered ? card.hue : card.hueSoft,
+                        color: isHovered ? '#fff' : card.hue,
+                        fontSize: '14px',
+                        fontWeight: 800,
+                        transform: `translateX(${arrowX}px)`,
+                        boxShadow: isHovered ? `0 4px 12px ${card.hue}40` : 'none',
+                        transition: 'all 300ms cubic-bezier(.2,.7,.3,1)',
+                      }}
+                    >
+                      &#8594;
+                    </span>
                   </div>
                 </div>
               </>
             )
 
-            const cardClass = `group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 min-h-[200px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:outline-none ${
-              isActive
-                ? 'ring-2 ring-white/40 shadow-lg'
-                : 'hover:-translate-y-1 hover:shadow-xl'
+            const cardStyle: React.CSSProperties = {
+              borderRadius: '16px',
+              border: '1px solid',
+              borderColor: isHovered
+                ? card.hueMid
+                : isActive
+                  ? `${card.hue}80`
+                  : '#E2E8F0',
+              boxShadow: isHovered
+                ? '0 16px 36px rgba(13,18,32,.14)'
+                : isActive
+                  ? `0 0 20px ${card.hue}35, 0 0 50px ${card.hue}12`
+                  : '0 2px 8px rgba(13,18,32,.05)',
+              transform: `translateY(${liftY}px)`,
+              transition: 'transform 350ms cubic-bezier(.2,.7,.3,1), box-shadow 350ms cubic-bezier(.2,.7,.3,1), border-color 350ms cubic-bezier(.2,.7,.3,1)',
+              ...(isActive ? { '--tw-ring-color': `${card.hue}80` } as React.CSSProperties : {}),
+            }
+
+            const baseClass = `group relative flex flex-col overflow-hidden cursor-pointer bg-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none${
+              isActive ? ' ring-2' : ''
             }`
+
+            const hoverHandlers = {
+              onMouseEnter: () => setHoveredKey(card.key),
+              onMouseLeave: () => setHoveredKey(null),
+            }
 
             if (isExpandCard) {
               const handleClick = () => {
-                if (feature.id === 'comparateur') {
+                if (card.key === 'comparateur') {
                   setComparatorOpen(p => !p)
                   setCdcOpen(false)
                 } else {
@@ -224,9 +344,11 @@ export function FeatureGrid() {
               }
               return (
                 <button
-                  key={feature.id}
+                  key={card.key}
                   onClick={handleClick}
-                  className={cardClass}
+                  className={baseClass}
+                  style={cardStyle}
+                  {...hoverHandlers}
                 >
                   {cardContent}
                 </button>
@@ -235,9 +357,11 @@ export function FeatureGrid() {
 
             return (
               <Link
-                key={feature.id}
-                href={feature.href!}
-                className={cardClass}
+                key={card.key}
+                href={card.href!}
+                className={baseClass}
+                style={cardStyle}
+                {...hoverHandlers}
               >
                 {cardContent}
               </Link>
@@ -245,7 +369,9 @@ export function FeatureGrid() {
           })}
         </div>
 
-        {/* ── Comparateur panel ── */}
+        {/* ══════════════════════════════════════════
+            Comparateur expand panel
+            ══════════════════════════════════════════ */}
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
           comparatorOpen ? 'max-h-[2000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
         }`}>
@@ -327,7 +453,9 @@ export function FeatureGrid() {
           </div>
         </div>
 
-        {/* ── Coups de Cœur panel ── */}
+        {/* ══════════════════════════════════════════
+            Coups de Coeur expand panel
+            ══════════════════════════════════════════ */}
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
           cdcOpen ? 'max-h-[1200px] opacity-100 mt-4' : 'max-h-0 opacity-0'
         }`}>
@@ -386,7 +514,7 @@ export function FeatureGrid() {
                         className="rounded-2xl overflow-hidden border border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow duration-300 flex"
                         style={{ minHeight: 220 }}
                       >
-                        {/* Left: image — takes 55% */}
+                        {/* Left: image */}
                         <div className="relative flex-shrink-0 overflow-hidden bg-gray-100 w-[45%] sm:w-[55%]">
                           {vehicle?.images?.[0] ? (
                             <Image
@@ -401,16 +529,14 @@ export function FeatureGrid() {
                               <Heart className="w-12 h-12" style={{ color: '#F43F5E20' }} />
                             </div>
                           )}
-                          {/* Right-side gradient into text area */}
                           <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-r from-transparent to-white/20" />
                         </div>
 
-                        {/* Right: text — takes 45% */}
+                        {/* Right: text */}
                         <div className="flex-1 px-3 sm:px-5 py-4 sm:py-5 flex flex-col justify-between">
                           {vehicle ? (
                             <>
                               <div>
-                                {/* Name */}
                                 <h4 className="font-bold text-primary text-base leading-snug mb-1">
                                   {vehicle.brands?.name} {vehicle.models?.name}
                                 </h4>
@@ -420,7 +546,6 @@ export function FeatureGrid() {
                                   </p>
                                 )}
 
-                                {/* Fuel tag + horsepower */}
                                 <div className="flex items-center gap-2 mb-3">
                                   <span
                                     className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold"
@@ -434,13 +559,11 @@ export function FeatureGrid() {
                                   )}
                                 </div>
 
-                                {/* Editorial text */}
                                 <p className="text-sm text-gray-500 leading-relaxed line-clamp-4">
                                   {vehicle.coup_de_coeur_reason || 'Un véhicule soigneusement sélectionné pour son rapport qualité-prix, ses équipements et son agrément de conduite.'}
                                 </p>
                               </div>
 
-                              {/* Price */}
                               {vehicle.price_min && (
                                 <p className="mt-4 text-sm font-bold" style={{ color: '#F43F5E' }}>
                                   À partir de {vehicle.price_min.toLocaleString('fr-MA')} DH
