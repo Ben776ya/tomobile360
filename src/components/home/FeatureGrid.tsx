@@ -245,7 +245,7 @@ export function FeatureGrid() {
 
                 {/* ── Body zone ── */}
                 <div
-                  className="flex flex-col flex-1"
+                  className="flex flex-col flex-1 text-center items-center"
                   style={{ padding: '16px 18px 18px' }}
                 >
                   <h3
@@ -272,7 +272,7 @@ export function FeatureGrid() {
 
                   {/* Footer row */}
                   <div
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-center gap-2"
                     style={{ marginTop: 'auto', paddingTop: '14px' }}
                   >
                     {/* CTA label */}
