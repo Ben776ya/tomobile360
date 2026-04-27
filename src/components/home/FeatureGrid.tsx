@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, X, ArrowRight, Zap, Fuel, Car, Mountain, Truck, Heart } from 'lucide-react'
+import { Plus, X, ArrowRight, Zap, Fuel, Car, Mountain, Truck, Heart, Scale, Tag, TrendingUp } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { VehicleSelector } from '@/components/vehicles/VehicleSelector'
 import { ComparisonTable } from '@/components/vehicles/ComparisonTable'
