@@ -226,87 +226,60 @@ export function FeatureGrid() {
 
             const cardContent = (
               <>
-                {/* ── Photo zone — 16 : 9 ── */}
-                <div className="relative aspect-video overflow-hidden">
+                {/* ── Circular photo with icon overlay ── */}
+                <div className="relative h-[124px] w-[124px] shrink-0 overflow-hidden rounded-full bg-[#1f2a44]">
                   <Image
                     src={card.image}
-                    alt=""
+                    alt={card.label}
                     fill
+                    sizes="124px"
                     className="object-cover"
                     style={{
                       transform: `scale(${photoScale})`,
-                      transition: 'transform 500ms cubic-bezier(.2,.7,.3,1)',
+                      transition: 'transform 400ms cubic-bezier(.2,.7,.3,1)',
                     }}
-                    sizes="(max-width: 768px) 50vw, 25vw"
                   />
-                  {/* Accent color wash (12 % opacity, multiply) */}
-                  <div
-                    className="absolute inset-0 mix-blend-multiply pointer-events-none"
-                    style={{ background: `${card.hue}1F` }}
-                  />
-                  {/* Bottom darkening gradient */}
-                  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/15 to-transparent pointer-events-none" />
-                </div>
-
-                {/* ── Body zone ── */}
-                <div
-                  className="flex flex-col flex-1 text-center items-center"
-                  style={{ padding: '16px 18px 18px' }}
-                >
-                  <h3
-                    className="font-display font-extrabold"
-                    style={{
-                      fontSize: '18px',
-                      letterSpacing: '-0.015em',
-                      lineHeight: 1.1,
-                      color: '#1C2541',
-                    }}
-                  >
-                    {card.label}
-                  </h3>
-                  <p
-                    className="font-sans font-normal line-clamp-2"
-                    style={{
-                      fontSize: '12.5px',
-                      marginTop: '4px',
-                      color: '#6B7280',
-                    }}
-                  >
-                    {card.sub}
-                  </p>
-
-                  {/* Footer row */}
-                  <div
-                    className="flex items-center justify-center gap-2"
-                    style={{ marginTop: 'auto', paddingTop: '14px' }}
-                  >
-                    {/* CTA label */}
-                    <span
-                      className="font-sans font-bold"
-                      style={{ fontSize: '12px', color: card.hue }}
-                    >
-                      {ctaText}
-                    </span>
-
-                    {/* Arrow circle */}
-                    <span
-                      className="flex items-center justify-center rounded-full select-none"
-                      style={{
-                        width: 28,
-                        height: 28,
-                        backgroundColor: isHovered ? card.hue : card.hueSoft,
-                        color: isHovered ? '#fff' : card.hue,
-                        fontSize: '14px',
-                        fontWeight: 800,
-                        transform: `translateX(${arrowX}px)`,
-                        boxShadow: isHovered ? `0 4px 12px ${card.hue}40` : 'none',
-                        transition: 'all 300ms cubic-bezier(.2,.7,.3,1)',
-                      }}
-                    >
-                      &#8594;
-                    </span>
+                  {/* Dark gradient overlay so icon reads cleanly */}
+                  <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-[rgba(10,15,28,0.15)] to-[rgba(10,15,28,0.65)]" />
+                  {/* Icon overlay (white, drop-shadowed) */}
+                  <div className="absolute inset-0 z-10 flex items-center justify-center text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)] [&>svg]:h-11 [&>svg]:w-11 [&>svg]:stroke-[1.7]">
+                    {card.icon}
                   </div>
                 </div>
+
+                {/* ── Title ── */}
+                <h3 className="mt-[18px] text-center text-[15px] font-bold tracking-[0.2px] text-white">
+                  {card.label}
+                </h3>
+
+                {/* ── Subtitle ── */}
+                <p className="mt-1 text-center text-[12.5px] text-[#8a93a6]">
+                  {card.sub}
+                </p>
+
+                {/* ── CTA + arrow row ── */}
+                <span className="mt-auto inline-flex items-center gap-1 pt-[14px] text-[12.5px] font-medium text-[#cbd2df]">
+                  {ctaText}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="h-3.5 w-3.5"
+                    style={{
+                      transform: `translateX(${arrowX}px)`,
+                      transition: 'transform 250ms cubic-bezier(.4,0,.2,1)',
+                    }}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                </span>
               </>
             )
 
