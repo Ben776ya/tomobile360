@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect, type ReactNode } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Plus, X, ArrowRight, Zap, Fuel, Car, Mountain, Truck, Heart, Scale, Tag, TrendingUp } from 'lucide-react'
@@ -59,6 +59,7 @@ type FeatureCard = {
   href: string | null
   image: string
   action: 'expand' | 'link'
+  icon: ReactNode
 }
 
 const featureCards: FeatureCard[] = [
@@ -73,6 +74,7 @@ const featureCards: FeatureCard[] = [
     href: null,
     image: '/features/comparateur-voitures-neuves-maroc.png',
     action: 'expand',
+    icon: <Scale />,
   },
   {
     key: 'offres',
@@ -85,6 +87,7 @@ const featureCards: FeatureCard[] = [
     href: '/neuf/promotions',
     image: '/features/offres-speciales-automobiles-maroc.png',
     action: 'link',
+    icon: <Tag />,
   },
   {
     key: 'coeur',
@@ -97,6 +100,7 @@ const featureCards: FeatureCard[] = [
     href: null,
     image: '/features/coups-de-coeur-selection-automobile-maroc.png',
     action: 'expand',
+    icon: <Heart />,
   },
   {
     key: 'top',
@@ -109,6 +113,7 @@ const featureCards: FeatureCard[] = [
     href: '/neuf/populaires',
     image: '/features/top-ventes-voitures-populaires-maroc.png',
     action: 'link',
+    icon: <TrendingUp />,
   },
 ]
 
