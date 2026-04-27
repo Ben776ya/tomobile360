@@ -206,7 +206,7 @@ export function FeatureGrid() {
         {/* ══════════════════════════════════════════
             V2 — Editorial Split Card Grid
             ══════════════════════════════════════════ */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 justify-items-center">
           {featureCards.map((card) => {
             const isExpandCard = card.action === 'expand'
             const isActive = isExpandCard && (
@@ -220,7 +220,7 @@ export function FeatureGrid() {
 
             /* Lift & zoom only when motion is allowed */
             const canAnimate = !reducedMotion
-            const liftY = canAnimate && isHovered && !isActive ? -6 : 0
+            const liftY = canAnimate && isHovered && !isActive ? -4 : 0
             const photoScale = canAnimate && isHovered ? 1.06 : 1
             const arrowX = canAnimate && isHovered ? 4 : 0
 
@@ -284,25 +284,26 @@ export function FeatureGrid() {
             )
 
             const cardStyle: React.CSSProperties = {
-              borderRadius: '16px',
+              borderRadius: '22px',
               border: '1px solid',
-              borderColor: isHovered
-                ? card.hueMid
-                : isActive
-                  ? `${card.hue}80`
-                  : '#E2E8F0',
-              boxShadow: isHovered
-                ? '0 16px 36px rgba(13,18,32,.14)'
-                : isActive
-                  ? `0 0 20px ${card.hue}35, 0 0 50px ${card.hue}12`
-                  : '0 2px 8px rgba(13,18,32,.05)',
+              borderColor: isActive
+                ? `${card.hue}80`
+                : isHovered
+                  ? '#2a3759'
+                  : '#1f2a44',
+              backgroundColor: '#141d33',
+              boxShadow: isActive
+                ? `0 0 20px ${card.hue}55, 0 0 50px ${card.hue}1F`
+                : isHovered
+                  ? '0 14px 30px rgba(0,0,0,0.45)'
+                  : '0 4px 12px rgba(0,0,0,0.25)',
               transform: `translateY(${liftY}px)`,
               transition: 'transform 350ms cubic-bezier(.2,.7,.3,1), box-shadow 350ms cubic-bezier(.2,.7,.3,1), border-color 350ms cubic-bezier(.2,.7,.3,1)',
-              ...(isActive ? { '--tw-ring-color': `${card.hue}80` } as React.CSSProperties : {}),
+              padding: '22px 18px 18px',
             }
 
-            const baseClass = `group relative flex flex-col overflow-hidden cursor-pointer bg-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none${
-              isActive ? ' ring-2' : ''
+            const baseClass = `group flex w-[200px] flex-col items-center text-white cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-indigo-500${
+              isActive ? '' : ''
             }`
 
             const hoverHandlers = {
