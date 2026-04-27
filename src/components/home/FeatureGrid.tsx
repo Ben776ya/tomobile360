@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect, type ReactNode } from 'react'
+import { useState, useCallback, useRef, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, X, ArrowRight, Zap, Fuel, Car, Mountain, Truck, Heart, Scale, Tag, TrendingUp } from 'lucide-react'
+import { Scale, Tag, TrendingUp, Heart, ArrowRight, Plus, X, Zap, Fuel, Car, Mountain, Truck } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { VehicleSelector } from '@/components/vehicles/VehicleSelector'
 import { ComparisonTable } from '@/components/vehicles/ComparisonTable'
@@ -48,74 +48,145 @@ const FUEL_LABELS: Record<string, string> = {
 
 /* ─── Feature card data ─── */
 
-type FeatureCard = {
+type FeatureItem = {
   key: 'comparateur' | 'offres' | 'coeur' | 'top'
-  label: string
-  sub: string
-  cta: string
-  hue: string
-  hueSoft: string
-  hueMid: string
-  href: string | null
-  image: string
-  action: 'expand' | 'link'
+  title: string
+  subtitle: string
+  imageSrc: string
+  imageAlt: string
   icon: ReactNode
+  cta: string
+  href: string | null
+  action: 'expand' | 'link'
 }
 
-const featureCards: FeatureCard[] = [
+const featureItems: FeatureItem[] = [
   {
     key: 'comparateur',
-    label: 'Comparateur',
-    sub: "Comparez jusqu'à 3 véhicules",
-    cta: 'Ouvrir',
-    hue: '#006EFE',
-    hueSoft: '#E6F0FF',
-    hueMid: '#CCE0FF',
-    href: null,
-    image: '/features/comparateur-voitures-neuves-maroc.png',
-    action: 'expand',
+    title: 'Comparateur',
+    subtitle: "Comparez jusqu'à 3 véhicules",
+    imageSrc: '/features/comparateur-voitures-neuves-maroc.png',
+    imageAlt: 'Comparateur de voitures neuves au Maroc',
     icon: <Scale />,
+    cta: 'Ouvrir',
+    href: null,
+    action: 'expand',
   },
   {
     key: 'offres',
-    label: 'Offres Spéciales',
-    sub: 'Les meilleures promotions',
-    cta: 'Voir',
-    hue: '#F97316',
-    hueSoft: '#FFF1E6',
-    hueMid: '#FFD9B8',
-    href: '/neuf/promotions',
-    image: '/features/offres-speciales-automobiles-maroc.png',
-    action: 'link',
+    title: 'Offres Spéciales',
+    subtitle: 'Les meilleures promotions',
+    imageSrc: '/features/offres-speciales-automobiles-maroc.png',
+    imageAlt: 'Offres spéciales automobiles au Maroc',
     icon: <Tag />,
+    cta: 'Voir',
+    href: '/neuf/promotions',
+    action: 'link',
   },
   {
     key: 'coeur',
-    label: 'Coups de Cœur',
-    sub: 'Notre sélection du moment',
-    cta: 'Ouvrir',
-    hue: '#F43F5E',
-    hueSoft: '#FFE9ED',
-    hueMid: '#FFCAD4',
-    href: null,
-    image: '/features/coups-de-coeur-selection-automobile-maroc.png',
-    action: 'expand',
+    title: 'Coups de Cœur',
+    subtitle: 'Notre sélection du moment',
+    imageSrc: '/features/coups-de-coeur-selection-automobile-maroc.png',
+    imageAlt: 'Sélection coups de cœur automobile',
     icon: <Heart />,
+    cta: 'Ouvrir',
+    href: null,
+    action: 'expand',
   },
   {
     key: 'top',
-    label: 'Top Ventes',
-    sub: 'Les plus populaires au Maroc',
-    cta: 'Voir',
-    hue: '#32B75C',
-    hueSoft: '#E6F8EC',
-    hueMid: '#BEEBCE',
-    href: '/neuf/populaires',
-    image: '/features/top-ventes-voitures-populaires-maroc.png',
-    action: 'link',
+    title: 'Top Ventes',
+    subtitle: 'Les plus populaires au Maroc',
+    imageSrc: '/features/top-ventes-voitures-populaires-maroc.png',
+    imageAlt: 'Top ventes voitures populaires au Maroc',
     icon: <TrendingUp />,
+    cta: 'Voir',
+    href: '/neuf/populaires',
+    action: 'link',
   },
 ]
+
+/* ─── Reusable feature card ─── */
+
+type FeatureCardProps = {
+  title: string
+  subtitle: string
+  imageSrc: string
+  imageAlt: string
+  icon: ReactNode
+  cta: string
+  href: string | null
+  action: 'expand' | 'link'
+  isActive: boolean
+  onClick?: () => void
+}
+
+function FeatureCard({
+  title,
+  subtitle,
+  imageSrc,
+  imageAlt,
+  icon,
+  cta,
+  href,
+  action,
+  isActive,
+  onClick,
+}: FeatureCardProps) {
+  const baseClass = `group mx-auto flex w-full max-w-[260px] flex-col items-center rounded-[22px] border bg-[#141d33] px-[18px] pt-[22px] pb-[18px] text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)] transition duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(0,0,0,0.45)] active:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-indigo-500 ${
+    isActive
+      ? 'border-indigo-400/60 shadow-[0_14px_30px_rgba(80,80,255,0.25)]'
+      : 'border-[#1f2a44] hover:border-[#2a3759]'
+  }`
+
+  const inner = (
+    <>
+      <div className="relative h-[124px] w-[124px] shrink-0 overflow-hidden rounded-full bg-[#1f2a44]">
+        <Image
+          src={imageSrc}
+          alt={imageAlt}
+          fill
+          sizes="124px"
+          className="object-cover transition-transform duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.06]"
+        />
+        <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-[rgba(10,15,28,0.15)] to-[rgba(10,15,28,0.65)]" />
+        <div className="absolute inset-0 z-10 flex items-center justify-center text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)] [&>svg]:h-11 [&>svg]:w-11 [&>svg]:stroke-[1.7]">
+          {icon}
+        </div>
+      </div>
+
+      <h3 className="mt-[18px] text-center text-[15px] font-bold tracking-[0.2px]">
+        {title}
+      </h3>
+      <p className="mt-1 text-center text-[12.5px] text-[#8a93a6]">
+        {subtitle}
+      </p>
+
+      <span className="mt-auto inline-flex items-center gap-1 pt-[14px] text-[12.5px] font-medium text-[#cbd2df]">
+        {cta}
+        <ArrowRight
+          aria-hidden="true"
+          className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-1"
+        />
+      </span>
+    </>
+  )
+
+  if (action === 'expand') {
+    return (
+      <button type="button" onClick={onClick} className={baseClass}>
+        {inner}
+      </button>
+    )
+  }
+
+  return (
+    <Link href={href!} className={baseClass}>
+      {inner}
+    </Link>
+  )
+}
 
 export function FeatureGrid() {
   /* ─── Comparateur state ─── */
@@ -126,24 +197,11 @@ export function FeatureGrid() {
   const [loading, setLoading] = useState(false)
   const fetchedIdsRef = useRef<Set<string>>(new Set())
 
-  /* ─── Hover state ─── */
-  const [hoveredKey, setHoveredKey] = useState<string | null>(null)
-
   /* ─── Coups de Coeur state ─── */
   const [cdcOpen, setCdcOpen] = useState(false)
   const [cdcCategory, setCdcCategory] = useState('voiture')
   const [cdcByCategory, setCdcByCategory] = useState<Record<string, CdcVehicle[]>>({})
   const [cdcLoading, setCdcLoading] = useState(false)
-
-  /* ─── Reduced-motion detection ─── */
-  const [reducedMotion, setReducedMotion] = useState(false)
-  useEffect(() => {
-    const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReducedMotion(mql.matches)
-    const handler = () => setReducedMotion(mql.matches)
-    mql.addEventListener('change', handler)
-    return () => mql.removeEventListener('change', handler)
-  }, [])
 
   /* ─── Comparateur fetch ─── */
   const fetchVehicleData = useCallback(async (ids: string[]) => {
@@ -199,158 +257,52 @@ export function FeatureGrid() {
     setSelectedIds(prev => prev.filter((_, i) => i !== index))
   }
 
+  const handleExpandClick = (key: 'comparateur' | 'coeur') => {
+    if (key === 'comparateur') {
+      setComparatorOpen(p => !p)
+      setCdcOpen(false)
+    } else {
+      setCdcOpen(p => !p)
+      setComparatorOpen(false)
+    }
+  }
+
   return (
-    <section className="relative -mt-6 sm:-mt-8 z-20 pt-0 pb-6">
+    <section className="py-2 bg-gray-900">
       <div className="container mx-auto px-4">
+        <div className="px-2 md:px-4 py-3 relative">
 
-        {/* ══════════════════════════════════════════
-            V2 — Editorial Split Card Grid
-            ══════════════════════════════════════════ */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 justify-items-center">
-          {featureCards.map((card) => {
-            const isExpandCard = card.action === 'expand'
-            const isActive = isExpandCard && (
-              (card.key === 'comparateur' && comparatorOpen) ||
-              (card.key === 'coeur' && cdcOpen)
+        {/* ── Card grid ── */}
+        <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+          {featureItems.map((item) => {
+            const isExpand = item.action === 'expand'
+            const isActive = isExpand && (
+              (item.key === 'comparateur' && comparatorOpen) ||
+              (item.key === 'coeur' && cdcOpen)
             )
-            const isHovered = hoveredKey === card.key
-            const ctaText = isExpandCard
-              ? (isActive ? 'Fermer' : card.cta)
-              : card.cta
-
-            /* Lift & zoom only when motion is allowed */
-            const canAnimate = !reducedMotion
-            const liftY = canAnimate && isHovered && !isActive ? -4 : 0
-            const photoScale = canAnimate && isHovered ? 1.06 : 1
-            const arrowX = canAnimate && isHovered ? 4 : 0
-
-            const cardContent = (
-              <>
-                {/* ── Circular photo with icon overlay ── */}
-                <div className="relative h-[124px] w-[124px] shrink-0 overflow-hidden rounded-full bg-[#1f2a44]">
-                  <Image
-                    src={card.image}
-                    alt={card.label}
-                    fill
-                    sizes="124px"
-                    className="object-cover"
-                    style={{
-                      transform: `scale(${photoScale})`,
-                      transition: 'transform 400ms cubic-bezier(.2,.7,.3,1)',
-                    }}
-                  />
-                  {/* Dark gradient overlay so icon reads cleanly */}
-                  <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-[rgba(10,15,28,0.15)] to-[rgba(10,15,28,0.65)]" />
-                  {/* Icon overlay (white, drop-shadowed) */}
-                  <div className="absolute inset-0 z-10 flex items-center justify-center text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)] [&>svg]:h-11 [&>svg]:w-11 [&>svg]:stroke-[1.7]">
-                    {card.icon}
-                  </div>
-                </div>
-
-                {/* ── Title ── */}
-                <h3 className="mt-[18px] text-center text-[15px] font-bold tracking-[0.2px] text-white">
-                  {card.label}
-                </h3>
-
-                {/* ── Subtitle ── */}
-                <p className="mt-1 text-center text-[12.5px] text-[#8a93a6]">
-                  {card.sub}
-                </p>
-
-                {/* ── CTA + arrow row ── */}
-                <span className="mt-auto inline-flex items-center gap-1 pt-[14px] text-[12.5px] font-medium text-[#cbd2df]">
-                  {ctaText}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    className="h-3.5 w-3.5"
-                    style={{
-                      transform: `translateX(${arrowX}px)`,
-                      transition: 'transform 250ms cubic-bezier(.4,0,.2,1)',
-                    }}
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    />
-                  </svg>
-                </span>
-              </>
-            )
-
-            const cardStyle: React.CSSProperties = {
-              borderRadius: '22px',
-              border: '1px solid',
-              borderColor: isActive
-                ? `${card.hue}80`
-                : isHovered
-                  ? '#2a3759'
-                  : '#1f2a44',
-              backgroundColor: '#141d33',
-              boxShadow: isActive
-                ? `0 0 20px ${card.hue}55, 0 0 50px ${card.hue}1F`
-                : isHovered
-                  ? '0 14px 30px rgba(0,0,0,0.45)'
-                  : '0 4px 12px rgba(0,0,0,0.25)',
-              transform: `translateY(${liftY}px)`,
-              transition: 'transform 350ms cubic-bezier(.2,.7,.3,1), box-shadow 350ms cubic-bezier(.2,.7,.3,1), border-color 350ms cubic-bezier(.2,.7,.3,1)',
-              padding: '22px 18px 18px',
-            }
-
-            const baseClass = `group flex w-[200px] flex-col items-center text-white cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-indigo-500${
-              isActive ? '' : ''
-            }`
-
-            const hoverHandlers = {
-              onMouseEnter: () => setHoveredKey(card.key),
-              onMouseLeave: () => setHoveredKey(null),
-            }
-
-            if (isExpandCard) {
-              const handleClick = () => {
-                if (card.key === 'comparateur') {
-                  setComparatorOpen(p => !p)
-                  setCdcOpen(false)
-                } else {
-                  setCdcOpen(p => !p)
-                  setComparatorOpen(false)
-                }
-              }
-              return (
-                <button
-                  key={card.key}
-                  onClick={handleClick}
-                  className={baseClass}
-                  style={cardStyle}
-                  {...hoverHandlers}
-                >
-                  {cardContent}
-                </button>
-              )
-            }
+            const ctaText = isExpand
+              ? (isActive ? 'Fermer' : item.cta)
+              : item.cta
 
             return (
-              <Link
-                key={card.key}
-                href={card.href!}
-                className={baseClass}
-                style={cardStyle}
-                {...hoverHandlers}
-              >
-                {cardContent}
-              </Link>
+              <FeatureCard
+                key={item.key}
+                title={item.title}
+                subtitle={item.subtitle}
+                imageSrc={item.imageSrc}
+                imageAlt={item.imageAlt}
+                icon={item.icon}
+                cta={ctaText}
+                href={item.href}
+                action={item.action}
+                isActive={isActive}
+                onClick={isExpand ? () => handleExpandClick(item.key as 'comparateur' | 'coeur') : undefined}
+              />
             )
           })}
         </div>
 
-        {/* ══════════════════════════════════════════
-            Comparateur expand panel
-            ══════════════════════════════════════════ */}
+        {/* ── Comparateur expand panel ── */}
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
           comparatorOpen ? 'max-h-[2000px] opacity-100 mt-4' : 'max-h-0 opacity-0'
         }`}>
@@ -432,9 +384,7 @@ export function FeatureGrid() {
           </div>
         </div>
 
-        {/* ══════════════════════════════════════════
-            Coups de Coeur expand panel
-            ══════════════════════════════════════════ */}
+        {/* ── Coups de Coeur expand panel ── */}
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
           cdcOpen ? 'max-h-[1200px] opacity-100 mt-4' : 'max-h-0 opacity-0'
         }`}>
@@ -574,6 +524,7 @@ export function FeatureGrid() {
               </Link>
             </div>
           </div>
+        </div>
         </div>
       </div>
 
