@@ -134,10 +134,10 @@ function FeatureCard({
   isActive,
   onClick,
 }: FeatureCardProps) {
-  const baseClass = `group mx-auto flex w-full max-w-[260px] flex-col items-center rounded-[22px] border bg-[#141d33] px-[18px] pt-[22px] pb-[18px] text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)] transition duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(0,0,0,0.45)] active:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-indigo-500 ${
+  const baseClass = `group mx-auto flex w-full max-w-[260px] flex-col items-center rounded-[22px] border bg-white px-[18px] pt-[22px] pb-[18px] text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.25)] transition duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(0,0,0,0.45)] active:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-indigo-500 ${
     isActive
       ? 'border-indigo-400/60 shadow-[0_14px_30px_rgba(80,80,255,0.25)]'
-      : 'border-[#1f2a44] hover:border-[#2a3759]'
+      : 'border-gray-200 hover:border-gray-300'
   }`
 
   const inner = (
@@ -159,11 +159,11 @@ function FeatureCard({
       <h3 className="mt-[18px] text-center text-[15px] font-bold tracking-[0.2px]">
         {title}
       </h3>
-      <p className="mt-1 text-center text-[12.5px] text-[#8a93a6]">
+      <p className="mt-1 text-center text-[12.5px] text-slate-500">
         {subtitle}
       </p>
 
-      <span className="mt-auto inline-flex items-center gap-1 pt-[14px] text-[12.5px] font-medium text-[#cbd2df]">
+      <span className="mt-auto inline-flex items-center gap-1 pt-[14px] text-[12.5px] font-medium text-slate-700">
         {cta}
         <ArrowRight
           aria-hidden="true"
@@ -268,7 +268,7 @@ export function FeatureGrid() {
   }
 
   return (
-    <section className="py-2 bg-gray-900">
+    <section className="py-2 bg-white">
       <div className="container mx-auto px-4">
         <div className="px-2 md:px-4 py-3 relative">
 
