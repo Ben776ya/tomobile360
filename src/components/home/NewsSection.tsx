@@ -25,7 +25,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
   const displayArticles = articles.slice(0, 4)
 
   return (
-    <section className="py-4 md:py-6">
+    <section className="py-4 md:py-6 bg-[#565A5D]/10">
       <div className="container mx-auto px-4">
         <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-card p-6 md:p-8">
         {/* Section Header */}
