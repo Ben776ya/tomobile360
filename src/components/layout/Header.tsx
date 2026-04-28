@@ -125,7 +125,7 @@ export default function Header() {
     <>
     <header
       className={cn(
-        'sticky top-0 z-50 bg-white border-b border-gray-200 transition-transform duration-300',
+        'sticky top-0 z-50 bg-[#565A5D]/10 backdrop-blur-md border-b border-gray-200 transition-transform duration-300',
         hidden && '-translate-y-full'
       )}
     >
