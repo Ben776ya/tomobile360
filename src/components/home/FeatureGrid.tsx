@@ -268,7 +268,7 @@ export function FeatureGrid() {
   }
 
   return (
-    <section className="py-2 bg-white">
+    <section className="py-2">
       <div className="container mx-auto px-4">
         <div className="px-2 md:px-4 py-3 relative">
 
