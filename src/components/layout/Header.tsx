@@ -153,19 +153,19 @@ export default function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="relative px-2.5 py-0.5 text-sm font-bold tracking-wide rounded-sm overflow-hidden group/nav"
+                    className="relative px-2.5 py-1 text-sm font-bold tracking-wide group/nav"
                   >
-                    {/* Fill rising from the underline */}
-                    <span
-                      className={`absolute inset-0 bg-[#33B75D] origin-bottom transition-transform duration-300 ease-out z-0
-                        ${isActive ? 'scale-y-100' : 'scale-y-0 group-hover/nav:scale-y-100'}
-                      `}
-                    />
                     <span className={`relative z-10 transition-colors duration-200
-                      ${isActive ? 'text-white' : 'text-gray-600 group-hover/nav:text-white'}
+                      ${isActive ? 'text-[#005FDB]' : 'text-gray-600 group-hover/nav:text-[#005FDB]'}
                     `}>
                       {link.label}
                     </span>
+                    {/* Underline bar — slides in on hover, stays on active */}
+                    <span
+                      className={`absolute left-0 right-0 bottom-0 h-[2px] bg-[#005FDB] origin-center transition-transform duration-300 ease-out
+                        ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover/nav:scale-x-100'}
+                      `}
+                    />
                   </Link>
                 )
               })}
