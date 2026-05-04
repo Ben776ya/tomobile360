@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ChevronRight, Check } from 'lucide-react'
 
 export function PromoBanner() {
@@ -9,18 +10,20 @@ export function PromoBanner() {
       <div className="container mx-auto px-4">
         <div className="relative">
           <div className="flex flex-col lg:flex-row items-center relative z-10">
-            {/* Left - Illustration/Image */}
+            {/* Left - NARSA logo emblem */}
             <div className="lg:w-1/3 p-3 lg:p-4 flex justify-center">
               <div className="relative w-32 h-32 md:w-44 md:h-44">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/20 rounded-full animate-glow-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#4057aa]/20 to-[#E8EBF5] rounded-full animate-glow-pulse" />
                 <div className="relative w-full h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-0.5">Offre exceptionnelle</p>
-                    <div className="relative">
-                      <span className="text-4xl md:text-5xl font-black text-secondary glow-cyan-text">2.9</span>
-                      <span className="text-lg md:text-xl font-bold text-secondary align-top">%</span>
-                    </div>
-                    <p className="text-xs font-semibold text-gray-700">sur votre PRÊT AUTO</p>
+                  <div className="bg-white rounded-2xl px-4 py-3 md:px-5 md:py-4 shadow-card">
+                    <Image
+                      src="/narsa_logo.png"
+                      alt="NARSA — Agence Nationale de la Sécurité Routière"
+                      width={160}
+                      height={48}
+                      className="w-24 md:w-32 h-auto object-contain"
+                      priority={false}
+                    />
                   </div>
                 </div>
               </div>
@@ -29,23 +32,23 @@ export function PromoBanner() {
             {/* Center - Content */}
             <div className="lg:w-1/3 p-6 lg:p-8 text-center lg:text-left">
               <h3 className="text-xl md:text-2xl font-bold text-primary mb-3">
-                Financez votre véhicule au meilleur taux
+                Sécurité Routière — en partenariat avec la NARSA
               </h3>
               <p className="text-gray-500 mb-4">
-                Profitez de notre offre exclusive de crédit auto avec un taux préférentiel.
+                Conseils, capsules vidéo et bonnes pratiques de l&apos;Agence Nationale de la Sécurité Routière pour une route plus sûre au Maroc.
               </p>
               <ul className="space-y-2 mb-4">
                 <li className="flex items-center gap-2 text-sm text-gray-700">
-                  <Check className="w-4 h-4 text-secondary flex-shrink-0" />
-                  <span>Réponse immédiate</span>
+                  <Check className="w-4 h-4 text-[#4057aa] flex-shrink-0" />
+                  <span>Capsules de sensibilisation officielles</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm text-gray-700">
-                  <Check className="w-4 h-4 text-secondary flex-shrink-0" />
-                  <span>Durée flexible jusqu&apos;à 72 mois</span>
+                  <Check className="w-4 h-4 text-[#4057aa] flex-shrink-0" />
+                  <span>Conseils pratiques pour conducteurs et piétons</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm text-gray-700">
-                  <Check className="w-4 h-4 text-secondary flex-shrink-0" />
-                  <span>Sans frais de dossier</span>
+                  <Check className="w-4 h-4 text-[#4057aa] flex-shrink-0" />
+                  <span>Code de la route et ressources NARSA</span>
                 </li>
               </ul>
             </div>
@@ -53,18 +56,20 @@ export function PromoBanner() {
             {/* Right - CTA */}
             <div className="lg:w-1/3 p-6 lg:p-8 flex flex-col items-center lg:items-end gap-4">
               <div className="text-center lg:text-right">
-                <span className="tag inline-block bg-[#32B75C] text-white text-xs font-bold tracking-wider px-3 py-1 rounded-full mb-2">OFFRE LIMITÉE</span>
-                <p className="text-lg font-bold text-primary">Profitez-en maintenant</p>
+                <span className="tag inline-block bg-[#4057aa] text-white text-xs font-bold tracking-wider px-3 py-1 rounded-full mb-2">
+                  PARTENAIRE NARSA
+                </span>
+                <p className="text-lg font-bold text-primary">Roulez en sécurité</p>
               </div>
               <Link
-                href="/services/credit"
-                className="inline-flex items-center gap-2 px-8 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-gold hover:shadow-gold-lg"
+                href="/services/securite-routiere"
+                className="inline-flex items-center gap-2 px-8 py-3 bg-[#4057aa] hover:bg-[#2e3f7a] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
               >
-                J&apos;en profite
+                Découvrir NARSA
                 <ChevronRight className="w-5 h-5" />
               </Link>
               <p className="text-xs text-gray-400 text-center lg:text-right">
-                *Sous réserve d&apos;acceptation du dossier
+                Source : Agence Nationale de la Sécurité Routière
               </p>
             </div>
           </div>
