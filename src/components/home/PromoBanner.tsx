@@ -12,19 +12,17 @@ export function PromoBanner() {
           <div className="flex flex-col lg:flex-row items-center relative z-10">
             {/* Left - NARSA logo emblem */}
             <div className="lg:w-1/3 p-3 lg:p-4 flex justify-center">
-              <div className="relative w-32 h-32 md:w-44 md:h-44">
+              <div className="relative w-44 h-44 md:w-56 md:h-56">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#4057aa]/20 to-[#E8EBF5] rounded-full animate-glow-pulse" />
-                <div className="relative w-full h-full flex items-center justify-center">
-                  <div className="bg-white rounded-2xl px-4 py-3 md:px-5 md:py-4 shadow-card">
-                    <Image
-                      src="/narsa_logo.png"
-                      alt="NARSA — Agence Nationale de la Sécurité Routière"
-                      width={160}
-                      height={48}
-                      className="w-24 md:w-32 h-auto object-contain"
-                      priority={false}
-                    />
-                  </div>
+                <div className="absolute inset-1.5 md:inset-2 bg-white rounded-full shadow-card flex items-center justify-center p-4 md:p-5">
+                  <Image
+                    src="/narsa_logo.png"
+                    alt="NARSA — Agence Nationale de la Sécurité Routière"
+                    width={200}
+                    height={60}
+                    className="w-full h-auto object-contain"
+                    priority={false}
+                  />
                 </div>
               </div>
             </div>
