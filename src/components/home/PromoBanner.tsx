@@ -14,7 +14,7 @@ export function PromoBanner() {
             <div className="lg:w-1/3 p-3 lg:p-4 flex justify-center">
               <div className="relative w-44 h-44 md:w-56 md:h-56">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#4057aa]/20 to-[#E8EBF5] rounded-full animate-glow-pulse" />
-                <div className="absolute inset-1.5 md:inset-2 bg-white rounded-full shadow-card flex items-center justify-center p-4 md:p-5">
+                <div className="absolute inset-1.5 md:inset-2 bg-white rounded-full shadow-card flex items-center justify-center p-3 md:p-4">
                   <Image
                     src="/narsa_logo.png"
                     alt="NARSA — Agence Nationale de la Sécurité Routière"
