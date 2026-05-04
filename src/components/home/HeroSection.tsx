@@ -198,13 +198,13 @@ export function HeroSection({ brands }: HeroSectionProps) {
       <div className="absolute inset-0 bg-gradient-to-r from-[#010920] via-[#010920] via-[3%] to-transparent to-[15%] pointer-events-none" />
 
       {/* Content */}
-      <div className="container mx-auto px-4 lg:px-8 relative z-10 pt-6 lg:pt-8 pb-14 lg:pb-16">
+      <div className="container mx-auto px-4 lg:px-8 relative z-10 py-6 lg:py-8">
         {/* Search panel — dark glass card anchored left */}
-        <div className="w-full max-w-xl bg-[#010920]/50 backdrop-blur-md rounded-2xl border border-white/10 p-4 sm:p-5 lg:p-6">
+        <div className="w-full max-w-xl bg-[#010920]/50 backdrop-blur-md rounded-2xl border border-white/10 px-4 py-6 sm:px-5 sm:py-7 lg:px-6 lg:py-8">
 
           {/* Title */}
           <h2 className="font-display text-lg lg:text-xl font-bold text-white leading-tight mb-0.5 text-center">
-            Trouvez la voiture idéale au Maroc
+            Trouvez la voiture idéale
           </h2>
           <p className="text-white/60 text-[11px] mb-3 text-center">
             Neuf et occasion — comparez les prix, faites le bon choix
