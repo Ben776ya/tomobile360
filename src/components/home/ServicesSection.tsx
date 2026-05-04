@@ -33,8 +33,8 @@ const services = [
     title: 'Demande de Test Drive',
     description: 'Essayez avant de vous décider.',
     link: '/contact',
-    color: 'bg-neon-purple',
-    glowColor: 'group-hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]',
+    color: 'bg-[#F3EBFD]',
+    glowColor: 'group-hover:shadow-[0_0_15px_rgba(168,85,247,0.2)]',
   },
   {
     id: 'revision',
@@ -84,7 +84,7 @@ export function ServicesSection() {
                     className={`${(service as any).logoSize || 'w-10 h-10 md:w-12 md:h-12'} object-contain`}
                   />
                 ) : (
-                  <service.icon className="w-9 h-9 md:w-11 md:h-11 text-white" />
+                  <service.icon className="w-14 h-14 md:w-16 md:h-16 text-[#A855F7]" />
                 )}
               </div>
               {/* Content - Right side */}
