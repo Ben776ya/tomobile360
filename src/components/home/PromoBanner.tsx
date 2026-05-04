@@ -6,8 +6,9 @@ import { ChevronRight, Check } from 'lucide-react'
 
 export function PromoBanner() {
   return (
-    <section className="py-2 md:py-3 bg-[#F2F4F6]">
+    <section className="py-4 md:py-6 bg-[#565A5D]/10">
       <div className="container mx-auto px-4">
+        <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-card">
         <div className="relative">
           <div className="flex flex-col lg:flex-row items-center relative z-10">
             {/* Left - NARSA logo emblem */}
@@ -71,6 +72,7 @@ export function PromoBanner() {
               </p>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </section>
