@@ -20,6 +20,7 @@ const services = [
     id: 'assurance',
     icon: Shield,
     logoSrc: '/atlanta-sanad-logo.png',
+    logoSize: 'w-14 h-14 md:w-16 md:h-16',
     title: 'Assurance',
     description: 'Obtenez votre devis d\'assurance auto avec notre partenaire Atlanta Sanad.',
     link: '/services/assurance',
@@ -73,7 +74,7 @@ export function ServicesSection() {
               className={`group bg-gray-50 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 border border-gray-100 hover:border-secondary/20 flex overflow-hidden ${service.glowColor}`}
             >
               {/* Icon - Left side */}
-              <div className={`${service.color} flex items-center justify-center ${compact ? 'px-4 md:px-5 min-w-[64px] md:min-w-[72px]' : 'px-6 md:px-8 min-w-[88px] md:min-w-[104px]'} group-hover:scale-105 transition-transform duration-300 origin-center`}>
+              <div className={`${service.color} flex items-center justify-center px-6 md:px-8 min-w-[88px] md:min-w-[104px] group-hover:scale-105 transition-transform duration-300 origin-center`}>
                 {(service as any).logoSrc ? (
                   <Image
                     src={(service as any).logoSrc}
@@ -83,7 +84,7 @@ export function ServicesSection() {
                     className={`${(service as any).logoSize || 'w-10 h-10 md:w-12 md:h-12'} object-contain`}
                   />
                 ) : (
-                  <service.icon className={`${compact ? 'w-7 h-7 md:w-8 md:h-8' : 'w-9 h-9 md:w-11 md:h-11'} text-white`} />
+                  <service.icon className="w-9 h-9 md:w-11 md:h-11 text-white" />
                 )}
               </div>
               {/* Content - Right side */}
