@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Scale, Tag, TrendingUp, Heart, ArrowRight, Plus, X, Zap, Fuel, Car, Mountain, Truck } from 'lucide-react'
+import { Scale, Tag, TrendingUp, Heart, Sparkles, ArrowRight, Plus, X, Zap, Fuel, Car, Mountain, Truck } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { VehicleSelector } from '@/components/vehicles/VehicleSelector'
 import { ComparisonTable } from '@/components/vehicles/ComparisonTable'
@@ -49,7 +49,7 @@ const FUEL_LABELS: Record<string, string> = {
 /* ─── Feature card data ─── */
 
 type FeatureItem = {
-  key: 'comparateur' | 'offres' | 'coeur' | 'top'
+  key: 'comparateur' | 'offres' | 'coeur' | 'top' | 'detailing'
   title: string
   subtitle: string
   imageSrc: string
@@ -103,6 +103,17 @@ const featureItems: FeatureItem[] = [
     icon: <TrendingUp />,
     cta: 'Voir',
     href: '/neuf/populaires',
+    action: 'link',
+  },
+  {
+    key: 'detailing',
+    title: 'Detailing',
+    subtitle: 'Centres agréés, prise en ligne',
+    imageSrc: '/features/detailing-services-automobile-maroc.png',
+    imageAlt: 'Services de detailing automobile au Maroc',
+    icon: <Sparkles />,
+    cta: 'Voir',
+    href: '/services/controle',
     action: 'link',
   },
 ]
@@ -273,7 +284,7 @@ export function FeatureGrid() {
         <div className="px-2 md:px-4 py-3 relative">
 
         {/* ── Card grid ── */}
-        <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+        <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-5">
           {featureItems.map((item) => {
             const isExpand = item.action === 'expand'
             const isActive = isExpand && (
