@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { CreditCard, Shield, Car, Wrench, CalendarCheck, ShieldCheck, ChevronRight } from 'lucide-react'
+import { CreditCard, Shield, Car, Wrench, CalendarCheck, ChevronRight } from 'lucide-react'
 
 const services = [
   {
@@ -54,17 +54,6 @@ const services = [
     link: '/services/controle',
     color: 'bg-orange-500',
     glowColor: 'group-hover:shadow-[0_0_15px_rgba(245,158,11,0.3)]',
-  },
-  {
-    id: 'securite-routiere',
-    icon: ShieldCheck,
-    logoSrc: '/narsa_logo.png',
-    logoSize: 'w-14 h-14 md:w-16 md:h-16',
-    title: 'Sécurité Routière',
-    description: 'Conseils et actualités NARSA pour une route plus sûre au Maroc.',
-    link: '/services/securite-routiere',
-    color: 'bg-[#E8EBF5]',
-    glowColor: 'group-hover:shadow-[0_0_15px_rgba(64,87,170,0.2)]',
   },
 ]
 
@@ -127,9 +116,9 @@ export function ServicesSection() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 {services.slice(0, 2).map(s => renderCard(s, false))}
               </div>
-              {/* Row 2 — Other services: 4 cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[services[2], services[3], services[4], services[5]].map(s => renderCard(s, true))}
+              {/* Row 2 — Other services: 3 cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[services[2], services[3], services[4]].map(s => renderCard(s, true))}
               </div>
             </>
           )
