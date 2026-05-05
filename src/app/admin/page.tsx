@@ -84,25 +84,25 @@ export default async function AdminDashboardPage() {
             </h2>
             <div className="space-y-3">
               <Link href="/admin/vehicles">
-                <Button variant="outline" className="w-full justify-start shadow-sm hover:shadow-glow-indigo-sm">
+                <Button variant="outline" className="w-full justify-start shadow-sm">
                   <Car className="h-4 w-4 mr-2" />
                   Gérer les véhicules
                 </Button>
               </Link>
               <Link href="/admin/blog">
-                <Button variant="outline" className="w-full justify-start shadow-sm hover:shadow-glow-indigo-sm">
+                <Button variant="outline" className="w-full justify-start shadow-sm">
                   <PenSquare className="h-4 w-4 mr-2" />
                   Gérer le blog
                 </Button>
               </Link>
               <Link href="/admin/users">
-                <Button variant="outline" className="w-full justify-start shadow-sm hover:shadow-glow-indigo-sm">
+                <Button variant="outline" className="w-full justify-start shadow-sm">
                   <Users className="h-4 w-4 mr-2" />
                   Gérer les utilisateurs
                 </Button>
               </Link>
               <Link href="/admin/promotions">
-                <Button variant="outline" className="w-full justify-start shadow-sm hover:shadow-glow-indigo-sm">
+                <Button variant="outline" className="w-full justify-start shadow-sm">
                   <TrendingUp className="h-4 w-4 mr-2" />
                   Gérer les promotions
                 </Button>

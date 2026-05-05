@@ -163,14 +163,14 @@ export default function AdminCoupsDeCoeurPage() {
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}
                         placeholder="Ex: Meilleur rapport qualité/prix du segment, finition exemplaire..."
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none focus:border-[#006EFE] focus:ring-1 focus:ring-[#006EFE]/20 outline-none"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none focus:border-secondary focus:ring-1 focus:ring-secondary/20 outline-none"
                         rows={3}
                       />
                       <div className="flex gap-2 mt-2">
                         <button
                           onClick={() => handleSave(vehicle.id)}
                           disabled={saving}
-                          className="px-3 py-1.5 bg-[#006EFE] text-white text-sm font-medium rounded-lg hover:bg-[#005BD4] disabled:opacity-50 transition-colors"
+                          className="px-3 py-1.5 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary-600 disabled:opacity-50 transition-colors"
                         >
                           {saving ? 'Enregistrement...' : 'Enregistrer'}
                         </button>
@@ -191,7 +191,7 @@ export default function AdminCoupsDeCoeurPage() {
                       )}
                       <button
                         onClick={() => handleEdit(vehicle)}
-                        className="mt-1 text-xs text-[#006EFE] hover:underline"
+                        className="mt-1 text-xs text-secondary hover:underline"
                       >
                         Modifier
                       </button>

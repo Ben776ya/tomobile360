@@ -373,7 +373,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
         </a>
         <a
           href={`tel:${TOMOBILE_PHONE_DISPLAY}`}
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#006EFE] text-white font-semibold rounded-xl text-sm"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-secondary text-white font-semibold rounded-xl text-sm"
         >
           Appeler
         </a>

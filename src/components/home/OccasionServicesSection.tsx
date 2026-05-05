@@ -18,13 +18,14 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
       rel="noopener noreferrer"
       className="group bg-white rounded-xl overflow-hidden border border-gray-200 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 flex flex-col"
     >
-      {/* Image — plain <img> to avoid next/image hostname restrictions on scraped CDN URLs */}
+      {/* Image */}
       <div className="relative flex-shrink-0 bg-white overflow-hidden">
         {listing.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={listing.image}
             alt={listing.title}
+            width={400}
+            height={300}
             className="w-full h-auto block"
           />
         ) : (
@@ -67,31 +68,31 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
         <div className="grid grid-cols-2 gap-y-2 gap-x-2 mb-3 flex-1">
           {listing.year && (
             <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
-              <Calendar className="w-3.5 h-3.5 flex-shrink-0 text-[#006EFE]/50" />
+              <Calendar className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.year}</span>
             </div>
           )}
           {listing.mileage && (
             <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
-              <Gauge className="w-3.5 h-3.5 flex-shrink-0 text-[#006EFE]/50" />
+              <Gauge className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.mileage}</span>
             </div>
           )}
           {listing.fuel && (
             <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
-              <Fuel className="w-3.5 h-3.5 flex-shrink-0 text-[#006EFE]/50" />
+              <Fuel className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.fuel}</span>
             </div>
           )}
           {listing.gearbox && (
             <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
-              <GitFork className="w-3.5 h-3.5 flex-shrink-0 text-[#006EFE]/50" />
+              <GitFork className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.gearbox}</span>
             </div>
           )}
           {listing.power && (
             <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
-              <Zap className="w-3.5 h-3.5 flex-shrink-0 text-[#006EFE]/50" />
+              <Zap className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.power}</span>
             </div>
           )}
@@ -110,14 +111,14 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
 
         {/* CTA */}
         <div className="border-t border-gray-100 pt-3 mt-auto">
-          <span className="w-full flex items-center justify-center py-2 text-xs font-semibold text-[#006EFE] border border-[#006EFE]/25 rounded-lg group-hover:bg-[#006EFE] group-hover:text-white group-hover:border-[#006EFE] transition-all duration-200">
+          <span className="w-full flex items-center justify-center py-2 text-xs font-semibold text-secondary border border-secondary/25 rounded-lg group-hover:bg-secondary group-hover:text-white group-hover:border-secondary transition-all duration-200">
             Voir le détail
           </span>
         </div>
       </div>
 
       {/* Bottom accent line */}
-      <div className="h-0.5 bg-gradient-to-r from-[#006EFE] via-[#32B75C] to-[#006EFE] opacity-40" />
+      <div className="h-0.5 bg-gradient-to-r from-secondary via-[#32B75C] to-secondary opacity-40" />
     </a>
   )
 }
@@ -191,7 +192,7 @@ export async function OccasionServicesSection() {
                   href={btn.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-gold hover:shadow-gold-lg"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300"
                 >
                   <btn.icon className="w-4 h-4" />
                   <span>{btn.label}</span>
@@ -201,7 +202,7 @@ export async function OccasionServicesSection() {
                 <Link
                   key={btn.href}
                   href={btn.href}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-gold hover:shadow-gold-lg"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300"
                 >
                   <btn.icon className="w-4 h-4" />
                   <span>{btn.label}</span>

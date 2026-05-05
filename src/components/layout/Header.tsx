@@ -125,7 +125,7 @@ export default function Header() {
     <>
     <header
       className={cn(
-        'sticky top-0 z-50 bg-[#565A5D]/10 backdrop-blur-md border-b border-gray-200 transition-transform duration-300',
+        'sticky top-0 z-50 bg-white border-b border-gray-200 transition-transform duration-300',
         hidden && '-translate-y-full'
       )}
     >
@@ -153,16 +153,17 @@ export default function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
+                    aria-current={isActive ? 'page' : undefined}
                     className="relative px-2.5 py-1 text-sm font-bold tracking-wide group/nav"
                   >
                     <span className={`relative z-10 transition-colors duration-200
-                      ${isActive ? 'text-[#005FDB]' : 'text-gray-600 group-hover/nav:text-[#005FDB]'}
+                      ${isActive ? 'text-secondary' : 'text-gray-600 group-hover/nav:text-secondary'}
                     `}>
                       {link.label}
                     </span>
                     {/* Underline bar — slides in on hover, stays on active */}
                     <span
-                      className={`absolute left-0 right-0 bottom-0 h-[2px] bg-[#005FDB] origin-center transition-transform duration-300 ease-out
+                      className={`absolute left-0 right-0 bottom-0 h-[2px] bg-secondary origin-center transition-transform duration-300 ease-out
                         ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover/nav:scale-x-100'}
                       `}
                     />
@@ -172,8 +173,8 @@ export default function Header() {
           </nav>
 
           {/* Desktop Search Field (right side) */}
-          <div ref={searchRef} className="relative hidden lg:block justify-self-center">
-            <div className="flex items-center bg-gray-50 border border-gray-200 rounded-full hover:border-gray-300 focus-within:border-[#006EFE] focus-within:ring-1 focus-within:ring-[#006EFE]/20 transition-all duration-200">
+          <div ref={searchRef} role="search" className="relative hidden lg:block justify-self-center">
+            <div className="flex items-center bg-gray-50 border border-gray-200 rounded-full hover:border-gray-300 focus-within:border-secondary focus-within:ring-1 focus-within:ring-secondary/20 transition-all duration-200">
               <Search className="h-4 w-4 text-gray-500 ml-3 flex-shrink-0" />
               <input
                 ref={searchInputRef}
@@ -189,7 +190,12 @@ export default function Header() {
                 className="w-52 px-2 py-1.5 text-sm bg-transparent text-gray-800 placeholder-gray-500 outline-none"
               />
               {searchQuery && (
-                <button onClick={() => { setSearchQuery(''); setSearchResults([]); setVideoResults([]); setSearchOpen(false) }} className="mr-2 text-gray-400 hover:text-gray-600">
+                <button
+                  type="button"
+                  aria-label="Effacer la recherche"
+                  onClick={() => { setSearchQuery(''); setSearchResults([]); setVideoResults([]); setSearchOpen(false) }}
+                  className="mr-2 p-1 text-gray-400 hover:text-gray-600"
+                >
                   <X className="h-3.5 w-3.5" />
                 </button>
               )}
@@ -219,7 +225,7 @@ export default function Header() {
                             )}
                             <div className="min-w-0">
                               {article.category && (
-                                <span className="text-[10px] font-semibold text-[#006EFE] uppercase tracking-wide">{article.category}</span>
+                                <span className="text-[10px] font-semibold text-secondary uppercase tracking-wide">{article.category}</span>
                               )}
                               <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">{article.title}</p>
                             </div>
@@ -253,7 +259,7 @@ export default function Header() {
                             )}
                             <div className="min-w-0">
                               {video.category && (
-                                <span className="text-[10px] font-semibold text-[#006EFE] uppercase tracking-wide">{video.category}</span>
+                                <span className="text-[10px] font-semibold text-secondary uppercase tracking-wide">{video.category}</span>
                               )}
                               <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">{video.title}</p>
                             </div>
@@ -265,7 +271,7 @@ export default function Header() {
                       <Link
                         href={`/actu?q=${encodeURIComponent(searchQuery)}`}
                         onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
-                        className="flex-1 px-3 py-2.5 text-xs font-semibold text-[#006EFE] hover:bg-blue-50 text-center transition-colors"
+                        className="flex-1 px-3 py-2.5 text-xs font-semibold text-secondary hover:bg-blue-50 text-center transition-colors"
                       >
                         Articles →
                       </Link>
@@ -273,7 +279,7 @@ export default function Header() {
                       <Link
                         href="/videos"
                         onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
-                        className="flex-1 px-3 py-2.5 text-xs font-semibold text-[#006EFE] hover:bg-blue-50 text-center transition-colors"
+                        className="flex-1 px-3 py-2.5 text-xs font-semibold text-secondary hover:bg-blue-50 text-center transition-colors"
                       >
                         Vidéos →
                       </Link>
@@ -298,9 +304,9 @@ export default function Header() {
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
-              <X className="h-6 w-6 text-[#006EFE]" />
+              <X className="h-6 w-6 text-secondary" />
             ) : (
-              <Menu className="h-6 w-6 text-[#006EFE]" />
+              <Menu className="h-6 w-6 text-secondary" />
             )}
           </button>
         </div>
@@ -319,7 +325,7 @@ export default function Header() {
                     if (e.key === 'Enter' && searchQuery.trim()) { router.push(`/actu?q=${encodeURIComponent(searchQuery.trim())}`); setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
                   }}
                   placeholder="Rechercher articles, vidéos..."
-                  className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 rounded-lg text-gray-800 placeholder-gray-400 outline-none border border-gray-200 focus:border-[#006EFE]/40"
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 rounded-lg text-gray-800 placeholder-gray-400 outline-none border border-gray-200 focus:border-secondary/40"
                 />
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               </div>
@@ -332,7 +338,7 @@ export default function Header() {
                       onClick={() => { setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
                       className="flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50 text-sm text-gray-800 border-b border-gray-50 last:border-0"
                     >
-                      <FileText className="h-3.5 w-3.5 text-[#006EFE] flex-shrink-0" />
+                      <FileText className="h-3.5 w-3.5 text-secondary flex-shrink-0" />
                       <span className="line-clamp-1">{article.title}</span>
                     </Link>
                   ))}
@@ -343,7 +349,7 @@ export default function Header() {
                       onClick={() => { setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
                       className="flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50 text-sm text-gray-800 border-b border-gray-50 last:border-0"
                     >
-                      <PlayCircle className="h-3.5 w-3.5 text-[#006EFE] flex-shrink-0" />
+                      <PlayCircle className="h-3.5 w-3.5 text-secondary flex-shrink-0" />
                       <span className="line-clamp-1">{video.title}</span>
                     </Link>
                   ))}
@@ -360,8 +366,8 @@ export default function Header() {
                     className={`px-5 py-3 text-sm font-bold transition-all duration-300
                       border-l-[3px]
                       ${isActive
-                        ? 'text-[#006EFE] border-[#006EFE] bg-blue-50/50'
-                        : 'text-gray-700 border-transparent hover:text-[#006EFE] hover:border-[#006EFE]/30'
+                        ? 'text-secondary border-secondary bg-blue-50/50'
+                        : 'text-gray-700 border-transparent hover:text-secondary hover:border-secondary/30'
                       }
                     `}
                     onClick={() => setMobileMenuOpen(false)}

@@ -185,7 +185,7 @@ export function FicheTechniqueForm({ fiche }: FicheTechniqueFormProps) {
           <button
             type="button"
             onClick={addSpec}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary hover:bg-primary/90 text-white rounded-lg transition shadow-glow-indigo-sm"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary hover:bg-primary/90 text-white rounded-lg transition"
           >
             <Plus className="h-4 w-4" />
             Ajouter
@@ -235,7 +235,7 @@ export function FicheTechniqueForm({ fiche }: FicheTechniqueFormProps) {
           <button
             type="button"
             onClick={addCategory}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary hover:bg-primary/90 text-white rounded-lg transition shadow-glow-indigo-sm"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary hover:bg-primary/90 text-white rounded-lg transition"
           >
             <Plus className="h-4 w-4" />
             Ajouter categorie
@@ -342,7 +342,7 @@ export function FicheTechniqueForm({ fiche }: FicheTechniqueFormProps) {
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition shadow-glow-indigo-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? (
             <Loader2 className="h-4 w-4 animate-spin" />

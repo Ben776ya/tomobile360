@@ -172,8 +172,8 @@ export default function QuiSommesNousPage() {
           {/* Right — text */}
           <div className="flex flex-col justify-center px-10 lg:px-14 py-14 bg-white">
             <div className="flex items-center gap-2.5 mb-6">
-              <span className="h-px w-6 bg-[#006EFE]" />
-              <span className="text-[11px] font-bold uppercase tracking-[2.5px] text-[#006EFE]">Notre équipe</span>
+              <span className="h-px w-6 bg-secondary" />
+              <span className="text-[11px] font-bold uppercase tracking-[2.5px] text-secondary">Notre équipe</span>
             </div>
 
             <h1
@@ -181,7 +181,7 @@ export default function QuiSommesNousPage() {
               style={{ fontFamily: 'var(--font-montserrat-alternates, var(--font-sora))' }}
             >
               L&apos;histoire<br />
-              <span className="text-[#006EFE]">d&apos;une passion</span>
+              <span className="text-secondary">d&apos;une passion</span>
             </h1>
 
             <p className="text-[15px] font-light text-gray-400 leading-relaxed max-w-xs mb-10">
@@ -191,7 +191,7 @@ export default function QuiSommesNousPage() {
             <div className="border-t border-gray-100 pt-8 flex gap-8">
               {stats.map((s) => (
                 <div key={s.label}>
-                  <p className="text-3xl font-black text-[#006EFE] leading-none tabular-nums">{s.value}</p>
+                  <p className="text-3xl font-black text-secondary leading-none tabular-nums">{s.value}</p>
                   <p className="text-[11px] font-medium text-gray-400 mt-1.5 uppercase tracking-wide">{s.label}</p>
                 </div>
               ))}
@@ -203,7 +203,7 @@ export default function QuiSommesNousPage() {
       {/* ── MISSION STRIP ────────────────────────────────────────────── */}
       <section className={`${pad} pb-10`}>
         <div className="rounded-2xl bg-gradient-to-r from-[#f0f6ff] via-white to-[#f0fdf8] border border-gray-100 py-10 px-10 flex flex-col md:flex-row items-center gap-8">
-          <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-[#006EFE]/10 flex items-center justify-center">
+          <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-secondary/10 flex items-center justify-center">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#006EFE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3m4 0h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2z"/>
             </svg>
@@ -211,7 +211,7 @@ export default function QuiSommesNousPage() {
           <p className="text-lg font-light text-gray-500 leading-relaxed flex-1">
             &ldquo;Couvrir l&apos;automobile au Maroc, c&apos;est raconter une culture,
             une <span className="font-semibold text-[#32B75C]">passion</span> et une{' '}
-            <span className="font-semibold text-[#006EFE]">ambition</span> nationale.&rdquo;
+            <span className="font-semibold text-secondary">ambition</span> nationale.&rdquo;
           </p>
           <span className="flex-shrink-0 text-[11px] uppercase tracking-[2px] text-gray-300 whitespace-nowrap">
             Depuis 2000
@@ -226,15 +226,15 @@ export default function QuiSommesNousPage() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
           <div>
             <div className="flex items-center gap-2.5 mb-3">
-              <span className="h-px w-6 bg-[#006EFE]" />
-              <span className="text-[11px] font-bold uppercase tracking-[2.5px] text-[#006EFE]">Notre équipe</span>
+              <span className="h-px w-6 bg-secondary" />
+              <span className="text-[11px] font-bold uppercase tracking-[2.5px] text-secondary">Notre équipe</span>
             </div>
             <h2
               className="text-2xl lg:text-3xl font-black text-[#1e3a8a] tracking-tight"
               style={{ fontFamily: 'var(--font-montserrat-alternates, var(--font-sora))' }}
             >
               Team{' '}
-              <span className="text-[#006EFE]">Tomobile360</span>
+              <span className="text-secondary">Tomobile360</span>
             </h2>
           </div>
           <p className="sm:text-right text-sm font-light text-gray-400 sm:max-w-[220px] leading-relaxed">
@@ -322,9 +322,9 @@ export default function QuiSommesNousPage() {
                   <div className="flex flex-col gap-1 min-w-0">
                     <a
                       href={`mailto:${member.email}`}
-                      className="flex items-center gap-2 text-[12px] text-gray-400 hover:text-[#006EFE] transition-colors duration-300 group/link truncate"
+                      className="flex items-center gap-2 text-[12px] text-gray-400 hover:text-secondary transition-colors duration-300 group/link truncate"
                     >
-                      <AtSign size={12} className="flex-shrink-0 text-gray-300 group-hover/link:text-[#006EFE] transition-colors duration-300" />
+                      <AtSign size={12} className="flex-shrink-0 text-gray-300 group-hover/link:text-secondary transition-colors duration-300" />
                       <span className="truncate">{member.email}</span>
                     </a>
                   </div>
@@ -335,7 +335,7 @@ export default function QuiSommesNousPage() {
                       <button
                         key={s.label}
                         title={s.label}
-                        className="w-8 h-8 rounded-xl border border-gray-100 flex items-center justify-center text-gray-300 hover:text-[#006EFE] hover:border-[#006EFE]/20 hover:bg-[#006EFE]/5 hover:scale-110 transition-all duration-300"
+                        className="w-8 h-8 rounded-xl border border-gray-100 flex items-center justify-center text-gray-300 hover:text-secondary hover:border-secondary/20 hover:bg-secondary/5 hover:scale-110 transition-all duration-300"
                       >
                         {s.icon === 'ig' && <InstagramIcon size={14} />}
                         {s.icon === 'fb' && <FacebookIcon size={14} />}
@@ -380,18 +380,18 @@ export default function QuiSommesNousPage() {
 
       {/* ── BOTTOM QUOTE ─────────────────────────────────────────────── */}
       <section className={`${pad} pb-10`}>
-        <div className="rounded-2xl bg-gradient-to-br from-[#006EFE]/5 via-white to-[#32B75C]/5 border border-gray-100 py-14 px-10 text-center">
+        <div className="rounded-2xl bg-gradient-to-br from-secondary/5 via-white to-[#32B75C]/5 border border-gray-100 py-14 px-10 text-center">
           <div className="inline-flex items-center gap-2 mb-6">
-            <span className="h-px w-6 bg-[#006EFE]/30" />
-            <span className="text-[10px] font-bold uppercase tracking-[2.5px] text-[#006EFE]">Notre engagement</span>
-            <span className="h-px w-6 bg-[#006EFE]/30" />
+            <span className="h-px w-6 bg-secondary/30" />
+            <span className="text-[10px] font-bold uppercase tracking-[2.5px] text-secondary">Notre engagement</span>
+            <span className="h-px w-6 bg-secondary/30" />
           </div>
           <p
             className="text-2xl md:text-3xl font-black text-[#1e3a8a] leading-tight tracking-tight max-w-2xl mx-auto"
             style={{ fontFamily: 'var(--font-montserrat-alternates, var(--font-sora))' }}
           >
             L&apos;automobile est notre passion,{' '}
-            <span className="text-[#006EFE]">le Maroc</span>{' '}
+            <span className="text-secondary">le Maroc</span>{' '}
             est <span className="text-[#32B75C]">notre terrain</span>.
           </p>
           <p className="text-[11px] font-semibold uppercase tracking-[2.5px] text-gray-300 mt-7">

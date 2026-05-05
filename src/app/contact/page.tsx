@@ -187,7 +187,7 @@ export default function ContactPage() {
                 <p className="text-sm text-gray-500 mb-4">
                   Besoin d&apos;une réponse rapide ? Chattez avec notre équipe en direct.
                 </p>
-                <button className="w-full px-4 py-2 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary-400 transition-colors shadow-glow-cyan">
+                <button className="w-full px-4 py-2 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary-400 transition-colors">
                   Démarrer le chat
                 </button>
               </div>
@@ -306,7 +306,7 @@ export default function ContactPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full md:w-auto px-8 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-glow-cyan hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full md:w-auto px-8 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {isSubmitting ? (
                         <>

@@ -168,7 +168,7 @@ export default function ControlePage() {
 
                 <button
                   type="submit"
-                  className="w-full py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-colors shadow-gold"
+                  className="w-full py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-colors"
                 >
                   Réserver maintenant
                 </button>

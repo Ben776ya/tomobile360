@@ -22,14 +22,15 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
       rel="noopener noreferrer"
       className="group bg-white rounded-xl overflow-hidden border border-gray-200 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 flex flex-col"
     >
-      {/* Image — plain <img> to avoid next/image hostname restrictions on scraped CDN URLs */}
+      {/* Image */}
       <div className="relative flex-shrink-0 bg-white overflow-hidden">
         {listing.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={listing.image}
             alt={listing.title}
             className="w-full h-auto block"
+            width={400}
+            height={300}
           />
         ) : (
           <div className="h-[225px] flex items-center justify-center bg-gray-100">
@@ -72,31 +73,31 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
         <div className="grid grid-cols-2 gap-y-1.5 gap-x-2 mb-3 flex-1">
           {listing.year && (
             <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
-              <Calendar className="w-3.5 h-3.5 flex-shrink-0 text-[#006EFE]/50" />
+              <Calendar className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.year}</span>
             </div>
           )}
           {listing.mileage && (
             <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
-              <Gauge className="w-3.5 h-3.5 flex-shrink-0 text-[#006EFE]/50" />
+              <Gauge className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.mileage}</span>
             </div>
           )}
           {listing.fuel && (
             <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
-              <Fuel className="w-3.5 h-3.5 flex-shrink-0 text-[#006EFE]/50" />
+              <Fuel className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.fuel}</span>
             </div>
           )}
           {listing.gearbox && (
             <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
-              <GitFork className="w-3.5 h-3.5 flex-shrink-0 text-[#006EFE]/50" />
+              <GitFork className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.gearbox}</span>
             </div>
           )}
           {listing.power && (
             <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
-              <Zap className="w-3.5 h-3.5 flex-shrink-0 text-[#006EFE]/50" />
+              <Zap className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.power}</span>
             </div>
           )}
@@ -116,7 +117,7 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
 
         {/* CTA */}
         <div className="border-t border-gray-100 pt-3 mt-auto">
-          <span className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-[#006EFE] border border-[#006EFE]/25 rounded-lg group-hover:bg-[#006EFE] group-hover:text-white group-hover:border-[#006EFE] transition-all duration-200">
+          <span className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-secondary border border-secondary/25 rounded-lg group-hover:bg-secondary group-hover:text-white group-hover:border-secondary transition-all duration-200">
             Voir l&apos;annonce
             <ExternalLink className="w-3 h-3" />
           </span>
@@ -124,7 +125,7 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
       </div>
 
       {/* Bottom accent */}
-      <div className="h-0.5 bg-gradient-to-r from-[#006EFE] via-[#32B75C] to-[#006EFE] opacity-40" />
+      <div className="h-0.5 bg-gradient-to-r from-secondary via-[#32B75C] to-secondary opacity-40" />
     </a>
   )
 }
@@ -216,7 +217,7 @@ export default async function UsedVehiclesPage({
                 <Link
                   key={f.params}
                   href={`/occasion?${f.params}`}
-                  className="px-3 sm:px-4 py-2 sm:py-1.5 text-xs sm:text-sm font-medium rounded-full border border-gray-200 text-gray-600 hover:border-[#006EFE] hover:text-[#006EFE] hover:bg-[#006EFE]/5 transition-all duration-150"
+                  className="px-3 sm:px-4 py-2 sm:py-1.5 text-xs sm:text-sm font-medium rounded-full border border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary hover:bg-secondary/5 transition-all duration-150"
                 >
                   {f.label}
                 </Link>

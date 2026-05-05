@@ -106,7 +106,7 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
                       className="group flex flex-col items-center justify-center
                                  bg-white border border-gray-100 rounded-xl p-3 sm:p-4 md:p-5
                                  min-h-[64px] sm:min-h-[72px] md:min-h-[80px]
-                                 hover:border-secondary/30 hover:shadow-glow-cyan-sm
+                                 hover:border-secondary/30
                                  transition-all duration-300"
                     >
                       {brand.logo_url ? (

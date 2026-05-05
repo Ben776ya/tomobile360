@@ -14,7 +14,7 @@ const services = [
     description: 'Financez votre véhicule avec SOFAC — leader du crédit auto au Maroc.',
     link: '/services/credit',
     color: 'bg-[#EBF1FD]',
-    glowColor: 'group-hover:shadow-[0_0_15px_rgba(68,136,238,0.2)]',
+    glowColor: '',
   },
   {
     id: 'assurance',
@@ -25,7 +25,7 @@ const services = [
     description: 'Obtenez votre devis d\'assurance auto avec notre partenaire Atlanta Sanad.',
     link: '/services/assurance',
     color: 'bg-[#EEF3FF]',
-    glowColor: 'group-hover:shadow-glow-cyan-sm',
+    glowColor: '',
   },
   {
     id: 'test-drive',
@@ -34,7 +34,7 @@ const services = [
     description: 'Essayez avant de vous décider.',
     link: '/contact',
     color: 'bg-[#F3EBFD]',
-    glowColor: 'group-hover:shadow-[0_0_15px_rgba(168,85,247,0.2)]',
+    glowColor: '',
   },
   {
     id: 'revision',
@@ -45,7 +45,7 @@ const services = [
     description: 'Pneus et entretien rapide avec notre partenaire DabaPneu — livraison et montage inclus.',
     link: '/services/revision',
     color: 'bg-[#FDF6E3]',
-    glowColor: 'group-hover:shadow-[0_0_15px_rgba(212,175,55,0.25)]',
+    glowColor: '',
   },
 ]
 
@@ -84,7 +84,7 @@ export function ServicesSection() {
                     className={`${(service as any).logoSize || 'w-10 h-10 md:w-12 md:h-12'} object-contain`}
                   />
                 ) : (
-                  <service.icon className="w-14 h-14 md:w-16 md:h-16 text-[#A855F7]" />
+                  <service.icon className="w-14 h-14 md:w-16 md:h-16 text-secondary" />
                 )}
               </div>
               {/* Content - Right side */}
@@ -92,10 +92,10 @@ export function ServicesSection() {
                 <h3 className={`font-bold text-primary ${compact ? 'text-sm md:text-base' : 'text-base md:text-lg'} mb-1 group-hover:text-secondary transition-colors`}>
                   {service.title}
                 </h3>
-                <p className="text-xs text-gray-500 mb-2 line-clamp-1">
+                <p className="text-sm text-gray-500 mb-2 line-clamp-1">
                   {service.description}
                 </p>
-                <div className="flex items-center gap-1 text-xs font-semibold text-secondary group-hover:gap-2 transition-all">
+                <div className="flex items-center gap-1 text-sm font-semibold text-secondary group-hover:gap-2 transition-all">
                   <span>Voir les offres</span>
                   <ChevronRight className="w-3 h-3" />
                 </div>

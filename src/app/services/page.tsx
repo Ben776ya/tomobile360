@@ -207,7 +207,7 @@ export default function ServicesPage() {
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-secondary text-white hover:bg-secondary-400 font-semibold rounded-xl transition-all duration-300 shadow-gold hover:shadow-lg"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-secondary text-white hover:bg-secondary-400 font-semibold rounded-xl transition-all duration-300 hover:shadow-lg"
             >
               Contactez-nous
               <ChevronRight className="h-5 w-5" />

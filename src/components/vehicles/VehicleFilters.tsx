@@ -118,14 +118,14 @@ export function VehicleFilters({
 
   const activeFilters = Object.entries({ brand, model, category, fuel, transmission, priceMin, priceMax }).filter(([, v]) => v)
 
-  const selectClass = 'w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:border-[#006EFE] focus:ring-1 focus:ring-[#006EFE]/20 outline-none transition-all duration-200'
+  const selectClass = 'w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:border-secondary focus:ring-1 focus:ring-secondary/20 outline-none transition-all duration-200'
 
   return (
     <div className="bg-white rounded-xl border-0 lg:border border-gray-200 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col">
       {/* Header - Fixed */}
       <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="h-5 w-5 text-[#006EFE]" />
+          <SlidersHorizontal className="h-5 w-5 text-secondary" />
           <h3 className="font-bold text-slate-700">Filtres</h3>
         </div>
       </div>
@@ -137,7 +137,7 @@ export function VehicleFilters({
             <button
               key={key}
               onClick={() => handleFilterChange(key, '')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#006EFE]/10 text-[#006EFE] text-sm font-medium rounded-full border border-[#006EFE]/20 hover:bg-[#006EFE]/20 transition-colors duration-150"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-secondary/10 text-secondary text-sm font-medium rounded-full border border-secondary/20 hover:bg-secondary/20 transition-colors duration-150"
             >
               {filterLabels[key]?.(value, brands) || value}
               <X className="h-3.5 w-3.5" />
@@ -240,7 +240,7 @@ export function VehicleFilters({
                     priceMin === (range.min || '') && priceMax === (range.max || '')
                   }
                   onChange={() => handlePriceRangeChange(range.min, range.max)}
-                  className="w-4 h-4 text-[#006EFE] focus:ring-[#006EFE] cursor-pointer"
+                  className="w-4 h-4 text-secondary focus:ring-secondary cursor-pointer"
                 />
                 <span className="text-sm text-gray-700">{range.label}</span>
               </label>
@@ -249,7 +249,7 @@ export function VehicleFilters({
             {(priceMin || priceMax) && (
               <button
                 onClick={clearPriceRange}
-                className="flex items-center gap-1.5 text-sm text-[#006EFE] hover:underline pl-2 pt-1"
+                className="flex items-center gap-1.5 text-sm text-secondary hover:underline pl-2 pt-1"
               >
                 <X className="h-3.5 w-3.5" />
                 Effacer le prix

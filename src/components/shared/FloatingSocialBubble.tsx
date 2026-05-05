@@ -147,12 +147,14 @@ export function FloatingSocialBubble() {
 
       {/* Main Bubble Button */}
       <button
-        className={`relative z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
+        type="button"
+        className={`relative z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg ${
           isExpanded
-            ? 'bg-primary text-white rotate-180 scale-110 shadow-glow-indigo'
-            : 'bg-secondary text-white hover:bg-secondary-400 hover:scale-110 shadow-glow-cyan animate-glow-pulse'
+            ? 'bg-primary text-white rotate-180 scale-110'
+            : 'bg-secondary text-white hover:bg-secondary-600 hover:scale-110'
         }`}
-        aria-label="Social Media"
+        aria-label="Réseaux sociaux"
+        aria-expanded={isExpanded}
       >
         <Share2 className="h-6 w-6" />
       </button>

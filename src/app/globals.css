@@ -19,11 +19,11 @@ html {
 
 @layer base {
   :root {
-    /* Maybach Two-Tone: Deep Navy + Cream */
+    /* Brand: Deep Navy + Marketplace Blue */
     --primary: 222 38% 18%; /* #1C2541 Deep Navy */
     --primary-foreground: 0 0% 100%;
-    --secondary: 42 53% 54%; /* #C9A84C Champagne Gold */
-    --secondary-foreground: 222 38% 18%;
+    --secondary: 215 100% 50%; /* #006EFE Marketplace Blue */
+    --secondary-foreground: 0 0% 100%;
 
     --background: 0 0% 100%; /* #ffffff White */
     --foreground: 222 38% 18%;
@@ -48,7 +48,7 @@ html {
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 42 53% 54%; /* Gold */
+    --ring: 215 100% 50%; /* #006EFE — matches secondary */
 
     --radius: 0.75rem;
 
@@ -97,11 +97,11 @@ html {
     @apply font-sans font-semibold text-xs uppercase tracking-wide;
   }
 
-  /* Gold CTA Button */
+  /* Primary CTA Button */
   .btn-cta {
     @apply px-8 py-3 bg-secondary text-white font-semibold rounded-lg
-           hover:bg-secondary-400 transition-all duration-300
-           shadow-md hover:shadow-gold active:scale-[0.98];
+           hover:bg-secondary-600 transition-all duration-300
+           shadow-md hover:shadow-card-hover active:scale-[0.98];
   }
 
   /* Primary Navy Button */
@@ -114,8 +114,8 @@ html {
   /* Outlined Button */
   .btn-outline {
     @apply px-6 py-3 bg-transparent border-2 border-secondary text-secondary font-semibold rounded-lg
-           hover:bg-secondary hover:text-primary transition-all duration-300
-           hover:shadow-gold;
+           hover:bg-secondary hover:text-white transition-all duration-300
+           hover:shadow-card-hover;
   }
 
   /* Card Component — Light */
@@ -132,14 +132,14 @@ html {
            hover:border-secondary/25;
   }
 
-  /* Glass morphism panel — light */
+  /* Solid surface panel — light (replaces former glass) */
   .glass {
-    @apply bg-white/70 backdrop-blur-md border border-gray-200 rounded-xl;
+    @apply bg-white border border-gray-200 rounded-xl;
   }
 
-  /* Glass morphism panel — dark (for header/footer/admin) */
+  /* Solid surface panel — dark (replaces former glass-dark) */
   .glass-dark {
-    @apply bg-dark-800/80 backdrop-blur-md border border-white/10 rounded-xl;
+    @apply bg-dark-800 border border-white/10 rounded-xl;
   }
 
   /* Section Container */
@@ -157,26 +157,17 @@ html {
     @apply text-base md:text-lg text-muted-foreground text-center mb-8 md:mb-12;
   }
 
-  /* Gold glow utilities */
-  .glow-cyan {
-    box-shadow: 0 0 15px rgba(201,168,76,0.20), 0 0 40px rgba(201,168,76,0.06);
-  }
-
-  .glow-indigo {
-    box-shadow: 0 0 12px rgba(28,37,65,0.20), 0 0 30px rgba(28,37,65,0.08);
-  }
-
-  .glow-cyan-text {
-    text-shadow: 0 0 10px rgba(201,168,76,0.3), 0 0 30px rgba(201,168,76,0.10);
-  }
-
+  /* Glow utilities — kept as no-ops for backward compatibility */
+  .glow-cyan,
+  .glow-indigo,
+  .glow-cyan-text,
   .glow-indigo-text {
-    text-shadow: 0 0 8px rgba(28,37,65,0.3), 0 0 25px rgba(28,37,65,0.10);
+    /* Decorative glows removed for marketplace tone — see .impeccable.md */
   }
 
-  /* Elegant gradient text */
+  /* Solid accent text (former gradient) */
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-secondary-400 via-secondary to-secondary-400;
+    @apply text-secondary;
   }
 
   /* Subtle grid background (for dark sections only) */
@@ -192,14 +183,14 @@ html {
     @apply bg-dark-800 text-white bg-grid relative overflow-hidden;
   }
 
-  /* Gold accent line */
+  /* Accent divider line */
   .neon-line {
     @apply h-[2px] bg-gradient-to-r from-transparent via-secondary to-transparent;
   }
 
-  /* Gold border on hover */
+  /* Accent border on hover */
   .neon-border-hover {
-    @apply border border-transparent transition-all duration-300 hover:border-secondary/30 hover:shadow-gold;
+    @apply border border-transparent transition-all duration-300 hover:border-secondary/30 hover:shadow-card-hover;
   }
 }
 

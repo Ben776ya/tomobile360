@@ -176,8 +176,8 @@ export function HeroSection({ brands }: HeroSectionProps) {
     router.push(`/neuf?${params.toString()}`)
   }
 
-  const selectClassName = 'w-full px-2.5 py-2 bg-white/10 border border-white/20 rounded-xl text-xs text-white focus:border-[#006EFE] focus:ring-1 focus:ring-[#006EFE]/40 outline-none transition-all duration-200 appearance-none cursor-pointer placeholder-white/50'
-  const sliderThumbClass = 'absolute w-full h-6 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#006EFE] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#006EFE] [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer'
+  const selectClassName = 'w-full px-2.5 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white focus:border-secondary focus:ring-1 focus:ring-secondary/40 outline-none transition-all duration-200 appearance-none cursor-pointer placeholder-white/70'
+  const sliderThumbClass = 'absolute w-full h-6 appearance-none bg-transparent cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-secondary [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-secondary [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer'
 
   return (
     <section className="relative min-h-[55vh] sm:min-h-[60vh] flex items-center overflow-hidden">
@@ -199,36 +199,37 @@ export function HeroSection({ brands }: HeroSectionProps) {
 
       {/* Content */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10 py-6 lg:py-8">
-        {/* Search panel — dark glass card anchored left */}
-        <div className="w-full max-w-xl bg-[#010920]/50 backdrop-blur-md rounded-2xl border border-white/10 px-4 py-6 sm:px-5 sm:py-7 lg:px-6 lg:py-8">
+        {/* Search panel — solid dark navy card anchored left */}
+        <div className="w-full max-w-xl bg-[#010920]/95 rounded-2xl border border-white/10 px-4 py-6 sm:px-5 sm:py-7 lg:px-6 lg:py-8">
 
           {/* Title */}
-          <h2 className="font-display text-lg lg:text-xl font-bold text-white leading-tight mb-0.5 text-center">
+          <h2 className="font-display text-xl lg:text-2xl font-bold text-white leading-tight mb-3 text-center">
             Trouvez la voiture idéale
           </h2>
-          <p className="text-white/60 text-[11px] mb-3 text-center">
-            Neuf et occasion — comparez les prix, faites le bon choix
-          </p>
 
           {/* NEUF / OCCASION Toggle */}
           <div className="flex justify-center mb-3">
           <div className="inline-flex rounded-xl bg-white/10 p-0.5 border border-white/5">
             <button
+              type="button"
               onClick={() => setVehicleCondition('neuf')}
-              className={`px-4 sm:px-5 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+              aria-pressed={vehicleCondition === 'neuf'}
+              className={`px-5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${
                 vehicleCondition === 'neuf'
-                  ? 'bg-[#006EFE] text-white shadow-sm'
-                  : 'text-white/70 hover:text-white'
+                  ? 'bg-secondary text-white shadow-sm'
+                  : 'text-white/80 hover:text-white'
               }`}
             >
               NEUF
             </button>
             <button
+              type="button"
               onClick={() => setVehicleCondition('occasion')}
-              className={`px-4 sm:px-5 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+              aria-pressed={vehicleCondition === 'occasion'}
+              className={`px-5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${
                 vehicleCondition === 'occasion'
-                  ? 'bg-[#006EFE] text-white shadow-sm'
-                  : 'text-white/70 hover:text-white'
+                  ? 'bg-secondary text-white shadow-sm'
+                  : 'text-white/80 hover:text-white'
               }`}
             >
               OCCAZ
@@ -237,25 +238,27 @@ export function HeroSection({ brands }: HeroSectionProps) {
           </div>
 
           {/* Vehicle Type Icons */}
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-1 mb-2">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 mb-2.5">
             {vehicleTypes.map((type) => (
               <button
                 key={type.id}
+                type="button"
                 onClick={() => setSelectedType(selectedType === type.id ? '' : type.id)}
-                className={`flex flex-col items-center py-1 px-1 rounded-lg transition-all duration-200 border ${
+                aria-pressed={selectedType === type.id}
+                className={`flex flex-col items-center justify-center min-h-[48px] py-2 px-1 rounded-lg transition-colors duration-200 border ${
                   selectedType === type.id
-                    ? 'bg-[#006EFE]/20 text-[#006EFE] border-[#006EFE]/50 scale-[1.03]'
-                    : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/15 hover:text-white hover:border-white/30'
+                    ? 'bg-secondary/20 text-white border-secondary/60'
+                    : 'bg-white/5 text-white/85 border-white/10 hover:bg-white/15 hover:text-white hover:border-white/30'
                 }`}
               >
-                <div className="w-4 h-4 flex items-center justify-center">
+                <div className="w-5 h-5 flex items-center justify-center">
                   {type.id === 'Utilitaire' ? (
-                    <Truck className="w-3.5 h-3.5" />
+                    <Truck className="w-4 h-4" />
                   ) : (
-                    <Car className="w-3.5 h-3.5" />
+                    <Car className="w-4 h-4" />
                   )}
                 </div>
-                <span className="text-[8px] font-medium leading-tight mt-0.5">{type.label}</span>
+                <span className="text-[10px] font-medium leading-tight mt-1">{type.label}</span>
               </button>
             ))}
           </div>
@@ -310,14 +313,14 @@ export function HeroSection({ brands }: HeroSectionProps) {
             {/* Price Range Slider */}
             <div>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-medium text-white/70">{formatPrice(priceRange[0])}</span>
-                <span className="text-xs font-medium text-white/40">Prix</span>
-                <span className="text-xs font-medium text-white/70">{formatPrice(priceRange[1])}</span>
+                <span className="text-xs font-medium text-white/85">{formatPrice(priceRange[0])}</span>
+                <span className="text-xs font-medium text-white/65">Prix</span>
+                <span className="text-xs font-medium text-white/85">{formatPrice(priceRange[1])}</span>
               </div>
               <div className="relative h-6 flex items-center">
                 <div className="absolute left-0 right-0 h-1.5 bg-white/20 rounded-full" />
                 <div
-                  className="absolute h-1.5 bg-gradient-to-r from-[#006EFE] to-[#006EFE] rounded-full"
+                  className="absolute h-1.5 bg-secondary rounded-full"
                   style={{
                     left: `${(priceRange[0] / 1000000) * 100}%`,
                     right: `${100 - (priceRange[1] / 1000000) * 100}%`,
@@ -347,13 +350,14 @@ export function HeroSection({ brands }: HeroSectionProps) {
             {/* Search Button + Result Count */}
             <div className="flex flex-col gap-1">
               {resultCount !== null && (
-                <p className="text-sm text-white/60 text-center">
+                <p className="text-sm text-white/85 text-center">
                   {resultCount.toLocaleString('fr-FR')} résultat{resultCount !== 1 ? 's' : ''}
                 </p>
               )}
               <button
+                type="button"
                 onClick={handleSearch}
-                className="w-full px-6 py-2 bg-[#006EFE] hover:bg-[#005BD4] text-white text-sm font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 justify-center"
+                className="w-full px-6 py-3 bg-secondary hover:bg-secondary-600 text-white text-sm font-semibold rounded-xl transition-colors duration-200 flex items-center gap-2 justify-center"
               >
                 <Search className="h-4 w-4" />
                 Rechercher

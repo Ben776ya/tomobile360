@@ -66,7 +66,7 @@ export function VehicleCard({ vehicle, showBadges = true }: VehicleCardProps) {
               </Badge>
             )}
             {vehicle.is_popular && (
-              <Badge className="bg-primary hover:bg-primary text-white border-0 shadow-glow-indigo-sm">
+              <Badge className="bg-primary hover:bg-primary text-white border-0">
                 POPULAIRE
               </Badge>
             )}

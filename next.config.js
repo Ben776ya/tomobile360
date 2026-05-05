@@ -73,6 +73,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'm-occaz.ma',
       },
+      {
+        protocol: 'https',
+        hostname: 'moccaz-crm.onetechapp.ma',
+      },
     ],
   },
 }

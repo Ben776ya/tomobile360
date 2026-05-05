@@ -88,7 +88,7 @@ export default async function VideosPage({
                 href={`/videos?category=${cat.value}`}
                 className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
                   category === cat.value
-                    ? 'bg-secondary text-white shadow-glow-cyan ring-2 ring-secondary/30 scale-105'
+                    ? 'bg-secondary text-white ring-2 ring-secondary/30 scale-105'
                     : 'bg-gray-50/50 text-gray-600 hover:bg-secondary/10 hover:text-secondary hover:scale-105'
                 }`}
               >
@@ -122,7 +122,7 @@ export default async function VideosPage({
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center shadow-glow-cyan transform group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
                       <Play className="h-8 w-8 text-white fill-white ml-1" />
                     </div>
                   </div>
@@ -189,7 +189,7 @@ export default async function VideosPage({
                   }`}
                   className={`px-4 py-2 rounded-md transition-all duration-300 ${
                     p === page
-                      ? 'bg-secondary text-white font-semibold shadow-glow-cyan ring-2 ring-secondary/50'
+                      ? 'bg-secondary text-white font-semibold ring-2 ring-secondary/50'
                       : 'border border-gray-200 hover:bg-secondary/20 hover:border-secondary hover:shadow-elevated text-gray-600'
                   }`}
                 >

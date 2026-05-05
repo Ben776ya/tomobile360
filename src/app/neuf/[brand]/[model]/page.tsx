@@ -150,7 +150,7 @@ export default async function ModelVersionsPage({ params }: PageProps) {
                       </Badge>
                     )}
                     {v.is_popular && (
-                      <Badge className="bg-primary hover:bg-primary text-white border-0 shadow-glow-indigo-sm">
+                      <Badge className="bg-primary hover:bg-primary text-white border-0">
                         POPULAIRE
                       </Badge>
                     )}
@@ -216,7 +216,7 @@ export default async function ModelVersionsPage({ params }: PageProps) {
         <div className="mt-8 text-center">
           <Link
             href="/neuf"
-            className="inline-block px-6 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl shadow-gold hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+            className="inline-block px-6 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
           >
             Retour au catalogue
           </Link>

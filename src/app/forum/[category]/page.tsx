@@ -108,7 +108,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               <p className="text-gray-600">{category.description}</p>
             </div>
             <Link href="/forum/nouveau">
-              <Button className="shadow-glow-cyan hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 bg-secondary text-white hover:bg-secondary-400">
+              <Button className="hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 bg-secondary text-white hover:bg-secondary-400">
                 <Plus className="h-4 w-4 mr-2" />
                 Nouveau sujet
               </Button>
@@ -121,7 +121,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               href={`/forum/${params.category}?sort=recent`}
               className={`px-3 sm:px-4 py-2.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition ${
                 sort === 'recent'
-                  ? 'bg-secondary text-white shadow-glow-cyan'
+                  ? 'bg-secondary text-white'
                   : 'bg-gray-50/50 text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -131,7 +131,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               href={`/forum/${params.category}?sort=popular`}
               className={`px-3 sm:px-4 py-2.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition ${
                 sort === 'popular'
-                  ? 'bg-secondary text-white shadow-glow-cyan'
+                  ? 'bg-secondary text-white'
                   : 'bg-gray-50/50 text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -141,7 +141,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               href={`/forum/${params.category}?sort=unanswered`}
               className={`px-3 sm:px-4 py-2.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition ${
                 sort === 'unanswered'
-                  ? 'bg-secondary text-white shadow-glow-cyan'
+                  ? 'bg-secondary text-white'
                   : 'bg-gray-50/50 text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -232,7 +232,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               Soyez le premier à démarrer une discussion dans cette catégorie
             </p>
             <Link href="/forum/nouveau">
-              <Button className="shadow-glow-cyan hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 bg-secondary text-white hover:bg-secondary-400">
+              <Button className="hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 bg-secondary text-white hover:bg-secondary-400">
                 <Plus className="h-4 w-4 mr-2" />
                 Créer un sujet
               </Button>
@@ -259,7 +259,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
                   <Button
                     variant={p === page ? 'default' : 'outline'}
                     size="sm"
-                    className={p === page ? 'shadow-glow-cyan ring-2 ring-secondary/30 bg-secondary text-white' : 'shadow-card hover:shadow-elevated hover:bg-secondary/20 hover:border-secondary hover:text-secondary transition-all duration-300 border-gray-200 text-gray-600'}
+                    className={p === page ? 'ring-2 ring-secondary/30 bg-secondary text-white' : 'shadow-card hover:shadow-elevated hover:bg-secondary/20 hover:border-secondary hover:text-secondary transition-all duration-300 border-gray-200 text-gray-600'}
                   >
                     {p}
                   </Button>

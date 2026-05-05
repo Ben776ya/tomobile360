@@ -352,14 +352,14 @@ export function FeatureGrid() {
                                   <h3 className="font-bold text-primary truncate text-sm">{vehicle.brands?.name} {vehicle.models?.name}</h3>
                                 </div>
                                 <p className="text-xs text-gray-400">{vehicle.year}</p>
-                                <p className="text-sm font-semibold text-[#006EFE]">{vehicle.price_min ? formatPrice(vehicle.price_min) : 'Sur demande'}</p>
+                                <p className="text-sm font-semibold text-secondary">{vehicle.price_min ? formatPrice(vehicle.price_min) : 'Sur demande'}</p>
                               </div>
                             </div>
                           ) : null}
                         </div>
                       ) : (
-                        <button onClick={() => setShowSelector(true)} className="flex flex-col items-center gap-3 py-8 px-6 w-full h-full text-gray-400 hover:text-[#006EFE] transition-all duration-200 group/add">
-                          <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-dashed border-gray-200 group-hover/add:border-[#006EFE]/40 transition-all duration-200">
+                        <button onClick={() => setShowSelector(true)} className="flex flex-col items-center gap-3 py-8 px-6 w-full h-full text-gray-400 hover:text-secondary transition-all duration-200 group/add">
+                          <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-dashed border-gray-200 group-hover/add:border-secondary/40 transition-all duration-200">
                             <Plus className="h-5 w-5" />
                           </div>
                           <span className="text-xs font-semibold tracking-wide">Ajouter</span>
@@ -387,7 +387,7 @@ export function FeatureGrid() {
             )}
 
             <div className="text-center mt-7">
-              <Link href="/neuf/comparer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#006EFE] hover:text-[#005BD4] transition-colors duration-200">
+              <Link href="/neuf/comparer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-secondary hover:text-[#005BD4] transition-colors duration-200">
                 Ouvrir le comparateur complet
                 <ArrowRight className="w-4 h-4" />
               </Link>

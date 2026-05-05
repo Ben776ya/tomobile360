@@ -245,10 +245,10 @@ export default async function NewVehiclesPage({
           <details className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <summary className="flex items-center justify-between p-4 cursor-pointer font-bold text-slate-700">
               <span className="flex items-center gap-2">
-                <SlidersHorizontal className="h-5 w-5 text-[#006EFE]" />
+                <SlidersHorizontal className="h-5 w-5 text-secondary" />
                 Filtres
                 {activeFilterCount > 0 && (
-                  <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-[#006EFE] rounded-full">
+                  <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-secondary rounded-full">
                     {activeFilterCount}
                   </span>
                 )}
@@ -312,8 +312,8 @@ export default async function NewVehiclesPage({
                     href={buildQuickFilterHref(f.key, f.value)}
                     className={`whitespace-nowrap px-4 py-1.5 text-sm font-medium rounded-full border transition-all duration-150 ${
                       active
-                        ? 'border-[#006EFE] bg-[#006EFE] text-white'
-                        : 'border-gray-200 text-gray-600 hover:border-[#006EFE] hover:text-[#006EFE] hover:bg-[#006EFE]/5'
+                        ? 'border-secondary bg-secondary text-white'
+                        : 'border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary hover:bg-secondary/5'
                     }`}
                   >
                     {f.label}
@@ -381,7 +381,7 @@ export default async function NewVehiclesPage({
                       {page > 1 && (
                         <Link
                           href={buildHref(page - 1)}
-                          className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold transition-all duration-300"
+                          className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary transition-all duration-300"
                         >
                           Précédent
                         </Link>
@@ -389,7 +389,7 @@ export default async function NewVehiclesPage({
 
                       {startPage > 1 && (
                         <>
-                          <Link href={buildHref(1)} className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold transition-all duration-300">1</Link>
+                          <Link href={buildHref(1)} className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary transition-all duration-300">1</Link>
                           {startPage > 2 && <span className="px-2 py-2 text-gray-400">…</span>}
                         </>
                       )}
@@ -402,8 +402,8 @@ export default async function NewVehiclesPage({
                             href={buildHref(pageNum)}
                             className={`px-4 py-2 rounded-md transition-all duration-300 ${
                               pageNum === page
-                                ? 'bg-secondary text-white font-semibold shadow-gold ring-2 ring-secondary/50'
-                                : 'bg-white border border-gray-200 text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold'
+                                ? 'bg-secondary text-white font-semibold ring-2 ring-secondary/50'
+                                : 'bg-white border border-gray-200 text-gray-700 hover:bg-secondary/20 hover:border-secondary'
                             }`}
                           >
                             {pageNum}
@@ -414,14 +414,14 @@ export default async function NewVehiclesPage({
                       {endPage < totalPages && (
                         <>
                           {endPage < totalPages - 1 && <span className="px-2 py-2 text-gray-400">…</span>}
-                          <Link href={buildHref(totalPages)} className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold transition-all duration-300">{totalPages}</Link>
+                          <Link href={buildHref(totalPages)} className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary transition-all duration-300">{totalPages}</Link>
                         </>
                       )}
 
                       {page < totalPages && (
                         <Link
                           href={buildHref(page + 1)}
-                          className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary hover:shadow-gold transition-all duration-300"
+                          className="px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-secondary/20 hover:border-secondary transition-all duration-300"
                         >
                           Suivant
                         </Link>
@@ -437,7 +437,7 @@ export default async function NewVehiclesPage({
                 </p>
                 <Link
                   href="/neuf"
-                  className="inline-block px-6 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl shadow-gold hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                  className="inline-block px-6 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                 >
                   Réinitialiser les filtres
                 </Link>

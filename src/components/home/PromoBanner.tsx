@@ -14,7 +14,7 @@ export function PromoBanner() {
             {/* Left - NARSA logo emblem */}
             <div className="lg:w-1/3 p-3 lg:p-4 flex justify-center">
               <div className="relative w-44 h-44 md:w-56 md:h-56">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#4057aa]/20 to-[#E8EBF5] rounded-full animate-glow-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#4057aa]/15 to-[#E8EBF5] rounded-full" />
                 <div className="absolute inset-1.5 md:inset-2 bg-white rounded-full shadow-card flex items-center justify-center p-3 md:p-4">
                   <Image
                     src="/narsa_logo.png"
@@ -55,9 +55,6 @@ export function PromoBanner() {
             {/* Right - CTA */}
             <div className="lg:w-1/3 p-6 lg:p-8 flex flex-col items-center lg:items-end gap-4">
               <div className="text-center lg:text-right">
-                <span className="tag inline-block bg-[#4057aa] text-white text-xs font-bold tracking-wider px-3 py-1 rounded-full mb-2">
-                  PARTENAIRE NARSA
-                </span>
                 <p className="text-lg font-bold text-primary">Roulez en sécurité</p>
               </div>
               <Link

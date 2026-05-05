@@ -230,14 +230,14 @@ export default function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Votre email"
-                  className="w-full px-4 py-3 pr-12 bg-dark-700 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 focus:shadow-glow-cyan-sm text-sm disabled:opacity-50"
+                  className="w-full px-4 py-3 pr-12 bg-dark-700 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 text-sm disabled:opacity-50"
                   required
                   disabled={isSubmitting}
                 />
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-secondary text-white hover:bg-secondary-400 hover:scale-110 hover:shadow-glow-cyan-sm rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-secondary text-white hover:bg-secondary-600 hover:scale-110 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   aria-label="Subscribe"
                 >
                   {isSubmitting ? (
@@ -270,7 +270,7 @@ export default function Footer() {
               href={EXTERNAL_LINKS.SELL_CAR}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center justify-center w-full px-6 py-3 bg-secondary hover:bg-secondary-400 hover:shadow-glow-cyan hover:-translate-y-0.5 text-white font-semibold rounded-xl transition-all duration-300"
+              className="mt-6 inline-flex items-center justify-center w-full px-6 py-3 bg-secondary hover:bg-secondary-600 text-white font-semibold rounded-xl transition-all duration-300"
             >
               Déposer votre annonce
             </a>

@@ -59,7 +59,7 @@ export function VideoSection({ videos }: VideoSectionProps) {
                     />
                     {/* Play Button Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
-                      <div className="w-14 h-14 rounded-full bg-secondary/90 flex items-center justify-center group-hover:scale-110 group-hover:shadow-gold transition-all shadow-lg">
+                      <div className="w-14 h-14 rounded-full bg-secondary/90 flex items-center justify-center group-hover:scale-110 transition-all shadow-lg">
                         <Play className="h-6 w-6 text-primary ml-1" fill="currentColor" />
                       </div>
                     </div>
@@ -71,7 +71,7 @@ export function VideoSection({ videos }: VideoSectionProps) {
                     )}
                     {/* Category Badge */}
                     {video.category && (
-                      <div className="absolute top-2 left-2 bg-primary text-white text-xs font-semibold px-2 py-0.5 rounded shadow-glow-indigo-sm">
+                      <div className="absolute top-2 left-2 bg-primary text-white text-xs font-semibold px-2 py-0.5 rounded">
                         {video.category}
                       </div>
                     )}
@@ -99,7 +99,7 @@ export function VideoSection({ videos }: VideoSectionProps) {
           <div className="text-center relative z-10">
             <Link
               href="/videos"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-gold hover:shadow-gold-lg"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300"
             >
               Plus de vidéos
               <ChevronRight className="w-5 h-5" />

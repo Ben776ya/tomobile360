@@ -73,7 +73,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
                       <span>{formatDate(post.published_at)}</span>
                     </div>
                   )}
-                  <h3 className="font-bold text-slate-700 text-base md:text-lg leading-snug line-clamp-2 mb-2 group-hover:text-[#006EFE] transition-colors duration-200">
+                  <h3 className="font-bold text-slate-700 text-base md:text-lg leading-snug line-clamp-2 mb-2 group-hover:text-secondary transition-colors duration-200">
                     {post.title}
                   </h3>
                   {excerpt && (
@@ -81,14 +81,14 @@ export function NewsSection({ articles }: NewsSectionProps) {
                       {excerpt}
                     </p>
                   )}
-                  <div className="flex items-center gap-1 text-sm font-semibold text-[#006EFE] group-hover:gap-2 transition-all duration-200 mt-auto">
+                  <div className="flex items-center gap-1 text-sm font-semibold text-secondary group-hover:gap-2 transition-all duration-200 mt-auto">
                     Lire l&apos;article
                     <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
 
                 {/* Bottom accent line */}
-                <div className="h-[2px] bg-gradient-to-r from-[#006EFE] to-[#0284FE] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                <div className="h-[2px] bg-gradient-to-r from-secondary to-[#0284FE] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
               </Link>
             )
           })}
@@ -99,7 +99,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
         <div className="text-center">
           <Link
             href="/actu"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300 shadow-gold hover:shadow-gold-lg"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-all duration-300"
           >
             Plus d&apos;actus
             <ChevronRight className="w-5 h-5" />

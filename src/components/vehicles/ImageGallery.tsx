@@ -82,7 +82,7 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
                 className={cn(
                   'relative w-16 h-12 sm:w-20 sm:h-14 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all duration-150',
                   idx === currentIndex
-                    ? 'border-[#006EFE] ring-1 ring-[#006EFE]/30'
+                    ? 'border-secondary ring-1 ring-secondary/30'
                     : 'border-transparent hover:border-gray-300 opacity-70 hover:opacity-100'
                 )}
               >

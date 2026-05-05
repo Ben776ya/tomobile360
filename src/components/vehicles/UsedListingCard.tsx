@@ -54,7 +54,7 @@ export function UsedListingCard({ listing }: UsedListingCardProps) {
           <Badge
             className={`shadow-md border-0 ${
               listing.seller_type === 'professional'
-                ? 'bg-primary hover:bg-primary text-white shadow-glow-indigo-sm'
+                ? 'bg-primary hover:bg-primary text-white'
                 : 'bg-gray-100 hover:bg-gray-100 text-gray-700 border border-gray-200'
             }`}
           >

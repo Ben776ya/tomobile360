@@ -76,7 +76,7 @@ export function ModelCard({ model }: ModelCardProps) {
             </Badge>
           )}
           {model.hasPopular && (
-            <Badge className="bg-primary hover:bg-primary text-white border-0 shadow-glow-indigo-sm">
+            <Badge className="bg-primary hover:bg-primary text-white border-0">
               POPULAIRE
             </Badge>
           )}
