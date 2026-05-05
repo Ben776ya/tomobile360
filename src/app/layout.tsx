@@ -25,6 +25,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
+  themeColor: '#0a1628',
 }
 
 export const metadata: Metadata = {
@@ -57,9 +58,11 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   alternates: {
+    canonical: '/',
     languages: {
       'fr-MA': 'https://tomobile360.ma',
       'fr': 'https://tomobile360.ma',
+      'x-default': 'https://tomobile360.ma',
     },
   },
 }
