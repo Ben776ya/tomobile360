@@ -281,7 +281,7 @@ export default function QuiSommesNousPage() {
                 </div>
 
                 {/* Photo coming pill */}
-                <div className="absolute bottom-3.5 right-3.5 flex items-center gap-1.5 bg-black/20 backdrop-blur-md rounded-full px-3 py-1">
+                <div className="absolute bottom-3.5 right-3.5 flex items-center gap-1.5 bg-black/40 rounded-full px-3 py-1">
                   <Camera size={10} className="text-white/85" />
                   <span className="text-[10px] text-white/85 font-medium tracking-wide">Photo à venir</span>
                 </div>

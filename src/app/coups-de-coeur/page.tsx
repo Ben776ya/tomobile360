@@ -103,7 +103,7 @@ export default async function CoupsDeCoeurPage({
       {/* Hero Banner */}
       <div className={`bg-gradient-to-r ${activeCat.gradient} py-8 sm:py-14 px-4`}>
         <div className="container mx-auto text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm mb-5 shadow-lg">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/15 mb-5 shadow-lg">
             <activeCat.Icon className="w-8 h-8 text-white" />
           </div>
           <p className="text-white/70 text-xs sm:text-sm font-semibold tracking-widest uppercase mb-2">
@@ -113,7 +113,7 @@ export default async function CoupsDeCoeurPage({
             {activeCat.label}
           </h1>
           <p className="text-white/85 text-lg font-medium mb-1">{activeCat.tagline}</p>
-          <p className="text-white/60 text-sm">{activeCat.description}</p>
+          <p className="text-white/85 text-sm">{activeCat.description}</p>
         </div>
       </div>
 
