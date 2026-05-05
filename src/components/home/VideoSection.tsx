@@ -23,7 +23,7 @@ export function VideoSection({ videos }: VideoSectionProps) {
           <div className="text-center mb-10 relative z-10">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Image
-                src="/logo_tomobil360.png"
+                src="/logo_tomobile360.png"
                 alt="Tomobile 360"
                 width={160}
                 height={40}

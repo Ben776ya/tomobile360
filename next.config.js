@@ -1,4 +1,12 @@
 /** @type {import('next').NextConfig} */
+
+// Single-CPU / no-worker-threads is needed during `next build` to avoid OOM on
+// the static-paths worker, but it actively breaks the dev server: webpack
+// chunk loading can race against the static-paths-worker and produce
+// `Cannot find module './vendor-chunks/...'` 500s on dynamic routes.
+// Apply the constraint only when invoked via `next build`.
+const isProductionBuild = process.argv.includes('build')
+
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
@@ -27,15 +35,31 @@ const securityHeaders = [
 const nextConfig = {
   poweredByHeader: false,
   compress: true,
-  experimental: {
-    workerThreads: false,
-    cpus: 1,
-  },
+  ...(isProductionBuild
+    ? {
+        experimental: {
+          workerThreads: false,
+          cpus: 1,
+        },
+      }
+    : {}),
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: securityHeaders,
+      },
+      // Block search engines from indexing any preview / non-canonical hosts
+      // (e.g. *.vercel.app). The production hostname is allow-listed below.
+      {
+        source: '/(.*)',
+        missing: [
+          { type: 'host', value: 'tomobile360.ma' },
+          { type: 'host', value: 'www.tomobile360.ma' },
+        ],
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        ],
       },
     ]
   },

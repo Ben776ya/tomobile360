@@ -135,7 +135,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
-              src="/logo_tomobil360.png"
+              src="/logo_tomobile360.png"
               alt="Tomobile 360"
               width={200}
               height={56}

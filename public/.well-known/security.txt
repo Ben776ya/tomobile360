@@ -1,0 +1,4 @@
+Contact: mailto:contact@tomobile360.ma
+Expires: 2027-05-05T00:00:00Z
+Preferred-Languages: fr, en
+Canonical: https://tomobile360.ma/.well-known/security.txt

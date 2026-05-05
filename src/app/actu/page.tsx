@@ -10,19 +10,40 @@ import type { Metadata } from 'next'
 
 export const revalidate = 60
 
-export const metadata: Metadata = {
-  title: 'Actualités Automobile Maroc 2026 — Nouveautés et Tendances',
-  description:
-    "Toute l'actualité automobile au Maroc : essais, nouveautés, tendances du marché et comparatifs. Restez informé avec Tomobile 360.",
-  alternates: { canonical: 'https://tomobile360.ma/actu' },
-  openGraph: {
-    title: 'Actualités Automobile Maroc 2026 — Nouveautés et Tendances',
-    description:
-      "Toute l'actualité automobile au Maroc : essais, nouveautés, tendances du marché et comparatifs.",
-    url: 'https://tomobile360.ma/actu',
-    siteName: 'Tomobile 360',
-    type: 'website',
-  },
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}): Promise<Metadata> {
+  const category = searchParams.category && searchParams.category !== 'all'
+    ? searchParams.category
+    : null
+  const page = parseInt(searchParams.page || '1')
+
+  const params = new URLSearchParams()
+  if (category) params.set('category', category)
+  if (page > 1) params.set('page', String(page))
+  const qs = params.toString()
+  const path = qs ? `/actu?${qs}` : '/actu'
+
+  const titleSuffix = page > 1 ? ` — Page ${page}` : ''
+  const title = `Actualités Automobile Maroc 2026 — Nouveautés et Tendances${titleSuffix}`
+  const description =
+    "Toute l'actualité automobile au Maroc : essais, nouveautés, tendances du marché et comparatifs. Restez informé avec Tomobile 360."
+
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      title,
+      description,
+      url: path,
+      siteName: 'Tomobile 360',
+      type: 'website',
+    },
+    robots: page > 1 ? { index: true, follow: true } : undefined,
+  }
 }
 
 const ITEMS_PER_PAGE = 12
@@ -165,7 +186,7 @@ export default async function ActuPage({
             name: 'Tomobile 360',
             logo: {
               '@type': 'ImageObject',
-              url: 'https://tomobile360.ma/logo_tomobil360.png',
+              url: 'https://tomobile360.ma/logo_tomobile360.png',
             },
           },
         }}

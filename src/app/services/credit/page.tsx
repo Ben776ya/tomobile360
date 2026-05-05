@@ -94,7 +94,10 @@ export default function CreditAutoPage() {
                 className="h-12 w-auto object-contain"
               />
             </div>
-            <p className="text-lg md:text-xl text-gray-500 mt-2">
+            <h1 className="text-3xl md:text-5xl font-bold text-primary font-display leading-tight">
+              Crédit Auto au Maroc <span className="text-secondary">avec SOFAC</span>
+            </h1>
+            <p className="text-lg md:text-xl text-gray-500 mt-4">
               Financez votre véhicule avec SOFAC — leader du crédit auto au Maroc.
               Simulation gratuite et sans engagement directement en ligne.
             </p>

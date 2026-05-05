@@ -129,7 +129,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
             name: 'Tomobile 360',
             logo: {
               '@type': 'ImageObject',
-              url: 'https://tomobile360.ma/logo_tomobil360.png',
+              url: 'https://tomobile360.ma/logo_tomobile360.png',
             },
           },
         }}

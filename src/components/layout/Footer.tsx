@@ -100,7 +100,7 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <Link href="/" className="inline-block mb-6">
               <Image
-                src="/logo_tomobil360.png"
+                src="/logo_tomobile360.png"
                 alt="Tomobile 360"
                 width={140}
                 height={40}

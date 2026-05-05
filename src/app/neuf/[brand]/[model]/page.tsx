@@ -19,10 +19,23 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps) {
   const brandSlug = decodeURIComponent(params.brand)
   const modelSlug = decodeURIComponent(params.model)
+  const brandLabel = brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1)
+  const modelLabel = modelSlug.charAt(0).toUpperCase() + modelSlug.slice(1)
+  const path = `/neuf/${encodeURIComponent(params.brand)}/${encodeURIComponent(params.model)}`
+  const title = `${brandLabel} ${modelLabel} — Versions au Maroc`
+  const description = `Comparez toutes les versions du ${brandSlug} ${modelSlug} disponibles au Maroc. Prix, équipements et fiches techniques.`
 
   return {
-    title: `${brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1)} ${modelSlug.charAt(0).toUpperCase() + modelSlug.slice(1)} — Versions au Maroc`,
-    description: `Comparez toutes les versions du ${brandSlug} ${modelSlug} disponibles au Maroc. Prix, équipements et fiches techniques.`,
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      title,
+      description,
+      url: path,
+      siteName: 'Tomobile 360',
+      type: 'website',
+    },
   }
 }
 
