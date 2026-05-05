@@ -105,7 +105,7 @@ function ArticleCard({ post }: { post: BlogListItem }) {
         )}
         <div className="flex items-center justify-between pt-3 border-t border-gray-100">
           {post.published_at && (
-            <span className="flex items-center gap-1 text-[11px] text-gray-400">
+            <span className="flex items-center gap-1 text-xs text-gray-400">
               <Calendar className="h-3 w-3" />
               {formatDate(post.published_at)}
             </span>
@@ -180,11 +180,11 @@ export default async function ActuPage({
             L&apos;actu auto{' '}
             <span className="text-secondary">au Maroc</span>
           </h1>
-          <p className="text-white/60 text-sm sm:text-base mb-6">
+          <p className="text-white/85 text-sm sm:text-base mb-6">
             Tendances, nouveautés et conseils pour les passionnés
           </p>
 
-          <p className="text-white/40 text-xs leading-relaxed max-w-2xl mb-8">
+          <p className="text-white/75 text-xs leading-relaxed max-w-2xl mb-8">
             Suivez toute l&apos;actualité du monde automobile au Maroc et à
             l&apos;international. Essais détaillés des derniers modèles,
             analyses du marché marocain, comparatifs entre véhicules
@@ -203,7 +203,7 @@ export default async function ActuPage({
                 className={`px-5 py-2.5 rounded-full text-sm font-semibold uppercase tracking-wide transition-all duration-200 ${
                   category === cat.value
                     ? 'bg-secondary text-white font-bold shadow-[0_4px_15px_rgba(0,110,254,0.4)]'
-                    : 'bg-white/[0.08] text-white/70 border border-white/10 hover:bg-white/[0.15] hover:text-white'
+                    : 'bg-white/[0.08] text-white/85 border border-white/10 hover:bg-white/[0.15] hover:text-white'
                 }`}
               >
                 {cat.label}
@@ -233,13 +233,13 @@ export default async function ActuPage({
                   {featured.title}
                 </h2>
                 {featured.subtitle && (
-                  <p className="text-white/60 text-sm leading-relaxed line-clamp-3 mb-5">
+                  <p className="text-white/85 text-sm leading-relaxed line-clamp-3 mb-5">
                     {featured.subtitle}
                   </p>
                 )}
                 <div className="flex items-center gap-4 mb-4">
                   {featured.published_at && (
-                    <span className="text-white/50 text-xs flex items-center gap-1">
+                    <span className="text-white/80 text-xs flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       {formatDate(featured.published_at)}
                     </span>

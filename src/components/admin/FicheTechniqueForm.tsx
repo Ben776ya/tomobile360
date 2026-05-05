@@ -177,7 +177,7 @@ export function FicheTechniqueForm({ fiche }: FicheTechniqueFormProps) {
       )}
 
       {/* Section 1: Specs */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-white">
             Caracteristiques techniques
@@ -229,7 +229,7 @@ export function FicheTechniqueForm({ fiche }: FicheTechniqueFormProps) {
       </div>
 
       {/* Section 2: En Detail */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-white">En Detail</h2>
           <button

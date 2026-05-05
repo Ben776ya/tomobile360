@@ -174,16 +174,16 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               {categoryLabel}
             </span>
             {post.published_at && (
-              <span className="flex items-center gap-1 text-xs sm:text-sm text-white/50">
+              <span className="flex items-center gap-1 text-xs sm:text-sm text-white/80">
                 <Calendar className="h-3.5 w-3.5" />
                 {formatDate(post.published_at)}
               </span>
             )}
-            <span className="flex items-center gap-1 text-xs sm:text-sm text-white/50">
+            <span className="flex items-center gap-1 text-xs sm:text-sm text-white/80">
               <Clock className="h-3.5 w-3.5" />
               {estimateReadTime(post.content)} de lecture
             </span>
-            <span className="flex items-center gap-1 text-xs sm:text-sm text-white/50">
+            <span className="flex items-center gap-1 text-xs sm:text-sm text-white/80">
               <Eye className="h-3.5 w-3.5" />
               {post.views.toLocaleString()} vues
             </span>
@@ -196,7 +196,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
           {/* Subtitle */}
           {post.subtitle && (
-            <p className="text-white/60 text-base sm:text-lg leading-relaxed mt-3 max-w-2xl">
+            <p className="text-white/85 text-base sm:text-lg leading-relaxed mt-3 max-w-2xl">
               {post.subtitle}
             </p>
           )}
@@ -316,7 +316,7 @@ function RelatedCard({
             {post.title}
           </h3>
           {post.published_at && (
-            <p className="text-[11px] text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 mt-1">
               {formatRelativeTime(post.published_at)}
             </p>
           )}

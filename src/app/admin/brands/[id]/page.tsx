@@ -79,7 +79,7 @@ export default async function AdminBrandDetailPage({
       </div>
 
       {/* Brand header */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 p-6 mb-6 shadow-dark-card">
+      <div className="bg-dark-700 rounded-lg border border-white/10 p-6 mb-6 shadow-dark-card">
         <div className="flex items-start gap-5">
           <div className="relative w-20 h-20 flex-shrink-0 bg-dark-600/50 rounded-xl overflow-hidden">
             {brand.logo_url ? (

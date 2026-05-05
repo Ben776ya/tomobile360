@@ -97,7 +97,7 @@ export function BrandCreateForm() {
   }
 
   return (
-    <div className="w-full max-w-md bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 p-5 shadow-dark-elevated">
+    <div className="w-full max-w-md bg-dark-700 rounded-lg border border-white/10 p-5 shadow-dark-elevated">
       {/* Form header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-semibold text-white">Nouvelle marque</h2>

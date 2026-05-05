@@ -124,7 +124,7 @@ export default function ImportCarsPage() {
 
           {/* Stats Card */}
           {stats && (
-            <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6 mb-6">
+            <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6 mb-6">
               <h2 className="text-lg font-bold text-white mb-4">
                 Base de données actuelle
               </h2>
@@ -167,7 +167,7 @@ export default function ImportCarsPage() {
           )}
 
           {/* Upload Card */}
-          <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6 mb-6">
+          <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6 mb-6">
             <div className="flex items-start gap-4 mb-6">
               <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0">
                 <Upload className="h-6 w-6 text-secondary" />
@@ -313,7 +313,7 @@ export default function ImportCarsPage() {
           </div>
 
           {/* Instructions Card */}
-          <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+          <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
             <div className="flex items-start gap-3 mb-4">
               <AlertCircle className="h-5 w-5 text-secondary flex-shrink-0 mt-0.5" />
               <h2 className="text-lg font-bold text-white">

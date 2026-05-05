@@ -121,7 +121,7 @@ export function PromotionForm({ vehicles, promotion, mode }: PromotionFormProps)
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Vehicle Selection */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Véhicule concerné *</h3>
 
         {selectedVehicle && (
@@ -194,7 +194,7 @@ export function PromotionForm({ vehicles, promotion, mode }: PromotionFormProps)
       </div>
 
       {/* Promotion Details */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Détails de la promotion</h3>
         <div className="space-y-4">
           <div>
@@ -248,7 +248,7 @@ export function PromotionForm({ vehicles, promotion, mode }: PromotionFormProps)
       </div>
 
       {/* Period & Status */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Période et statut</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>

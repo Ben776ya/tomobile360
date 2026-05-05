@@ -93,7 +93,7 @@ export default async function AdminContentPage({
         </div>
 
         {/* Tabs */}
-        <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 mb-6 p-1.5">
+        <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 mb-6 p-1.5">
           <div className="flex gap-1">
             <Link
               href="/admin/content?tab=articles"
@@ -119,7 +119,7 @@ export default async function AdminContentPage({
         </div>
 
         {/* Content Table */}
-        <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
+        <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-dark-600/50 border-b border-white/10">

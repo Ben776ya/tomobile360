@@ -61,7 +61,7 @@ export default async function AdminBrandsPage() {
 
       {/* Grid */}
       {brandsWithCounts.length === 0 ? (
-        <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 p-12 text-center">
+        <div className="bg-dark-700 rounded-lg border border-white/10 p-12 text-center">
           <Tag className="h-16 w-16 mx-auto mb-4 text-dark-300" />
           <h3 className="text-xl font-semibold text-white mb-2">
             Aucune marque enregistrée
@@ -76,7 +76,7 @@ export default async function AdminBrandsPage() {
             <Link
               key={brand.id}
               href={`/admin/brands/${brand.id}`}
-              className="bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 p-5 hover:border-secondary/40 hover:shadow-dark-elevated transition-all duration-200 group"
+              className="bg-dark-700 rounded-lg border border-white/10 p-5 hover:border-secondary/40 hover:shadow-dark-elevated transition-all duration-200 group"
             >
               <div className="flex items-start gap-4">
                 {/* Logo */}

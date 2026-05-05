@@ -60,7 +60,7 @@ export default async function AdminDashboardPage() {
             { label: 'Vidéos', count: totalVideos, icon: Video },
             { label: 'Sujets forum', count: totalForumTopics, icon: MessageSquare },
           ].map((stat) => (
-            <div key={stat.label} className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6 hover:border-secondary/20 transition-all">
+            <div key={stat.label} className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6 hover:border-secondary/20 transition-all">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
                   <stat.icon className="h-6 w-6 text-secondary" />
@@ -78,7 +78,7 @@ export default async function AdminDashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Quick Actions */}
-          <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+          <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
             <h2 className="text-xl font-bold text-white mb-4">
               Actions rapides
             </h2>
@@ -111,7 +111,7 @@ export default async function AdminDashboardPage() {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+          <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
             <h2 className="text-xl font-bold text-white mb-4">
               Activité récente
             </h2>

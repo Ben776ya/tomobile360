@@ -132,7 +132,7 @@ export function ModelManager({ brandId, initialModels: models }: ModelManagerPro
   }
 
   return (
-    <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 shadow-dark-card overflow-hidden">
+    <div className="bg-dark-700 rounded-lg border border-white/10 shadow-dark-card overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
         <h2 className="text-base font-semibold text-white">

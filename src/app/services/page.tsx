@@ -198,7 +198,7 @@ export default function ServicesPage() {
       {/* CTA Section */}
       <section className="py-16 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="bg-white/90 backdrop-blur-md border border-gray-200 rounded-2xl p-8 md:p-12 text-center">
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 md:p-12 text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-primary mb-4">
               Besoin d&apos;aide ?
             </h2>

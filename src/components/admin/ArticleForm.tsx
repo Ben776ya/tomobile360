@@ -126,7 +126,7 @@ export function ArticleForm({ article, mode }: ArticleFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic Info */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Informations de base</h3>
         <div className="space-y-4">
           <div>
@@ -191,7 +191,7 @@ export function ArticleForm({ article, mode }: ArticleFormProps) {
       </div>
 
       {/* Tags */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Tags</h3>
         <div className="flex gap-2 mb-3">
           <Input
@@ -218,7 +218,7 @@ export function ArticleForm({ article, mode }: ArticleFormProps) {
       </div>
 
       {/* Content - Markdown Editor */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">Contenu (Markdown) *</h3>
           <div className="flex items-center gap-2">
@@ -278,7 +278,7 @@ Paragraphe de texte avec **gras** et *italique*.
       </div>
 
       {/* Publishing Options */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Publication</h3>
         <label className="flex items-center gap-2 cursor-pointer">
           <input

@@ -103,7 +103,7 @@ export function BrandEditForm({ brand }: BrandEditFormProps) {
   }
 
   return (
-    <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 p-5 shadow-dark-card">
+    <div className="bg-dark-700 rounded-lg border border-white/10 p-5 shadow-dark-card">
       <h2 className="text-base font-semibold text-white mb-4">Modifier la marque</h2>
 
       {error && (

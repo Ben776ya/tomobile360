@@ -387,7 +387,7 @@ export function FeatureGrid() {
             )}
 
             <div className="text-center mt-7">
-              <Link href="/neuf/comparer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-secondary hover:text-[#005BD4] transition-colors duration-200">
+              <Link href="/neuf/comparer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-secondary hover:text-secondary-600 transition-colors duration-200">
                 Ouvrir le comparateur complet
                 <ArrowRight className="w-4 h-4" />
               </Link>

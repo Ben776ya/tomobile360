@@ -85,7 +85,7 @@ export default function AdminFichesTechniquesPage() {
       )}
 
       {/* Search */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-4 mb-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-4 mb-6">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-dark-400" />
           <input
@@ -99,7 +99,7 @@ export default function AdminFichesTechniquesPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />

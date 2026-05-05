@@ -48,7 +48,7 @@ export default async function AdminPromotionsPage() {
         </div>
 
         {/* Promotions Table */}
-        <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
+        <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-dark-600/50 border-b border-white/10">

@@ -313,7 +313,7 @@ export function VehicleForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic Info - Always visible */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Informations de base</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {!defaultBrandId && (
@@ -378,7 +378,7 @@ export function VehicleForm({
       </div>
 
       {/* Pricing */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Prix</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -407,7 +407,7 @@ export function VehicleForm({
       </div>
 
       {/* Images */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Images</h3>
         <div className="space-y-3">
           {/* File Upload */}
@@ -466,7 +466,7 @@ export function VehicleForm({
       </div>
 
       {/* Tags/Flags */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Tags et statut</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <label className="flex items-center gap-2 cursor-pointer">
@@ -518,7 +518,7 @@ export function VehicleForm({
       </div>
 
       {/* Coup de Cœur — editorial reason */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Coup de Cœur</h3>
         <div>
           <label className="block text-sm font-medium text-dark-200 mb-1">
@@ -536,7 +536,7 @@ export function VehicleForm({
       </div>
 
       {/* Engine & Performance - Collapsible */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
         <div className="p-4">
           <SectionToggle label="Moteur et performances" open={showEngine} onToggle={() => setShowEngine(!showEngine)} />
         </div>
@@ -602,7 +602,7 @@ export function VehicleForm({
       </div>
 
       {/* Fuel Efficiency - Collapsible */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
         <div className="p-4">
           <SectionToggle label="Consommation" open={showEfficiency} onToggle={() => setShowEfficiency(!showEfficiency)} />
         </div>
@@ -631,7 +631,7 @@ export function VehicleForm({
       </div>
 
       {/* Body & Interior - Collapsible */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
         <div className="p-4">
           <SectionToggle label="Carrosserie et intérieur" open={showBody} onToggle={() => setShowBody(!showBody)} />
         </div>
@@ -688,7 +688,7 @@ export function VehicleForm({
       </div>
 
       {/* Dimensions - Collapsible */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
         <div className="p-4">
           <SectionToggle label="Dimensions (mm)" open={showDimensions} onToggle={() => setShowDimensions(!showDimensions)} />
         </div>
@@ -717,7 +717,7 @@ export function VehicleForm({
       </div>
 
       {/* Features - Collapsible */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
         <div className="p-4">
           <SectionToggle label="Équipements et sécurité" open={showFeatures} onToggle={() => setShowFeatures(!showFeatures)} />
         </div>
@@ -779,7 +779,7 @@ export function VehicleForm({
 
       {/* Promotion - Collapsible (only for create mode) */}
       {mode === 'create' && (
-        <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
+        <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 overflow-hidden">
           <div className="p-4">
             <SectionToggle label="Promotion (optionnel)" open={showPromo} onToggle={() => setShowPromo(!showPromo)} />
           </div>

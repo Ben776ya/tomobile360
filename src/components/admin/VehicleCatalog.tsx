@@ -95,7 +95,7 @@ export function VehicleCatalog({ brand, models, vehicles, allBrands, allModels }
           const colorClass = CATEGORY_COLORS[model.category as VehicleCategory] ?? 'bg-gray-500/20 text-gray-300 border-gray-500/30'
 
           return (
-            <div key={model.id} className="bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 shadow-dark-card overflow-hidden">
+            <div key={model.id} className="bg-dark-700 rounded-lg border border-white/10 shadow-dark-card overflow-hidden">
               {/* Model header */}
               <div className="flex items-center gap-3 px-5 py-3.5 border-b border-white/10 bg-dark-600/30">
                 <h3 className="font-semibold text-white text-base">{model.name}</h3>
@@ -319,7 +319,7 @@ export function VehicleCatalog({ brand, models, vehicles, allBrands, allModels }
 
         {/* Empty state */}
         {vehicles.length === 0 && models.length === 0 && (
-          <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 p-12 text-center">
+          <div className="bg-dark-700 rounded-lg border border-white/10 p-12 text-center">
             <Car className="h-16 w-16 mx-auto mb-4 text-dark-300" />
             <h3 className="text-xl font-semibold text-white mb-2">Aucun véhicule</h3>
             <p className="text-dark-300">Ajoutez d&apos;abord des modèles, puis des véhicules</p>

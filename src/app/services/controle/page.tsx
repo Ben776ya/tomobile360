@@ -105,7 +105,7 @@ export default function ControlePage() {
             </div>
 
             {/* Booking Form */}
-            <div className="bg-white/90 backdrop-blur-md border border-gray-200 rounded-xl rounded-2xl p-8 shadow-card">
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-card">
               <h2 className="text-xl font-bold text-primary mb-6">
                 Réserver un créneau
               </h2>

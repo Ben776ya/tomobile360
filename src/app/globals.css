@@ -127,7 +127,7 @@ html {
 
   /* Dark Card Component — for header/footer/admin */
   .card-dark {
-    @apply bg-dark-700/90 backdrop-blur-sm rounded-xl border border-white/10
+    @apply bg-dark-700 rounded-xl border border-white/10
            shadow-dark-card hover:shadow-dark-elevated transition-all duration-300
            hover:border-secondary/25;
   }
@@ -155,14 +155,6 @@ html {
   /* Section Subtitle */
   .section-subtitle {
     @apply text-base md:text-lg text-muted-foreground text-center mb-8 md:mb-12;
-  }
-
-  /* Glow utilities — kept as no-ops for backward compatibility */
-  .glow-cyan,
-  .glow-indigo,
-  .glow-cyan-text,
-  .glow-indigo-text {
-    /* Decorative glows removed for marketplace tone — see .impeccable.md */
   }
 
   /* Solid accent text (former gradient) */

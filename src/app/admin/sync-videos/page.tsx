@@ -79,7 +79,7 @@ export default function SyncVideosPage() {
 
           {/* Stats Card */}
           {stats && (
-            <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6 mb-6">
+            <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6 mb-6">
               <h2 className="text-lg font-bold text-white mb-4">
                 Statistiques
               </h2>
@@ -111,7 +111,7 @@ export default function SyncVideosPage() {
           )}
 
           {/* Sync Card */}
-          <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6 mb-6">
+          <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6 mb-6">
             <div className="flex items-start gap-4 mb-6">
               <div className="w-12 h-12 rounded-full bg-[#32B75C]/20 flex items-center justify-center flex-shrink-0">
                 <Youtube className="h-6 w-6 text-[#32B75C]" />
@@ -199,7 +199,7 @@ export default function SyncVideosPage() {
           </div>
 
           {/* Instructions Card */}
-          <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6">
+          <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
             <h2 className="text-lg font-bold text-white mb-4">
               Configuration requise
             </h2>

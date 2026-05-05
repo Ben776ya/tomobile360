@@ -110,7 +110,7 @@ function NarsaVideosContent() {
       )}
 
       {/* Upload Form Card */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 p-6 mb-8">
+      <div className="bg-dark-700 rounded-lg border border-white/10 p-6 mb-8">
         <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
           <Upload className="h-5 w-5 text-primary" />
           Ajouter une video
@@ -226,7 +226,7 @@ function NarsaVideosContent() {
       </div>
 
       {/* Video List Card */}
-      <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg border border-white/10 p-6">
+      <div className="bg-dark-700 rounded-lg border border-white/10 p-6">
         <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
           <Video className="h-5 w-5 text-primary" />
           Videos existantes ({videos.length})

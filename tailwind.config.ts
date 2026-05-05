@@ -159,33 +159,15 @@ const config: Config = {
           from: { transform: 'translateX(-100%)' },
           to: { transform: 'translateX(0)' },
         },
-        'glow-pulse': {
-          '0%, 100%': { boxShadow: '0 0 5px rgba(0,110,254,0.15), 0 0 20px rgba(0,110,254,0.06)' },
-          '50%': { boxShadow: '0 0 12px rgba(0,110,254,0.25), 0 0 35px rgba(0,110,254,0.10)' },
-        },
-        'shimmer': {
-          '0%': { backgroundPosition: '-200% 0' },
-          '100%': { backgroundPosition: '200% 0' },
-        },
-        'float': {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-5px)' },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 0.3s ease-out',
         'slide-in': 'slide-in 0.3s ease-out',
-        'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
-        'shimmer': 'shimmer 3s ease-in-out infinite',
-        'float': 'float 3s ease-in-out infinite',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-futuristic': 'linear-gradient(135deg, #1C2541 0%, #2A3A4E 50%, #1C2541 100%)',
-        'gradient-hero': 'linear-gradient(135deg, #1C2541 0%, #2A3A4E 40%, #1F2D3F 70%, #1C2541 100%)',
-        'gradient-card': 'linear-gradient(135deg, rgba(28,37,65,0.9) 0%, rgba(42,58,78,0.9) 100%)',
       },
     },
   },

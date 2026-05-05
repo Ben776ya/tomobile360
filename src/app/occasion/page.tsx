@@ -65,38 +65,38 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
         <h3 className="font-bold text-gray-800 text-sm leading-snug mb-0.5 line-clamp-1">
           {listing.title}
         </h3>
-        <p className="text-[11px] text-gray-400 mb-3 line-clamp-1">
+        <p className="text-xs text-gray-400 mb-3 line-clamp-1">
           {listing.subtitle}
         </p>
 
         {/* Specs 2×3 grid */}
         <div className="grid grid-cols-2 gap-y-1.5 gap-x-2 mb-3 flex-1">
           {listing.year && (
-            <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
+            <div className="flex items-center gap-1.5 text-xs text-gray-500">
               <Calendar className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.year}</span>
             </div>
           )}
           {listing.mileage && (
-            <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
+            <div className="flex items-center gap-1.5 text-xs text-gray-500">
               <Gauge className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.mileage}</span>
             </div>
           )}
           {listing.fuel && (
-            <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
+            <div className="flex items-center gap-1.5 text-xs text-gray-500">
               <Fuel className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.fuel}</span>
             </div>
           )}
           {listing.gearbox && (
-            <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
+            <div className="flex items-center gap-1.5 text-xs text-gray-500">
               <GitFork className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.gearbox}</span>
             </div>
           )}
           {listing.power && (
-            <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
+            <div className="flex items-center gap-1.5 text-xs text-gray-500">
               <Zap className="w-3.5 h-3.5 flex-shrink-0 text-secondary/50" />
               <span>{listing.power}</span>
             </div>

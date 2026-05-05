@@ -39,7 +39,7 @@ export function AdminSidebar() {
   }
 
   return (
-    <div className="bg-dark-700/80 backdrop-blur-sm rounded-lg shadow-dark-card border border-white/10 p-6 sticky top-4">
+    <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6 sticky top-4">
       {/* Admin Info */}
       <div className="mb-6 pb-6 border-b border-white/10">
         <div className="w-16 h-16 bg-primary/20 border border-primary/30 rounded-full flex items-center justify-center mb-3 mx-auto">

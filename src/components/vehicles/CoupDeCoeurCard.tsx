@@ -127,7 +127,7 @@ export function CoupDeCoeurCard({ vehicle, category, variant = 'grid' }: CoupDeC
 
           {/* Brand logo bottom-left */}
           {vehicle.brands?.logo_url && (
-            <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-md border border-gray-200">
+            <div className="absolute bottom-3 left-3 bg-white/95 rounded-lg p-2 shadow-md border border-gray-200">
               <Image
                 src={vehicle.brands.logo_url}
                 alt={brandName}
@@ -212,7 +212,7 @@ export function CoupDeCoeurCard({ vehicle, category, variant = 'grid' }: CoupDeC
 
         {/* Brand logo */}
         {vehicle.brands?.logo_url && (
-          <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-md border border-gray-200">
+          <div className="absolute bottom-3 left-3 bg-white/95 rounded-lg p-2 shadow-md border border-gray-200">
             <Image
               src={vehicle.brands.logo_url}
               alt={brandName}
