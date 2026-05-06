@@ -11,12 +11,12 @@
  *   stdout summary (article count, broken link count, top 5 hrefs)
  */
 
-import { createClient } from '@supabase/supabase-js'
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { fetchAllArticles } from './lib/fetch-articles'
 import { auditArticles } from './lib/audit-articles'
-import type { ArticleForAudit, BrokenLinkRow } from './lib/types'
+import type { BrokenLinkRow } from './lib/types'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = join(__dirname, '..')
@@ -32,33 +32,6 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
   process.exit(1)
 }
 
-const PAGE_SIZE = 200
-
-async function fetchAllArticles(): Promise<ArticleForAudit[]> {
-  const supabase = createClient(SUPABASE_URL!, SUPABASE_KEY!)
-  const all: ArticleForAudit[] = []
-  let from = 0
-
-  while (true) {
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('id, slug, title, content')
-      .range(from, from + PAGE_SIZE - 1)
-      .order('id', { ascending: true })
-
-    if (error) {
-      console.error('Supabase fetch error:', error.message)
-      process.exit(1)
-    }
-
-    if (!data || data.length === 0) break
-    all.push(...(data as ArticleForAudit[]))
-    if (data.length < PAGE_SIZE) break
-    from += PAGE_SIZE
-  }
-
-  return all
-}
 
 function csvEscape(field: string): string {
   if (/[",\r\n]/.test(field)) {
@@ -78,7 +51,13 @@ function toCsv(rows: BrokenLinkRow[]): string {
 async function main() {
   const start = Date.now()
   console.log('Fetching articles from blog_posts...')
-  const articles = await fetchAllArticles()
+  let articles
+  try {
+    articles = await fetchAllArticles(SUPABASE_URL!, SUPABASE_KEY!)
+  } catch (err) {
+    console.error('Supabase fetch error:', err instanceof Error ? err.message : err)
+    process.exit(1)
+  }
   console.log(`Fetched ${articles.length} articles in ${Date.now() - start}ms`)
 
   console.log('Auditing internal links...')

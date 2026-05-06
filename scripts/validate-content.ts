@@ -8,9 +8,8 @@
  *   npx tsx --env-file=.env.local scripts/validate-content.ts
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { fetchAllArticles } from './lib/fetch-articles'
 import { auditArticles } from './lib/audit-articles'
-import type { ArticleForAudit } from './lib/types'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -24,32 +23,15 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
   process.exit(0)
 }
 
-const PAGE_SIZE = 200
-
-async function fetchAllArticles(): Promise<ArticleForAudit[]> {
-  const supabase = createClient(SUPABASE_URL!, SUPABASE_KEY!)
-  const all: ArticleForAudit[] = []
-  let from = 0
-  while (true) {
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('id, slug, title, content')
-      .range(from, from + PAGE_SIZE - 1)
-      .order('id', { ascending: true })
-    if (error) {
-      console.error('[validate-content] Supabase error:', error.message)
-      process.exit(1)
-    }
-    if (!data || data.length === 0) break
-    all.push(...(data as ArticleForAudit[]))
-    if (data.length < PAGE_SIZE) break
-    from += PAGE_SIZE
-  }
-  return all
-}
 
 async function main() {
-  const articles = await fetchAllArticles()
+  let articles
+  try {
+    articles = await fetchAllArticles(SUPABASE_URL!, SUPABASE_KEY!)
+  } catch (err) {
+    console.error('[validate-content] Supabase error:', err instanceof Error ? err.message : err)
+    process.exit(1)
+  }
   const result = auditArticles(articles)
 
   if (result.summary.totalBrokenLinks === 0) {
