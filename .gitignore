@@ -59,5 +59,6 @@ migrations/
 scripts/*
 !scripts/audit-internal-links.ts
 !scripts/validate-content.ts
+!scripts/fix-broken-links.ts
 !scripts/lib/
 !scripts/output/
