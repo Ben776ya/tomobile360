@@ -4,6 +4,13 @@
  *
  * Wired into `npm run build` via package.json.
  *
+ * NOTE (2026-05-06): On introduction, 34 existing articles contain broken
+ * internal links (e.g. /comparatifs/..., /fiches-techniques/..., /blog/...).
+ * `npm run build` will exit 1 until those links are fixed. Run:
+ *   npm run audit:internal-links
+ * for the full CSV of what needs fixing. The pre-insertion validators
+ * in /api/admin/blog (POST + PUT) prevent NEW broken links from entering.
+ *
  * Usage:
  *   npx tsx --env-file=.env.local scripts/validate-content.ts
  */

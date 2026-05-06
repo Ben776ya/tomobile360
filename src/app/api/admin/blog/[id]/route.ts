@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { extractInternalLinks } from '../../../../../../scripts/lib/extract-internal-links'
+import { validateInternalHref } from '../../../../../../scripts/lib/validate-route'
 
 async function checkAdmin() {
   const supabase = await createClient()
@@ -46,6 +48,26 @@ export async function PUT(
     } = body
 
     const isPublished = status === 'published'
+
+    // Reject any content update that contains broken internal links —
+    // mirrors the POST handler validator so admins can't introduce broken
+    // hrefs via edit after a clean creation.
+    if (typeof content === 'string') {
+      const brokenHrefs: string[] = []
+      for (const href of extractInternalLinks(content)) {
+        const result = validateInternalHref(href)
+        if (result.isInternal && !result.valid) brokenHrefs.push(href)
+      }
+      if (brokenHrefs.length > 0) {
+        return NextResponse.json(
+          {
+            error: 'Liens internes invalides détectés',
+            broken_hrefs: brokenHrefs,
+          },
+          { status: 400 },
+        )
+      }
+    }
 
     // If publishing for the first time, fetch current to check published_at
     let publishedAt: string | null | undefined
