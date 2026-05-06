@@ -183,7 +183,7 @@ export default async function ModelVersionsPage({ params }: PageProps) {
                     </p>
                   ) : (
                     <p className="text-sm text-gray-500 mb-3">
-                      {v.price_min ? `A partir de ${formatPrice(v.price_min)}` : '\u00A0'}
+                      {v.price_min ? `A partir de ${formatPrice(v.price_min)}` : ' '}
                     </p>
                   )}
 
