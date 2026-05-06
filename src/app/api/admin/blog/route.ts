@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { extractInternalLinks } from '../../../../../scripts/lib/extract-internal-links'
+import { validateInternalHref } from '../../../../../scripts/lib/validate-route'
 
 async function checkAdmin() {
   const supabase = await createClient()
@@ -55,6 +57,23 @@ export async function POST(request: NextRequest) {
     if (!title || !content || !category) {
       return NextResponse.json(
         { error: 'Titre, contenu et catégorie sont obligatoires' },
+        { status: 400 },
+      )
+    }
+
+    // Reject any post that contains broken internal links — the build-time
+    // guard catches existing rows; this catches new ones at write time.
+    const brokenHrefs: string[] = []
+    for (const href of extractInternalLinks(content)) {
+      const result = validateInternalHref(href)
+      if (result.isInternal && !result.valid) brokenHrefs.push(href)
+    }
+    if (brokenHrefs.length > 0) {
+      return NextResponse.json(
+        {
+          error: 'Liens internes invalides détectés',
+          broken_hrefs: brokenHrefs,
+        },
         { status: 400 },
       )
     }
