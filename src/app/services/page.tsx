@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 type ServiceItem = {
   icon: React.ComponentType<{ className?: string }>
   logoSrc?: string
+  logoClass?: string
   title: string
   description: string
   href: string
@@ -27,6 +28,7 @@ const services: ServiceItem[] = [
   {
     icon: CreditCard,
     logoSrc: '/sofac_logo.png',
+    logoClass: 'w-20 h-20',
     title: 'SOFAC — Crédit Auto',
     description: 'Financez votre véhicule avec SOFAC — leader du crédit auto au Maroc, réponse rapide.',
     href: '/services/credit',
@@ -137,7 +139,7 @@ export default function ServicesPage() {
                         alt={service.title}
                         width={56}
                         height={56}
-                        className="w-14 h-14 object-contain"
+                        className={`${service.logoClass ?? 'w-14 h-14'} object-contain`}
                         sizes="56px"
                       />
                     ) : (
