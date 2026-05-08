@@ -186,3 +186,229 @@ html {
   }
 }
 
+/* ───────────────────────────────────────────────────────────────────
+   Velvet Poster — homepage feature grid tiles
+   Used by src/components/home/FeatureGrid.tsx (FeatureCard render)
+   ─────────────────────────────────────────────────────────────────── */
+
+.vp-tile {
+  --hue: #006EFE;
+  --deep: #0044B5;
+  --soft: #EAF2FF;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 1 / 1.32;
+  background: #fff;
+  border: 1px solid rgba(28, 37, 65, 0.06);
+  border-radius: 22px;
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(13, 18, 32, 0.04), 0 14px 32px -22px rgba(13, 18, 32, 0.22);
+  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.55s;
+  width: 100%;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+}
+.vp-tile:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 1px 2px rgba(13, 18, 32, 0.04), 0 32px 60px -22px var(--hue);
+}
+.vp-tile:active {
+  transform: translateY(-2px) scale(0.99);
+}
+
+.vp-block {
+  position: relative;
+  height: 62%;
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--hue) 0%, var(--deep) 100%);
+}
+
+.vp-halftone {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1.1px, transparent 1.4px);
+  background-size: 10px 10px;
+  mix-blend-mode: overlay;
+  -webkit-mask-image: linear-gradient(180deg, #000, transparent 90%);
+  mask-image: linear-gradient(180deg, #000, transparent 90%);
+  transition: transform 1.2s ease;
+}
+.vp-tile:hover .vp-halftone {
+  transform: translateY(-4px);
+}
+
+.vp-spot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -58%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 62%);
+  filter: blur(6px);
+  pointer-events: none;
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s;
+}
+.vp-tile:hover .vp-spot {
+  transform: translate(-50%, -62%) scale(1.15);
+}
+
+.vp-bgicon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transform: translateY(-4%);
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.25));
+  animation: vp-float 7s ease-in-out infinite;
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.vp-bgicon svg {
+  width: 84px;
+  height: 84px;
+}
+.vp-tile:hover .vp-bgicon {
+  transform: translateY(-7%) scale(1.08);
+}
+@keyframes vp-float {
+  0%, 100% { transform: translateY(-4%); }
+  50%      { transform: translateY(-6%); }
+}
+
+.vp-echo {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  opacity: 0.22;
+  transform: rotate(8deg);
+  pointer-events: none;
+}
+.vp-echo svg {
+  width: 22px;
+  height: 22px;
+}
+
+.vp-sticker {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px 5px 5px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.95);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--deep);
+}
+.vp-sticker-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: var(--soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.vp-sticker-icon svg {
+  width: 11px;
+  height: 11px;
+}
+
+.vp-cutout {
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  width: 58%;
+  aspect-ratio: 1 / 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #fff;
+  box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(13, 18, 32, 0.18);
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: 3;
+}
+.vp-cutout img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.vp-tile:hover .vp-cutout img {
+  transform: scale(1.08);
+}
+
+.vp-footer {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  padding: 48px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  text-align: center;
+}
+.vp-title {
+  font-family: var(--font-montserrat-alternates), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  color: #0D1220;
+  display: inline-block;
+  align-self: center;
+  position: relative;
+  padding-bottom: 6px;
+}
+.vp-underline {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--hue);
+  transform: translateX(-50%);
+  transition: width 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border-radius: 2px;
+}
+.vp-tile:hover .vp-underline {
+  width: 62%;
+}
+.vp-sub {
+  font-size: 11px;
+  margin-top: 6px;
+  color: rgba(28, 37, 65, 0.55);
+}
+
+/* Per-feature theme overrides (set CSS variables on the tile) */
+.vp-tile.f-comparateur { --hue: #006EFE; --deep: #0044B5; --soft: #EAF2FF; }
+.vp-tile.f-offres      { --hue: #F97316; --deep: #B84A0E; --soft: #FFF3E8; }
+.vp-tile.f-coeur       { --hue: #F43F5E; --deep: #B11635; --soft: #FFEBEF; }
+.vp-tile.f-top         { --hue: #10B981; --deep: #0A6E4F; --soft: #E7F8F1; }
+.vp-tile.f-detailing   { --hue: #7C3AED; --deep: #4C1D95; --soft: #F2EAFE; }
+
+/* Per-tile colored drop-shadow on bg icon */
+.vp-tile.f-comparateur .vp-bgicon { filter: drop-shadow(0 6px 14px #0044B555); }
+.vp-tile.f-offres      .vp-bgicon { filter: drop-shadow(0 6px 14px #B84A0E55); }
+.vp-tile.f-coeur       .vp-bgicon { filter: drop-shadow(0 6px 14px #B1163555); }
+.vp-tile.f-top         .vp-bgicon { filter: drop-shadow(0 6px 14px #0A6E4F55); }
+.vp-tile.f-detailing   .vp-bgicon { filter: drop-shadow(0 6px 14px #4C1D9555); }
+
+/* Per-tile colored shadow on the cutout circle */
+.vp-tile.f-comparateur .vp-cutout { box-shadow: 0 14px 28px -10px #0044B566, 0 2px 6px rgba(13, 18, 32, 0.18); }
+.vp-tile.f-offres      .vp-cutout { box-shadow: 0 14px 28px -10px #B84A0E66, 0 2px 6px rgba(13, 18, 32, 0.18); }
+.vp-tile.f-coeur       .vp-cutout { box-shadow: 0 14px 28px -10px #B1163566, 0 2px 6px rgba(13, 18, 32, 0.18); }
+.vp-tile.f-top         .vp-cutout { box-shadow: 0 14px 28px -10px #0A6E4F66, 0 2px 6px rgba(13, 18, 32, 0.18); }
+.vp-tile.f-detailing   .vp-cutout { box-shadow: 0 14px 28px -10px #4C1D9566, 0 2px 6px rgba(13, 18, 32, 0.18); }
+
