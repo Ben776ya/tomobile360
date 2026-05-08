@@ -178,7 +178,11 @@ function FeatureCard({
         {cta}
         <ArrowRight
           aria-hidden="true"
-          className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-1"
+          className={`h-3.5 w-3.5 transition-transform duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+            action === 'expand' && isActive
+              ? 'rotate-90'
+              : 'group-hover:translate-x-1'
+          }`}
         />
       </span>
     </>
