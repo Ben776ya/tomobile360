@@ -28,7 +28,7 @@ const services: ServiceItem[] = [
   {
     icon: CreditCard,
     logoSrc: '/sofac_logo.png',
-    logoClass: 'w-20 h-20',
+    logoClass: 'w-14 h-14 scale-150',
     title: 'SOFAC — Crédit Auto',
     description: 'Financez votre véhicule avec SOFAC — leader du crédit auto au Maroc, réponse rapide.',
     href: '/services/credit',

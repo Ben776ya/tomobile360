@@ -9,7 +9,7 @@ const services = [
     id: 'credit',
     icon: CreditCard,
     logoSrc: '/sofac_logo.png',
-    logoSize: 'w-20 h-20 md:w-24 md:h-24',
+    logoSize: 'w-14 h-14 md:w-16 md:h-16 scale-150',
     title: 'Financement',
     description: 'Financez votre véhicule avec SOFAC — leader du crédit auto au Maroc.',
     link: '/services/credit',
