@@ -39,10 +39,8 @@ const services = [
   {
     id: 'revision',
     icon: Wrench,
-    logoSrc: '/daba_pneu.png',
-    logoSize: 'w-14 h-14 md:w-16 md:h-16',
     title: 'Entretien rapide',
-    description: 'Pneus et entretien rapide avec notre partenaire DabaPneu — livraison et montage inclus.',
+    description: 'Pneus, detailing et entretien — choisissez le service qui vous convient.',
     link: '/services/revision',
     color: 'bg-[#FDF6E3]',
     glowColor: '',
