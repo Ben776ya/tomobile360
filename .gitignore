@@ -47,7 +47,6 @@ IMPORT_CARS_GUIDE.md
 YOUTUBE_SYNC_SETUP.md
 VIDEOS_SETUP.md
 DEPLOYMENT_CHECKLIST.md
-scripts/
 nul
 
 # vehicle images (served from Supabase Storage, not local files)
@@ -55,3 +54,11 @@ public/vehicles/
 
 # migrations (one-time SQL scripts, already executed in Supabase)
 migrations/
+
+# legacy scripts (keep out of version control)
+scripts/*
+!scripts/audit-internal-links.ts
+!scripts/validate-content.ts
+!scripts/fix-broken-links.ts
+!scripts/lib/
+!scripts/output/

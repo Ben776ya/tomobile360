@@ -4,10 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next dev",
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next build",
+    "build": "npm run validate-content && cross-env NODE_OPTIONS=--max-old-space-size=4096 next build",
     "start": "next start",
     "lint": "next lint",
-    "test:moccaz": "npx tsx scripts/test-moccaz.ts"
+    "test:moccaz": "npx tsx scripts/test-moccaz.ts",
+    "test:audit": "tsx --test scripts/lib/__tests__/validate-route.test.ts scripts/lib/__tests__/extract-internal-links.test.ts scripts/lib/__tests__/audit-articles.test.ts",
+    "audit:internal-links": "tsx --env-file=.env.local scripts/audit-internal-links.ts",
+    "validate-content": "tsx --env-file-if-exists=.env.local scripts/validate-content.ts",
+    "fix:broken-links": "tsx --env-file=.env.local scripts/fix-broken-links.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.4",
