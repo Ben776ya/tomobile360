@@ -6,7 +6,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Services Automobiles au Maroc — Crédit, Assurance, Entretien',
-  description: 'Crédit auto SOFAC, assurance Atlanta Sanad, DabaPneus, contrôle technique, sécurité routière NARSA : tous les services automobiles au Maroc réunis sur Tomobile 360.',
+  description: 'Crédit auto SOFAC, assurance Atlanta Sanad, entretien rapide (pneus & detailing), contrôle technique, sécurité routière NARSA : tous les services automobiles au Maroc réunis sur Tomobile 360.',
   alternates: {
     canonical: 'https://tomobile360.ma/services',
   },
@@ -55,13 +55,12 @@ const services: ServiceItem[] = [
   },
   {
     icon: Wrench,
-    logoSrc: '/daba_pneu.png',
-    title: 'DabaPneus',
-    description: 'Pneus et entretien rapide avec notre partenaire DabaPneu — livraison et montage inclus.',
+    title: 'Entretien rapide',
+    description: 'Pneus, detailing et bientôt plus — l\'entretien de votre voiture, simplifié.',
     href: '/services/revision',
     color: 'bg-[#FDF6E3]',
     iconColor: 'text-[#d4af37]',
-    features: ['Pneus toutes marques', 'Montage inclus', 'Livraison rapide'],
+    features: ['Pneus & montage', 'Detailing & polissage', 'Plus de services à venir'],
   },
   {
     icon: CalendarCheck,
