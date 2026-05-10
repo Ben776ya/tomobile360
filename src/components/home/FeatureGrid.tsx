@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Scale, Tag, TrendingUp, Heart, Sparkles, ArrowRight, Plus, X, Zap, Fuel, Car, Mountain, Truck } from 'lucide-react'
+import { ArrowRight, Plus, X, Zap, Fuel, Car, Mountain, Truck, Heart } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { VehicleSelector } from '@/components/vehicles/VehicleSelector'
 import { ComparisonTable } from '@/components/vehicles/ComparisonTable'
@@ -48,14 +48,14 @@ const FUEL_LABELS: Record<string, string> = {
 
 /* ─── Feature card data ─── */
 
+type FeatureKey = 'comparateur' | 'offres' | 'coeur' | 'top' | 'detailing'
+
 type FeatureItem = {
-  key: 'comparateur' | 'offres' | 'coeur' | 'top' | 'detailing'
+  key: FeatureKey
   title: string
   subtitle: string
   imageSrc: string
   imageAlt: string
-  icon: ReactNode
-  cta: string
   href: string | null
   action: 'expand' | 'link'
 }
@@ -64,136 +64,174 @@ const featureItems: FeatureItem[] = [
   {
     key: 'comparateur',
     title: 'Comparateur',
-    subtitle: "Comparez jusqu'à 3 véhicules",
+    subtitle: "Jusqu'à 3 véhicules",
     imageSrc: '/features/comparateur-voitures-neuves-maroc.png',
     imageAlt: 'Comparateur de voitures neuves au Maroc',
-    icon: <Scale />,
-    cta: 'Ouvrir',
     href: null,
     action: 'expand',
   },
   {
     key: 'offres',
     title: 'Offres Spéciales',
-    subtitle: 'Les meilleures promotions',
+    subtitle: 'Promotions du moment',
     imageSrc: '/features/offres-speciales-automobiles-maroc.png',
     imageAlt: 'Offres spéciales automobiles au Maroc',
-    icon: <Tag />,
-    cta: 'Voir',
     href: '/neuf/promotions',
     action: 'link',
   },
   {
     key: 'coeur',
     title: 'Coups de Cœur',
-    subtitle: 'Notre sélection du moment',
+    subtitle: 'Notre sélection',
     imageSrc: '/features/coups-de-coeur-selection-automobile-maroc.png',
     imageAlt: 'Sélection coups de cœur automobile',
-    icon: <Heart />,
-    cta: 'Ouvrir',
     href: null,
     action: 'expand',
   },
   {
     key: 'top',
     title: 'Top Ventes',
-    subtitle: 'Les plus populaires au Maroc',
+    subtitle: 'Les plus populaires',
     imageSrc: '/features/top-ventes-voitures-populaires-maroc.png',
     imageAlt: 'Top ventes voitures populaires au Maroc',
-    icon: <TrendingUp />,
-    cta: 'Voir',
     href: '/neuf/populaires',
     action: 'link',
   },
   {
     key: 'detailing',
     title: 'Detailing',
-    subtitle: 'Centres agréés, prise en ligne',
+    subtitle: 'Centres agréés',
     imageSrc: '/features/detailing-services-automobile-maroc.png',
     imageAlt: 'Services de detailing automobile au Maroc',
-    icon: <Sparkles />,
-    cta: 'Voir',
     href: '/services/controle',
     action: 'link',
   },
 ]
 
+const STICKER_LABELS: Record<FeatureKey, string> = {
+  comparateur: 'Comparer',
+  offres: 'Découvrir',
+  coeur: 'Explorer',
+  top: 'Voir',
+  detailing: 'Réserver',
+}
+
+const ICON_PATHS: Record<FeatureKey, ReactNode> = {
+  comparateur: (
+    <>
+      <path d="M6 4v16M18 4v16" />
+      <path d="M2 9l4-5 4 5M14 15l4 5 4-5" />
+    </>
+  ),
+  offres: (
+    <>
+      <path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+      <circle cx="7" cy="7" r="1.5" />
+    </>
+  ),
+  coeur: (
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+  ),
+  top: (
+    <>
+      <path d="M3 17l6-6 4 4 8-8" />
+      <path d="M14 7h7v7" />
+    </>
+  ),
+  detailing: (
+    <path d="M12 3l2 4 4 1-3 3 1 4-4-2-4 2 1-4-3-3 4-1z" />
+  ),
+}
+
+const STICKER_ICON_STROKE: Record<FeatureKey, string> = {
+  comparateur: '#006EFE',
+  offres: '#F97316',
+  coeur: '#F43F5E',
+  top: '#10B981',
+  detailing: '#7C3AED',
+}
+
 /* ─── Reusable feature card ─── */
 
 type FeatureCardProps = {
+  featureKey: FeatureKey
   title: string
   subtitle: string
   imageSrc: string
   imageAlt: string
-  icon: ReactNode
-  cta: string
   href: string | null
   action: 'expand' | 'link'
-  isActive: boolean
   onClick?: () => void
 }
 
 function FeatureCard({
+  featureKey,
   title,
   subtitle,
   imageSrc,
   imageAlt,
-  icon,
-  cta,
   href,
   action,
-  isActive,
   onClick,
 }: FeatureCardProps) {
-  const baseClass = `group mx-auto flex w-full max-w-[260px] flex-col items-center rounded-[22px] border bg-white px-[18px] pt-[22px] pb-[18px] text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.25)] transition duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(0,0,0,0.45)] active:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-indigo-500 ${
-    isActive
-      ? 'border-indigo-400/60 shadow-[0_14px_30px_rgba(80,80,255,0.25)]'
-      : 'border-gray-200 hover:border-gray-300'
-  }`
+  const className = `vp-tile f-${featureKey}`
+  const stickerLabel = STICKER_LABELS[featureKey]
+  const stickerStroke = STICKER_ICON_STROKE[featureKey]
+  const iconPaths = ICON_PATHS[featureKey]
 
   const inner = (
     <>
-      <div className="relative h-[124px] w-[124px] shrink-0 overflow-hidden rounded-full bg-[#1f2a44]">
+      <div className="vp-block">
+        <div className="vp-halftone" />
+        <div className="vp-spot" />
+        <div className="vp-bgicon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.32)" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round">
+            {iconPaths}
+          </svg>
+        </div>
+        <div className="vp-echo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+            {iconPaths}
+          </svg>
+        </div>
+        <div className="vp-sticker">
+          <span className="vp-sticker-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke={stickerStroke} strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+              {iconPaths}
+            </svg>
+          </span>
+          {stickerLabel}
+        </div>
+      </div>
+      <div className="vp-cutout">
         <Image
           src={imageSrc}
           alt={imageAlt}
           fill
-          sizes="124px"
-          className="object-cover transition-transform duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.06]"
+          sizes="(min-width: 1024px) 145px, (min-width: 640px) 220px, 50vw"
+          className="object-cover"
         />
-        <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-[rgba(10,15,28,0.15)] to-[rgba(10,15,28,0.65)]" />
-        <div className="absolute inset-0 z-10 flex items-center justify-center text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)] [&>svg]:h-11 [&>svg]:w-11 [&>svg]:stroke-[1.7]">
-          {icon}
-        </div>
       </div>
-
-      <h3 className="mt-[18px] text-center text-[15px] font-bold tracking-[0.2px]">
-        {title}
-      </h3>
-      <p className="mt-1 text-center text-[12.5px] text-slate-500">
-        {subtitle}
-      </p>
-
-      <span className="mt-auto inline-flex items-center gap-1 pt-[14px] text-[12.5px] font-medium text-slate-700">
-        {cta}
-        <ArrowRight
-          aria-hidden="true"
-          className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-1"
-        />
-      </span>
+      <div className="vp-footer">
+        <div className="vp-title">
+          {title}
+          <span className="vp-underline" />
+        </div>
+        <div className="vp-sub">{subtitle}</div>
+      </div>
     </>
   )
 
   if (action === 'expand') {
     return (
-      <button type="button" onClick={onClick} className={baseClass}>
+      <button type="button" onClick={onClick} className={className}>
         {inner}
       </button>
     )
   }
 
   return (
-    <Link href={href!} className={baseClass}>
+    <Link href={href!} className={className}>
       {inner}
     </Link>
   )
@@ -287,26 +325,16 @@ export function FeatureGrid() {
         <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-5">
           {featureItems.map((item) => {
             const isExpand = item.action === 'expand'
-            const isActive = isExpand && (
-              (item.key === 'comparateur' && comparatorOpen) ||
-              (item.key === 'coeur' && cdcOpen)
-            )
-            const ctaText = isExpand
-              ? (isActive ? 'Fermer' : item.cta)
-              : item.cta
-
             return (
               <FeatureCard
                 key={item.key}
+                featureKey={item.key}
                 title={item.title}
                 subtitle={item.subtitle}
                 imageSrc={item.imageSrc}
                 imageAlt={item.imageAlt}
-                icon={item.icon}
-                cta={ctaText}
                 href={item.href}
                 action={item.action}
-                isActive={isActive}
                 onClick={isExpand ? () => handleExpandClick(item.key as 'comparateur' | 'coeur') : undefined}
               />
             )
