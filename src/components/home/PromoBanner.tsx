@@ -24,8 +24,11 @@ export function PromoBanner() {
               </div>
             </div>
 
-            {/* Middle — SEO bullet list */}
+            {/* Middle — Eyebrow tag + SEO bullet list */}
             <div className="lg:w-4/12 p-5 md:p-6 flex flex-col justify-center">
+              <span className="inline-flex items-center self-start gap-2 px-3 py-0.5 rounded-full bg-[#E8EBF5] text-[#4057aa] text-[11px] font-semibold uppercase tracking-wide mb-3">
+                En partenariat avec la NARSA
+              </span>
               <ul className="space-y-2.5">
                 <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
                   <Check className="w-4 h-4 mt-0.5 text-[#4057aa] flex-shrink-0" aria-hidden="true" />
@@ -42,12 +45,8 @@ export function PromoBanner() {
               </ul>
             </div>
 
-            {/* Right — CTA stack centered, pinned to far right */}
+            {/* Right — Vertically-centered CTA stack, pinned to far right */}
             <div className="lg:w-4/12 p-5 md:p-6 flex flex-col items-center justify-center text-center lg:border-l border-gray-100">
-              <span className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-[#E8EBF5] text-[#4057aa] text-[11px] font-semibold uppercase tracking-wide mb-2">
-                En partenariat avec la NARSA
-              </span>
-
               <h3 className="text-xl md:text-2xl font-bold text-primary leading-tight">
                 Roulez en sécurité
               </h3>
