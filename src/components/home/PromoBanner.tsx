@@ -24,8 +24,15 @@ export function PromoBanner() {
               </div>
             </div>
 
-            {/* Right — Compact content */}
-            <div className="lg:w-8/12 p-5 md:p-6 flex flex-col justify-center">
+            {/* Middle — SEO descriptive text */}
+            <div className="lg:w-4/12 p-5 md:p-6 flex flex-col justify-center">
+              <p className="text-sm md:text-[15px] text-gray-600 leading-relaxed">
+                L&apos;<strong className="font-semibold text-[#4057aa]">Agence Nationale de la Sécurité Routière (NARSA)</strong> mène au Maroc des campagnes de sensibilisation, des capsules vidéo pédagogiques et des conseils pratiques pour conducteurs et piétons. Une démarche essentielle pour faire du <strong className="font-semibold text-[#4057aa]">code de la route</strong> un réflexe partagé.
+              </p>
+            </div>
+
+            {/* Right — CTA stack pinned to far right */}
+            <div className="lg:w-4/12 p-5 md:p-6 flex flex-col justify-center lg:border-l border-gray-100">
               <span className="inline-flex items-center self-start gap-2 px-3 py-0.5 rounded-full bg-[#E8EBF5] text-[#4057aa] text-[11px] font-semibold uppercase tracking-wide mb-2">
                 En partenariat avec la NARSA
               </span>
@@ -46,18 +53,13 @@ export function PromoBanner() {
                 />
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                <Link
-                  href="/services/securite-routiere"
-                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#4057aa] hover:bg-[#2e3f7a] text-white font-semibold rounded-lg transition-all duration-300 shadow-md hover:shadow-lg text-sm"
-                >
-                  Découvrir NARSA
-                  <ChevronRight className="w-4 h-4" aria-hidden="true" />
-                </Link>
-                <p className="text-[11px] text-gray-400">
-                  Source : NARSA — Agence Nationale de la Sécurité Routière
-                </p>
-              </div>
+              <Link
+                href="/services/securite-routiere"
+                className="inline-flex items-center self-start gap-2 px-6 py-2.5 bg-[#4057aa] hover:bg-[#2e3f7a] text-white font-semibold rounded-lg transition-all duration-300 shadow-md hover:shadow-lg text-sm"
+              >
+                Découvrir NARSA
+                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+              </Link>
             </div>
           </div>
         </div>
