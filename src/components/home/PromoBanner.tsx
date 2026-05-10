@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Check } from 'lucide-react'
 
 export function PromoBanner() {
   return (
@@ -24,16 +24,27 @@ export function PromoBanner() {
               </div>
             </div>
 
-            {/* Middle — SEO descriptive text */}
+            {/* Middle — SEO bullet list */}
             <div className="lg:w-4/12 p-5 md:p-6 flex flex-col justify-center">
-              <p className="text-sm md:text-[15px] text-gray-600 leading-relaxed">
-                L&apos;<strong className="font-semibold text-[#4057aa]">Agence Nationale de la Sécurité Routière (NARSA)</strong> mène au Maroc des campagnes de sensibilisation, des capsules vidéo pédagogiques et des conseils pratiques pour conducteurs et piétons. Une démarche essentielle pour faire du <strong className="font-semibold text-[#4057aa]">code de la route</strong> un réflexe partagé.
-              </p>
+              <ul className="space-y-2.5">
+                <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
+                  <Check className="w-4 h-4 mt-0.5 text-[#4057aa] flex-shrink-0" aria-hidden="true" />
+                  <span>Capsules de sensibilisation officielles</span>
+                </li>
+                <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
+                  <Check className="w-4 h-4 mt-0.5 text-[#4057aa] flex-shrink-0" aria-hidden="true" />
+                  <span>Conseils pratiques pour conducteurs et piétons</span>
+                </li>
+                <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
+                  <Check className="w-4 h-4 mt-0.5 text-[#4057aa] flex-shrink-0" aria-hidden="true" />
+                  <span>Code de la route et ressources NARSA</span>
+                </li>
+              </ul>
             </div>
 
-            {/* Right — CTA stack pinned to far right */}
-            <div className="lg:w-4/12 p-5 md:p-6 flex flex-col justify-center lg:border-l border-gray-100">
-              <span className="inline-flex items-center self-start gap-2 px-3 py-0.5 rounded-full bg-[#E8EBF5] text-[#4057aa] text-[11px] font-semibold uppercase tracking-wide mb-2">
+            {/* Right — CTA stack centered, pinned to far right */}
+            <div className="lg:w-4/12 p-5 md:p-6 flex flex-col items-center justify-center text-center lg:border-l border-gray-100">
+              <span className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-[#E8EBF5] text-[#4057aa] text-[11px] font-semibold uppercase tracking-wide mb-2">
                 En partenariat avec la NARSA
               </span>
 
@@ -48,14 +59,14 @@ export function PromoBanner() {
                   alt="NARSA — Agence Nationale de la Sécurité Routière"
                   width={200}
                   height={60}
-                  className="h-8 md:h-9 w-auto object-contain"
+                  className="h-11 md:h-12 w-auto object-contain"
                   priority={false}
                 />
               </div>
 
               <Link
                 href="/services/securite-routiere"
-                className="inline-flex items-center self-start gap-2 px-6 py-2.5 bg-[#4057aa] hover:bg-[#2e3f7a] text-white font-semibold rounded-lg transition-all duration-300 shadow-md hover:shadow-lg text-sm"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#4057aa] hover:bg-[#2e3f7a] text-white font-semibold rounded-lg transition-all duration-300 shadow-md hover:shadow-lg text-sm"
               >
                 Découvrir NARSA
                 <ChevronRight className="w-4 h-4" aria-hidden="true" />
