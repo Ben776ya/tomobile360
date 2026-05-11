@@ -261,7 +261,6 @@ html {
   top: 14px;
   right: 14px;
   opacity: 0.22;
-  transform: rotate(8deg);
   pointer-events: none;
 }
 .vp-echo svg {
