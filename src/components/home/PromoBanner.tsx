@@ -26,7 +26,7 @@ export function PromoBanner() {
 
             {/* Middle — Eyebrow tag + SEO bullet list */}
             <div className="lg:w-4/12 p-5 md:p-6 flex flex-col justify-center">
-              <span className="inline-flex items-center self-start gap-2 px-3 py-0.5 rounded-full bg-[#E8EBF5] text-[#4057aa] text-[11px] font-semibold uppercase tracking-wide mb-6">
+              <span className="inline-flex items-center self-start gap-2 px-3 py-0.5 rounded-full bg-[#E8EBF5] text-[#4057aa] text-[11px] font-semibold uppercase tracking-wide mb-10">
                 En partenariat avec la NARSA
               </span>
               <ul className="space-y-2.5">
