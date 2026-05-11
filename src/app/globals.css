@@ -221,7 +221,7 @@ html {
 
 .vp-block {
   position: relative;
-  height: 62%;
+  height: 52%;
   overflow: hidden;
   background: linear-gradient(160deg, var(--hue) 0%, var(--deep) 100%);
 }
