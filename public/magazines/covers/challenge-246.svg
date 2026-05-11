@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 350" role="img" aria-label="Challenge Magazine numéro 246 - Avril 2026">
+  <defs>
+    <linearGradient id="g246" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2c3e64"/>
+      <stop offset="100%" stop-color="#566fb6"/>
+    </linearGradient>
+  </defs>
+  <rect width="250" height="350" fill="url(#g246)"/>
+  <text x="125" y="48" text-anchor="middle" fill="#fad502" font-family="Helvetica, Arial, sans-serif" font-weight="800" font-size="30" letter-spacing="2">CHALLENGE</text>
+  <text x="125" y="72" text-anchor="middle" fill="#ffffff" font-family="Helvetica, Arial, sans-serif" font-weight="400" font-size="10" letter-spacing="4">MAGAZINE</text>
+  <line x1="40" y1="92" x2="210" y2="92" stroke="#fad502" stroke-width="2"/>
+  <text x="125" y="190" text-anchor="middle" fill="#ffffff" font-family="Helvetica, Arial, sans-serif" font-weight="900" font-size="76">N°246</text>
+  <text x="125" y="226" text-anchor="middle" fill="#fad502" font-family="Helvetica, Arial, sans-serif" font-weight="600" font-size="13" letter-spacing="3">AVRIL 2026</text>
+  <text x="125" y="290" text-anchor="middle" fill="#ffffff" opacity="0.9" font-family="Helvetica, Arial, sans-serif" font-weight="600" font-size="11">L'avenir du moteur</text>
+  <text x="125" y="306" text-anchor="middle" fill="#ffffff" opacity="0.7" font-family="Helvetica, Arial, sans-serif" font-weight="400" font-size="10">thermique</text>
+</svg>
