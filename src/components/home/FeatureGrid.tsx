@@ -184,11 +184,6 @@ function FeatureCard({
       <div className="vp-block">
         <div className="vp-halftone" />
         <div className="vp-spot" />
-        <div className="vp-bgicon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.32)" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round">
-            {iconPaths}
-          </svg>
-        </div>
         <div className="vp-echo">
           <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
             {iconPaths}
