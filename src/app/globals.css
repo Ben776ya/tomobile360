@@ -198,7 +198,7 @@ html {
   position: relative;
   display: flex;
   flex-direction: column;
-  aspect-ratio: 1 / 1.32;
+  aspect-ratio: 1 / 1.18;
   background: #fff;
   border: 1px solid rgba(28, 37, 65, 0.06);
   border-radius: 22px;
@@ -214,7 +214,6 @@ html {
 }
 .vp-tile:hover {
   transform: translateY(-6px);
-  box-shadow: 0 1px 2px rgba(13, 18, 32, 0.04), 0 32px 60px -22px var(--hue);
 }
 .vp-tile:active {
   transform: translateY(-2px) scale(0.99);
@@ -222,7 +221,7 @@ html {
 
 .vp-block {
   position: relative;
-  height: 62%;
+  height: 52%;
   overflow: hidden;
   background: linear-gradient(160deg, var(--hue) 0%, var(--deep) 100%);
 }
@@ -255,30 +254,6 @@ html {
 }
 .vp-tile:hover .vp-spot {
   transform: translate(-50%, -62%) scale(1.15);
-}
-
-.vp-bgicon {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  transform: translateY(-4%);
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.25));
-  animation: vp-float 7s ease-in-out infinite;
-  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.vp-bgicon svg {
-  width: 84px;
-  height: 84px;
-}
-.vp-tile:hover .vp-bgicon {
-  transform: translateY(-7%) scale(1.08);
-}
-@keyframes vp-float {
-  0%, 100% { transform: translateY(-4%); }
-  50%      { transform: translateY(-6%); }
 }
 
 .vp-echo {
@@ -326,7 +301,7 @@ html {
 
 .vp-cutout {
   position: absolute;
-  top: 34%;
+  top: 27%;
   left: 50%;
   width: 58%;
   aspect-ratio: 1 / 1;
@@ -397,13 +372,6 @@ html {
 .vp-tile.f-coeur       { --hue: #F43F5E; --deep: #B11635; --soft: #FFEBEF; }
 .vp-tile.f-top         { --hue: #10B981; --deep: #0A6E4F; --soft: #E7F8F1; }
 .vp-tile.f-detailing   { --hue: #7C3AED; --deep: #4C1D95; --soft: #F2EAFE; }
-
-/* Per-tile colored drop-shadow on bg icon */
-.vp-tile.f-comparateur .vp-bgicon { filter: drop-shadow(0 6px 14px #0044B555); }
-.vp-tile.f-offres      .vp-bgicon { filter: drop-shadow(0 6px 14px #B84A0E55); }
-.vp-tile.f-coeur       .vp-bgicon { filter: drop-shadow(0 6px 14px #B1163555); }
-.vp-tile.f-top         .vp-bgicon { filter: drop-shadow(0 6px 14px #0A6E4F55); }
-.vp-tile.f-detailing   .vp-bgicon { filter: drop-shadow(0 6px 14px #4C1D9555); }
 
 /* Per-tile colored shadow on the cutout circle */
 .vp-tile.f-comparateur .vp-cutout { box-shadow: 0 14px 28px -10px #0044B566, 0 2px 6px rgba(13, 18, 32, 0.18); }
