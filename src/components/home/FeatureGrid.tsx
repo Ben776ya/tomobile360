@@ -101,7 +101,7 @@ const featureItems: FeatureItem[] = [
     key: 'detailing',
     title: 'Detailing',
     subtitle: 'Centres agréés',
-    imageSrc: '/features/detailing-services-automobile-maroc.png',
+    imageSrc: '/features/detailing-services-automobile-maroc.jpg',
     imageAlt: 'Services de detailing automobile au Maroc',
     href: '/services/controle',
     action: 'link',
