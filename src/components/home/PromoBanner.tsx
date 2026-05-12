@@ -1,7 +1,10 @@
 import { NarsaCampaign } from '@/components/home/NarsaCampaign'
 import { ChallengeMagazine } from '@/components/home/ChallengeMagazine'
+import { getLatestMagazine } from '@/lib/data/challenge-magazines'
 
-export function PromoBanner() {
+export async function PromoBanner() {
+  const latestIssue = await getLatestMagazine()
+
   return (
     <section className="py-6 md:py-10 bg-white">
       <div className="container mx-auto px-4">
@@ -11,7 +14,7 @@ export function PromoBanner() {
             <NarsaCampaign />
           </div>
           <div className="lg:col-span-1">
-            <ChallengeMagazine />
+            <ChallengeMagazine issue={latestIssue} />
           </div>
         </div>
       </div>
