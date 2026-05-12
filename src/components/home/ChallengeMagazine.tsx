@@ -10,7 +10,7 @@ export function ChallengeMagazine() {
 
   return (
     <div className="h-full bg-[#F4F5F8] rounded-2xl border border-gray-200/70 p-5 md:p-6">
-      <div className="grid grid-cols-[120px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] gap-4 md:gap-5 items-start h-full">
+      <div className="grid grid-cols-[120px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] gap-4 md:gap-5 items-center h-full">
         {/* Cover with EXCLUSIF sticker */}
         <Link
           href={issue.pdfUrl}
@@ -53,21 +53,23 @@ export function ChallengeMagazine() {
           <p className="text-[12px] text-[#7B6AB4] font-medium leading-snug">
             Dossier : {issue.dossierTitle.toLowerCase()}
           </p>
-          <Link
-            href={issue.pdfUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 self-start inline-flex items-center gap-2 px-4 py-2.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white font-semibold rounded-full transition-colors duration-300 text-sm shadow-md hover:shadow-lg"
-          >
-            <Download className="w-4 h-4" aria-hidden="true" />
-            Lire le PDF
-          </Link>
-          <Link
-            href="/magazine"
-            className="mt-1 self-start text-[12px] font-semibold text-gray-500 hover:text-[#1c2541] transition-colors"
-          >
-            Tous les numéros →
-          </Link>
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <Link
+              href={issue.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white font-semibold rounded-full transition-colors duration-300 text-sm shadow-md hover:shadow-lg"
+            >
+              <Download className="w-4 h-4" aria-hidden="true" />
+              Lire le PDF
+            </Link>
+            <Link
+              href="/magazine"
+              className="text-[12px] font-semibold text-gray-500 hover:text-[#1c2541] transition-colors whitespace-nowrap"
+            >
+              Tous les numéros →
+            </Link>
+          </div>
         </div>
       </div>
     </div>
