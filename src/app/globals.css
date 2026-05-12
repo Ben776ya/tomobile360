@@ -369,13 +369,13 @@ html {
 .vp-tile.f-comparateur { --hue: #006EFE; --deep: #0044B5; --soft: #EAF2FF; }
 .vp-tile.f-offres      { --hue: #F97316; --deep: #B84A0E; --soft: #FFF3E8; }
 .vp-tile.f-coeur       { --hue: #F43F5E; --deep: #B11635; --soft: #FFEBEF; }
-.vp-tile.f-top         { --hue: #10B981; --deep: #0A6E4F; --soft: #E7F8F1; }
-.vp-tile.f-detailing   { --hue: #7C3AED; --deep: #4C1D95; --soft: #F2EAFE; }
+.vp-tile.f-top         { --hue: #fad502; --deep: #8A7100; --soft: #FFFAE0; }
+.vp-tile.f-ev          { --hue: #7C3AED; --deep: #4C1D95; --soft: #F2EAFE; }
 
 /* Per-tile colored shadow on the cutout circle */
 .vp-tile.f-comparateur .vp-cutout { box-shadow: 0 14px 28px -10px #0044B566, 0 2px 6px rgba(13, 18, 32, 0.18); }
 .vp-tile.f-offres      .vp-cutout { box-shadow: 0 14px 28px -10px #B84A0E66, 0 2px 6px rgba(13, 18, 32, 0.18); }
 .vp-tile.f-coeur       .vp-cutout { box-shadow: 0 14px 28px -10px #B1163566, 0 2px 6px rgba(13, 18, 32, 0.18); }
-.vp-tile.f-top         .vp-cutout { box-shadow: 0 14px 28px -10px #0A6E4F66, 0 2px 6px rgba(13, 18, 32, 0.18); }
-.vp-tile.f-detailing   .vp-cutout { box-shadow: 0 14px 28px -10px #4C1D9566, 0 2px 6px rgba(13, 18, 32, 0.18); }
+.vp-tile.f-top         .vp-cutout { box-shadow: 0 14px 28px -10px #8A710066, 0 2px 6px rgba(13, 18, 32, 0.18); }
+.vp-tile.f-ev          .vp-cutout { box-shadow: 0 14px 28px -10px #4C1D9566, 0 2px 6px rgba(13, 18, 32, 0.18); }
 

@@ -48,7 +48,7 @@ const FUEL_LABELS: Record<string, string> = {
 
 /* ─── Feature card data ─── */
 
-type FeatureKey = 'comparateur' | 'offres' | 'coeur' | 'top' | 'detailing'
+type FeatureKey = 'comparateur' | 'offres' | 'coeur' | 'top' | 'ev'
 
 type FeatureItem = {
   key: FeatureKey
@@ -98,12 +98,12 @@ const featureItems: FeatureItem[] = [
     action: 'link',
   },
   {
-    key: 'detailing',
-    title: 'Detailing',
-    subtitle: 'Centres agréés',
-    imageSrc: '/features/detailing-services-automobile-maroc.jpg',
-    imageAlt: 'Services de detailing automobile au Maroc',
-    href: '/services/controle',
+    key: 'ev',
+    title: 'Voitures électriques',
+    subtitle: 'Découvrir la gamme',
+    imageSrc: '/blog/kia-maroc-siam-2026-stand-meknes-modeles-electriques-hero.png',
+    imageAlt: 'Voitures électriques au Maroc',
+    href: '/neuf?fuel=Electric',
     action: 'link',
   },
 ]
@@ -113,7 +113,7 @@ const STICKER_LABELS: Record<FeatureKey, string> = {
   offres: 'Découvrir',
   coeur: 'Explorer',
   top: 'Voir',
-  detailing: 'Réserver',
+  ev: 'Voir',
 }
 
 const ICON_PATHS: Record<FeatureKey, ReactNode> = {
@@ -138,8 +138,8 @@ const ICON_PATHS: Record<FeatureKey, ReactNode> = {
       <path d="M14 7h7v7" />
     </>
   ),
-  detailing: (
-    <path d="M12 3l2 4 4 1-3 3 1 4-4-2-4 2 1-4-3-3 4-1z" />
+  ev: (
+    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
   ),
 }
 
@@ -148,7 +148,7 @@ const STICKER_ICON_STROKE: Record<FeatureKey, string> = {
   offres: '#F97316',
   coeur: '#F43F5E',
   top: '#10B981',
-  detailing: '#7C3AED',
+  ev: '#7C3AED',
 }
 
 /* ─── Reusable feature card ─── */
