@@ -20,31 +20,33 @@ export function NarsaCampaign() {
           />
         </div>
 
-        {/* Column 2 — Eyebrow + bullets */}
-        <div className="flex flex-col items-start gap-3 min-w-0 text-left">
-          <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#DBE4F5] text-[#4057aa] text-[11px] font-bold uppercase tracking-wide">
-            En partenariat avec la NARSA
-          </span>
-          <ul className="space-y-2.5 mt-4">
-            <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
-              <span className="mt-0.5 w-[18px] h-[18px] rounded-full bg-[#4057aa] inline-flex items-center justify-center flex-shrink-0">
-                <Check className="w-3 h-3 text-white" aria-hidden="true" strokeWidth={3} />
-              </span>
-              <span>Capsules de sensibilisation officielles</span>
-            </li>
-            <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
-              <span className="mt-0.5 w-[18px] h-[18px] rounded-full bg-[#4057aa] inline-flex items-center justify-center flex-shrink-0">
-                <Check className="w-3 h-3 text-white" aria-hidden="true" strokeWidth={3} />
-              </span>
-              <span>Conseils pratiques pour conducteurs et piétons</span>
-            </li>
-            <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
-              <span className="mt-0.5 w-[18px] h-[18px] rounded-full bg-[#4057aa] inline-flex items-center justify-center flex-shrink-0">
-                <Check className="w-3 h-3 text-white" aria-hidden="true" strokeWidth={3} />
-              </span>
-              <span>Code de la route et ressources NARSA</span>
-            </li>
-          </ul>
+        {/* Column 2 — Eyebrow + bullets, grouped and centered horizontally in column */}
+        <div className="flex flex-col items-center min-w-0">
+          <div className="flex flex-col items-start gap-3 text-left">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#DBE4F5] text-[#4057aa] text-[11px] font-bold uppercase tracking-wide">
+              En partenariat avec la NARSA
+            </span>
+            <ul className="space-y-2.5 mt-4">
+              <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
+                <span className="mt-0.5 w-[18px] h-[18px] rounded-full bg-[#4057aa] inline-flex items-center justify-center flex-shrink-0">
+                  <Check className="w-3 h-3 text-white" aria-hidden="true" strokeWidth={3} />
+                </span>
+                <span>Capsules de sensibilisation officielles</span>
+              </li>
+              <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
+                <span className="mt-0.5 w-[18px] h-[18px] rounded-full bg-[#4057aa] inline-flex items-center justify-center flex-shrink-0">
+                  <Check className="w-3 h-3 text-white" aria-hidden="true" strokeWidth={3} />
+                </span>
+                <span>Conseils pratiques pour conducteurs et piétons</span>
+              </li>
+              <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
+                <span className="mt-0.5 w-[18px] h-[18px] rounded-full bg-[#4057aa] inline-flex items-center justify-center flex-shrink-0">
+                  <Check className="w-3 h-3 text-white" aria-hidden="true" strokeWidth={3} />
+                </span>
+                <span>Code de la route et ressources NARSA</span>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Column 3 — Headline + logo + CTA */}
