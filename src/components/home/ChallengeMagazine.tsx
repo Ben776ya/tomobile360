@@ -1,28 +1,32 @@
-'use client'
-
 import Link from 'next/link'
 import Image from 'next/image'
 import { Download } from 'lucide-react'
-import { getLatestIssue } from '@/lib/data/challenge-magazines'
+import type { Magazine } from '@/lib/types'
 
-export function ChallengeMagazine() {
-  const issue = getLatestIssue()
+export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
+  if (!issue) {
+    return (
+      <div className="h-full bg-[#F4F5F8] rounded-2xl border border-gray-200/70 p-5 md:p-6 flex items-center justify-center text-sm text-gray-500">
+        Aucun numéro publié pour le moment.
+      </div>
+    )
+  }
 
   return (
     <div className="h-full bg-[#F4F5F8] rounded-2xl border border-gray-200/70 p-5 md:p-6">
       <div className="grid grid-cols-[120px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] gap-4 md:gap-5 items-center h-full">
         {/* Cover with EXCLUSIF sticker */}
         <Link
-          href={issue.pdfUrl}
+          href={issue.pdf_url}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`Ouvrir le PDF du numéro ${issue.issueNumber}`}
+          aria-label={`Ouvrir le PDF du numéro ${issue.issue_number}`}
           className="relative block group shrink-0"
         >
           <div className="relative w-full aspect-[250/350] rounded-lg overflow-hidden ring-1 ring-[#1c2541]/15 shadow-md transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:shadow-lg">
             <Image
-              src={issue.coverUrl}
-              alt={`Couverture Challenge Magazine N°${issue.issueNumber} — ${issue.dossierTitle}`}
+              src={issue.cover_url}
+              alt={`Couverture Challenge Magazine N°${issue.issue_number} — ${issue.dossier_title}`}
               fill
               sizes="130px"
               className="object-cover"
@@ -34,7 +38,7 @@ export function ChallengeMagazine() {
               Exclusif
             </span>
             <span className="block text-[10px] font-extrabold leading-tight text-center">
-              N°{issue.issueNumber}
+              N°{issue.issue_number}
             </span>
           </span>
         </Link>
@@ -48,14 +52,19 @@ export function ChallengeMagazine() {
             Le dernier numéro<br />est paru
           </h3>
           <p className="text-[13px] font-semibold text-[#1c2541] mt-0.5">
-            N°{issue.issueNumber} <span className="text-gray-400">·</span> {issue.issueDate}
+            N°{issue.issue_number}
+            {issue.issue_date ? (
+              <>
+                {' '}<span className="text-gray-400">·</span> {issue.issue_date}
+              </>
+            ) : null}
           </p>
           <p className="text-[12px] text-[#7B6AB4] font-medium leading-snug">
-            Dossier : {issue.dossierTitle.toLowerCase()}
+            Dossier : {issue.dossier_title.toLowerCase()}
           </p>
           <div className="mt-2 flex items-center gap-2">
             <Link
-              href={issue.pdfUrl}
+              href={issue.pdf_url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white font-semibold rounded-full transition-colors duration-300 text-xs shadow-md hover:shadow-lg whitespace-nowrap"

@@ -1,42 +1,44 @@
-export type ChallengeMagazineIssue = {
-  /** Stable identifier — also used as URL slug for /magazine/[id] in the future. */
-  id: string
-  /** Issue number (e.g. 5) — displayed as "N°5". */
-  issueNumber: number
-  /** Human-readable cover date in French (e.g. "Avril / Mai 2026"). */
-  issueDate: string
-  /** Headline dossier title (1 line). */
-  dossierTitle: string
-  /** Short sub-headline that complements the dossier title. */
-  dossierSubtitle: string
-  /** Public path to the cover image (rendered first page of the PDF). */
-  coverUrl: string
-  /** Public path to the magazine PDF. */
-  pdfUrl: string
-  /** Short uppercase chips associated with the issue (rubrics from the masthead). */
-  tags: string[]
-  /** Flag the issue currently featured as the hero on the homepage. Exactly one should be true. */
-  isLatest?: boolean
-}
+import 'server-only'
 
-export const CHALLENGE_MAGAZINES: ChallengeMagazineIssue[] = [
-  {
-    id: 'challenge-auto-5',
-    issueNumber: 5,
-    issueDate: 'Avril / Mai 2026',
-    dossierTitle: 'Ces nouveautés qui vont marquer 2026',
-    dossierSubtitle: 'Hybrides & électriques : bien choisir sa motorisation',
-    coverUrl: '/magazines/covers/challenge-auto-5.jpg',
-    pdfUrl: '/magazines/pdfs/challenge-auto-5.pdf',
-    tags: ['ACTU', 'TENDANCES', 'ESSAIS'],
-    isLatest: true,
-  },
-]
+import { createClient } from '@/lib/supabase/server'
+import type { Magazine } from '@/lib/types'
+
+const MAGAZINE_COLUMNS =
+  'id, issue_number, issue_date, dossier_title, dossier_subtitle, cover_url, pdf_url, tags, order_position, is_published, created_at, updated_at'
 
 /**
- * Returns the issue flagged `isLatest`. Falls back to the first issue
- * if the flag is missing on the dataset (defensive — should never happen).
+ * Returns the most recent published magazine (highest order_position).
+ * Returns null if no published magazine exists.
  */
-export function getLatestIssue(): ChallengeMagazineIssue {
-  return CHALLENGE_MAGAZINES.find((m) => m.isLatest) ?? CHALLENGE_MAGAZINES[0]
+export async function getLatestMagazine(): Promise<Magazine | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('magazines')
+    .select(MAGAZINE_COLUMNS)
+    .eq('is_published', true)
+    .order('order_position', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (error) {
+    console.error('getLatestMagazine error', error)
+    return null
+  }
+  return (data as Magazine | null) ?? null
+}
+
+/**
+ * Returns all published magazines, newest first (descending order_position).
+ */
+export async function getAllMagazines(): Promise<Magazine[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('magazines')
+    .select(MAGAZINE_COLUMNS)
+    .eq('is_published', true)
+    .order('order_position', { ascending: false })
+  if (error) {
+    console.error('getAllMagazines error', error)
+    return []
+  }
+  return (data ?? []) as Magazine[]
 }
