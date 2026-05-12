@@ -128,7 +128,7 @@ export async function OccasionServicesSection() {
   const featured = listings.slice(0, 3)
 
   return (
-    <section className="py-4 md:py-6 bg-[#565A5D]/10">
+    <section className="pt-1 pb-4 md:pb-6 bg-[#565A5D]/10">
       <div className="container mx-auto px-4">
         <div className="p-6 md:p-8">
 
