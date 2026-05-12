@@ -60,5 +60,6 @@ scripts/*
 !scripts/audit-internal-links.ts
 !scripts/validate-content.ts
 !scripts/fix-broken-links.ts
+!scripts/extract-magazine-cover.py
 !scripts/lib/
 !scripts/output/
