@@ -60,7 +60,7 @@ export default function EntretienRapidePage() {
       </div>
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-black/5 via-white to-white py-16 md:py-24">
+      <section className="bg-gradient-to-br from-black/5 via-white to-white pt-6 md:pt-8 pb-8 md:pb-12">
         <div className="container mx-auto px-4 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-secondary/10 mb-6">
             <Wrench className="h-8 w-8 text-secondary" />
@@ -79,7 +79,7 @@ export default function EntretienRapidePage() {
       <section className="py-16 md:py-20">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-primary text-center mb-12">
-            Nos services d&apos;entretien
+            Nos partenaires
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
