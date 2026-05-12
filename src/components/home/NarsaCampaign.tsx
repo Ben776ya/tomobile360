@@ -21,7 +21,7 @@ export function NarsaCampaign() {
         </div>
 
         {/* Column 2 — Eyebrow + bullets */}
-        <div className="flex flex-col items-center gap-3 min-w-0 text-center">
+        <div className="flex flex-col items-start gap-3 min-w-0 text-left">
           <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#DBE4F5] text-[#4057aa] text-[11px] font-bold uppercase tracking-wide">
             En partenariat avec la NARSA
           </span>
