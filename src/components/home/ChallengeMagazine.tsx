@@ -53,19 +53,19 @@ export function ChallengeMagazine() {
           <p className="text-[12px] text-[#7B6AB4] font-medium leading-snug">
             Dossier : {issue.dossierTitle.toLowerCase()}
           </p>
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="mt-2 flex items-center gap-2">
             <Link
               href={issue.pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white font-semibold rounded-full transition-colors duration-300 text-sm shadow-md hover:shadow-lg"
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white font-semibold rounded-full transition-colors duration-300 text-xs shadow-md hover:shadow-lg whitespace-nowrap"
             >
-              <Download className="w-4 h-4" aria-hidden="true" />
+              <Download className="w-3.5 h-3.5" aria-hidden="true" />
               Lire le PDF
             </Link>
             <Link
               href="/magazine"
-              className="text-[12px] font-semibold text-gray-500 hover:text-[#1c2541] transition-colors whitespace-nowrap"
+              className="text-[11px] font-semibold text-gray-500 hover:text-[#1c2541] transition-colors whitespace-nowrap"
             >
               Tous les numéros →
             </Link>
