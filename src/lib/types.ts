@@ -278,3 +278,18 @@ export type FicheTechnique = {
   updated_at: string
   models?: Model & { brands?: Brand }
 }
+
+export type Magazine = {
+  id: string
+  issue_number: number
+  issue_date: string | null
+  dossier_title: string
+  dossier_subtitle: string | null
+  cover_url: string
+  pdf_url: string
+  tags: string[]
+  order_position: number
+  is_published: boolean
+  created_at: string
+  updated_at: string
+}
