@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { VehicleSelector } from '@/components/vehicles/VehicleSelector'
 import { ComparisonTable } from '@/components/vehicles/ComparisonTable'
 import { formatPrice } from '@/lib/utils'
+import { MobileCarousel } from '@/components/shared/MobileCarousel'
 
 interface VehicleData {
   id: string
@@ -20,6 +21,7 @@ interface VehicleData {
 
 interface CdcVehicle {
   id: string
+  model_id: string
   fuel_type: string
   horsepower: number | null
   price_min: number | null
@@ -275,7 +277,7 @@ export function FeatureGrid() {
     const supabase = createClient()
     const { data } = await supabase
       .from('vehicles_new')
-      .select('id, fuel_type, horsepower, price_min, images, version, year, coup_de_coeur_reason, brands:brand_id (name), models:model_id (name)')
+      .select('id, model_id, fuel_type, horsepower, price_min, images, version, year, coup_de_coeur_reason, brands:brand_id (name), models:model_id (name)')
       .eq('is_coup_de_coeur', true)
       .eq('coup_de_coeur_category', category)
       .limit(10)
@@ -316,8 +318,11 @@ export function FeatureGrid() {
       <div className="container mx-auto px-4">
         <div className="px-2 md:px-4 py-3 relative">
 
-        {/* ── Card grid ── */}
-        <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-5">
+        {/* ── Card grid (desktop) / infinite carousel (mobile) ── */}
+        <MobileCarousel
+          desktopClassName="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-5"
+          autoPlayMs={5000}
+        >
           {featureItems.map((item) => {
             const isExpand = item.action === 'expand'
             return (
@@ -334,7 +339,7 @@ export function FeatureGrid() {
               />
             )
           })}
-        </div>
+        </MobileCarousel>
 
         {/* ── Comparateur expand panel ── */}
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
@@ -455,8 +460,14 @@ export function FeatureGrid() {
               </div>
             ) : (() => {
               const vehicles = cdcByCategory[cdcCategory] || []
-              const carburant = vehicles.find(v => !FUEL_ELECTRIC.includes(v.fuel_type))
-              const electric = vehicles.find(v => FUEL_ELECTRIC.includes(v.fuel_type))
+              const seenModels = new Set<string>()
+              const dedupedByModel = vehicles.filter(v => {
+                if (seenModels.has(v.model_id)) return false
+                seenModels.add(v.model_id)
+                return true
+              })
+              const carburant = dedupedByModel.find(v => !FUEL_ELECTRIC.includes(v.fuel_type))
+              const electric = dedupedByModel.find(v => FUEL_ELECTRIC.includes(v.fuel_type))
 
               return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

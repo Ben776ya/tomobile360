@@ -10,7 +10,8 @@ import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
 import { VehicleSpecs, KeySpecsStrip } from '@/components/vehicles/VehicleSpecs'
 import { ImageGallery } from '@/components/vehicles/ImageGallery'
-import { VehicleCard } from '@/components/vehicles/VehicleCard'
+import { ModelCard } from '@/components/vehicles/ModelCard'
+import { buildModelGroups } from '@/lib/vehicles/group-by-model'
 import { ShareButton } from '@/components/shared/ShareButton'
 import { ContactDealerDialog } from '@/components/shared/ContactDealerDialog'
 import { TestDriveDialog } from '@/components/shared/TestDriveDialog'
@@ -103,17 +104,38 @@ export default async function VehicleDetailPage({ params }: PageProps) {
   // Increment view count
   void supabase.rpc('increment_vehicle_views', { vehicle_id: vehicle.id })
 
-  // Fetch similar vehicles (same brand or category)
-  const { data: similarVehicles } = await supabase
+  // Fetch all available versions of this brand+model so we can list them in the sidebar
+  const { data: modelVersions } = await supabase
+    .from('vehicles_new')
+    .select('id, version')
+    .eq('brand_id', vehicle.brand_id)
+    .eq('model_id', vehicle.model_id)
+    .eq('is_available', true)
+    .order('price_min', { ascending: true, nullsFirst: false })
+
+  // Fetch candidate rows for "Véhicules Similaires" — same brand OR same model category.
+  // We over-fetch then group by model so the section shows distinct MODELS, not versions.
+  const sameCategoryModelIds = await getSameCategoryModels(supabase, vehicle.models?.category)
+  const similarFilter = sameCategoryModelIds
+    ? `brand_id.eq.${vehicle.brand_id},model_id.in.(${sameCategoryModelIds})`
+    : `brand_id.eq.${vehicle.brand_id}`
+
+  const { data: similarRows } = await supabase
     .from('vehicles_new')
     .select(`
-      *,
+      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, brand_id, model_id,
       brands:brand_id (name, logo_url),
-      models:model_id (name)
+      models:model_id (name),
+      promotions (discount_percentage, is_active)
     `)
-    .neq('id', params.id)
-    .or(`brand_id.eq.${vehicle.brand_id},model_id.in.(${await getSameCategoryModels(supabase, vehicle.models?.category)})`)
-    .limit(4)
+    .neq('model_id', vehicle.model_id)
+    .eq('is_available', true)
+    .or(similarFilter)
+    .order('price_min', { ascending: true, nullsFirst: false })
+
+  const similarModelGroups = buildModelGroups(
+    (similarRows ?? []) as unknown as Parameters<typeof buildModelGroups>[0]
+  ).slice(0, 4)
 
   // Check for active promotions
   const { data: promotion } = await supabase
@@ -151,7 +173,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
         <Breadcrumbs
           items={[
             { name: 'Voitures Neuves', href: '/neuf' },
-            { name: brandName, href: `/neuf/${params.brand}/${params.model}` },
+            { name: brandName },
             { name: `${brandName} ${modelName}` },
           ]}
         />
@@ -266,92 +288,113 @@ export default async function VehicleDetailPage({ params }: PageProps) {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-4 shadow-card hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-300">
-              <h3 className="text-lg font-semibold text-primary mb-4">Prix</h3>
+            <div className="sticky top-4 space-y-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-card hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-300">
+                <h3 className="text-lg font-semibold text-primary mb-4">Prix</h3>
 
-              {promotion ? (
-                <div className="mb-4">
-                  <p className="text-sm text-gray-400 line-through">
-                    {formatPrice(vehicle.price_min || 0)}
+                {promotion ? (
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-400 line-through">
+                      {formatPrice(vehicle.price_min || 0)}
+                    </p>
+                    <p className="text-3xl font-bold text-secondary">
+                      {formatPrice(finalPrice)}
+                    </p>
+                    <p className="text-sm text-green-600 mt-1">
+                      Économisez {formatPrice((vehicle.price_min || 0) - finalPrice)}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-3xl font-bold text-secondary mb-4">
+                    {priceDisplay}
                   </p>
-                  <p className="text-3xl font-bold text-secondary">
-                    {formatPrice(finalPrice)}
-                  </p>
-                  <p className="text-sm text-green-600 mt-1">
-                    Économisez {formatPrice((vehicle.price_min || 0) - finalPrice)}
-                  </p>
+                )}
+
+                {promotion && (
+                  <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                    <p className="text-sm font-semibold text-amber-700 mb-1">
+                      {promotion.title}
+                    </p>
+                    <p className="text-xs text-amber-600/80">
+                      Valable jusqu&apos;au{' '}
+                      {new Date(promotion.valid_until).toLocaleDateString('fr-MA', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  {/* WhatsApp CTA */}
+                  <a
+                    href={`https://wa.me/${TOMOBILE_PHONE}?text=${whatsappText}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                    Contacter via WhatsApp
+                  </a>
+                  <ContactDealerDialog
+                    vehicleName={`${brandName} ${modelName} ${vehicle.year}`}
+                    dealerEmail="contact@tomobile360.ma"
+                    dealerPhone={TOMOBILE_PHONE_DISPLAY}
+                  />
+                  <TestDriveDialog
+                    vehicleName={`${brandName} ${modelName} ${vehicle.year}`}
+                    dealerPhone={TOMOBILE_PHONE}
+                  />
+                  <Link href="/neuf/comparer" className="block">
+                    <Button variant="outline" className="w-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                      Comparer ce véhicule
+                    </Button>
+                  </Link>
                 </div>
-              ) : (
-                <p className="text-3xl font-bold text-secondary mb-4">
-                  {priceDisplay}
-                </p>
-              )}
 
-              {promotion && (
-                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                  <p className="text-sm font-semibold text-amber-700 mb-1">
-                    {promotion.title}
-                  </p>
-                  <p className="text-xs text-amber-600/80">
-                    Valable jusqu&apos;au{' '}
-                    {new Date(promotion.valid_until).toLocaleDateString('fr-MA', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
-                  </p>
+                {/* View Count — single location */}
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="flex items-center gap-1.5 text-sm text-gray-400">
+                    <Eye className="h-4 w-4" />
+                    <span>Vu {vehicle.views?.toLocaleString() || 0} fois</span>
+                  </div>
                 </div>
-              )}
-
-              <div className="space-y-3">
-                {/* WhatsApp CTA */}
-                <a
-                  href={`https://wa.me/${TOMOBILE_PHONE}?text=${whatsappText}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
-                >
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                  </svg>
-                  Contacter via WhatsApp
-                </a>
-                <ContactDealerDialog
-                  vehicleName={`${brandName} ${modelName} ${vehicle.year}`}
-                  dealerEmail="contact@tomobile360.ma"
-                  dealerPhone={TOMOBILE_PHONE_DISPLAY}
-                />
-                <TestDriveDialog
-                  vehicleName={`${brandName} ${modelName} ${vehicle.year}`}
-                  dealerPhone={TOMOBILE_PHONE}
-                />
-                <Link href="/neuf/comparer" className="block">
-                  <Button variant="outline" className="w-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                    Comparer ce véhicule
-                  </Button>
-                </Link>
               </div>
 
-              {/* View Count — single location */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="flex items-center gap-1.5 text-sm text-gray-400">
-                  <Eye className="h-4 w-4" />
-                  <span>Vu {vehicle.views?.toLocaleString() || 0} fois</span>
-                </div>
+            {modelVersions && modelVersions.length > 1 && (
+              <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-card">
+                <h3 className="text-lg font-semibold text-primary mb-4">
+                  Versions disponibles
+                </h3>
+                <ul className="space-y-2">
+                  {modelVersions.map((v) => (
+                    <li
+                      key={v.id}
+                      className="text-sm text-gray-700 border-b border-gray-100 last:border-b-0 pb-2 last:pb-0"
+                    >
+                      {brandName} {modelName}
+                      {v.version ? ` ${v.version}` : ''}
+                    </li>
+                  ))}
+                </ul>
               </div>
+            )}
             </div>
           </div>
         </div>
 
         {/* Similar Vehicles */}
-        {similarVehicles && similarVehicles.length > 0 && (
+        {similarModelGroups.length > 0 && (
           <div className="mt-12">
             <h2 className="text-2xl font-bold text-primary mb-6">
               Véhicules Similaires
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {similarVehicles.map((similar) => (
-                <VehicleCard key={similar.id} vehicle={similar} showBadges />
+              {similarModelGroups.map((mg) => (
+                <ModelCard key={mg.modelId} model={mg} />
               ))}
             </div>
           </div>
