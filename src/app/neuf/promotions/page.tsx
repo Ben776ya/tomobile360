@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { VehicleCard } from '@/components/vehicles/VehicleCard'
-import type { VehicleNew } from '@/lib/types'
+import { ModelCard } from '@/components/vehicles/ModelCard'
+import { buildModelGroups } from '@/lib/vehicles/group-by-model'
 
 export const metadata: Metadata = {
   title: 'Promotions Voitures Neuves au Maroc',
@@ -21,20 +21,20 @@ export default async function PromotionsPage() {
   const { data: vehicles } = await supabase
     .from('vehicles_new')
     .select(`
-      *,
+      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, brand_id, model_id,
       brands:brand_id (name, logo_url),
       models:model_id (name),
       promotions (discount_percentage, is_active)
     `)
     .eq('is_featured_offer', true)
-    .order('created_at', { ascending: false })
+    .eq('is_available', true)
+    .order('price_min', { ascending: true, nullsFirst: false })
 
-  const count = vehicles?.length || 0
+  const modelGroups = buildModelGroups((vehicles ?? []) as unknown as Parameters<typeof buildModelGroups>[0])
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
         <div className="mb-8">
           <Link
             href="/neuf"
@@ -51,19 +51,17 @@ export default async function PromotionsPage() {
           </p>
         </div>
 
-        {/* Results Count */}
         <div className="mb-6 bg-white p-4 rounded-lg shadow-card border border-gray-200">
           <p className="text-sm text-gray-500">
-            <span className="font-semibold text-secondary">{count}</span>{' '}
-            offre{count > 1 ? 's' : ''} spéciale{count > 1 ? 's' : ''}
+            <span className="font-semibold text-secondary">{modelGroups.length}</span>{' '}
+            offre{modelGroups.length > 1 ? 's' : ''} spéciale{modelGroups.length > 1 ? 's' : ''}
           </p>
         </div>
 
-        {/* Vehicles Grid */}
-        {vehicles && vehicles.length > 0 ? (
+        {modelGroups.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {vehicles.map((vehicle) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle as VehicleNew} />
+            {modelGroups.map((mg) => (
+              <ModelCard key={mg.modelId} model={mg} />
             ))}
           </div>
         ) : (
