@@ -10,7 +10,8 @@ import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
 import { VehicleSpecs, KeySpecsStrip } from '@/components/vehicles/VehicleSpecs'
 import { ImageGallery } from '@/components/vehicles/ImageGallery'
-import { VehicleCard } from '@/components/vehicles/VehicleCard'
+import { ModelCard } from '@/components/vehicles/ModelCard'
+import { buildModelGroups } from '@/lib/vehicles/group-by-model'
 import { ShareButton } from '@/components/shared/ShareButton'
 import { ContactDealerDialog } from '@/components/shared/ContactDealerDialog'
 import { TestDriveDialog } from '@/components/shared/TestDriveDialog'
@@ -112,17 +113,29 @@ export default async function VehicleDetailPage({ params }: PageProps) {
     .eq('is_available', true)
     .order('price_min', { ascending: true, nullsFirst: false })
 
-  // Fetch similar vehicles (same brand or category)
-  const { data: similarVehicles } = await supabase
+  // Fetch candidate rows for "Véhicules Similaires" — same brand OR same model category.
+  // We over-fetch then group by model so the section shows distinct MODELS, not versions.
+  const sameCategoryModelIds = await getSameCategoryModels(supabase, vehicle.models?.category)
+  const similarFilter = sameCategoryModelIds
+    ? `brand_id.eq.${vehicle.brand_id},model_id.in.(${sameCategoryModelIds})`
+    : `brand_id.eq.${vehicle.brand_id}`
+
+  const { data: similarRows } = await supabase
     .from('vehicles_new')
     .select(`
-      *,
+      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, brand_id, model_id,
       brands:brand_id (name, logo_url),
-      models:model_id (name)
+      models:model_id (name),
+      promotions (discount_percentage, is_active)
     `)
-    .neq('id', params.id)
-    .or(`brand_id.eq.${vehicle.brand_id},model_id.in.(${await getSameCategoryModels(supabase, vehicle.models?.category)})`)
-    .limit(4)
+    .neq('model_id', vehicle.model_id)
+    .eq('is_available', true)
+    .or(similarFilter)
+    .order('price_min', { ascending: true, nullsFirst: false })
+
+  const similarModelGroups = buildModelGroups(
+    (similarRows ?? []) as unknown as Parameters<typeof buildModelGroups>[0]
+  ).slice(0, 4)
 
   // Check for active promotions
   const { data: promotion } = await supabase
@@ -374,14 +387,14 @@ export default async function VehicleDetailPage({ params }: PageProps) {
         </div>
 
         {/* Similar Vehicles */}
-        {similarVehicles && similarVehicles.length > 0 && (
+        {similarModelGroups.length > 0 && (
           <div className="mt-12">
             <h2 className="text-2xl font-bold text-primary mb-6">
               Véhicules Similaires
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {similarVehicles.map((similar) => (
-                <VehicleCard key={similar.id} vehicle={similar} showBadges />
+              {similarModelGroups.map((mg) => (
+                <ModelCard key={mg.modelId} model={mg} />
               ))}
             </div>
           </div>
