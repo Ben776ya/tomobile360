@@ -103,6 +103,15 @@ export default async function VehicleDetailPage({ params }: PageProps) {
   // Increment view count
   void supabase.rpc('increment_vehicle_views', { vehicle_id: vehicle.id })
 
+  // Fetch all available versions of this brand+model so we can list them in the sidebar
+  const { data: modelVersions } = await supabase
+    .from('vehicles_new')
+    .select('id, version')
+    .eq('brand_id', vehicle.brand_id)
+    .eq('model_id', vehicle.model_id)
+    .eq('is_available', true)
+    .order('price_min', { ascending: true, nullsFirst: false })
+
   // Fetch similar vehicles (same brand or category)
   const { data: similarVehicles } = await supabase
     .from('vehicles_new')
@@ -151,7 +160,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
         <Breadcrumbs
           items={[
             { name: 'Voitures Neuves', href: '/neuf' },
-            { name: brandName, href: `/neuf/${params.brand}/${params.model}` },
+            { name: brandName },
             { name: `${brandName} ${modelName}` },
           ]}
         />
@@ -265,7 +274,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-4 shadow-card hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-300">
               <h3 className="text-lg font-semibold text-primary mb-4">Prix</h3>
 
@@ -340,6 +349,25 @@ export default async function VehicleDetailPage({ params }: PageProps) {
                 </div>
               </div>
             </div>
+
+            {modelVersions && modelVersions.length > 1 && (
+              <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-card">
+                <h3 className="text-lg font-semibold text-primary mb-4">
+                  Versions disponibles
+                </h3>
+                <ul className="space-y-2">
+                  {modelVersions.map((v) => (
+                    <li
+                      key={v.id}
+                      className="text-sm text-gray-700 border-b border-gray-100 last:border-b-0 pb-2 last:pb-0"
+                    >
+                      {brandName} {modelName}
+                      {v.version ? ` ${v.version}` : ''}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
 
