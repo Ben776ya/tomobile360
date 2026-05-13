@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { ModelCard, type ModelGroup } from '@/components/vehicles/ModelCard'
+import { ModelCard } from '@/components/vehicles/ModelCard'
+import { buildModelGroups } from '@/lib/vehicles/group-by-model'
 import { VehicleFilters } from '@/components/vehicles/VehicleFilters'
 import { BrandHeader } from '@/components/vehicles/BrandHeader'
 import { SlidersHorizontal } from 'lucide-react'
@@ -85,65 +86,8 @@ export default async function NewVehiclesPage({
 
   const { data: vehicles } = await query
 
-  // Group vehicles by model
-  type VehicleRow = NonNullable<typeof vehicles>[number]
-  const modelMap: Record<string, VehicleRow[]> = {}
-  for (const v of vehicles ?? []) {
-    const key = v.model_id
-    if (!modelMap[key]) modelMap[key] = []
-    modelMap[key].push(v)
-  }
-
-  // Build model groups
-  const modelGroups: ModelGroup[] = []
-  for (const key of Object.keys(modelMap)) {
-    const groupVehicles = modelMap[key]
-    const representative = groupVehicles[0] // cheapest (sorted by price_min asc)
-    const brandsRaw = representative.brands as unknown
-    const brandData = (Array.isArray(brandsRaw) ? brandsRaw[0] : brandsRaw) as { name: string; logo_url: string | null } | null
-    const modelsRaw = representative.models as unknown
-    const modelData = (Array.isArray(modelsRaw) ? modelsRaw[0] : modelsRaw) as { name: string } | null
-
-    if (!brandData || !modelData) continue
-
-    const prices = groupVehicles.map((v: VehicleRow) => v.price_min).filter((p): p is number => p !== null)
-    const minPrice = prices.length > 0 ? Math.min(...prices) : null
-
-    const maxPrices = groupVehicles.map((v: VehicleRow) => v.price_max ?? v.price_min).filter((p): p is number => p !== null)
-    const maxPrice = maxPrices.length > 0 ? Math.max(...maxPrices) : null
-
-    const fuelSet: Record<string, boolean> = {}
-    const transSet: Record<string, boolean> = {}
-    for (const v of groupVehicles) {
-      if (v.fuel_type) fuelSet[v.fuel_type] = true
-      if (v.transmission) transSet[v.transmission] = true
-    }
-    const fuelTypes = Object.keys(fuelSet)
-    const transmissions = Object.keys(transSet)
-
-    const hasPromo = groupVehicles.some((v: VehicleRow) => {
-      const promos = v.promotions as { discount_percentage: number | null; is_active?: boolean }[] | null
-      return promos?.some((p: { discount_percentage: number | null; is_active?: boolean }) => p.discount_percentage && p.discount_percentage > 0 && p.is_active !== false)
-    })
-
-    modelGroups.push({
-      brandId: representative.brand_id,
-      brandName: brandData.name,
-      brandLogo: brandData.logo_url,
-      modelId: representative.model_id,
-      modelName: modelData.name,
-      minPrice,
-      maxPrice,
-      mainImage: representative.images?.[0] || '/placeholder-car.svg',
-      versionCount: groupVehicles.length,
-      fuelTypes,
-      transmissions,
-      hasNewRelease: groupVehicles.some((v: VehicleRow) => v.is_new_release),
-      hasPopular: groupVehicles.some((v: VehicleRow) => v.is_popular),
-      hasPromo,
-      vehicleId: groupVehicles[0].id,
-    })
-  }
+  // Group vehicles by model (shared helper)
+  const modelGroups = buildModelGroups((vehicles ?? []) as unknown as Parameters<typeof buildModelGroups>[0])
 
   // Sort model groups
   switch (sort) {
