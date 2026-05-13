@@ -21,7 +21,7 @@ export default async function PopularVehiclesPage() {
   const { data: vehicles } = await supabase
     .from('vehicles_new')
     .select(`
-      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, brand_id, model_id, views,
+      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, brand_id, model_id,
       brands:brand_id (name, logo_url),
       models:model_id (name),
       promotions (discount_percentage, is_active)
