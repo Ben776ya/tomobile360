@@ -54,8 +54,10 @@ export function MobileCarousel({
     return () => clearInterval(timer)
   }, [isMobile, autoPlayMs, dragging, n])
 
-  // After landing on a clone, silently snap back to the matching real slide
-  const handleTransitionEnd = () => {
+  // After landing on a clone, silently snap back to the matching real slide.
+  // Guard against bubble-up from child transitions (e.g. card hover effects).
+  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.propertyName !== 'transform') return
     if (n <= 1) return
     if (current === total - 1) {
       setAnimate(false)
@@ -74,7 +76,14 @@ export function MobileCarousel({
     }
   }, [animate])
 
-  const goTo = useCallback((nextIndex: number) => {
+  // Relative navigation (arrows, swipe) — functional updater avoids stale closure
+  const step = useCallback((delta: number) => {
+    setAnimate(true)
+    setCurrent((c) => c + delta)
+  }, [])
+
+  // Absolute navigation (dots) — jumps to a specific real-slide index
+  const goToIndex = useCallback((nextIndex: number) => {
     setAnimate(true)
     setCurrent(nextIndex)
   }, [])
@@ -95,9 +104,9 @@ export function MobileCarousel({
     setDragOffset(0)
     const threshold = 50
     if (touchDeltaX.current < -threshold) {
-      goTo(current + 1)
+      step(1)
     } else if (touchDeltaX.current > threshold) {
-      goTo(current - 1)
+      step(-1)
     }
   }
 
@@ -142,14 +151,14 @@ export function MobileCarousel({
       {n > 1 && (
         <>
           <button
-            onClick={() => goTo(current - 1)}
+            onClick={() => step(-1)}
             className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center transition-opacity"
             aria-label="Précédent"
           >
             <ChevronLeft className="w-4 h-4 text-gray-700" />
           </button>
           <button
-            onClick={() => goTo(current + 1)}
+            onClick={() => step(1)}
             className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center transition-opacity"
             aria-label="Suivant"
           >
@@ -164,7 +173,7 @@ export function MobileCarousel({
           {items.map((_, i) => (
             <button
               key={i}
-              onClick={() => goTo(i + 1)}
+              onClick={() => goToIndex(i + 1)}
               className={`h-2 rounded-full transition-all duration-300 ${
                 i === activeDot ? 'w-6 bg-primary' : 'w-2 bg-gray-300/70'
               }`}
