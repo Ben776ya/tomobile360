@@ -19,8 +19,8 @@ export interface ModelGroup {
   hasNewRelease: boolean
   hasPopular: boolean
   hasPromo: boolean
-  /** The vehicle ID to link to directly when there's only 1 version */
-  singleVehicleId?: string
+  /** Representative vehicle id this model card links to (cheapest version) */
+  vehicleId: string
 }
 
 interface ModelCardProps {
@@ -32,10 +32,7 @@ export function ModelCard({ model }: ModelCardProps) {
     ? `À partir de ${formatPrice(model.minPrice)}`
     : 'Prix sur demande'
 
-  // If 1 version → go straight to detail page; multiple → go to model versions page
-  const href = model.singleVehicleId
-    ? `/neuf/${model.brandName.toLowerCase()}/${model.modelName.toLowerCase()}/${model.singleVehicleId}`
-    : `/neuf/${model.brandName.toLowerCase()}/${model.modelName.toLowerCase()}`
+  const href = `/neuf/${model.brandName.toLowerCase()}/${model.modelName.toLowerCase()}/${model.vehicleId}`
 
   return (
     <Link

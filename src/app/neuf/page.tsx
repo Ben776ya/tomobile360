@@ -141,7 +141,7 @@ export default async function NewVehiclesPage({
       hasNewRelease: groupVehicles.some((v: VehicleRow) => v.is_new_release),
       hasPopular: groupVehicles.some((v: VehicleRow) => v.is_popular),
       hasPromo,
-      singleVehicleId: groupVehicles.length === 1 ? groupVehicles[0].id : undefined,
+      vehicleId: groupVehicles[0].id,
     })
   }
 
