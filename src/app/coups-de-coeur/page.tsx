@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { CoupDeCoeurCard } from '@/components/vehicles/CoupDeCoeurCard'
+import { ModelCard } from '@/components/vehicles/ModelCard'
+import { buildModelGroups } from '@/lib/vehicles/group-by-model'
 import { Car, Mountain, Truck, Zap } from 'lucide-react'
 import type { CoupDeCoeurCategory } from '@/lib/types'
 
@@ -93,7 +94,9 @@ export default async function CoupsDeCoeurPage({
     .eq('is_coup_de_coeur', true)
     .eq('is_available', true)
     .eq('coup_de_coeur_category', activeCategory)
-    .order('created_at', { ascending: false })
+    .order('price_min', { ascending: true, nullsFirst: false })
+
+  const modelGroups = buildModelGroups((vehicles ?? []) as unknown as Parameters<typeof buildModelGroups>[0])
 
   const activeCat = CATEGORIES.find(c => c.value === activeCategory)!
 
@@ -149,17 +152,17 @@ export default async function CoupsDeCoeurPage({
 
       {/* Vehicles Grid */}
       <div className="container mx-auto px-4 py-10">
-        {vehicles && vehicles.length > 0 ? (
+        {modelGroups.length > 0 ? (
           <>
             <p className="text-sm text-gray-400 mb-6 font-medium">
               <span className="font-bold" style={{ color: activeCat.color }}>
-                {vehicles.length}
+                {modelGroups.length}
               </span>{' '}
-              véhicule{vehicles.length > 1 ? 's' : ''} dans cette sélection
+              véhicule{modelGroups.length > 1 ? 's' : ''} dans cette sélection
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {vehicles.map((vehicle) => (
-                <CoupDeCoeurCard key={vehicle.id} vehicle={vehicle as any} category={activeCategory} />
+              {modelGroups.map((mg) => (
+                <ModelCard key={mg.modelId} model={mg} />
               ))}
             </div>
           </>
