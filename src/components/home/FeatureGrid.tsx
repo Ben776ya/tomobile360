@@ -20,6 +20,7 @@ interface VehicleData {
 
 interface CdcVehicle {
   id: string
+  model_id: string
   fuel_type: string
   horsepower: number | null
   price_min: number | null
@@ -275,7 +276,7 @@ export function FeatureGrid() {
     const supabase = createClient()
     const { data } = await supabase
       .from('vehicles_new')
-      .select('id, fuel_type, horsepower, price_min, images, version, year, coup_de_coeur_reason, brands:brand_id (name), models:model_id (name)')
+      .select('id, model_id, fuel_type, horsepower, price_min, images, version, year, coup_de_coeur_reason, brands:brand_id (name), models:model_id (name)')
       .eq('is_coup_de_coeur', true)
       .eq('coup_de_coeur_category', category)
       .limit(10)
@@ -455,8 +456,14 @@ export function FeatureGrid() {
               </div>
             ) : (() => {
               const vehicles = cdcByCategory[cdcCategory] || []
-              const carburant = vehicles.find(v => !FUEL_ELECTRIC.includes(v.fuel_type))
-              const electric = vehicles.find(v => FUEL_ELECTRIC.includes(v.fuel_type))
+              const seenModels = new Set<string>()
+              const dedupedByModel = vehicles.filter(v => {
+                if (seenModels.has(v.model_id)) return false
+                seenModels.add(v.model_id)
+                return true
+              })
+              const carburant = dedupedByModel.find(v => !FUEL_ELECTRIC.includes(v.fuel_type))
+              const electric = dedupedByModel.find(v => FUEL_ELECTRIC.includes(v.fuel_type))
 
               return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
