@@ -20,14 +20,23 @@ export function MobileCarousel({
   breakpoint = 768,
 }: MobileCarouselProps) {
   const items = Children.toArray(children)
-  const [current, setCurrent] = useState(0)
+  const n = items.length
+
+  // Extended slides: [cloneOfLast, ...items, cloneOfFirst]
+  const slides = n > 1 ? [items[n - 1], ...items, items[0]] : items
+  const total = slides.length
+
+  // current = index into `slides`. Start at 1 (= first real item) when looping.
+  const [current, setCurrent] = useState(n > 1 ? 1 : 0)
+  const [animate, setAnimate] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
-  const touchStartX = useRef(0)
-  const touchDeltaX = useRef(0)
   const [dragging, setDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState(0)
+  const touchStartX = useRef(0)
+  const touchDeltaX = useRef(0)
   const containerRef = useRef<HTMLDivElement>(null)
 
+  // Detect mobile breakpoint
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < breakpoint)
     check()
@@ -35,18 +44,40 @@ export function MobileCarousel({
     return () => window.removeEventListener('resize', check)
   }, [breakpoint])
 
-  // Auto-play
+  // Auto-play (mobile only, paused during drag)
   useEffect(() => {
-    if (!isMobile || !autoPlayMs || dragging) return
+    if (!isMobile || !autoPlayMs || dragging || n <= 1) return
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % items.length)
+      setAnimate(true)
+      setCurrent((c) => c + 1)
     }, autoPlayMs)
     return () => clearInterval(timer)
-  }, [isMobile, autoPlayMs, items.length, dragging])
+  }, [isMobile, autoPlayMs, dragging, n])
 
-  const goTo = useCallback((index: number) => {
-    setCurrent(((index % items.length) + items.length) % items.length)
-  }, [items.length])
+  // After landing on a clone, silently snap back to the matching real slide
+  const handleTransitionEnd = () => {
+    if (n <= 1) return
+    if (current === total - 1) {
+      setAnimate(false)
+      setCurrent(1)
+    } else if (current === 0) {
+      setAnimate(false)
+      setCurrent(n)
+    }
+  }
+
+  // Re-enable animation on the frame after a silent snap
+  useEffect(() => {
+    if (!animate) {
+      const id = requestAnimationFrame(() => setAnimate(true))
+      return () => cancelAnimationFrame(id)
+    }
+  }, [animate])
+
+  const goTo = useCallback((nextIndex: number) => {
+    setAnimate(true)
+    setCurrent(nextIndex)
+  }, [])
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
@@ -75,8 +106,11 @@ export function MobileCarousel({
     return <div className={desktopClassName}>{children}</div>
   }
 
-  // Mobile: single-item carousel
-  const translateX = -(current * 100) + (dragOffset / (containerRef.current?.offsetWidth || 375)) * 100
+  const containerWidth = containerRef.current?.offsetWidth || 375
+  const translateX = -(current * 100) + (dragOffset / containerWidth) * 100
+
+  // Active dot — map `current` back to the real-items index
+  const activeDot = n > 1 ? ((current - 1) % n + n) % n : 0
 
   return (
     <div className="relative">
@@ -90,12 +124,13 @@ export function MobileCarousel({
       >
         <div
           className="flex"
+          onTransitionEnd={handleTransitionEnd}
           style={{
             transform: `translateX(${translateX}%)`,
-            transition: dragging ? 'none' : 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: animate && !dragging ? 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
           }}
         >
-          {items.map((item, i) => (
+          {slides.map((item, i) => (
             <div key={i} className="w-full flex-shrink-0 px-1">
               {item}
             </div>
@@ -104,7 +139,7 @@ export function MobileCarousel({
       </div>
 
       {/* Arrow buttons */}
-      {items.length > 1 && (
+      {n > 1 && (
         <>
           <button
             onClick={() => goTo(current - 1)}
@@ -123,15 +158,15 @@ export function MobileCarousel({
         </>
       )}
 
-      {/* Dot indicators */}
-      {items.length > 1 && (
+      {/* Dot indicators — one per REAL item */}
+      {n > 1 && (
         <div className="flex justify-center gap-1.5 mt-3">
           {items.map((_, i) => (
             <button
               key={i}
-              onClick={() => goTo(i)}
+              onClick={() => goTo(i + 1)}
               className={`h-2 rounded-full transition-all duration-300 ${
-                i === current ? 'w-6 bg-primary' : 'w-2 bg-gray-300/70'
+                i === activeDot ? 'w-6 bg-primary' : 'w-2 bg-gray-300/70'
               }`}
               aria-label={`Slide ${i + 1}`}
             />
