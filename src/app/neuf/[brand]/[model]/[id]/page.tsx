@@ -274,8 +274,9 @@ export default async function VehicleDetailPage({ params }: PageProps) {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-4 shadow-card hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-300">
+          <div className="lg:col-span-1">
+            <div className="sticky top-4 space-y-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-card hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-300">
               <h3 className="text-lg font-semibold text-primary mb-4">Prix</h3>
 
               {promotion ? (
@@ -368,6 +369,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
                 </ul>
               </div>
             )}
+            </div>
           </div>
         </div>
 
