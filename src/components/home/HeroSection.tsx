@@ -21,7 +21,7 @@ const budgetRanges = [
   { value: '200000-400000', label: '200 000 - 400 000 DH' },
   { value: '400000-600000', label: '400 000 - 600 000 DH' },
   { value: '600000-1000000', label: '600 000 - 1 000 000 DH' },
-  { value: '1000000+', label: 'Plus de 1 000 000 DH' },
+  { value: '1000000+', label: '+1 000 000 DH' },
 ]
 
 const vehicleTypes = [
@@ -315,7 +315,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs font-medium text-white/85">{formatPrice(priceRange[0])}</span>
                 <span className="text-xs font-medium text-white/65">Prix</span>
-                <span className="text-xs font-medium text-white/85">{formatPrice(priceRange[1])}</span>
+                <span className="text-xs font-medium text-white/85">{priceRange[1] >= 1000000 ? `+${formatPrice(priceRange[1])}` : formatPrice(priceRange[1])}</span>
               </div>
               <div className="relative h-6 flex items-center">
                 <div className="absolute left-0 right-0 h-1.5 bg-white/20 rounded-full" />
