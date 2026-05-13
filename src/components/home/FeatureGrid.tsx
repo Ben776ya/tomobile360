@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { VehicleSelector } from '@/components/vehicles/VehicleSelector'
 import { ComparisonTable } from '@/components/vehicles/ComparisonTable'
 import { formatPrice } from '@/lib/utils'
+import { MobileCarousel } from '@/components/shared/MobileCarousel'
 
 interface VehicleData {
   id: string
@@ -317,8 +318,11 @@ export function FeatureGrid() {
       <div className="container mx-auto px-4">
         <div className="px-2 md:px-4 py-3 relative">
 
-        {/* ── Card grid ── */}
-        <div className="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-5">
+        {/* ── Card grid (desktop) / infinite carousel (mobile) ── */}
+        <MobileCarousel
+          desktopClassName="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-5"
+          autoPlayMs={5000}
+        >
           {featureItems.map((item) => {
             const isExpand = item.action === 'expand'
             return (
@@ -335,7 +339,7 @@ export function FeatureGrid() {
               />
             )
           })}
-        </div>
+        </MobileCarousel>
 
         {/* ── Comparateur expand panel ── */}
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
