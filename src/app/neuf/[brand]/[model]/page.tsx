@@ -37,7 +37,7 @@ async function resolveModel(brandParam: string, modelParam: string) {
   const target = (models ?? []).find((m: any) => {
     const brandName = Array.isArray(m.brands) ? m.brands[0]?.name : m.brands?.name
     if (!brandName) return false
-    return slug(brandName) === brandParam && slug(m.name) === modelParam
+    return slug(brandName) === slug(brandParam) && slug(m.name) === slug(modelParam)
   })
 
   if (!target) return null
