@@ -26,7 +26,7 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
           overflow-visible
         "
       >
-        {/* Left — kicker + title + primary CTA */}
+        {/* Left — kicker + title + stacked CTAs (primary pill on top, ghost link below) */}
         <div className="flex flex-col gap-3 min-w-0">
           <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#6B7280] leading-none">
             Challenge Auto · N°{issue.issue_number}
@@ -39,7 +39,7 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
             <span className="font-display italic font-extrabold">Challenge auto</span>
           </h3>
 
-          <div className="mt-1">
+          <div className="mt-1 flex flex-col items-start gap-3">
             <Link
               href={issue.pdf_url}
               target="_blank"
@@ -59,20 +59,36 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
               <Download className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
               <span>Lire le PDF</span>
             </Link>
+
+            <Link
+              href="/magazine"
+              className="
+                inline-flex items-center gap-1.5
+                text-[#1C2541] font-semibold text-[12px]
+                opacity-[0.85] hover:opacity-100
+                transition-opacity duration-200
+                group
+                whitespace-nowrap
+              "
+            >
+              <span>Tous les numéros</span>
+              <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2.2} aria-hidden="true" />
+            </Link>
           </div>
         </div>
 
-        {/* Right — tilted cover overflowing the top + "Tous les numéros" anchored bottom-right */}
-        <div className="relative self-stretch flex flex-col items-end justify-end">
+        {/* Right — tilted cover overflowing the top; lowered slightly to fill
+            the bottom-right of the card now that the secondary CTA moved away. */}
+        <div className="relative self-stretch">
           {/* Soft blurred shadow projected onto the banner — lives outside
               the cover's rotation so it can be tuned independently.
-              top offset = cover top (-44/-58) + 18px shadow drop. */}
+              top offset = cover top (-32/-42) + 18px shadow drop. */}
           <div
             aria-hidden="true"
             className="
               pointer-events-none absolute
-              right-[-8px] top-[-26px]
-              md:right-[-14px] md:top-[-40px]
+              right-[-8px] top-[-14px]
+              md:right-[-14px] md:top-[-24px]
               w-[150px] md:w-[175px]
               aspect-[180/245]
               rounded-[12px]
@@ -94,8 +110,8 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
             aria-label={`Ouvrir le PDF du numéro ${issue.issue_number}`}
             className="
               absolute
-              right-[-8px] top-[-44px]
-              md:right-[-14px] md:top-[-58px]
+              right-[-8px] top-[-32px]
+              md:right-[-14px] md:top-[-42px]
               w-[150px] md:w-[175px]
               aspect-[180/245]
               rounded-[6px]
@@ -143,25 +159,6 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
                   'linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0) 65%)',
               }}
             />
-          </Link>
-
-          {/* Secondary "Tous les numéros" link — flows naturally in the right
-              column. The cover is position:absolute so it doesn't consume flow
-              space, leaving this link to be the only flow child; flex-col +
-              justify-end + items-end pins it to the bottom-right corner. */}
-          <Link
-            href="/magazine"
-            className="
-              inline-flex items-center gap-1.5
-              text-[#1C2541] font-semibold text-[12px]
-              opacity-[0.85] hover:opacity-100
-              transition-opacity duration-200
-              group
-              whitespace-nowrap
-            "
-          >
-            <span>Tous les numéros</span>
-            <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2.2} aria-hidden="true" />
           </Link>
         </div>
       </div>
