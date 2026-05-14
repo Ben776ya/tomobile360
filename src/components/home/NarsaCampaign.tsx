@@ -4,36 +4,38 @@ import { ChevronRight } from 'lucide-react'
 
 export function NarsaCampaign() {
   return (
-    <div className="relative h-full min-h-[240px] md:min-h-[260px] rounded-2xl overflow-hidden border border-gray-200/70 shadow-md">
+    <div className="relative h-full min-h-[240px] md:min-h-[260px] rounded-2xl overflow-hidden border border-gray-200/70 shadow-md bg-white">
       <Image
         src="/narsa_banner_bg.jpeg"
         alt=""
         fill
         sizes="(min-width: 1024px) 66vw, 100vw"
-        className="object-cover object-left"
+        className="object-cover object-left opacity-80"
         priority={false}
         aria-hidden="true"
       />
 
       <div
-        className="absolute inset-0 bg-black/25 lg:hidden"
+        className="absolute inset-0 bg-black/20 lg:hidden"
         aria-hidden="true"
       />
 
-      <div className="relative h-full w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_220px] items-center">
-        <div className="px-6 py-6 lg:py-0 lg:pl-8 flex items-center justify-center lg:justify-start">
-          <h3 className="text-xl sm:text-2xl md:text-[26px] font-extrabold leading-[1.15] text-white text-center lg:text-left max-w-[18ch] [text-shadow:0_2px_8px_rgba(0,0,0,0.45)]">
-            Roulez en toute sécurité avec NARSA
+      <div className="relative h-full w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] items-stretch">
+        <div className="px-6 pt-6 md:pt-7 pb-2 lg:pb-2 flex items-start justify-center">
+          <h3 className="text-xl sm:text-2xl md:text-[26px] font-extrabold leading-[1.2] text-white text-center max-w-[22ch] [text-shadow:0_2px_10px_rgba(0,0,0,0.55)]">
+            Roulez en toute sécurité
+            <br />
+            avec NARSA
           </h3>
         </div>
 
-        <div className="px-6 pb-6 lg:py-0 lg:pr-6 flex flex-col items-center justify-center gap-4">
+        <div className="px-4 pb-6 lg:py-4 lg:pr-6 flex flex-col items-center justify-center gap-4">
           <Image
             src="/narsa_logo.png"
             alt="NARSA — Agence Nationale de la Sécurité Routière"
-            width={200}
-            height={60}
-            className="h-10 md:h-12 w-auto object-contain opacity-70"
+            width={320}
+            height={96}
+            className="h-16 md:h-20 w-auto object-contain"
             priority={false}
           />
           <Link
