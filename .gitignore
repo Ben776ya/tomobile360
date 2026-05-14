@@ -64,5 +64,3 @@ scripts/*
 !scripts/upload-magazines-to-supabase.mjs
 !scripts/lib/
 !scripts/output/
-!scripts/curated-images/
-scripts/curated-images/output/
