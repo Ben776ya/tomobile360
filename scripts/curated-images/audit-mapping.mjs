@@ -54,9 +54,10 @@ async function main() {
     .select('id, name, brands(name)')
   if (error) { console.error(error); process.exit(1) }
 
-  const { data: counts } = await supabase
+  const { data: counts, error: countErr } = await supabase
     .from('vehicles_new')
     .select('model_id')
+  if (countErr) { console.error(countErr); process.exit(1) }
   const countByModel = new Map()
   for (const r of counts) countByModel.set(r.model_id, (countByModel.get(r.model_id) || 0) + 1)
 
@@ -65,6 +66,10 @@ async function main() {
     const brandName = Array.isArray(m.brands) ? m.brands[0]?.name : m.brands?.name
     if (!brandName) continue
     const key = `${slug(brandName)}::${slug(m.name)}`
+    if (dbMap.has(key)) {
+      const prior = dbMap.get(key)
+      console.warn(`WARN: DB slug collision "${key}" — "${brandName} ${m.name}" overwrites "${prior.brand_name} ${prior.model_name}"`)
+    }
     dbMap.set(key, {
       model_id: m.id,
       brand_name: brandName,
