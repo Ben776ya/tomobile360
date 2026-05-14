@@ -46,7 +46,7 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
         {/* Content */}
         <div className="flex flex-col gap-2 min-w-0">
           <span className="inline-flex items-center self-start px-3 py-1 rounded-full bg-[#FCE7E7] text-[#1c2541] text-[10px] font-bold uppercase tracking-wider">
-            Magazine Challenge
+            Challenge Auto
           </span>
           <h3 className="text-lg md:text-xl font-extrabold text-[#1c2541] leading-tight">
             Le dernier numéro<br />est paru
