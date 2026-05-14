@@ -22,14 +22,14 @@ export function NarsaCampaign() {
 
       <div className="relative h-full w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] items-stretch">
         <div className="px-6 lg:pl-56 pt-6 md:pt-7 pb-2 flex items-start justify-center">
-          <h3 className="text-xl sm:text-2xl md:text-[26px] font-extrabold leading-[1.2] text-white text-center max-w-[22ch] [text-shadow:0_2px_10px_rgba(0,0,0,0.55)]">
+          <h3 className="text-xl sm:text-2xl md:text-[26px] font-extrabold leading-[1.2] text-white text-center max-w-[22ch] [text-shadow:0_2px_14px_rgba(0,0,0,0.75),0_1px_3px_rgba(0,0,0,0.45)]">
             Roulez en toute sécurité
             <br />
             avec NARSA
           </h3>
         </div>
 
-        <div className="px-4 pb-6 lg:py-4 lg:pr-6 flex flex-col items-center justify-center gap-4">
+        <div className="px-4 pb-6 lg:py-4 lg:pr-4 flex flex-col items-center lg:items-end justify-center gap-4">
           <Image
             src="/narsa_logo.png"
             alt="NARSA — Agence Nationale de la Sécurité Routière"
