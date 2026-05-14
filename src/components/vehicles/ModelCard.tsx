@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { cn, formatPrice } from '@/lib/utils'
 import { Fuel, Gauge, Layers } from 'lucide-react'
+import { slug } from '@/lib/slug'
 
 export interface ModelGroup {
   brandId: string
@@ -32,7 +33,7 @@ export function ModelCard({ model }: ModelCardProps) {
     ? `À partir de ${formatPrice(model.minPrice)}`
     : 'Prix sur demande'
 
-  const href = `/neuf/${model.brandName.toLowerCase()}/${model.modelName.toLowerCase()}/${model.vehicleId}`
+  const href = `/neuf/${slug(model.brandName)}/${slug(model.modelName)}`
 
   return (
     <Link

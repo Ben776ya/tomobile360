@@ -103,6 +103,18 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // Old per-vehicle URLs: /neuf/{brand}/{model}/{uuid} → /neuf/{brand}/{model}
+      // The page itself does a second redirect to the canonical-slug pair
+      // when the brand/model params aren't already slug-form.
+      {
+        source: '/neuf/:brand/:model/:id',
+        destination: '/neuf/:brand/:model',
+        permanent: true,
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

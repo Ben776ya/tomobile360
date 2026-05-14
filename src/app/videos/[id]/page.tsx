@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { formatRelativeTime } from '@/lib/utils'
 import { LinkifyText } from '@/components/shared/LinkifyText'
 import { VideoShareButton } from '@/components/videos/VideoShareButton'
+import { slug } from '@/lib/slug'
 
 export const revalidate = 30
 
@@ -57,7 +58,14 @@ export default async function VideoDetailPage({ params }: PageProps) {
   // Fetch video
   const { data: video } = await supabase
     .from('videos')
-    .select('*')
+    .select(`
+      *,
+      vehicles_new:vehicle_id (
+        id,
+        brands:brand_id (name),
+        models:model_id (name)
+      )
+    `)
     .eq('id', params.id)
     .eq('is_published', true)
     .single()
@@ -204,12 +212,20 @@ export default async function VideoDetailPage({ params }: PageProps) {
                     <h3 className="text-lg font-semibold text-slate-700 mb-3">
                       Véhicule présenté
                     </h3>
-                    <Link
-                      href={`/neuf/${video.vehicle_id}`}
-                      className="inline-flex items-center gap-2 text-secondary hover:text-secondary-400 hover:underline transition-all duration-300"
-                    >
-                      Voir la fiche technique
-                    </Link>
+                    {(() => {
+                      const v: any = Array.isArray((video as any).vehicles_new) ? (video as any).vehicles_new[0] : (video as any).vehicles_new
+                      const brandName = Array.isArray(v?.brands) ? v.brands[0]?.name : v?.brands?.name
+                      const modelName = Array.isArray(v?.models) ? v.models[0]?.name : v?.models?.name
+                      if (!brandName || !modelName) return null
+                      return (
+                        <Link
+                          href={`/neuf/${slug(brandName)}/${slug(modelName)}`}
+                          className="inline-flex items-center gap-2 text-secondary hover:text-secondary-400 hover:underline transition-all duration-300"
+                        >
+                          Voir la fiche technique
+                        </Link>
+                      )
+                    })()}
                   </div>
                 )}
               </div>

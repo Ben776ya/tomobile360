@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
 import { Check, X as XIcon } from 'lucide-react'
+import { slug } from '@/lib/slug'
 
 interface ComparisonTableProps {
   vehicleIds: string[]
@@ -142,7 +143,7 @@ export function ComparisonTable({ vehicleIds }: ComparisonTableProps) {
             {vehicles.map((vehicle) => (
               <th key={vehicle.id} className="p-4 text-center min-w-[250px]">
                 <Link
-                  href={`/neuf/${vehicle.brands?.name?.toLowerCase()}/${vehicle.models?.name?.toLowerCase()}/${vehicle.id}`}
+                  href={`/neuf/${slug(vehicle.brands?.name || '')}/${slug(vehicle.models?.name || '')}`}
                   className="text-accent hover:text-accent/80 font-semibold"
                 >
                   {vehicle.brands?.name} {vehicle.models?.name}
