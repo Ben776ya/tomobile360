@@ -2,71 +2,45 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRight, Check } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 
 export function NarsaCampaign() {
   return (
-    <div className="h-full bg-[#EEF2F8] rounded-2xl border border-gray-200/70 p-5 md:p-6">
-      <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] lg:grid-cols-[150px_minmax(0,1fr)_auto] gap-5 md:gap-6 items-center h-full">
-        {/* Column 1 — NARSA campaign poster */}
-        <div className="relative w-[150px] sm:w-[140px] lg:w-[150px] aspect-[250/350] rounded-lg overflow-hidden ring-1 ring-[#4057aa]/10 shadow-md mx-auto sm:mx-0">
-          <Image
-            src="/narsa_annonce_visuelle.jpg"
-            alt="Campagne NARSA — Roulez moins vite, c'est sauver plus de vies"
-            fill
-            sizes="150px"
-            className="object-cover"
-            priority={false}
-          />
-        </div>
+    <div className="relative h-full min-h-[240px] md:min-h-[260px] rounded-2xl overflow-hidden border border-gray-200/70 shadow-md">
+      {/* Background road-scene image (panoramic, with built-in white panel on the right) */}
+      <Image
+        src="/narsa_banner_bg.jpeg"
+        alt=""
+        fill
+        sizes="(min-width: 1024px) 66vw, 100vw"
+        className="object-cover object-left"
+        priority={false}
+        aria-hidden="true"
+      />
 
-        {/* Column 2 — Eyebrow + bullets, grouped and centered horizontally in column */}
-        <div className="flex flex-col items-center min-w-0">
-          <div className="flex flex-col items-start gap-3 text-left">
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#DBE4F5] text-[#4057aa] text-[11px] font-bold uppercase tracking-wide">
-              En partenariat avec la NARSA
-            </span>
-            <ul className="space-y-2.5 mt-4">
-              <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
-                <span className="mt-0.5 w-[18px] h-[18px] rounded-full bg-[#4057aa] inline-flex items-center justify-center flex-shrink-0">
-                  <Check className="w-3 h-3 text-white" aria-hidden="true" strokeWidth={3} />
-                </span>
-                <span>Capsules de sensibilisation officielles</span>
-              </li>
-              <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
-                <span className="mt-0.5 w-[18px] h-[18px] rounded-full bg-[#4057aa] inline-flex items-center justify-center flex-shrink-0">
-                  <Check className="w-3 h-3 text-white" aria-hidden="true" strokeWidth={3} />
-                </span>
-                <span>Conseils pratiques pour conducteurs et piétons</span>
-              </li>
-              <li className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700">
-                <span className="mt-0.5 w-[18px] h-[18px] rounded-full bg-[#4057aa] inline-flex items-center justify-center flex-shrink-0">
-                  <Check className="w-3 h-3 text-white" aria-hidden="true" strokeWidth={3} />
-                </span>
-                <span>Code de la route et ressources NARSA</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+      {/* Mobile-only soft overlay so text + logo stay legible when the white panel is cropped */}
+      <div
+        className="absolute inset-0 bg-black/25 lg:hidden"
+        aria-hidden="true"
+      />
 
-        {/* Column 3 — Headline + logo + CTA */}
-        <div className="flex flex-col items-center gap-4 lg:w-[200px]">
-          <h3 className="text-2xl md:text-[26px] font-extrabold text-[#1c2541] leading-[1.1] text-center">
-            Roulez en{' '}
-            <span className="relative inline-block whitespace-nowrap">
-              <span className="relative z-10">sécurité</span>
-              <span
-                className="absolute left-0 right-0 bottom-0.5 h-2 bg-[#fad502] -z-0 rounded-sm"
-                aria-hidden="true"
-              />
-            </span>
+      {/* Content layer */}
+      <div className="relative h-full w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_220px] items-center">
+        {/* Title overlay — centered over the photo area */}
+        <div className="px-6 py-6 lg:py-0 lg:pl-8 flex items-center justify-center lg:justify-start">
+          <h3 className="text-xl sm:text-2xl md:text-[26px] font-extrabold leading-[1.15] text-white text-center lg:text-left max-w-[18ch] [text-shadow:0_2px_8px_rgba(0,0,0,0.45)]">
+            Roulez en toute sécurité avec NARSA
           </h3>
+        </div>
+
+        {/* Right column — logo + CTA, sized to sit on top of the image's built-in white panel */}
+        <div className="px-6 pb-6 lg:py-0 lg:pr-6 flex flex-col items-center justify-center gap-4">
           <Image
             src="/narsa_logo.png"
             alt="NARSA — Agence Nationale de la Sécurité Routière"
             width={200}
             height={60}
-            className="h-9 md:h-10 w-auto object-contain"
+            className="h-10 md:h-12 w-auto object-contain opacity-70"
             priority={false}
           />
           <Link
