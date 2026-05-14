@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { slug } from '@/lib/slug'
 
 const BASE_URL = 'https://tomobile360.ma'
 
@@ -48,18 +49,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }))
 
-  // Dynamic: new vehicle pages
-  const { data: vehicles } = await supabase
+  // Dynamic: model-level new vehicle pages (one URL per model)
+  // Only models with at least one available vehicle.
+  const { data: availableVehicles } = await supabase
     .from('vehicles_new')
-    .select('id, brand_id, model_id, updated_at, brands:brand_id (name), models:model_id (name)')
-    .limit(1000)
+    .select('model_id, updated_at')
+    .eq('is_available', true)
 
-  const vehiclePages: MetadataRoute.Sitemap = (vehicles || []).map((v: any) => ({
-    url: `${BASE_URL}/neuf/${(v.brands?.name || 'marque').toLowerCase()}/${(v.models?.name || 'modele').toLowerCase()}/${v.id}`,
-    lastModified: v.updated_at ? new Date(v.updated_at) : new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }))
+  const lastModifiedByModel = new Map<string, Date>()
+  for (const v of availableVehicles || []) {
+    const t = v.updated_at ? new Date(v.updated_at) : new Date()
+    const prev = lastModifiedByModel.get(v.model_id)
+    if (!prev || t > prev) lastModifiedByModel.set(v.model_id, t)
+  }
+
+  const { data: models } = await supabase
+    .from('models')
+    .select('id, name, brands:brand_id (name)')
+
+  const vehiclePages: MetadataRoute.Sitemap = (models || [])
+    .filter((m: any) => lastModifiedByModel.has(m.id))
+    .map((m: any) => {
+      const brandName = Array.isArray(m.brands) ? m.brands[0]?.name : m.brands?.name
+      return {
+        url: `${BASE_URL}/neuf/${slug(brandName || 'marque')}/${slug(m.name || 'modele')}`,
+        lastModified: lastModifiedByModel.get(m.id)!,
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+      }
+    })
 
   // Dynamic: used vehicle listing pages (highest-intent pages)
   const { data: usedListings } = await supabase
