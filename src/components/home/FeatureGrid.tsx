@@ -149,7 +149,7 @@ const STICKER_ICON_STROKE: Record<FeatureKey, string> = {
   comparateur: '#006EFE',
   offres: '#F97316',
   coeur: '#F43F5E',
-  top: '#10B981',
+  top: '#A16207',
   ev: '#7C3AED',
 }
 
