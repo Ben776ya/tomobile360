@@ -101,10 +101,10 @@ const featureItems: FeatureItem[] = [
   },
   {
     key: 'ev',
-    title: 'Voitures électriques',
+    title: 'EV/PHEV',
     subtitle: 'Découvrir la gamme',
     imageSrc: '/blog/kia-maroc-siam-2026-stand-meknes-modeles-electriques-hero.png',
-    imageAlt: 'Voitures électriques au Maroc',
+    imageAlt: 'Voitures EV et PHEV au Maroc',
     href: '/neuf?fuel=Electric',
     action: 'link',
   },
@@ -150,7 +150,7 @@ const STICKER_ICON_STROKE: Record<FeatureKey, string> = {
   offres: '#F97316',
   coeur: '#F43F5E',
   top: '#A16207',
-  ev: '#7C3AED',
+  ev: '#15803D',
 }
 
 /* ─── Reusable feature card ─── */
