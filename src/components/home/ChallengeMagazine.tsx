@@ -13,20 +13,20 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
   }
 
   return (
-    <div className="relative pt-7 md:pt-9 h-full">
+    <div className="relative h-full">
       <div
         className="
           relative h-full bg-[#F2F4F6] rounded-2xl
           border border-[#F0F2F5]
           shadow-[0_2px_8px_rgba(0,0,0,0.06)]
           px-5 py-5 md:px-6 md:py-6
-          grid grid-cols-[minmax(0,1fr)_120px] md:grid-cols-[minmax(0,1fr)_140px]
+          grid grid-cols-[minmax(0,1fr)_150px] md:grid-cols-[minmax(0,1fr)_175px]
           gap-4 items-center
-          min-h-[170px] md:min-h-[190px]
+          min-h-[240px] md:min-h-[260px]
           overflow-visible
         "
       >
-        {/* Left — kicker + title + CTAs */}
+        {/* Left — kicker + title + primary CTA */}
         <div className="flex flex-col gap-3 min-w-0">
           <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#6B7280] leading-none">
             Challenge Auto · N°{issue.issue_number}
@@ -39,7 +39,7 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
             <span className="font-display italic font-extrabold">Challenge auto</span>
           </h3>
 
-          <div className="mt-1 flex items-center gap-3 flex-wrap">
+          <div className="mt-1">
             <Link
               href={issue.pdf_url}
               target="_blank"
@@ -59,36 +59,21 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
               <Download className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
               <span>Lire le PDF</span>
             </Link>
-
-            <Link
-              href="/magazine"
-              className="
-                inline-flex items-center gap-1.5
-                px-1 py-1
-                text-[#1C2541] font-semibold text-[12px]
-                opacity-[0.85] hover:opacity-100
-                transition-opacity duration-200
-                group
-              "
-            >
-              <span>Tous les numéros</span>
-              <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2.2} aria-hidden="true" />
-            </Link>
           </div>
         </div>
 
-        {/* Right — tilted magazine cover, overflowing the banner top */}
-        <div className="relative self-stretch">
+        {/* Right — tilted cover overflowing the top + "Tous les numéros" anchored bottom-right */}
+        <div className="relative self-stretch flex flex-col items-end justify-end">
           {/* Soft blurred shadow projected onto the banner — lives outside
               the cover's rotation so it can be tuned independently.
-              top offset = cover top (-28/-36) + 18px shadow drop. */}
+              top offset = cover top (-44/-58) + 18px shadow drop. */}
           <div
             aria-hidden="true"
             className="
               pointer-events-none absolute
-              right-[-8px] top-[-10px]
-              md:right-[-12px] md:top-[-18px]
-              w-[120px] md:w-[140px]
+              right-[-8px] top-[-26px]
+              md:right-[-14px] md:top-[-40px]
+              w-[150px] md:w-[175px]
               aspect-[180/245]
               rounded-[12px]
               bg-[rgba(20,28,48,0.28)]
@@ -109,9 +94,9 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
             aria-label={`Ouvrir le PDF du numéro ${issue.issue_number}`}
             className="
               absolute
-              right-[-8px] top-[-28px]
-              md:right-[-12px] md:top-[-36px]
-              w-[120px] md:w-[140px]
+              right-[-8px] top-[-44px]
+              md:right-[-14px] md:top-[-58px]
+              w-[150px] md:w-[175px]
               aspect-[180/245]
               rounded-[6px]
               overflow-visible
@@ -137,7 +122,7 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
               src={issue.cover_url}
               alt={`Couverture Challenge Auto N°${issue.issue_number} — ${issue.dossier_title}`}
               fill
-              sizes="(min-width: 768px) 140px, 120px"
+              sizes="(min-width: 768px) 175px, 150px"
               className="object-cover rounded-[4px] select-none"
               draggable={false}
               priority={false}
@@ -158,6 +143,25 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
                   'linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0) 65%)',
               }}
             />
+          </Link>
+
+          {/* Secondary "Tous les numéros" link — flows naturally in the right
+              column. The cover is position:absolute so it doesn't consume flow
+              space, leaving this link to be the only flow child; flex-col +
+              justify-end + items-end pins it to the bottom-right corner. */}
+          <Link
+            href="/magazine"
+            className="
+              inline-flex items-center gap-1.5
+              text-[#1C2541] font-semibold text-[12px]
+              opacity-[0.85] hover:opacity-100
+              transition-opacity duration-200
+              group
+              whitespace-nowrap
+            "
+          >
+            <span>Tous les numéros</span>
+            <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" strokeWidth={2.2} aria-hidden="true" />
           </Link>
         </div>
       </div>
