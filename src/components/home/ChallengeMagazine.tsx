@@ -66,7 +66,7 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
                 inline-flex items-center gap-1.5
                 px-1 py-1
                 text-[#1C2541] font-semibold text-[12px]
-                opacity-85 hover:opacity-100
+                opacity-[0.85] hover:opacity-100
                 transition-opacity duration-200
                 group
               "
@@ -79,13 +79,15 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
 
         {/* Right — tilted magazine cover, overflowing the banner top */}
         <div className="relative self-stretch">
-          {/* Soft blurred shadow projected onto the banner — separate element so it sits outside the rotation cleanly */}
+          {/* Soft blurred shadow projected onto the banner — lives outside
+              the cover's rotation so it can be tuned independently.
+              top offset = cover top (-28/-36) + 18px shadow drop. */}
           <div
             aria-hidden="true"
             className="
               pointer-events-none absolute
-              right-[-8px] top-[calc(-28px+18px)]
-              md:right-[-12px] md:top-[calc(-36px+18px)]
+              right-[-8px] top-[-10px]
+              md:right-[-12px] md:top-[-18px]
               w-[120px] md:w-[140px]
               aspect-[180/245]
               rounded-[12px]
@@ -97,7 +99,9 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
             "
           />
 
-          {/* The cover itself — rotated, no white inset stripe */}
+          {/* Cover itself. Hover transform restates the base rotate(10deg)
+              on purpose — CSS replaces transforms wholesale on state change,
+              so the hover variant must include the rotation to keep it. */}
           <Link
             href={issue.pdf_url}
             target="_blank"
