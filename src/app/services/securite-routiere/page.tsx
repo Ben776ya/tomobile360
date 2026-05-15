@@ -151,7 +151,7 @@ export default function SecuriteRoutierePage() {
                   alt="NARSA"
                   width={200}
                   height={60}
-                  className="max-h-10 sm:max-h-12 w-auto object-contain"
+                  className="max-h-12 sm:max-h-14 w-auto object-contain"
                 />
               </div>
               <span aria-hidden className="text-2xl sm:text-3xl font-light text-white/60">
@@ -163,7 +163,7 @@ export default function SecuriteRoutierePage() {
                   alt="MFM Radio"
                   width={100}
                   height={100}
-                  className="max-h-14 sm:max-h-16 w-auto object-contain"
+                  className="max-h-16 sm:max-h-[72px] w-auto object-contain"
                 />
               </div>
             </div>
