@@ -157,13 +157,13 @@ export default function SecuriteRoutierePage() {
               <span aria-hidden className="text-2xl sm:text-3xl font-light text-white/60">
                 ×
               </span>
-              <div className="flex h-16 w-40 sm:h-20 sm:w-48 items-center justify-center rounded-xl bg-white shadow-md p-2">
+              <div className="flex h-16 w-40 sm:h-20 sm:w-48 items-center justify-center rounded-xl bg-white shadow-md">
                 <Image
                   src="/mfm_radio_logo.webp"
                   alt="MFM Radio"
                   width={100}
                   height={100}
-                  className="max-h-16 sm:max-h-[72px] w-auto object-contain"
+                  className="max-h-16 sm:max-h-20 w-auto object-contain"
                 />
               </div>
             </div>
