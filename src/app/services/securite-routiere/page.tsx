@@ -144,26 +144,26 @@ export default function SecuriteRoutierePage() {
               Une collaboration
             </span>
 
-            <div className="mt-5 flex items-center gap-4 sm:gap-6">
-              <div className="flex items-center justify-center rounded-xl bg-white px-4 py-3 shadow-md">
+            <div className="mt-5 flex items-center justify-center gap-4 sm:gap-6">
+              <div className="flex h-16 w-40 sm:h-20 sm:w-48 items-center justify-center rounded-xl bg-white shadow-md p-3">
                 <Image
                   src="/narsa_logo.png"
                   alt="NARSA"
                   width={200}
                   height={60}
-                  className="h-10 sm:h-12 w-auto object-contain"
+                  className="max-h-10 sm:max-h-12 w-auto object-contain"
                 />
               </div>
               <span aria-hidden className="text-2xl sm:text-3xl font-light text-white/60">
                 ×
               </span>
-              <div className="flex items-center justify-center rounded-xl bg-white px-4 py-3 shadow-md">
+              <div className="flex h-16 w-40 sm:h-20 sm:w-48 items-center justify-center rounded-xl bg-white shadow-md p-3">
                 <Image
                   src="/mfm_radio_logo.webp"
                   alt="MFM Radio"
-                  width={120}
-                  height={60}
-                  className="h-10 sm:h-12 w-auto object-contain"
+                  width={100}
+                  height={100}
+                  className="max-h-10 sm:max-h-12 w-auto object-contain"
                 />
               </div>
             </div>
@@ -232,70 +232,36 @@ export default function SecuriteRoutierePage() {
         </div>
       </section>
 
-      {/* CTA Banner — mirrors khadamatnarsa.ma "Accédez à vos démarches en ligne" */}
+      {/* CTA Banner */}
       <section className="py-16 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#3f4e9c] via-[#4b5bb0] to-[#3f4e9c] shadow-lg">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]"
-            />
-
-            <div className="relative grid grid-cols-1 md:grid-cols-2 items-center gap-6 md:gap-8 p-8 md:p-12">
-              {/* Left column — copy + CTAs */}
-              <div className="text-white">
-                <div className="mb-4 inline-flex items-center rounded-md bg-white px-3 py-1.5 shadow-sm">
-                  <Image
-                    src="/narsa_logo.png"
-                    alt="NARSA"
-                    width={120}
-                    height={36}
-                    className="h-7 w-auto object-contain"
-                  />
-                </div>
-                <h2 className="text-3xl md:text-4xl font-bold leading-tight">
-                  Accédez à vos démarches{' '}
-                  <span className="block md:inline">en ligne</span>
-                </h2>
-                <p className="mt-3 text-base md:text-lg text-white/85">
-                  Votre service public,{' '}
-                  <span className="text-[#fad502] font-semibold">enfin à portée de clic.</span>
-                </p>
-
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <a
-                    href={NARSA_WEBSITE}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center rounded-lg bg-[#fad502] px-5 py-2.5 text-sm md:text-base font-semibold text-[#2e3f7a] shadow-sm transition-colors hover:bg-[#ffe34a]"
-                  >
-                    Demande d&apos;informations
-                  </a>
-                  <a
-                    href={NARSA_WEBSITE}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center rounded-lg border border-white/70 bg-transparent px-5 py-2.5 text-sm md:text-base font-semibold text-white transition-colors hover:bg-white hover:text-[#3f4e9c]"
-                  >
-                    Suivi des dossiers
-                  </a>
-                </div>
-              </div>
-
-              {/* Right column — device mockup (desktop only) */}
-              <div className="relative hidden md:block">
-                <div className="relative h-44 lg:h-52 w-full">
-                  <Image
-                    src="/narsa_services_mockup.png"
-                    alt=""
-                    aria-hidden
-                    fill
-                    className="object-cover object-right"
-                    sizes="(min-width: 1024px) 480px, 50vw"
-                  />
-                </div>
+          <div className="bg-gradient-to-r from-[#4057aa] to-[#2e3f7a] rounded-2xl p-8 md:p-12 text-center text-white shadow-lg">
+            <div className="flex justify-center mb-6">
+              <div className="bg-white rounded-xl px-6 py-3">
+                <Image
+                  src="/narsa_logo.png"
+                  alt="NARSA"
+                  width={160}
+                  height={48}
+                  className="w-40 h-auto object-contain"
+                />
               </div>
             </div>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">
+              Visitez le site officiel de la NARSA
+            </h2>
+            <p className="text-white/80 mb-8 max-w-xl mx-auto">
+              Accédez à toutes les ressources de sécurité routière, le code de la route,
+              et les services en ligne de la NARSA.
+            </p>
+            <a
+              href={NARSA_WEBSITE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#4057aa] font-bold rounded-xl transition-all duration-300 hover:bg-[#fad502] hover:text-[#2e3f7a] shadow-md text-lg"
+            >
+              Accéder au site NARSA
+            </a>
           </div>
         </div>
       </section>
