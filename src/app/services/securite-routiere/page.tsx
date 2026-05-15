@@ -88,11 +88,18 @@ function VideoListJsonLd() {
         contentUrl: video.src,
         thumbnailUrl: `${SITE_URL}/narsa_logo.png`,
         uploadDate: '2021-07-01',
-        publisher: {
-          '@type': 'Organization',
-          name: 'NARSA — Agence Nationale de la Sécurité Routière',
-          url: 'https://www.narsa.ma',
-        },
+        publisher: [
+          {
+            '@type': 'Organization',
+            name: 'NARSA — Agence Nationale de la Sécurité Routière',
+            url: 'https://www.narsa.ma',
+          },
+          {
+            '@type': 'RadioStation',
+            name: 'MFM Radio',
+            url: 'https://www.mfmradio.ma',
+          },
+        ],
         inLanguage: 'fr',
       },
     })),
