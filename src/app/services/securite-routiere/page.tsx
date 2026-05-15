@@ -145,13 +145,13 @@ export default function SecuriteRoutierePage() {
             </span>
 
             <div className="mt-5 flex items-center justify-center gap-4 sm:gap-6">
-              <div className="flex h-16 w-40 sm:h-20 sm:w-48 items-center justify-center rounded-xl bg-white shadow-md p-3">
+              <div className="flex h-16 w-40 sm:h-20 sm:w-48 items-center justify-center rounded-xl bg-white shadow-md">
                 <Image
                   src="/narsa_logo.png"
                   alt="NARSA"
                   width={200}
                   height={60}
-                  className="max-h-12 sm:max-h-14 w-auto object-contain"
+                  className="max-h-14 sm:max-h-[58px] w-auto object-contain"
                 />
               </div>
               <span aria-hidden className="text-2xl sm:text-3xl font-light text-white/60">
