@@ -48,7 +48,7 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
               className="
                 inline-flex items-center gap-2
                 px-4 py-2.5
-                rounded-full bg-[#E84545] hover:bg-[#D63838]
+                rounded-full bg-[#005DDD] hover:bg-[#0049B5]
                 text-white font-bold text-[13px]
                 shadow-[0_6px_16px_rgba(0,0,0,0.10)]
                 hover:shadow-[0_10px_22px_rgba(0,0,0,0.14)]

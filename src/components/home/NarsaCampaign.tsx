@@ -35,15 +35,15 @@ export function NarsaCampaign() {
             alt="NARSA — Agence Nationale de la Sécurité Routière"
             width={320}
             height={96}
-            className="h-16 md:h-20 w-auto object-contain"
+            className="h-20 md:h-24 w-auto object-contain -mt-2 md:-mt-3"
             priority={false}
           />
           <Link
             href="/services/securite-routiere"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#4057aa] hover:bg-[#2e3f7a] text-white font-semibold rounded-full transition-all duration-300 shadow-md hover:shadow-lg text-sm"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#4057aa] hover:bg-[#2e3f7a] text-white font-semibold rounded-full transition-all duration-300 shadow-md hover:shadow-lg text-xs"
           >
             Découvrir NARSA
-            <ChevronRight className="w-4 h-4" aria-hidden="true" />
+            <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
           </Link>
         </div>
       </div>
