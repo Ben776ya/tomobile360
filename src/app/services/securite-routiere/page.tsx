@@ -232,36 +232,70 @@ export default function SecuriteRoutierePage() {
         </div>
       </section>
 
-      {/* CTA Banner */}
+      {/* CTA Banner — mirrors khadamatnarsa.ma "Accédez à vos démarches en ligne" */}
       <section className="py-16 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="bg-gradient-to-r from-[#4057aa] to-[#2e3f7a] rounded-2xl p-8 md:p-12 text-center text-white shadow-lg">
-            <div className="flex justify-center mb-6">
-              <div className="bg-white rounded-xl px-6 py-3">
-                <Image
-                  src="/narsa_logo.png"
-                  alt="NARSA"
-                  width={160}
-                  height={48}
-                  className="w-40 h-auto object-contain"
-                />
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#3F4E9C] via-[#4B5BB0] to-[#3F4E9C] shadow-lg">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]"
+            />
+
+            <div className="relative grid grid-cols-1 md:grid-cols-2 items-center gap-6 md:gap-8 p-8 md:p-12">
+              {/* Left column — copy + CTAs */}
+              <div className="text-white">
+                <div className="mb-4 inline-flex items-center rounded-md bg-white px-3 py-1.5 shadow-sm">
+                  <Image
+                    src="/narsa_logo.png"
+                    alt="NARSA"
+                    width={120}
+                    height={36}
+                    className="h-7 w-auto object-contain"
+                  />
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+                  Accédez à vos démarches{' '}
+                  <span className="block md:inline">en ligne</span>
+                </h2>
+                <p className="mt-3 text-base md:text-lg text-white/85">
+                  Votre service public,{' '}
+                  <span className="text-[#FAD502] font-semibold">enfin à portée de clic.</span>
+                </p>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <a
+                    href={NARSA_WEBSITE}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-lg bg-[#FAD502] px-5 py-2.5 text-sm md:text-base font-semibold text-[#2e3f7a] shadow-sm transition-colors hover:bg-[#ffe34a]"
+                  >
+                    Demande d&apos;informations
+                  </a>
+                  <a
+                    href={NARSA_WEBSITE}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-lg border border-white/70 bg-transparent px-5 py-2.5 text-sm md:text-base font-semibold text-white transition-colors hover:bg-white hover:text-[#3F4E9C]"
+                  >
+                    Suivi des dossiers
+                  </a>
+                </div>
+              </div>
+
+              {/* Right column — device mockup (desktop only) */}
+              <div className="relative hidden md:block">
+                <div className="relative h-44 lg:h-52 w-full">
+                  <Image
+                    src="/narsa_services_mockup.png"
+                    alt="Aperçu des services NARSA en ligne"
+                    fill
+                    className="object-cover object-right"
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    priority={false}
+                  />
+                </div>
               </div>
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Visitez le site officiel de la NARSA
-            </h2>
-            <p className="text-white/80 mb-8 max-w-xl mx-auto">
-              Accédez à toutes les ressources de sécurité routière, le code de la route,
-              et les services en ligne de la NARSA.
-            </p>
-            <a
-              href={NARSA_WEBSITE}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#4057aa] font-bold rounded-xl transition-all duration-300 hover:bg-[#fad502] hover:text-[#2e3f7a] shadow-md text-lg"
-            >
-              Accéder au site NARSA
-            </a>
           </div>
         </div>
       </section>
