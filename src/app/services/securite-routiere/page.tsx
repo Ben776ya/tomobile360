@@ -139,7 +139,7 @@ export default function SecuriteRoutierePage() {
             Retour aux services
           </Link>
 
-          <div className="max-w-3xl">
+          <div className="max-w-3xl mx-auto text-center">
             <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white/80 ring-1 ring-white/20">
               Une collaboration
             </span>
@@ -157,13 +157,13 @@ export default function SecuriteRoutierePage() {
               <span aria-hidden className="text-2xl sm:text-3xl font-light text-white/60">
                 ×
               </span>
-              <div className="flex h-16 w-40 sm:h-20 sm:w-48 items-center justify-center rounded-xl bg-white shadow-md p-3">
+              <div className="flex h-16 w-40 sm:h-20 sm:w-48 items-center justify-center rounded-xl bg-white shadow-md p-2">
                 <Image
                   src="/mfm_radio_logo.webp"
                   alt="MFM Radio"
                   width={100}
                   height={100}
-                  className="max-h-10 sm:max-h-12 w-auto object-contain"
+                  className="max-h-14 sm:max-h-16 w-auto object-contain"
                 />
               </div>
             </div>
@@ -171,7 +171,7 @@ export default function SecuriteRoutierePage() {
             <h1 className="mt-8 text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
               Capsules de sensibilisation à la sécurité routière
             </h1>
-            <p className="mt-4 text-base md:text-lg text-white/85 max-w-2xl">
+            <p className="mt-4 text-base md:text-lg text-white/85 max-w-2xl mx-auto">
               Une série produite en partenariat avec la <span className="font-semibold text-white">NARSA</span>
               {' '}et <span className="font-semibold text-white">MFM Radio</span> pour informer les usagers
               de la route au Maroc et promouvoir des comportements plus sûrs.
