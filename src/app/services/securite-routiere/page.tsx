@@ -124,29 +124,57 @@ export default function SecuriteRoutierePage() {
         ]} />
       </div>
 
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-[#E8EBF5] via-white to-white py-16 md:py-24">
-        <div className="container mx-auto px-4">
+      {/* Hero — NARSA × MFM Radio collaboration */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#2e3f7a] via-[#3a4d99] to-[#4057aa] py-16 md:py-24">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:24px_24px]"
+        />
+        <div className="container relative mx-auto px-4">
           <Link
             href="/services"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-[#4057aa] mb-6 transition-colors text-sm"
+            className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-8 transition-colors text-sm"
           >
             <ArrowLeft className="h-4 w-4" />
             Retour aux services
           </Link>
+
           <div className="max-w-3xl">
-            <div className="flex items-center gap-4 mb-4">
-              <Image
-                src="/narsa_logo.png"
-                alt="NARSA"
-                width={200}
-                height={60}
-                className="h-12 w-auto object-contain"
-              />
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white/80 ring-1 ring-white/20">
+              Une collaboration
+            </span>
+
+            <div className="mt-5 flex items-center gap-4 sm:gap-6">
+              <div className="flex items-center justify-center rounded-xl bg-white px-4 py-3 shadow-md">
+                <Image
+                  src="/narsa_logo.png"
+                  alt="NARSA"
+                  width={200}
+                  height={60}
+                  className="h-10 sm:h-12 w-auto object-contain"
+                />
+              </div>
+              <span aria-hidden className="text-2xl sm:text-3xl font-light text-white/60">
+                ×
+              </span>
+              <div className="flex items-center justify-center rounded-xl bg-white px-4 py-3 shadow-md">
+                <Image
+                  src="/mfm_radio_logo.webp"
+                  alt="MFM Radio"
+                  width={120}
+                  height={60}
+                  className="h-10 sm:h-12 w-auto object-contain"
+                />
+              </div>
             </div>
-            <p className="text-lg md:text-xl text-gray-500 mt-2">
-              Découvrez les capsules vidéo de sensibilisation et les conseils de sécurité routière
-              de la NARSA — Agence Nationale de la Sécurité Routière du Maroc.
+
+            <h1 className="mt-8 text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
+              Capsules de sensibilisation à la sécurité routière
+            </h1>
+            <p className="mt-4 text-base md:text-lg text-white/85 max-w-2xl">
+              Une série produite en partenariat avec la <span className="font-semibold text-white">NARSA</span>
+              {' '}et <span className="font-semibold text-white">MFM Radio</span> pour informer les usagers
+              de la route au Maroc et promouvoir des comportements plus sûrs.
             </p>
           </div>
         </div>
