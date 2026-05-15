@@ -29,7 +29,7 @@ export function NarsaCampaign() {
           </h3>
         </div>
 
-        <div className="px-4 pb-6 lg:py-4 lg:pr-4 flex flex-col items-center lg:items-end justify-center gap-4">
+        <div className="px-4 pb-6 lg:py-4 lg:pr-4 flex flex-col items-center justify-center gap-4">
           <Image
             src="/narsa_logo.png"
             alt="NARSA — Agence Nationale de la Sécurité Routière"
