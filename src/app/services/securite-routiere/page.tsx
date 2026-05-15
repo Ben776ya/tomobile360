@@ -235,7 +235,7 @@ export default function SecuriteRoutierePage() {
       {/* CTA Banner — mirrors khadamatnarsa.ma "Accédez à vos démarches en ligne" */}
       <section className="py-16 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#3F4E9C] via-[#4B5BB0] to-[#3F4E9C] shadow-lg">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#3f4e9c] via-[#4b5bb0] to-[#3f4e9c] shadow-lg">
             <div
               aria-hidden
               className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]"
@@ -259,7 +259,7 @@ export default function SecuriteRoutierePage() {
                 </h2>
                 <p className="mt-3 text-base md:text-lg text-white/85">
                   Votre service public,{' '}
-                  <span className="text-[#FAD502] font-semibold">enfin à portée de clic.</span>
+                  <span className="text-[#fad502] font-semibold">enfin à portée de clic.</span>
                 </p>
 
                 <div className="mt-6 flex flex-wrap gap-3">
@@ -267,7 +267,7 @@ export default function SecuriteRoutierePage() {
                     href={NARSA_WEBSITE}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center rounded-lg bg-[#FAD502] px-5 py-2.5 text-sm md:text-base font-semibold text-[#2e3f7a] shadow-sm transition-colors hover:bg-[#ffe34a]"
+                    className="inline-flex items-center justify-center rounded-lg bg-[#fad502] px-5 py-2.5 text-sm md:text-base font-semibold text-[#2e3f7a] shadow-sm transition-colors hover:bg-[#ffe34a]"
                   >
                     Demande d&apos;informations
                   </a>
@@ -275,7 +275,7 @@ export default function SecuriteRoutierePage() {
                     href={NARSA_WEBSITE}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center rounded-lg border border-white/70 bg-transparent px-5 py-2.5 text-sm md:text-base font-semibold text-white transition-colors hover:bg-white hover:text-[#3F4E9C]"
+                    className="inline-flex items-center justify-center rounded-lg border border-white/70 bg-transparent px-5 py-2.5 text-sm md:text-base font-semibold text-white transition-colors hover:bg-white hover:text-[#3f4e9c]"
                   >
                     Suivi des dossiers
                   </a>
@@ -287,11 +287,11 @@ export default function SecuriteRoutierePage() {
                 <div className="relative h-44 lg:h-52 w-full">
                   <Image
                     src="/narsa_services_mockup.png"
-                    alt="Aperçu des services NARSA en ligne"
+                    alt=""
+                    aria-hidden
                     fill
                     className="object-cover object-right"
-                    sizes="(min-width: 768px) 50vw, 100vw"
-                    priority={false}
+                    sizes="(min-width: 1024px) 480px, 50vw"
                   />
                 </div>
               </div>
