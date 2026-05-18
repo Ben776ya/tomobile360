@@ -40,10 +40,20 @@ export function NarsaCampaign() {
           />
           <Link
             href="/services/securite-routiere"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#4057aa] hover:bg-[#2e3f7a] text-white font-semibold rounded-full transition-all duration-300 shadow-md hover:shadow-lg text-xs"
+            className="
+              self-start
+              inline-flex items-center gap-2
+              px-4 py-2.5
+              rounded-full bg-[#4057aa] hover:bg-[#2e3f7a]
+              text-white font-bold text-[13px]
+              shadow-[0_6px_16px_rgba(0,0,0,0.10)]
+              hover:shadow-[0_10px_22px_rgba(0,0,0,0.14)]
+              hover:-translate-y-px active:translate-y-0
+              transition-all duration-200
+            "
           >
-            Découvrir NARSA
-            <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>Découvrir NARSA</span>
+            <ChevronRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
           </Link>
         </div>
       </div>
