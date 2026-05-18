@@ -9,7 +9,7 @@ import { createVehicle, updateVehicle, createPromotion } from '@/lib/actions/adm
 import { createClient } from '@/lib/supabase/client'
 import Image from 'next/image'
 import { Loader2, ChevronDown, ChevronUp, Plus, X, Upload } from 'lucide-react'
-import type { Brand, Model, VehicleNew } from '@/lib/types'
+import type { Brand, Model, VehicleNew, Variant, FuelType, Transmission } from '@/lib/types'
 
 interface VehicleFormProps {
   brands: Brand[]
@@ -110,6 +110,11 @@ export function VehicleForm({
   // Coup de Cœur
   const [coupDeCoeurReason, setCoupDeCoeurReason] = useState(vehicle?.coup_de_coeur_reason ?? '')
 
+  // Variant list (additional trims/versions displayed in the "Versions disponibles" sidebar)
+  const [variantList, setVariantList] = useState<Variant[]>(
+    Array.isArray(vehicle?.variant_list) ? (vehicle!.variant_list as Variant[]) : []
+  )
+
   // Promotion
   const [promoPercentage, setPromoPercentage] = useState('')
   const [promoTitle, setPromoTitle] = useState('')
@@ -187,6 +192,21 @@ export function VehicleForm({
     }
   }
 
+  const addVariant = () => {
+    setVariantList(prev => [...prev, {
+      version: '', price_min: null, price_max: null,
+      horsepower: null, fuel_type: null, transmission: null,
+    }])
+  }
+
+  const removeVariant = (i: number) => {
+    setVariantList(prev => prev.filter((_, idx) => idx !== i))
+  }
+
+  const updateVariant = (i: number, patch: Partial<Variant>) => {
+    setVariantList(prev => prev.map((v, idx) => idx === i ? { ...v, ...patch } : v))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -253,6 +273,16 @@ export function VehicleForm({
       is_coming_soon: isComingSoon,
       is_featured_offer: isFeaturedOffer,
       coup_de_coeur_reason: strOrNull(coupDeCoeurReason),
+      variant_list: variantList.length > 0
+        ? variantList.map(v => ({
+            version: v.version?.trim() || null,
+            price_min: v.price_min ?? null,
+            price_max: v.price_max ?? null,
+            horsepower: v.horsepower ?? null,
+            fuel_type: v.fuel_type || null,
+            transmission: v.transmission || null,
+          }))
+        : null,
     }
 
     let result: any
@@ -404,6 +434,107 @@ export function VehicleForm({
             />
           </div>
         </div>
+      </div>
+
+      {/* Variant list — appears in the "Versions disponibles" sidebar on the public model page */}
+      <div className="bg-dark-700 rounded-lg shadow-dark-card border border-white/10 p-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold text-white">Versions / Variantes</h3>
+          <Button type="button" onClick={addVariant} variant="outline" size="sm" className="border-white/10 bg-dark-700/80 text-dark-100 hover:bg-dark-600/50">
+            <Plus className="h-4 w-4 mr-1" /> Ajouter une version
+          </Button>
+        </div>
+        <p className="text-xs text-dark-400 mb-4">
+          Liste des versions/finitions de ce modèle. Affiché dans la colonne &quot;Versions disponibles&quot; de la page produit.
+          Laissez vide si le modèle n&apos;a qu&apos;une seule version.
+        </p>
+        {variantList.length === 0 ? (
+          <p className="text-sm text-dark-400 italic">Aucune version supplémentaire.</p>
+        ) : (
+          <div className="space-y-3">
+            {variantList.map((v, i) => (
+              <div key={i} className="grid grid-cols-1 md:grid-cols-12 gap-2 bg-dark-800/40 border border-white/5 rounded-md p-3">
+                <div className="md:col-span-4">
+                  <Label className="text-xs text-dark-300">Nom de la version</Label>
+                  <Input
+                    value={v.version ?? ''}
+                    onChange={(e) => updateVariant(i, { version: e.target.value })}
+                    placeholder="ex: GT Line"
+                    className="mt-1 bg-dark-700/80 border-white/10 text-white placeholder-dark-400 focus:ring-secondary/50"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <Label className="text-xs text-dark-300">Prix min (DH)</Label>
+                  <Input
+                    type="number"
+                    value={v.price_min ?? ''}
+                    onChange={(e) => updateVariant(i, { price_min: e.target.value === '' ? null : Number(e.target.value) })}
+                    className="mt-1 bg-dark-700/80 border-white/10 text-white focus:ring-secondary/50"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <Label className="text-xs text-dark-300">Prix max (DH)</Label>
+                  <Input
+                    type="number"
+                    value={v.price_max ?? ''}
+                    onChange={(e) => updateVariant(i, { price_max: e.target.value === '' ? null : Number(e.target.value) })}
+                    className="mt-1 bg-dark-700/80 border-white/10 text-white focus:ring-secondary/50"
+                  />
+                </div>
+                <div className="md:col-span-1">
+                  <Label className="text-xs text-dark-300">CV</Label>
+                  <Input
+                    type="number"
+                    value={v.horsepower ?? ''}
+                    onChange={(e) => updateVariant(i, { horsepower: e.target.value === '' ? null : Number(e.target.value) })}
+                    className="mt-1 bg-dark-700/80 border-white/10 text-white focus:ring-secondary/50"
+                  />
+                </div>
+                <div className="md:col-span-1">
+                  <Label className="text-xs text-dark-300">Carb.</Label>
+                  <select
+                    value={v.fuel_type ?? ''}
+                    onChange={(e) => updateVariant(i, { fuel_type: (e.target.value || null) as FuelType | null })}
+                    className="mt-1 flex h-10 w-full rounded-md border border-white/10 bg-dark-700/80 px-2 py-2 text-sm text-white focus:ring-secondary/50 focus:ring-2 focus:outline-none"
+                  >
+                    <option value="">—</option>
+                    <option value="Essence">Essence</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="Electric">Electric</option>
+                    <option value="PHEV">PHEV</option>
+                  </select>
+                </div>
+                <div className="md:col-span-1">
+                  <Label className="text-xs text-dark-300">Boîte</Label>
+                  <select
+                    value={v.transmission ?? ''}
+                    onChange={(e) => updateVariant(i, { transmission: (e.target.value || null) as Transmission | null })}
+                    className="mt-1 flex h-10 w-full rounded-md border border-white/10 bg-dark-700/80 px-2 py-2 text-sm text-white focus:ring-secondary/50 focus:ring-2 focus:outline-none"
+                  >
+                    <option value="">—</option>
+                    <option value="Manual">Manual</option>
+                    <option value="Automatic">Automatic</option>
+                    <option value="CVT">CVT</option>
+                    <option value="DCT">DCT</option>
+                  </select>
+                </div>
+                <div className="md:col-span-1 flex items-end justify-end">
+                  <Button
+                    type="button"
+                    onClick={() => removeVariant(i)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                    aria-label="Supprimer cette version"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Images */}

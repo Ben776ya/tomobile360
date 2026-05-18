@@ -63,7 +63,7 @@ export default async function VideosPage({
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-2">
-            Regardez nos vidéos : L&apos;auto comme vous ne l&apos;avez jamais vue !
+            TOMOBILE360 TV
           </h1>
           <p className="text-gray-600">
             Essais, comparatifs, actualités et guides en vidéo

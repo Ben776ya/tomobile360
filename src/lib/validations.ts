@@ -20,6 +20,15 @@ export type ArticleInput = z.infer<typeof ArticleSchema>
 
 // === Admin Update Schemas ===
 
+const VariantSchema = z.object({
+  version: z.string().nullable().optional(),
+  price_min: z.number().nullable().optional(),
+  price_max: z.number().nullable().optional(),
+  horsepower: z.number().nullable().optional(),
+  fuel_type: z.string().nullable().optional(),
+  transmission: z.string().nullable().optional(),
+})
+
 export const UpdateVideoSchema = z.object({
   title: z.string().min(1).optional(),
   description: z.string().optional(),
@@ -68,6 +77,7 @@ export const UpdateVehicleSchema = z.object({
   is_coming_soon: z.boolean().optional(),
   is_featured_offer: z.boolean().optional(),
   coup_de_coeur_reason: z.string().nullable().optional(),
+  variant_list: z.array(VariantSchema).nullable().optional(),
 }).strict()
 
 export const UpdatePromotionSchema = z.object({
@@ -161,6 +171,7 @@ export const CreateVehicleSchema = z.object({
   is_coming_soon: z.boolean().optional(),
   is_featured_offer: z.boolean().optional(),
   coup_de_coeur_reason: z.string().nullable().optional(),
+  variant_list: z.array(VariantSchema).nullable().optional(),
 }).strict()
 
 // === Fiche Technique Schemas ===

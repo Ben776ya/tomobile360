@@ -254,6 +254,7 @@ export async function createVehicle(data: CreateVehicleInput) {
       is_coming_soon: d.is_coming_soon ?? false,
       is_featured_offer: d.is_featured_offer ?? false,
       coup_de_coeur_reason: d.coup_de_coeur_reason || null,
+      variant_list: d.variant_list ?? null,
     })
     .select()
     .single()
@@ -313,6 +314,7 @@ export async function updateVehicle(id: string, data: UpdateVehicleInput) {
   if (d.is_coming_soon !== undefined) updateData.is_coming_soon = d.is_coming_soon
   if (d.is_featured_offer !== undefined) updateData.is_featured_offer = d.is_featured_offer
   if (d.coup_de_coeur_reason !== undefined) updateData.coup_de_coeur_reason = d.coup_de_coeur_reason || null
+  if (d.variant_list !== undefined) updateData.variant_list = d.variant_list ?? null
 
   const supabase = await createClient()
 

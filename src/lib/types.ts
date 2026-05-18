@@ -44,6 +44,15 @@ export type Transmission = 'Manual' | 'Automatic' | 'CVT' | 'DCT'
 export type Condition = 'Excellent' | 'Très Bon' | 'Bon' | 'Acceptable'
 export type SellerType = 'individual' | 'professional'
 
+export type Variant = {
+  version: string | null
+  price_min: number | null
+  price_max: number | null
+  horsepower: number | null
+  fuel_type: FuelType | null
+  transmission: Transmission | null
+}
+
 export type VehicleNew = {
   id: string
   brand_id: string
@@ -92,6 +101,7 @@ export type VehicleNew = {
   coup_de_coeur_category: CoupDeCoeurCategory | null
   coup_de_coeur_reason: string | null
   is_featured_offer: boolean
+  variant_list: Variant[] | null
   brands?: Brand
   models?: Model
 }

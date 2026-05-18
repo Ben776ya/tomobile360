@@ -27,7 +27,7 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
         "
       >
         {/* Left — kicker + title + stacked CTAs (primary pill on top, ghost link below) */}
-        <div className="flex flex-col gap-3 min-w-0">
+        <div className="flex flex-col gap-3 min-w-0 self-stretch">
           <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#6B7280] leading-none">
             Challenge Auto · N°{issue.issue_number}
           </span>
@@ -39,7 +39,7 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
             <span className="font-display italic font-extrabold">Challenge auto</span>
           </h3>
 
-          <div className="mt-1 flex flex-col items-start gap-3">
+          <div className="mt-auto mb-1.5 flex flex-col items-start gap-3">
             <Link
               href={issue.pdf_url}
               target="_blank"

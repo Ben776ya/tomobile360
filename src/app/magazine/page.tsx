@@ -6,9 +6,9 @@ import { getAllMagazines } from '@/lib/data/challenge-magazines'
 export const revalidate = 60
 
 export const metadata = {
-  title: 'Archives Challenge Magazine — Tomobile 360',
+  title: 'Archives Challenge Auto — Tomobile 360',
   description:
-    'Tous les numéros du Challenge Magazine en accès libre — actualités auto, dossiers, essais et tendances du marché marocain.',
+    'Tous les numéros du Challenge Auto en accès libre — actualités auto, dossiers, essais et tendances du marché marocain.',
 }
 
 export default async function MagazineArchivePage() {
@@ -22,7 +22,7 @@ export default async function MagazineArchivePage() {
             Archives
           </p>
           <h1 className="text-3xl md:text-4xl font-extrabold text-[#1c2541] leading-tight">
-            Tous les numéros du Challenge Magazine
+            Tous les numéros du Challenge Auto
           </h1>
           <p className="mt-3 text-sm md:text-base text-gray-600 leading-relaxed">
             Du plus récent au plus ancien — téléchargez chaque numéro en PDF.

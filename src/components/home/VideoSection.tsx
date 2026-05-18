@@ -21,7 +21,7 @@ export function VideoSection({ videos }: VideoSectionProps) {
         <div className="p-6 md:p-8 relative">
           {/* Section Header */}
           <div className="text-center mb-10 relative z-10">
-            <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="flex items-center justify-center mb-4">
               <Image
                 src="/logo_tomobile360.png"
                 alt="Tomobile 360"

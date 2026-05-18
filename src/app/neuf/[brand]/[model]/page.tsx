@@ -17,6 +17,7 @@ import { buildModelGroups } from '@/lib/vehicles/group-by-model'
 import { ShareButton } from '@/components/shared/ShareButton'
 import { ContactDealerDialog } from '@/components/shared/ContactDealerDialog'
 import { TestDriveDialog } from '@/components/shared/TestDriveDialog'
+import type { Variant } from '@/lib/types'
 
 export const revalidate = 60
 
@@ -44,7 +45,7 @@ async function resolveModel(brandParam: string, modelParam: string) {
 
   const brand = Array.isArray(target.brands) ? target.brands[0] : target.brands
 
-  const { data: versions } = await supabase
+  const { data: vehicle } = await supabase
     .from('vehicles_new')
     .select(`
       id, brand_id, model_id, version, year,
@@ -57,19 +58,32 @@ async function resolveModel(brandParam: string, modelParam: string) {
       is_available, is_popular, is_new_release, is_coming_soon,
       doors, warranty_months, exterior_color, interior_color,
       euro_norm, vat_deductible, power_kw, mileage,
+      variant_list,
       views, created_at, updated_at,
       promotions (discount_percentage, is_active, valid_until, title, description)
     `)
     .eq('model_id', target.id)
     .eq('is_available', true)
-    .order('price_min', { ascending: true, nullsFirst: false })
+    .maybeSingle()
 
-  if (!versions || versions.length === 0) return null
+  if (!vehicle) return null
+
+  const variants: Variant[] = Array.isArray(vehicle.variant_list) && vehicle.variant_list.length > 0
+    ? (vehicle.variant_list as Variant[])
+    : [{
+        version: vehicle.version,
+        price_min: vehicle.price_min,
+        price_max: vehicle.price_max,
+        horsepower: vehicle.horsepower,
+        fuel_type: vehicle.fuel_type,
+        transmission: vehicle.transmission,
+      }]
 
   return {
     model: { id: target.id as string, name: target.name as string, category: target.category as string | null },
     brand: { id: brand?.id as string, name: brand?.name as string, logo_url: brand?.logo_url as string | null },
-    versions: versions as any[],
+    vehicle: vehicle as any,
+    variants,
   }
 }
 
@@ -77,14 +91,15 @@ export async function generateMetadata({ params }: PageProps) {
   const resolved = await resolveModel(params.brand, params.model)
   if (!resolved) return { title: 'Modèle non trouvé' }
 
-  const { brand, model, versions } = resolved
-  const minPrice = versions.find(v => v.price_min != null)?.price_min ?? null
+  const { brand, model, vehicle, variants } = resolved
+  const variantPrices = variants.map(v => v.price_min).filter((p): p is number => p != null)
+  const minPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : null
   const canonicalUrl = `https://tomobile360.ma/neuf/${slug(brand.name)}/${slug(model.name)}`
   const title = `${brand.name} ${model.name} — Prix, Versions et Fiche Technique au Maroc`
   const description = minPrice
-    ? `Découvrez le ${brand.name} ${model.name} au Maroc : ${versions.length} version${versions.length > 1 ? 's' : ''}, prix à partir de ${formatPrice(minPrice)}, fiche technique complète.`
-    : `Découvrez le ${brand.name} ${model.name} au Maroc : ${versions.length} version${versions.length > 1 ? 's' : ''}, fiche technique complète.`
-  const ogImage = versions[0].images?.[0] || '/og-image.png'
+    ? `Découvrez le ${brand.name} ${model.name} au Maroc : ${variants.length} version${variants.length > 1 ? 's' : ''}, prix à partir de ${formatPrice(minPrice)}, fiche technique complète.`
+    : `Découvrez le ${brand.name} ${model.name} au Maroc : ${variants.length} version${variants.length > 1 ? 's' : ''}, fiche technique complète.`
+  const ogImage = vehicle.images?.[0] || '/og-image.png'
 
   return {
     title,
@@ -111,7 +126,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
   const resolved = await resolveModel(params.brand, params.model)
   if (!resolved) notFound()
 
-  const { brand, model, versions } = resolved
+  const { brand, model, vehicle, variants } = resolved
 
   const canonicalBrandSlug = slug(brand.name)
   const canonicalModelSlug = slug(model.name)
@@ -120,7 +135,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
   }
 
   const supabase = await createClient()
-  const representative = versions[0]
+  const representative = vehicle
   const images = (representative.images as string[] | null) || []
 
   const { data: fiche } = await supabase
@@ -151,23 +166,21 @@ export default async function ModelDetailPage({ params }: PageProps) {
     (similarRows ?? []) as unknown as Parameters<typeof buildModelGroups>[0]
   ).slice(0, 4)
 
-  const prices = versions.map(v => v.price_min).filter((p): p is number => p != null)
-  const maxPrices = versions.map(v => v.price_max ?? v.price_min).filter((p): p is number => p != null)
+  const prices = variants.map(v => v.price_min).filter((p): p is number => p != null)
+  const maxPrices = variants.map(v => v.price_max ?? v.price_min).filter((p): p is number => p != null)
   const minPrice = prices.length > 0 ? Math.min(...prices) : null
   const maxPrice = maxPrices.length > 0 ? Math.max(...maxPrices) : null
-  const totalViews = versions.reduce((sum, v) => sum + (v.views || 0), 0)
-  const hasNewRelease = versions.some(v => v.is_new_release)
-  const hasPopular = versions.some(v => v.is_popular)
-  const fuelTypes = Array.from(new Set(versions.map(v => v.fuel_type).filter(Boolean)))
-  const transmissions = Array.from(new Set(versions.map(v => v.transmission).filter(Boolean)))
+  const totalViews = representative.views || 0
+  const hasNewRelease = !!representative.is_new_release
+  const hasPopular = !!representative.is_popular
+  const fuelTypes = Array.from(new Set(variants.map(v => v.fuel_type).filter(Boolean)))
+  const transmissions = Array.from(new Set(variants.map(v => v.transmission).filter(Boolean)))
 
   type Promo = { discount_percentage: number | null; is_active?: boolean; valid_until?: string | null; title?: string | null }
-  const activePromos: Promo[] = versions.flatMap(v =>
-    (v.promotions as Promo[] | null ?? []).filter(p =>
-      p.is_active !== false &&
-      p.discount_percentage != null && p.discount_percentage > 0 &&
-      (!p.valid_until || new Date(p.valid_until) >= new Date())
-    )
+  const activePromos: Promo[] = ((representative.promotions as Promo[] | null) ?? []).filter(p =>
+    p.is_active !== false &&
+    p.discount_percentage != null && p.discount_percentage > 0 &&
+    (!p.valid_until || new Date(p.valid_until) >= new Date())
   )
   const bestPromo = activePromos.length > 0
     ? activePromos.reduce((a, b) => (b.discount_percentage! > a.discount_percentage! ? b : a))
@@ -188,7 +201,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
   )
   const canonicalUrl = `https://tomobile360.ma/neuf/${canonicalBrandSlug}/${canonicalModelSlug}`
 
-  const offers = versions
+  const offers = variants
     .filter(v => v.price_min != null && v.price_min > 0)
     .map(v => ({
       '@type': 'Offer',
@@ -244,7 +257,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
                         {brand.name} {model.name}
                       </h1>
                       <p className="text-gray-400">
-                        {versions.length} version{versions.length > 1 ? 's' : ''} disponible{versions.length > 1 ? 's' : ''}
+                        {variants.length} version{variants.length > 1 ? 's' : ''} disponible{variants.length > 1 ? 's' : ''}
                       </p>
                     </div>
                   </div>
@@ -346,17 +359,16 @@ export default async function ModelDetailPage({ params }: PageProps) {
                 </div>
               </div>
 
-              {versions.length > 1 && (
+              {variants.length > 1 && (
                 <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-card">
                   <h3 className="text-lg font-semibold text-primary mb-4">Versions disponibles</h3>
-                  <ul className="space-y-3">
-                    {versions.map((v) => (
-                      <li key={v.id} className="border-b border-gray-100 last:border-b-0 pb-3 last:pb-0">
+                  <ul className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 -mr-2">
+                    {variants.map((v, i) => (
+                      <li key={i} className="border-b border-gray-100 last:border-b-0 pb-3 last:pb-0">
                         <p className="text-sm font-semibold text-gray-800">
                           {v.version || `${brand.name} ${model.name}`}
                         </p>
                         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500 mt-1">
-                          {v.year && <span>{v.year}</span>}
                           {v.fuel_type && <span>{v.fuel_type}</span>}
                           {v.transmission && <span>{v.transmission}</span>}
                           {v.horsepower && <span>{v.horsepower} ch</span>}
