@@ -18,11 +18,10 @@ import { ShareButton } from '@/components/shared/ShareButton'
 import { ContactDealerDialog } from '@/components/shared/ContactDealerDialog'
 import { TestDriveDialog } from '@/components/shared/TestDriveDialog'
 import type { Variant } from '@/lib/types'
+import { BUSINESS_INFO } from '@/lib/business-info'
 
 export const revalidate = 60
 
-const TOMOBILE_PHONE = '212XXX000000' // TODO: replace with real WhatsApp number
-const TOMOBILE_PHONE_DISPLAY = '+212 XXX-000000'
 
 interface PageProps {
   params: { brand: string; model: string }
@@ -325,7 +324,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
 
                 <div className="space-y-3">
                   <a
-                    href={`https://wa.me/${TOMOBILE_PHONE}?text=${whatsappText}`}
+                    href={`https://wa.me/${BUSINESS_INFO.WHATSAPP_E164}?text=${whatsappText}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
@@ -338,11 +337,11 @@ export default async function ModelDetailPage({ params }: PageProps) {
                   <ContactDealerDialog
                     vehicleName={`${brand.name} ${model.name}`}
                     dealerEmail="contact@tomobile360.ma"
-                    dealerPhone={TOMOBILE_PHONE_DISPLAY}
+                    dealerPhone={BUSINESS_INFO.WHATSAPP_DISPLAY}
                   />
                   <TestDriveDialog
                     vehicleName={`${brand.name} ${model.name}`}
-                    dealerPhone={TOMOBILE_PHONE}
+                    dealerPhone={BUSINESS_INFO.WHATSAPP_E164}
                   />
                   <Link href="/neuf/comparer" className="block">
                     <Button variant="outline" className="w-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
@@ -400,7 +399,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
       {/* Sticky Mobile Contact Bar */}
       <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex gap-3 shadow-lg">
         <a
-          href={`https://wa.me/${TOMOBILE_PHONE}?text=${whatsappText}`}
+          href={`https://wa.me/${BUSINESS_INFO.WHATSAPP_E164}?text=${whatsappText}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#25D366] text-white font-semibold rounded-xl text-sm"
@@ -411,7 +410,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
           WhatsApp
         </a>
         <a
-          href={`tel:${TOMOBILE_PHONE_DISPLAY}`}
+          href={`tel:${BUSINESS_INFO.WHATSAPP_DISPLAY}`}
           className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-secondary text-white font-semibold rounded-xl text-sm"
         >
           Appeler
