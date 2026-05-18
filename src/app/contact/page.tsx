@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { Mail, Phone, MapPin, Send, Clock, MessageCircle, AlertCircle } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { submitContactMessage } from '@/lib/actions/contact'
+import { BUSINESS_INFO, whatsappLink } from '@/lib/business-info'
 
 interface FormErrors {
   name?: string
@@ -76,17 +78,23 @@ export default function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!validateForm()) return
 
-    if (!validateForm()) {
+    setIsSubmitting(true)
+    const result = await submitContactMessage({
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim() || undefined,
+      subject: formData.subject,
+      message: formData.message.trim(),
+    })
+    setIsSubmitting(false)
+
+    if ('error' in result && result.error) {
+      setErrors({ message: result.error })
       return
     }
 
-    setIsSubmitting(true)
-
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    setIsSubmitting(false)
     setSubmitted(true)
     setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
     setErrors({})
@@ -95,7 +103,7 @@ export default function ContactPage() {
   const InputError = ({ error }: { error?: string }) => {
     if (!error) return null
     return (
-      <p className="mt-1 text-sm text-[#32B75C] flex items-center gap-1">
+      <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
         <AlertCircle className="h-3.5 w-3.5" />
         {error}
       </p>
@@ -135,7 +143,7 @@ export default function ContactPage() {
                     <div>
                       <p className="font-semibold text-gray-900">Adresse</p>
                       <p className="text-sm text-gray-500">
-                        Casablanca, Maroc
+                        {BUSINESS_INFO.ADDRESS_SHORT}
                       </p>
                     </div>
                   </div>
@@ -146,9 +154,12 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">Téléphone</p>
-                      <p className="text-sm text-gray-500">
-                        +212 5XX-XXXXXX
-                      </p>
+                      <a
+                        href={`tel:${BUSINESS_INFO.PHONE_TEL}`}
+                        className="text-sm text-gray-500 hover:text-secondary transition-colors"
+                      >
+                        {BUSINESS_INFO.PHONE_DISPLAY}
+                      </a>
                     </div>
                   </div>
 
@@ -158,9 +169,12 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">Email</p>
-                      <p className="text-sm text-gray-500">
-                        contact@tomobile360.ma
-                      </p>
+                      <a
+                        href={`mailto:${BUSINESS_INFO.EMAIL}`}
+                        className="text-sm text-gray-500 hover:text-secondary transition-colors"
+                      >
+                        {BUSINESS_INFO.EMAIL}
+                      </a>
                     </div>
                   </div>
 
@@ -171,8 +185,8 @@ export default function ContactPage() {
                     <div>
                       <p className="font-semibold text-gray-900">Horaires</p>
                       <p className="text-sm text-gray-500">
-                        Lun - Ven: 9h00 - 18h00<br />
-                        Sam: 9h00 - 13h00
+                        {BUSINESS_INFO.HOURS_WEEKDAY}<br />
+                        {BUSINESS_INFO.HOURS_SATURDAY}
                       </p>
                     </div>
                   </div>
@@ -187,9 +201,14 @@ export default function ContactPage() {
                 <p className="text-sm text-gray-500 mb-4">
                   Besoin d&apos;une réponse rapide ? Chattez avec notre équipe en direct.
                 </p>
-                <button className="w-full px-4 py-2 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary-400 transition-colors">
+                <a
+                  href={whatsappLink('Bonjour Tomobile 360, j\'aimerais discuter avec votre équipe.')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center px-4 py-2 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary-400 transition-colors"
+                >
                   Démarrer le chat
-                </button>
+                </a>
               </div>
             </div>
 
@@ -226,7 +245,7 @@ export default function ContactPage() {
                           value={formData.name}
                           onChange={(e) => handleChange('name', e.target.value)}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
-                            errors.name ? 'border-[#32B75C]' : 'border-gray-200'
+                            errors.name ? 'border-red-500' : 'border-gray-200'
                           }`}
                           placeholder="Votre nom"
                         />
@@ -241,7 +260,7 @@ export default function ContactPage() {
                           value={formData.email}
                           onChange={(e) => handleChange('email', e.target.value)}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
-                            errors.email ? 'border-[#32B75C]' : 'border-gray-200'
+                            errors.email ? 'border-red-500' : 'border-gray-200'
                           }`}
                           placeholder="votre@email.com"
                         />
@@ -259,7 +278,7 @@ export default function ContactPage() {
                           value={formData.phone}
                           onChange={(e) => handleChange('phone', e.target.value)}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
-                            errors.phone ? 'border-[#32B75C]' : 'border-gray-200'
+                            errors.phone ? 'border-red-500' : 'border-gray-200'
                           }`}
                           placeholder="+212 6XX-XXXXXX"
                         />
@@ -273,7 +292,7 @@ export default function ContactPage() {
                           value={formData.subject}
                           onChange={(e) => handleChange('subject', e.target.value)}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all ${
-                            errors.subject ? 'border-[#32B75C]' : 'border-gray-200'
+                            errors.subject ? 'border-red-500' : 'border-gray-200'
                           }`}
                         >
                           <option value="">Sélectionnez un sujet</option>
@@ -296,7 +315,7 @@ export default function ContactPage() {
                         value={formData.message}
                         onChange={(e) => handleChange('message', e.target.value)}
                         className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all resize-none placeholder-gray-400 ${
-                          errors.message ? 'border-[#32B75C]' : 'border-gray-200'
+                          errors.message ? 'border-red-500' : 'border-gray-200'
                         }`}
                         placeholder="Votre message..."
                       />
