@@ -240,3 +240,20 @@ export const ContactMessageSchema = z.object({
 })
 
 export type ContactMessageInput = z.infer<typeof ContactMessageSchema>
+
+// === Service Booking Schemas ===
+
+export const ControleBookingSchema = z.object({
+  city: z.string().trim().min(1, 'Ville requise'),
+  plate_number: z.string().trim().min(1, "Immatriculation requise").max(20),
+  preferred_date: z.string().refine((v) => !isNaN(Date.parse(v)), { message: 'Date invalide' }),
+  phone: z
+    .string()
+    .trim()
+    .refine(
+      (v) => /^(\+212|0)[5-7]\d{8}$/.test(v.replace(/\s|-/g, '')),
+      { message: 'Numéro de téléphone invalide' }
+    ),
+})
+
+export type ControleBookingInput = z.infer<typeof ControleBookingSchema>
