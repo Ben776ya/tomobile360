@@ -140,7 +140,7 @@ export default function DetailingPage() {
                 </ul>
 
                 <Link
-                  href="/contact"
+                  href="/contact?subject=service&topic=detailing"
                   className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 mt-auto text-center block ${
                     pkg.featured
                       ? 'bg-purple-600 hover:bg-purple-700 text-white'
@@ -192,7 +192,7 @@ export default function DetailingPage() {
               detailing partenaire le plus proche de chez vous.
             </p>
             <Link
-              href="/contact"
+              href="/contact?subject=service&topic=detailing"
               className="inline-flex items-center gap-2 px-8 py-3 bg-white text-purple-700 font-bold rounded-xl transition-all duration-300 hover:bg-purple-50 shadow-md"
             >
               Demander un devis

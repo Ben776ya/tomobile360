@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Mail, Phone, MapPin, Send, Clock, MessageCircle, AlertCircle } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { submitContactMessage } from '@/lib/actions/contact'
@@ -25,6 +25,17 @@ export default function ContactPage() {
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const sub = params.get('subject')
+    const topic = params.get('topic')
+    const allowedSubjects = ['info', 'vehicle', 'service', 'partnership', 'other'] as const
+    if (sub && (allowedSubjects as readonly string[]).includes(sub)) {
+      const prefilledMessage = topic ? `Sujet : ${topic}\n\n` : ''
+      setFormData((prev) => ({ ...prev, subject: sub, message: prefilledMessage }))
+    }
+  }, [])
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
