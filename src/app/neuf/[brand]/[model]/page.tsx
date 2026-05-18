@@ -336,7 +336,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
                   </a>
                   <ContactDealerDialog
                     vehicleName={`${brand.name} ${model.name}`}
-                    dealerEmail="contact@tomobile360.ma"
+                    dealerEmail={BUSINESS_INFO.EMAIL}
                     dealerPhone={BUSINESS_INFO.WHATSAPP_DISPLAY}
                   />
                   <TestDriveDialog
@@ -410,7 +410,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
           WhatsApp
         </a>
         <a
-          href={`tel:${BUSINESS_INFO.WHATSAPP_DISPLAY}`}
+          href={`tel:${BUSINESS_INFO.PHONE_TEL}`}
           className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-secondary text-white font-semibold rounded-xl text-sm"
         >
           Appeler
