@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Send } from 'lucide-react'
 import { subscribeNewsletter } from '@/lib/actions/newsletter'
 import { EXTERNAL_LINKS } from '@/lib/links'
+import { BUSINESS_INFO } from '@/lib/business-info'
 
 const socialLinks = [
   {
@@ -114,17 +115,19 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-dark-300">
                 <MapPin className="h-4 w-4 text-secondary flex-shrink-0 mt-0.5" />
-                <span>123 Boulevard Mohammed V, Casablanca 20250, Maroc</span>
+                <span>{BUSINESS_INFO.ADDRESS_FULL}</span>
               </li>
               <li className="flex items-center gap-3 text-sm text-dark-300">
                 <Phone className="h-4 w-4 text-secondary flex-shrink-0" />
-                <a href="tel:+212522123456" className="hover:text-secondary transition-colors">
-                  +212 522-123456
+                <a href={`tel:${BUSINESS_INFO.PHONE_TEL}`} className="hover:text-secondary transition-colors">
+                  {BUSINESS_INFO.PHONE_DISPLAY}
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm text-dark-300">
                 <Mail className="h-4 w-4 text-secondary flex-shrink-0" />
-                <span>contact@tomobile360.ma</span>
+                <a href={`mailto:${BUSINESS_INFO.EMAIL}`} className="hover:text-secondary transition-colors">
+                  {BUSINESS_INFO.EMAIL}
+                </a>
               </li>
             </ul>
             {/* Social Icons */}
