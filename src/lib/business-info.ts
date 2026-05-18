@@ -6,14 +6,14 @@ export const BUSINESS_INFO = {
   // Public-facing contact channels
   EMAIL: 'contact@tomobile360.ma',
   EMAIL_PRIVACY: 'privacy@tomobile360.ma',
-  PHONE_DISPLAY: '+212 522-123456', // PLACEHOLDER — USER: real landline
-  PHONE_TEL: '+212522123456',        // PLACEHOLDER — same number, no spaces, for tel: links
+  PHONE_DISPLAY: '+212 522 54 81 50 à 52', // landline range (3 lines: 50, 51, 52)
+  PHONE_TEL: '+212522548150',              // first line of the range, for tel: links
   WHATSAPP_DISPLAY: '+212 XXX-000000', // PLACEHOLDER — USER: real WhatsApp number
   WHATSAPP_E164: '212XXX000000',       // PLACEHOLDER — same WhatsApp, no +/spaces, for wa.me/ links
 
   // Physical address
-  ADDRESS_SHORT: 'Casablanca, Maroc',                                  // PLACEHOLDER — keep short form for cards
-  ADDRESS_FULL: '123 Boulevard Mohammed V, Casablanca 20250, Maroc',   // PLACEHOLDER — USER: real street address
+  ADDRESS_SHORT: 'Quartier El Manar, Casablanca',                                // short form for cards
+  ADDRESS_FULL: '2, Rue Mohamed Laghzaoui, Quartier El Manar, Casablanca 20370, Maroc',
   CITY: 'Casablanca',
   COUNTRY: 'Maroc',
 
