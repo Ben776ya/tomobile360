@@ -103,7 +103,7 @@ export default function ConfidentialitePage() {
             <h2 className="text-xl font-bold text-slate-700 mb-4">8. Contact</h2>
             <p className="text-gray-600">
               Pour toute question concernant cette politique de confidentialité, contactez-nous :<br />
-              Email : privacy@tomobile360.ma<br />
+              Email : {BUSINESS_INFO.EMAIL_PRIVACY}<br />
               Adresse : {BUSINESS_INFO.ADDRESS_FULL}
             </p>
           </section>
