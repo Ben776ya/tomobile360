@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Send, ArrowRight } from 'lucide-react'
+import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Send, Play, Plus } from 'lucide-react'
 import { subscribeNewsletter } from '@/lib/actions/newsletter'
 import { EXTERNAL_LINKS } from '@/lib/links'
 import { BUSINESS_INFO } from '@/lib/business-info'
@@ -91,185 +91,263 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-dark-800 text-white relative overflow-hidden border-t border-white/10">
-      {/* Subtle grid texture */}
-      <div className="absolute inset-0 bg-grid pointer-events-none opacity-50" />
-      {/* Main Footer */}
-      <div className="container mx-auto px-4 pt-6 sm:pt-8 lg:pt-10 pb-8 sm:pb-12 lg:pb-16 relative z-10">
+    <footer className="relative bg-dark-800 text-white overflow-hidden border-t border-white/10 font-sans">
+      {/* Decorative grid texture (masked) */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
+          backgroundSize: '56px 56px',
+          WebkitMaskImage:
+            'radial-gradient(1200px 700px at 50% 30%, #000 50%, transparent 90%)',
+          maskImage:
+            'radial-gradient(1200px 700px at 50% 30%, #000 50%, transparent 90%)',
+        }}
+      />
+      {/* Decorative radial blue glow (top-left) */}
+      <div
+        aria-hidden="true"
+        className="absolute pointer-events-none z-0 rounded-full"
+        style={{
+          width: 680,
+          height: 680,
+          left: -180,
+          top: -280,
+          background:
+            'radial-gradient(circle, rgba(0,110,254,0.22), transparent 60%)',
+        }}
+      />
 
-        {/* Top: Brand identity (left) + Magazine Banner (center) + Newsletter (right) */}
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-8 xl:gap-10 xl:items-center mb-6 sm:mb-8 lg:mb-10">
+      <div className="relative z-10 container mx-auto px-6 sm:px-10 lg:px-14 pt-9">
+        {/* Top accent gradient bar */}
+        <div
+          aria-hidden="true"
+          className="h-[3px] w-full rounded-full mb-7 opacity-70 bg-gradient-to-r from-transparent via-secondary to-transparent"
+        />
 
-          {/* Brand Identity Block */}
-          <div>
-            <Link href="/" className="inline-block mb-6">
+        {/* ===== 1. Hero row: brand | magazine | newsletter ===== */}
+        <section className="grid grid-cols-1 lg:grid-cols-[minmax(260px,1fr)_minmax(300px,1.05fr)_minmax(280px,1fr)] gap-6 items-stretch mb-[22px]">
+
+          {/* Brand column */}
+          <div className="flex flex-col">
+            <Link href="/" className="inline-block mb-2">
               <Image
                 src="/logo_tomobile360.png"
                 alt="Tomobile 360"
-                width={140}
-                height={40}
-                className="h-10 w-auto"
+                width={116}
+                height={33}
+                className="w-[116px] h-auto block"
               />
             </Link>
-            <p className="text-dark-300 text-sm mb-6 leading-relaxed">
+            <p className="text-xs leading-[1.5] text-white/[0.62] max-w-[38ch] mb-2.5">
               Tomobile 360 est votre guide d&apos;achat automobile au Maroc — prix, fiches techniques, comparatifs et essais de voitures neuves.
             </p>
-            {/* Contact Info */}
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3 text-sm text-dark-300">
-                <MapPin className="h-4 w-4 text-secondary flex-shrink-0 mt-0.5" />
+
+            <ul className="list-none m-0 mb-2.5 p-0 flex flex-col gap-[5px]">
+              <li className="flex gap-2 items-center text-xs text-white/[0.78] leading-[1.35]">
+                <span aria-hidden="true" className="flex-shrink-0 w-5 h-5 rounded-[5px] bg-secondary/[0.16] text-secondary-400 flex items-center justify-center">
+                  <MapPin className="w-2.5 h-2.5" />
+                </span>
                 <span>{BUSINESS_INFO.ADDRESS_FULL}</span>
               </li>
-              <li className="flex items-center gap-3 text-sm text-dark-300">
-                <Phone className="h-4 w-4 text-secondary flex-shrink-0" />
-                <a href={`tel:${BUSINESS_INFO.PHONE_TEL}`} className="hover:text-secondary transition-colors">
+              <li className="flex gap-2 items-center text-xs text-white/[0.78] leading-[1.35]">
+                <span aria-hidden="true" className="flex-shrink-0 w-5 h-5 rounded-[5px] bg-secondary/[0.16] text-secondary-400 flex items-center justify-center">
+                  <Phone className="w-2.5 h-2.5" />
+                </span>
+                <a href={`tel:${BUSINESS_INFO.PHONE_TEL}`} className="text-inherit no-underline hover:text-white transition-colors">
                   {BUSINESS_INFO.PHONE_DISPLAY}
                 </a>
               </li>
-              <li className="flex items-center gap-3 text-sm text-dark-300">
-                <Mail className="h-4 w-4 text-secondary flex-shrink-0" />
-                <a href={`mailto:${BUSINESS_INFO.EMAIL}`} className="hover:text-secondary transition-colors">
+              <li className="flex gap-2 items-center text-xs text-white/[0.78] leading-[1.35]">
+                <span aria-hidden="true" className="flex-shrink-0 w-5 h-5 rounded-[5px] bg-secondary/[0.16] text-secondary-400 flex items-center justify-center">
+                  <Mail className="w-2.5 h-2.5" />
+                </span>
+                <a href={`mailto:${BUSINESS_INFO.EMAIL}`} className="text-inherit no-underline hover:text-white transition-colors">
                   {BUSINESS_INFO.EMAIL}
                 </a>
               </li>
             </ul>
-            {/* Social Icons */}
-            <div className="flex gap-2 mt-6">
+
+            <div className="flex gap-[7px] mt-auto" aria-label="Réseaux sociaux">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
-                  style={{ backgroundColor: social.color }}
                   aria-label={social.label}
                   title={social.label}
+                  className="w-7 h-7 rounded-[7px] flex items-center justify-center bg-white/[0.06] border border-white/[0.10] text-white/85 transition-all duration-200 hover:-translate-y-0.5 hover:text-white hover:border-transparent hover:shadow-lg"
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = social.color }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = '' }}
                 >
                   {social.icon ? (
-                    <social.icon className="h-4 w-4" />
+                    <social.icon className="w-3 h-3" />
                   ) : (
-                    social.customIcon
+                    <span className="w-3 h-3 flex items-center justify-center">{social.customIcon}</span>
                   )}
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Magazine Banner (center) */}
-          <Link
-            href="/qui-sommes-nous"
-            aria-label="Découvrir l'équipe Tomobile 360 Magazine"
-            className="group block relative max-w-2xl mx-auto overflow-hidden rounded-xl border border-white/10 shadow-elevated hover:shadow-glow-cyan-lg transition-all duration-500 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-dark-800"
+          {/* Magazine card */}
+          <article
+            aria-label="Tomobile 360 Magazine"
+            className="relative rounded-lg overflow-hidden bg-[#0a1430] border border-white/[0.08] min-h-[150px] lg:max-h-[170px] isolate lg:self-center"
           >
             <Image
               src="/footer_banner.jpg"
               alt=""
-              width={1006}
-              height={282}
-              sizes="(max-width: 640px) 100vw, 672px"
-              className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.02]"
-              priority={false}
+              fill
+              sizes="(max-width: 1024px) 100vw, 400px"
+              className="object-cover"
             />
-            {/* Soft edge gradient so the banner blends into the dark footer */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-dark-800/30 via-transparent to-dark-800/30" />
-            {/* Hover CTA chip (bottom-right) */}
-            <div className="pointer-events-none absolute bottom-3 right-3 sm:bottom-4 sm:right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/95 text-white text-xs sm:text-sm font-semibold shadow-lg backdrop-blur-sm opacity-100 translate-y-0 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-y-1 sm:group-hover:translate-y-0 transition-all duration-300">
-              <span>Qui sommes-nous</span>
-              <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </div>
-          </Link>
-
-          {/* Newsletter Block */}
-          <div className="w-full">
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white font-display">
-              Newsletter
-            </h3>
-            <p className="text-sm text-dark-300 mb-4">
-              Inscrivez-vous pour recevoir nos offres et actualités.
-            </p>
-            <form onSubmit={handleSubscribe} className="space-y-3">
-              <div className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Votre email"
-                  className="w-full px-4 py-3 pr-12 bg-dark-700 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 text-sm disabled:opacity-50"
-                  required
-                  disabled={isSubmitting}
-                />
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-secondary text-white hover:bg-secondary-600 hover:scale-110 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  aria-label="Subscribe"
-                >
-                  {isSubmitting ? (
-                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </button>
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 z-[1]"
+              style={{
+                background:
+                  'linear-gradient(90deg, rgba(7,13,28,0.92) 0%, rgba(7,13,28,0.55) 38%, rgba(7,13,28,0.05) 70%)',
+              }}
+            />
+            <div className="relative z-[2] h-full p-3.5 flex flex-col justify-between max-w-[65%]">
+              <span className="inline-flex self-start items-center gap-[7px] bg-white/[0.08] border border-white/[0.14] rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white/85">
+                <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full bg-destructive" style={{ boxShadow: '0 0 8px #ef4444' }} />
+                Nouvel épisode
+              </span>
+              <div>
+                <h2 className="font-display font-extrabold text-[15px] lg:text-[18px] leading-[1.1] mt-1.5 text-white tracking-tight">
+                  Tomobile<em className="not-italic text-secondary-400">360</em> Magazine
+                </h2>
               </div>
-              {message && (
-                <div className={`text-xs px-3 py-2 rounded-lg ${
-                  message.type === 'success'
-                    ? 'bg-green-500/20 text-green-300 border border-green-500/30'
-                    : 'bg-red-500/20 text-red-300 border border-red-500/30'
-                }`}>
-                  {message.text}
-                </div>
-              )}
+              <div className="flex gap-2.5 flex-wrap">
+                <Link
+                  href="/qui-sommes-nous"
+                  className="inline-flex items-center gap-1.5 bg-white text-dark-800 px-2.5 py-1.5 rounded-full text-[11.5px] font-semibold no-underline transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                >
+                  <Play className="w-3 h-3" fill="currentColor" />
+                  Regarder l&apos;épisode
+                </Link>
+                <a
+                  href={EXTERNAL_LINKS.YOUTUBE}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 bg-transparent text-white border border-white/25 px-2.5 py-1.5 rounded-full text-[11.5px] font-semibold no-underline transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/[0.06]"
+                >
+                  <Youtube className="w-3 h-3" />
+                  Tous les épisodes
+                </a>
+              </div>
+            </div>
+          </article>
+
+          {/* Newsletter card */}
+          <aside className="flex flex-col gap-2.5 p-3.5 rounded-lg border border-white/[0.08] backdrop-blur-md"
+            style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015))' }}
+          >
+            <div className="flex items-center gap-2.5">
+              <span aria-hidden="true" className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center"
+                style={{ boxShadow: '0 0 0 3px rgba(0,110,254,0.18)' }}
+              >
+                <Mail className="w-3.5 h-3.5 text-white" />
+              </span>
+              <h3 className="m-0 font-display font-extrabold text-[13px] uppercase tracking-[0.14em] text-white">
+                Newsletter
+              </h3>
+            </div>
+
+            <form
+              onSubmit={handleSubscribe}
+              className="flex items-stretch bg-white/[0.06] border border-white/[0.12] rounded-xl transition-all duration-200 focus-within:border-secondary"
+            >
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Votre email"
+                aria-label="Votre email"
+                className="flex-1 min-w-0 bg-transparent border-0 outline-none px-3 py-[7px] text-white text-[12.5px] placeholder:text-white/40 disabled:opacity-50"
+                required
+                disabled={isSubmitting}
+              />
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                aria-label="S'inscrire"
+                className="m-[3px] bg-secondary hover:bg-secondary-600 text-white rounded-md w-[30px] h-[28px] flex items-center justify-center transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <div className="h-3 w-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+              </button>
             </form>
-            <p className="text-[11px] sm:text-xs text-dark-400 mt-3">
+
+            {message && (
+              <div className={`text-[11px] px-2.5 py-1.5 rounded-md ${
+                message.type === 'success'
+                  ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                  : 'bg-red-500/20 text-red-300 border border-red-500/30'
+              }`}>
+                {message.text}
+              </div>
+            )}
+
+            <p className="text-[10.5px] leading-[1.4] text-white/[0.42] -mt-1 m-0">
               En vous inscrivant, vous acceptez notre{' '}
-              <Link href="/confidentialite" className="text-secondary hover:text-secondary-600 hover:underline transition-all duration-300">
+              <Link href="/confidentialite" className="text-secondary no-underline hover:underline">
                 politique de confidentialité
               </Link>
               .
             </p>
 
-            {/* CTA Button */}
             <a
               href={EXTERNAL_LINKS.SELL_CAR}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center justify-center w-full px-6 py-3 bg-secondary hover:bg-secondary-600 text-white font-semibold rounded-xl transition-all duration-300"
+              className="inline-flex items-center justify-center gap-2 w-full px-3.5 py-2.5 bg-success hover:bg-success/90 text-white font-bold text-[12.5px] border-0 rounded-lg no-underline transition-all duration-200 hover:-translate-y-0.5 mt-0.5"
+              style={{ boxShadow: '0 5px 14px rgba(16,185,129,0.22), inset 0 -2px 0 rgba(0,0,0,0.18)' }}
             >
+              <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
               Déposer votre annonce
             </a>
-          </div>
-        </div>
+          </aside>
+        </section>
 
-        {/* Bottom: Navigation Links (Neuf | Occasion | Services) — aligned under banner */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto">
-
+        {/* ===== 2. Link row (Neuf | Occasion | Services) ===== */}
+        <section className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-4 border-t border-b border-white/[0.08]">
           {/* Neuf */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white font-display">
+          <nav aria-label="Voitures neuves">
+            <h4 className="relative pb-2 mb-3 font-display font-extrabold text-xs uppercase tracking-[0.16em] text-white">
               Neuf
-            </h3>
-            <ul className="space-y-3">
+              <span aria-hidden="true" className="absolute left-0 bottom-0 w-6 h-0.5 rounded-sm bg-secondary" />
+            </h4>
+            <ul className="list-none p-0 m-0 flex flex-wrap gap-x-[18px] gap-y-1.5">
               {neufLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-dark-300 hover:text-secondary hover:translate-x-1 inline-block transition-all duration-300"
+                    className="group inline-flex items-center gap-[7px] text-[13px] text-white/65 no-underline transition-all duration-150 hover:text-white hover:translate-x-0.5"
                   >
+                    <span aria-hidden="true" className="w-1 h-1 rounded-full bg-white/25 transition-all duration-150 group-hover:bg-secondary group-hover:scale-[1.6]" />
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Occasion */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white font-display">
+          <nav aria-label="Occasion">
+            <h4 className="relative pb-2 mb-3 font-display font-extrabold text-xs uppercase tracking-[0.16em] text-white">
               Occasion
-            </h3>
-            <ul className="space-y-3">
+              <span aria-hidden="true" className="absolute left-0 bottom-0 w-6 h-0.5 rounded-sm bg-success" />
+            </h4>
+            <ul className="list-none p-0 m-0 flex flex-wrap gap-x-[18px] gap-y-1.5">
               {occasionLinks.map((link) => (
                 <li key={link.href}>
                   {link.external ? (
@@ -277,71 +355,87 @@ export default function Footer() {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-dark-300 hover:text-secondary hover:translate-x-1 inline-block transition-all duration-300"
+                      className="group inline-flex items-center gap-[7px] text-[13px] text-white/65 no-underline transition-all duration-150 hover:text-white hover:translate-x-0.5"
                     >
+                      <span aria-hidden="true" className="w-1 h-1 rounded-full bg-white/25 transition-all duration-150 group-hover:bg-success group-hover:scale-[1.6]" />
                       {link.label}
                     </a>
                   ) : (
                     <Link
                       href={link.href}
-                      className="text-sm text-dark-300 hover:text-secondary hover:translate-x-1 inline-block transition-all duration-300"
+                      className="group inline-flex items-center gap-[7px] text-[13px] text-white/65 no-underline transition-all duration-150 hover:text-white hover:translate-x-0.5"
                     >
+                      <span aria-hidden="true" className="w-1 h-1 rounded-full bg-white/25 transition-all duration-150 group-hover:bg-success group-hover:scale-[1.6]" />
                       {link.label}
                     </Link>
                   )}
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Services */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white font-display">
+          <nav aria-label="Services">
+            <h4 className="relative pb-2 mb-3 font-display font-extrabold text-xs uppercase tracking-[0.16em] text-white">
               Services
-            </h3>
-            <ul className="space-y-3">
+              <span
+                aria-hidden="true"
+                className="absolute left-0 bottom-0 w-6 h-0.5 rounded-sm"
+                style={{ background: 'linear-gradient(90deg, #006EFE, #10B981)' }}
+              />
+            </h4>
+            <ul className="list-none p-0 m-0 flex flex-wrap gap-x-[18px] gap-y-1.5">
               {serviceLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-dark-300 hover:text-secondary hover:translate-x-1 inline-block transition-all duration-300"
+                    className="group inline-flex items-center gap-[7px] text-[13px] text-white/65 no-underline transition-all duration-150 hover:text-white hover:translate-x-0.5"
                   >
+                    <span aria-hidden="true" className="w-1 h-1 rounded-full bg-white/25 transition-all duration-150 group-hover:bg-secondary group-hover:scale-[1.6]" />
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
+        </section>
 
-        </div>
-
-      </div>
-
-      {/* Bottom Bar */}
-      <div className="border-t border-white/5 relative z-10">
-        <div className="container mx-auto px-4 py-5">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-dark-400">
-              © {currentYear} Tomobile 360. Tous droits réservés.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-              <Link href="/qui-sommes-nous" className="text-sm text-dark-400 hover:text-secondary hover:underline transition-all duration-300">
+        {/* ===== 3. Legal bar ===== */}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 py-4 pb-[18px] flex-wrap">
+          <span className="text-[12.5px] text-white/50 tracking-[0.02em]">
+            © {currentYear} Tomobile 360. Tous droits réservés.
+          </span>
+          <ul className="list-none p-0 m-0 flex gap-1 flex-wrap items-center">
+            <li>
+              <Link href="/qui-sommes-nous" className="text-[12.5px] text-white/55 no-underline transition-colors duration-150 hover:text-white">
                 Qui Sommes-Nous
               </Link>
-              <Link href="/mentions-legales" className="text-sm text-dark-400 hover:text-secondary hover:underline transition-all duration-300">
+            </li>
+            <li className="flex items-center gap-[14px]">
+              <span aria-hidden="true" className="w-[3px] h-[3px] rounded-full bg-white/25" />
+              <Link href="/mentions-legales" className="text-[12.5px] text-white/55 no-underline transition-colors duration-150 hover:text-white">
                 Mentions Légales
               </Link>
-              <Link href="/confidentialite" className="text-sm text-dark-400 hover:text-secondary hover:underline transition-all duration-300">
+            </li>
+            <li className="flex items-center gap-[14px]">
+              <span aria-hidden="true" className="w-[3px] h-[3px] rounded-full bg-white/25" />
+              <Link href="/confidentialite" className="text-[12.5px] text-white/55 no-underline transition-colors duration-150 hover:text-white">
                 Confidentialité
               </Link>
-              <Link href="/conditions" className="text-sm text-dark-400 hover:text-secondary hover:underline transition-all duration-300">
+            </li>
+            <li className="flex items-center gap-[14px]">
+              <span aria-hidden="true" className="w-[3px] h-[3px] rounded-full bg-white/25" />
+              <Link href="/conditions" className="text-[12.5px] text-white/55 no-underline transition-colors duration-150 hover:text-white">
                 Conditions d&apos;utilisation
               </Link>
-              <Link href="/cookies" className="text-sm text-dark-400 hover:text-secondary hover:underline transition-all duration-300">
+            </li>
+            <li className="flex items-center gap-[14px]">
+              <span aria-hidden="true" className="w-[3px] h-[3px] rounded-full bg-white/25" />
+              <Link href="/cookies" className="text-[12.5px] text-white/55 no-underline transition-colors duration-150 hover:text-white">
                 Cookies
               </Link>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>
