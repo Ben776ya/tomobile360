@@ -95,10 +95,10 @@ export default function Footer() {
       {/* Subtle grid texture */}
       <div className="absolute inset-0 bg-grid pointer-events-none opacity-50" />
       {/* Main Footer */}
-      <div className="container mx-auto px-4 py-8 sm:py-12 lg:py-16 relative z-10">
+      <div className="container mx-auto px-4 pt-6 sm:pt-8 lg:pt-10 pb-8 sm:pb-12 lg:pb-16 relative z-10">
 
         {/* Top: Brand identity (left) + Magazine Banner (center) + Newsletter (right) */}
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-8 xl:gap-10 xl:items-center mb-10 sm:mb-12 lg:mb-14">
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-8 xl:gap-10 xl:items-center mb-6 sm:mb-8 lg:mb-10">
 
           {/* Brand Identity Block */}
           <div>
