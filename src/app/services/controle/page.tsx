@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ClipboardCheck, Check, ChevronRight, ArrowLeft, MapPin, Calendar, Clock } from 'lucide-react'
+import { ClipboardCheck, Check, ArrowLeft, MapPin, Calendar, Clock } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { BookingForm } from './BookingForm'
 
 export const metadata: Metadata = {
   title: 'Contrôle Technique Voiture au Maroc',
@@ -105,75 +106,7 @@ export default function ControlePage() {
             </div>
 
             {/* Booking Form */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-card">
-              <h2 className="text-xl font-bold text-primary mb-6">
-                Réserver un créneau
-              </h2>
-              <form className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ville
-                  </label>
-                  <select className="w-full px-4 py-3 bg-white text-primary border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent">
-                    <option value="">Sélectionnez une ville</option>
-                    {centers.map((c) => (
-                      <option key={c.city} value={c.city}>
-                        {c.city} ({c.centers} centres)
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Immatriculation
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ex: 12345-A-67"
-                    className="w-full px-4 py-3 bg-white text-primary border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent placeholder-gray-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Date souhaitée
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full px-4 py-3 bg-white text-primary border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Téléphone
-                  </label>
-                  <input
-                    type="tel"
-                    placeholder="+212 6XX-XXXXXX"
-                    className="w-full px-4 py-3 bg-white text-primary border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent placeholder-gray-400"
-                  />
-                </div>
-
-                <div className="bg-gray-100 rounded-xl p-4 border border-gray-100">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Tarif contrôle technique</span>
-                    <span className="text-xl font-bold text-primary">350 DH</span>
-                  </div>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Contre-visite gratuite en cas de défaillance
-                  </p>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-3 bg-secondary hover:bg-secondary-400 text-white font-semibold rounded-xl transition-colors"
-                >
-                  Réserver maintenant
-                </button>
-              </form>
-            </div>
+            <BookingForm />
           </div>
         </div>
       </section>

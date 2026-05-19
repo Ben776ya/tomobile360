@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { BUSINESS_INFO } from '@/lib/business-info'
 
 export const metadata: Metadata = {
   title: 'Mentions Légales',
@@ -22,11 +23,13 @@ export default function MentionsLegalesPage() {
             <h2 className="text-xl font-bold text-slate-700 mb-4">1. Éditeur du site</h2>
             <p className="text-gray-600">
               Le site Tomobile360.ma est édité par :<br />
-              <strong>Tomobile 360 SARL</strong><br />
-              Adresse : Casablanca, Maroc<br />
-              Téléphone : +212 522-123456<br />
-              Email : contact@tomobile360.ma<br />
-              Directeur de la publication : [Nom du directeur]
+              <strong>{BUSINESS_INFO.COMPANY_LEGAL_NAME}</strong><br />
+              Adresse : {BUSINESS_INFO.ADDRESS_FULL}<br />
+              Téléphone : {BUSINESS_INFO.PHONE_DISPLAY}<br />
+              Email : {BUSINESS_INFO.EMAIL}<br />
+              RC : {BUSINESS_INFO.RC_NUMBER}<br />
+              ICE : {BUSINESS_INFO.ICE_NUMBER}<br />
+              Directeur de la publication : {BUSINESS_INFO.DIRECTOR_NAME}
             </p>
           </section>
 
@@ -80,7 +83,7 @@ export default function MentionsLegalesPage() {
           </section>
 
           <p className="text-sm text-gray-600 mt-12 pt-8 border-t border-gray-200">
-            Dernière mise à jour : Janvier 2024
+            Dernière mise à jour : Mai 2026
           </p>
         </div>
       </div>

@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Share2 } from 'lucide-react'
+import { EXTERNAL_LINKS } from '@/lib/links'
 
 const socialLinks = [
   {
-    href: 'https://facebook.com',
+    href: EXTERNAL_LINKS.FACEBOOK,
     label: 'Facebook',
     color: '#1877F2',
     icon: (
@@ -15,7 +16,7 @@ const socialLinks = [
     ),
   },
   {
-    href: 'https://youtube.com',
+    href: EXTERNAL_LINKS.YOUTUBE,
     label: 'YouTube',
     color: '#FF0000',
     icon: (
@@ -25,7 +26,7 @@ const socialLinks = [
     ),
   },
   {
-    href: 'https://instagram.com',
+    href: EXTERNAL_LINKS.INSTAGRAM,
     label: 'Instagram',
     color: 'linear-gradient(135deg, #833AB4, #FD1D1D, #F77737)',
     isGradient: true,
@@ -36,7 +37,7 @@ const socialLinks = [
     ),
   },
   {
-    href: 'https://tiktok.com',
+    href: EXTERNAL_LINKS.TIKTOK,
     label: 'TikTok',
     color: '#000000',
     icon: (

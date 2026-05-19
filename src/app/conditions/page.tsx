@@ -117,7 +117,7 @@ export default function ConditionsPage() {
           </section>
 
           <p className="text-sm text-gray-600 mt-12 pt-8 border-t border-gray-200">
-            Dernière mise à jour : Janvier 2024
+            Dernière mise à jour : Mai 2026
           </p>
         </div>
       </div>

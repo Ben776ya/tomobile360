@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { Toaster } from '@/components/ui/toaster'
 import { safeJsonLd } from '@/lib/utils'
+import { BUSINESS_INFO } from '@/lib/business-info'
 
 const sora = Sora({
   subsets: ['latin'],
@@ -105,11 +106,11 @@ export default function RootLayout({
                     '@type': 'ImageObject',
                     url: 'https://tomobile360.ma/logo_tomobile360.png',
                   },
-                  email: 'contact@tomobile360.ma',
+                  email: BUSINESS_INFO.EMAIL,
                   contactPoint: {
                     '@type': 'ContactPoint',
                     contactType: 'customer service',
-                    email: 'contact@tomobile360.ma',
+                    email: BUSINESS_INFO.EMAIL,
                     availableLanguage: 'French',
                   },
                   address: {

@@ -219,3 +219,41 @@ export function validateAction<T>(
   const firstMessage = result.error.issues[0]?.message ?? 'Donnees invalides'
   return { success: false, error: firstMessage, fieldErrors }
 }
+
+// === Contact Message Schema ===
+
+export const ContactMessageSchema = z.object({
+  name: z.string().trim().min(2, 'Le nom doit contenir au moins 2 caractères').max(120, 'Nom trop long'),
+  email: z.string().trim().email('Adresse email invalide').max(255),
+  phone: z
+    .string()
+    .trim()
+    .optional()
+    .refine(
+      (v) => !v || /^(\+212|0)[5-7]\d{8}$/.test(v.replace(/\s|-/g, '')),
+      { message: 'Numéro de téléphone invalide (format: +212 6XX XXX XXX)' }
+    ),
+  subject: z.enum(['info', 'vehicle', 'service', 'partnership', 'other'], {
+    error: 'Veuillez sélectionner un sujet',
+  }),
+  message: z.string().trim().min(10, 'Le message doit contenir au moins 10 caractères').max(5000, 'Message trop long'),
+})
+
+export type ContactMessageInput = z.infer<typeof ContactMessageSchema>
+
+// === Service Booking Schemas ===
+
+export const ControleBookingSchema = z.object({
+  city: z.string().trim().min(1, 'Ville requise'),
+  plate_number: z.string().trim().min(1, "Immatriculation requise").max(20),
+  preferred_date: z.string().refine((v) => !isNaN(Date.parse(v)), { message: 'Date invalide' }),
+  phone: z
+    .string()
+    .trim()
+    .refine(
+      (v) => /^(\+212|0)[5-7]\d{8}$/.test(v.replace(/\s|-/g, '')),
+      { message: 'Numéro de téléphone invalide' }
+    ),
+})
+
+export type ControleBookingInput = z.infer<typeof ControleBookingSchema>

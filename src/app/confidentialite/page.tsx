@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { BUSINESS_INFO } from '@/lib/business-info'
 
 export const metadata: Metadata = {
   title: 'Politique de Confidentialité',
@@ -86,7 +87,7 @@ export default function ConfidentialitePage() {
               <li>Droit d&apos;opposition</li>
             </ul>
             <p className="text-gray-600 mt-4">
-              Pour exercer ces droits, contactez-nous à : privacy@tomobile360.ma
+              Pour exercer ces droits, contactez-nous à : {BUSINESS_INFO.EMAIL_PRIVACY}
             </p>
           </section>
 
@@ -102,13 +103,13 @@ export default function ConfidentialitePage() {
             <h2 className="text-xl font-bold text-slate-700 mb-4">8. Contact</h2>
             <p className="text-gray-600">
               Pour toute question concernant cette politique de confidentialité, contactez-nous :<br />
-              Email : privacy@tomobile360.ma<br />
-              Adresse : Casablanca, Maroc
+              Email : {BUSINESS_INFO.EMAIL_PRIVACY}<br />
+              Adresse : {BUSINESS_INFO.ADDRESS_FULL}
             </p>
           </section>
 
           <p className="text-sm text-gray-600 mt-12 pt-8 border-t border-gray-200">
-            Dernière mise à jour : Janvier 2024
+            Dernière mise à jour : Mai 2026
           </p>
         </div>
       </div>

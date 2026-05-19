@@ -14,7 +14,8 @@ import {
   Shield,
   ExternalLink,
   Heart,
-  FileText
+  FileText,
+  Mail
 } from 'lucide-react'
 
 const menuItems = [
@@ -24,6 +25,7 @@ const menuItems = [
   { href: '/admin/fiches-techniques', icon: FileText, label: 'Fiches Techniques' },
   { href: '/admin/blog', icon: PenSquare, label: 'Blog' },
   { href: '/admin/users', icon: Users, label: 'Utilisateurs' },
+  { href: '/admin/messages', icon: Mail, label: 'Messages' },
   { href: '/admin/promotions', icon: TrendingUp, label: 'Promotions' },
   { href: '/admin/import-cars', icon: Upload, label: 'Importer véhicules' },
   { href: '/admin/sync-videos', icon: Video, label: 'Sync vidéos' },
