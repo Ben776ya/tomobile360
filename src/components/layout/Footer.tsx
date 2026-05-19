@@ -159,13 +159,7 @@ export default function Footer() {
         }}
       />
 
-      <div className="relative z-10 container mx-auto px-6 sm:px-10 lg:px-14 pt-9">
-        {/* Top accent gradient bar */}
-        <div
-          aria-hidden="true"
-          className="h-[3px] w-full rounded-full mb-7 opacity-70 bg-gradient-to-r from-transparent via-secondary to-transparent"
-        />
-
+      <div className="relative z-10 container mx-auto px-6 sm:px-10 lg:px-14 pt-5">
         {/* ===== 1. Hero row: brand | magazine | newsletter ===== */}
         <section className="grid grid-cols-1 lg:grid-cols-[minmax(260px,1fr)_minmax(300px,1.05fr)_minmax(280px,1fr)] gap-6 items-stretch mb-[22px]">
 
