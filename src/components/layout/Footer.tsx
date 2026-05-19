@@ -285,12 +285,12 @@ export default function Footer() {
       <div className="container mx-auto px-4 pb-8 sm:pb-10 lg:pb-12 relative z-10">
         <Link
           href="/qui-sommes-nous"
-          aria-label="Decouvrir l'equipe Tomobile 360 Magazine"
+          aria-label="Découvrir l'équipe Tomobile 360 Magazine"
           className="group block relative overflow-hidden rounded-xl border border-white/10 shadow-elevated hover:shadow-glow-cyan-lg transition-all duration-500 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-dark-800"
         >
           <Image
             src="/footer_banner.jpg"
-            alt="Tomobile 360 Magazine - Notre equipe de journalistes automobile"
+            alt=""
             width={1006}
             height={282}
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
@@ -300,7 +300,7 @@ export default function Footer() {
           {/* Soft edge gradient so the banner blends into the dark footer */}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-dark-800/30 via-transparent to-dark-800/30" />
           {/* Hover CTA chip (bottom-right) */}
-          <div className="pointer-events-none absolute bottom-3 right-3 sm:bottom-4 sm:right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/95 text-white text-xs sm:text-sm font-semibold shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
+          <div className="pointer-events-none absolute bottom-3 right-3 sm:bottom-4 sm:right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/95 text-white text-xs sm:text-sm font-semibold shadow-lg backdrop-blur-sm opacity-100 translate-y-0 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-y-1 sm:group-hover:translate-y-0 transition-all duration-300">
             <span>Qui sommes-nous</span>
             <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </div>
