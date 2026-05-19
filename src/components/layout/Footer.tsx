@@ -242,8 +242,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom: Navigation Links (Neuf | Occasion | Services) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12">
+        {/* Bottom: Navigation Links (Neuf | Occasion | Services) — aligned under banner */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto">
 
           {/* Neuf */}
           <div>
