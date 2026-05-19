@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Send, Play, Plus } from 'lucide-react'
+import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Send, Plus } from 'lucide-react'
 import { subscribeNewsletter } from '@/lib/actions/newsletter'
 import { EXTERNAL_LINKS } from '@/lib/links'
 import { BUSINESS_INFO } from '@/lib/business-info'
@@ -231,56 +231,20 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Magazine card */}
-          <article
-            aria-label="Tomobile 360 Magazine"
-            className="relative rounded-lg overflow-hidden bg-[#0a1430] border border-white/[0.08] min-h-[150px] isolate lg:self-center"
+          {/* Magazine banner — clickable, redirects to qui-sommes-nous */}
+          <Link
+            href="/qui-sommes-nous"
+            aria-label="Découvrir l'équipe Tomobile 360 Magazine"
+            className="group relative block rounded-lg overflow-hidden border border-white/[0.08] min-h-[150px] isolate lg:self-center transition-all duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-dark-800"
           >
             <Image
               src="/footer_banner.jpg"
               alt=""
               fill
               sizes="(max-width: 1024px) 100vw, 400px"
-              className="object-cover"
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
             />
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 z-[1]"
-              style={{
-                background:
-                  'linear-gradient(90deg, rgba(7,13,28,0.92) 0%, rgba(7,13,28,0.55) 38%, rgba(7,13,28,0.05) 70%)',
-              }}
-            />
-            <div className="relative z-[2] h-full p-3.5 flex flex-col justify-between max-w-[65%]">
-              <span className="inline-flex self-start items-center gap-[7px] bg-white/[0.08] border border-white/[0.14] rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white/85">
-                <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full bg-destructive" style={{ boxShadow: '0 0 8px #ef4444' }} />
-                Nouvel épisode
-              </span>
-              <div>
-                <h2 className="font-display font-extrabold text-[15px] lg:text-[18px] leading-[1.1] mt-1.5 text-white tracking-tight">
-                  Tomobile<em className="not-italic text-secondary-400">360</em> Magazine
-                </h2>
-              </div>
-              <div className="flex gap-2.5 flex-wrap">
-                <Link
-                  href="/qui-sommes-nous"
-                  className="inline-flex items-center gap-1.5 bg-white text-dark-800 px-2.5 py-1.5 rounded-full text-[11.5px] font-semibold no-underline transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-dark-800"
-                >
-                  <Play className="w-3 h-3" fill="currentColor" />
-                  Regarder l&apos;épisode
-                </Link>
-                <a
-                  href={EXTERNAL_LINKS.YOUTUBE}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 bg-transparent text-white border border-white/25 px-2.5 py-1.5 rounded-full text-[11.5px] font-semibold no-underline transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-dark-800"
-                >
-                  <Youtube className="w-3 h-3" />
-                  Tous les épisodes
-                </a>
-              </div>
-            </div>
-          </article>
+          </Link>
 
           {/* Newsletter card */}
           <aside className="flex flex-col gap-2.5 p-3.5 rounded-lg border border-white/[0.08] backdrop-blur-md"
