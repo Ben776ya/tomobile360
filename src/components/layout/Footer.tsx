@@ -97,8 +97,8 @@ export default function Footer() {
       {/* Main Footer */}
       <div className="container mx-auto px-4 py-8 sm:py-12 lg:py-16 relative z-10">
 
-        {/* Top: Brand identity (left) + Newsletter (right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-10 sm:mb-12 lg:mb-14">
+        {/* Top: Brand identity (left) + Magazine Banner (center) + Newsletter (right) */}
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-8 xl:gap-10 xl:items-center mb-10 sm:mb-12 lg:mb-14">
 
           {/* Brand Identity Block */}
           <div>
@@ -111,11 +111,11 @@ export default function Footer() {
                 className="h-10 w-auto"
               />
             </Link>
-            <p className="text-dark-300 text-sm mb-6 leading-relaxed max-w-md">
+            <p className="text-dark-300 text-sm mb-6 leading-relaxed">
               Tomobile 360 est votre guide d&apos;achat automobile au Maroc — prix, fiches techniques, comparatifs et essais de voitures neuves.
             </p>
             {/* Contact Info */}
-            <ul className="space-y-3 max-w-md">
+            <ul className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-dark-300">
                 <MapPin className="h-4 w-4 text-secondary flex-shrink-0 mt-0.5" />
                 <span>{BUSINESS_INFO.ADDRESS_FULL}</span>
@@ -134,20 +134,20 @@ export default function Footer() {
               </li>
             </ul>
             {/* Social Icons */}
-            <div className="flex gap-3 mt-6">
+            <div className="flex gap-2 mt-6">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative w-11 h-11 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
+                  className="group relative w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300"
                   style={{ backgroundColor: social.color }}
                   aria-label={social.label}
                   title={social.label}
                 >
                   {social.icon ? (
-                    <social.icon className="h-5 w-5" />
+                    <social.icon className="h-4 w-4" />
                   ) : (
                     social.customIcon
                   )}
@@ -156,8 +156,32 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* Magazine Banner (center) */}
+          <Link
+            href="/qui-sommes-nous"
+            aria-label="Découvrir l'équipe Tomobile 360 Magazine"
+            className="group block relative max-w-2xl mx-auto overflow-hidden rounded-xl border border-white/10 shadow-elevated hover:shadow-glow-cyan-lg transition-all duration-500 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-dark-800"
+          >
+            <Image
+              src="/footer_banner.jpg"
+              alt=""
+              width={1006}
+              height={282}
+              sizes="(max-width: 640px) 100vw, 672px"
+              className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.02]"
+              priority={false}
+            />
+            {/* Soft edge gradient so the banner blends into the dark footer */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-dark-800/30 via-transparent to-dark-800/30" />
+            {/* Hover CTA chip (bottom-right) */}
+            <div className="pointer-events-none absolute bottom-3 right-3 sm:bottom-4 sm:right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/95 text-white text-xs sm:text-sm font-semibold shadow-lg backdrop-blur-sm opacity-100 translate-y-0 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-y-1 sm:group-hover:translate-y-0 transition-all duration-300">
+              <span>Qui sommes-nous</span>
+              <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            </div>
+          </Link>
+
           {/* Newsletter Block */}
-          <div className="w-full lg:max-w-md lg:ml-auto">
+          <div className="w-full">
             <h3 className="text-sm font-bold uppercase tracking-wider mb-5 text-white font-display">
               Newsletter
             </h3>
@@ -216,32 +240,6 @@ export default function Footer() {
               Déposer votre annonce
             </a>
           </div>
-        </div>
-
-        {/* Middle: Magazine Banner */}
-        <div className="mb-10 sm:mb-12 lg:mb-14">
-          <Link
-            href="/qui-sommes-nous"
-            aria-label="Découvrir l'équipe Tomobile 360 Magazine"
-            className="group block relative max-w-2xl mx-auto overflow-hidden rounded-xl border border-white/10 shadow-elevated hover:shadow-glow-cyan-lg transition-all duration-500 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-dark-800"
-          >
-            <Image
-              src="/footer_banner.jpg"
-              alt=""
-              width={1006}
-              height={282}
-              sizes="(max-width: 640px) 100vw, 672px"
-              className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.02]"
-              priority={false}
-            />
-            {/* Soft edge gradient so the banner blends into the dark footer */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-dark-800/30 via-transparent to-dark-800/30" />
-            {/* Hover CTA chip (bottom-right) */}
-            <div className="pointer-events-none absolute bottom-3 right-3 sm:bottom-4 sm:right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/95 text-white text-xs sm:text-sm font-semibold shadow-lg backdrop-blur-sm opacity-100 translate-y-0 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-y-1 sm:group-hover:translate-y-0 transition-all duration-300">
-              <span>Qui sommes-nous</span>
-              <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </div>
-          </Link>
         </div>
 
         {/* Bottom: Navigation Links (Neuf | Occasion | Services) */}
