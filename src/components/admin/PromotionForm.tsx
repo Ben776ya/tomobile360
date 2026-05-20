@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createPromotion, updatePromotion } from '@/lib/actions/admin'
+import { createPromotion, updatePromotion } from '@/lib/actions/admin/promotions'
 import { Loader2, Car, Search, Check } from 'lucide-react'
 import type { Promotion } from '@/lib/types'
 

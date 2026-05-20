@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { updateVehicle } from '@/lib/actions/admin'
+import { updateVehicle } from '@/lib/actions/admin/vehicles'
 import type { VehicleNew } from '@/lib/types'
 
 type CoupDeCoeurVehicle = VehicleNew & {

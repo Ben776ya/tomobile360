@@ -1,12 +1,23 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-// NOTE: client is currently un-genericized. Adding `<Database>` here surfaces
-// real type errors throughout the codebase (some queries use raw column lists
-// that disagree with the generated row types). Tracked as a follow-up to the
-// 2026-05-20 audit — see Cluster D refactor pass. Until then, callers can
-// type their query results explicitly using helpers from
-// `src/lib/database.types.ts` (e.g. `Tables<'vehicles_new'>`).
+// NOTE: client is intentionally un-genericized.
+//
+// Adding `<Database>` here surfaces 80+ type errors across admin pages
+// because the Supabase JS SDK's row inference from `.select('a, b, c')`
+// strings does not reliably propagate the generated row types — the parsed
+// types collapse to `never`, which then breaks every property access on
+// the result.
+//
+// Tracked attempt: Cluster D of the 2026-05-20 audit (PR cluster-d). The
+// proper fix is a per-call-site migration to either:
+//   1. `.returns<RowType>()` annotations on every query, OR
+//   2. switching from `.select('col, col')` strings to typed builders
+//
+// Callers that need typed results today can use the generated row helpers:
+//   import type { Tables } from '@/lib/database.types'
+//   const brand = data as Tables<'brands'>
+// or pass an explicit type to `.returns<T>()` on the query.
 export function createClient() {
   const cookieStore = cookies()
 
@@ -21,22 +32,19 @@ export function createClient() {
         set(name: string, value: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value, ...options })
-          } catch (error) {
-            // The `set` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
+          } catch {
+            // Called from a Server Component — middleware refreshes the session,
+            // so this is safe to ignore.
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value: '', ...options })
-          } catch (error) {
-            // The `delete` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
+          } catch {
+            // Same caveat as set().
           }
         },
       },
-    }
+    },
   )
 }

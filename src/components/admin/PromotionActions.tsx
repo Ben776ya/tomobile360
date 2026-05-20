@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Edit, Trash2, Power } from 'lucide-react'
-import { deletePromotion, togglePromotionStatus } from '@/lib/actions/admin'
+import { deletePromotion, togglePromotionStatus } from '@/lib/actions/admin/promotions'
 
 interface PromotionActionsProps {
   promotionId: string

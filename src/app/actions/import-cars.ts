@@ -3,7 +3,7 @@
 import { createClient } from '@supabase/supabase-js'
 import * as Sentry from '@sentry/nextjs'
 import { ImportedCar, validateCar, normalizeBrandName, ImportResult } from '@/lib/car-importer'
-import { checkAdmin } from '@/lib/actions/admin'
+import { checkAdmin } from '@/lib/auth/check-admin'
 
 /**
  * Import cars into the database

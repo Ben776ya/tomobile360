@@ -3,7 +3,7 @@
 import { createClient as createServerClient } from '@supabase/supabase-js'
 import * as Sentry from '@sentry/nextjs'
 import { fetchYouTubeChannelVideos, categorizeVideo } from '@/lib/youtube'
-import { checkAdmin } from '@/lib/actions/admin'
+import { checkAdmin } from '@/lib/auth/check-admin'
 
 export interface SyncResult {
   success: boolean

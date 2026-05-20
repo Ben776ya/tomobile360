@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createArticle, updateArticle } from '@/lib/actions/admin'
+import { createArticle, updateArticle } from '@/lib/actions/admin/articles'
 import { Loader2, Plus, X, Upload, Eye, Edit } from 'lucide-react'
 import type { Article } from '@/lib/types'
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
-import { checkAdmin } from '@/lib/actions/admin'
+import { checkAdmin } from '@/lib/auth/check-admin'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
