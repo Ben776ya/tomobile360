@@ -62,5 +62,6 @@ scripts/*
 !scripts/fix-broken-links.ts
 !scripts/extract-magazine-cover.py
 !scripts/upload-magazines-to-supabase.mjs
+!scripts/prelaunch-scan.sh
 !scripts/lib/
 !scripts/output/
