@@ -1,8 +1,10 @@
 'use server'
 
 import { z } from 'zod'
+import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { validateAction } from '@/lib/validations'
+import { rateLimit } from '@/lib/rate-limit'
 
 const NewsletterSchema = z.object({
   email: z.string().email('Adresse email invalide'),
@@ -12,6 +14,14 @@ export async function subscribeNewsletter(formData: { email: string }) {
   const validation = validateAction(NewsletterSchema, formData)
   if (!validation.success) {
     return { error: validation.error }
+  }
+
+  const headerList = await headers()
+  const ip = headerList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+
+  // 5 subscribe attempts per IP per hour — prevents enumeration / spam.
+  if (!rateLimit(`newsletter:${ip}`, { maxRequests: 5, windowMs: 60 * 60 * 1000 })) {
+    return { error: 'Trop de tentatives. Réessayez dans quelques minutes.' }
   }
 
   const supabase = await createClient()
