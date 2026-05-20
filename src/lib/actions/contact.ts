@@ -1,6 +1,7 @@
 'use server'
 
 import { headers } from 'next/headers'
+import * as Sentry from '@sentry/nextjs'
 import { createClient } from '@/lib/supabase/server'
 import { ContactMessageSchema, validateAction } from '@/lib/validations'
 import { rateLimit } from '@/lib/rate-limit'
@@ -42,7 +43,7 @@ export async function submitContactMessage(formData: {
     })
 
   if (error) {
-    console.error('Contact submit error:', error)
+    Sentry.captureException(error, { tags: { action: 'submitContactMessage' } })
     return { error: 'Une erreur est survenue. Réessayez plus tard.' }
   }
 

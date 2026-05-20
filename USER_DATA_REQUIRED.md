@@ -168,6 +168,23 @@ Provide:
 
 ---
 
+## 12bis. Sentry (error reporting) — wired, needs env var in Vercel
+
+`@sentry/nextjs` is fully wired into the build (client, server, edge runtimes + Next.js error boundaries + 5 server actions). It only activates when a DSN is present in the environment — local builds without the var continue to work unchanged.
+
+| # | Item | Env var | Value |
+|---|------|---------|-------|
+| 12b.1 | Sentry DSN (project: tomobile360, region: eu/de) | `NEXT_PUBLIC_SENTRY_DSN` | `https://b71b5a4035e7c790c9839b1e814ceebf@o4511268969709568.ingest.de.sentry.io/4511422962073680` |
+| 12b.2 | Sentry auth token (optional, source-map upload) | `SENTRY_AUTH_TOKEN` | issue at https://tomobile360.sentry.io/settings/auth-tokens/ — scope `project:releases` |
+| 12b.3 | Sentry org slug (optional, only used during build for source-map upload) | `SENTRY_ORG` | `tomobile360` (or whatever your org slug is) |
+| 12b.4 | Sentry project slug (optional, only used during build for source-map upload) | `SENTRY_PROJECT` | `tomobile360` |
+
+The DSN is public-by-design (it's safe in the client bundle). Set it for **Production** and **Preview** environments in Vercel. The auth token / org / project trio is only needed if you want sourcemaps uploaded so stack traces deminify — without them, Sentry still receives errors, you just see compiled line numbers.
+
+Tunnel route: `/monitoring` (the SDK proxies events through your own domain to bypass ad-blockers). No setup needed — already wired in `next.config.js`.
+
+---
+
 ## 12. Optional: marketing photos and SOFAC/AtlantaSanad disclaimers
 
 The current SOFAC and AtlantaSanad disclaimers on `/services/credit` and `/services/assurance` use standard regulatory language. **Have your legal/compliance contact at each partner review them once** before launch. They may want specific wording about:
@@ -206,7 +223,8 @@ So your remaining work is concentrated in sections 1, 2, 4 above (legal IDs, CND
 
 Before pushing to production:
 
-- [ ] Set all 4 required env vars (RC, ICE, DIRECTOR) in Vercel
+- [ ] Set all 3 required env vars (RC, ICE, DIRECTOR) in Vercel
+- [ ] Set `NEXT_PUBLIC_SENTRY_DSN` in Vercel (Production + Preview)
 - [ ] File the CNDP declaration and set `NEXT_PUBLIC_CNDP_DECLARATION`
 - [ ] Create the 6 email forwards on `tomobile360.ma`
 - [ ] Decide what to do with magazine issue N°644 (delete or correct)

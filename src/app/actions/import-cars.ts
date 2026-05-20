@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@supabase/supabase-js'
+import * as Sentry from '@sentry/nextjs'
 import { ImportedCar, validateCar, normalizeBrandName, ImportResult } from '@/lib/car-importer'
 import { checkAdmin } from '@/lib/actions/admin'
 
@@ -189,7 +190,7 @@ export async function importCars(cars: ImportedCar[]): Promise<ImportResult> {
     }
 
   } catch (error) {
-    console.error('Import error:', error)
+    Sentry.captureException(error, { tags: { action: 'importCars' } })
     return {
       success: false,
       message: 'Import failed',

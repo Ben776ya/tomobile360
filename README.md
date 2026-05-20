@@ -55,6 +55,13 @@ NEXT_PUBLIC_CNDP_DECLARATION="D-GC-001/2026"
 NEXT_PUBLIC_WHATSAPP_DISPLAY="+212 6XX XX XX XX"
 NEXT_PUBLIC_WHATSAPP_E164="2126XXXXXXXX"
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# Sentry — error reporting (public-by-design, safe in client bundle).
+# When unset, Sentry is silently skipped at build time.
+NEXT_PUBLIC_SENTRY_DSN=https://<key>@<orgid>.ingest.<region>.sentry.io/<projectid>
+# SENTRY_AUTH_TOKEN=    # CI-only, enables source-map upload
+# SENTRY_ORG=tomobile360
+# SENTRY_PROJECT=tomobile360
 ```
 
 The same values must be set in **Vercel → Settings → Environment Variables** for Production *and* Preview environments. See [USER_DATA_REQUIRED.md](./USER_DATA_REQUIRED.md) for the full deploy checklist.
@@ -113,6 +120,7 @@ src/
 - **Rate limits**: public-write actions (`submitContactMessage`, `subscribeNewsletter`, `submitControleBooking`) capped at 5 attempts / hour / IP via `rateLimit()`.
 - **CSP**: configured in `next.config.js`. Includes `unsafe-eval`/`unsafe-inline` for Next.js hydration; everything else is locked down.
 - **HSTS + X-Frame-Options + Referrer-Policy + Permissions-Policy**: all set.
+- **Error reporting**: `@sentry/nextjs` wired into client, server, and edge runtimes plus `error.tsx`/`global-error.tsx` and the 5 mutation server actions. Activates only when `NEXT_PUBLIC_SENTRY_DSN` is set. Events are proxied via `/monitoring` to bypass ad-blockers.
 
 ## Database
 

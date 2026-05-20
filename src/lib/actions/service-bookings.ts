@@ -1,6 +1,7 @@
 'use server'
 
 import { headers } from 'next/headers'
+import * as Sentry from '@sentry/nextjs'
 import { createClient } from '@/lib/supabase/server'
 import { ControleBookingSchema, validateAction } from '@/lib/validations'
 import { rateLimit } from '@/lib/rate-limit'
@@ -37,7 +38,7 @@ export async function submitControleBooking(formData: {
     })
 
   if (error) {
-    console.error('Controle booking error:', error)
+    Sentry.captureException(error, { tags: { action: 'submitControleBooking' } })
     return { error: 'Une erreur est survenue. Réessayez plus tard.' }
   }
 

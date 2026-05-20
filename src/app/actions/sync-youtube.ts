@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient as createServerClient } from '@supabase/supabase-js'
+import * as Sentry from '@sentry/nextjs'
 import { fetchYouTubeChannelVideos, categorizeVideo } from '@/lib/youtube'
 import { checkAdmin } from '@/lib/actions/admin'
 
@@ -27,7 +28,7 @@ export async function syncYouTubeVideos(): Promise<SyncResult> {
     // Get API key from environment
     const apiKey = process.env.YOUTUBE_API_KEY
     if (!apiKey) {
-      console.error('YouTube API key not found in environment')
+      Sentry.captureMessage('YouTube API key missing', { level: 'error', tags: { action: 'syncYouTubeVideos' } })
       return {
         success: false,
         message: 'YouTube API key not configured',
@@ -52,7 +53,7 @@ export async function syncYouTubeVideos(): Promise<SyncResult> {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
     if (!supabaseUrl || !supabaseServiceKey) {
-      console.error('Supabase configuration missing')
+      Sentry.captureMessage('Supabase configuration missing in syncYouTubeVideos', { level: 'error' })
       return {
         success: false,
         message: 'Supabase not configured',
@@ -86,7 +87,7 @@ export async function syncYouTubeVideos(): Promise<SyncResult> {
       .select()
 
     if (upsertError) {
-      console.error('Error upserting videos:', upsertError)
+      Sentry.captureException(upsertError, { tags: { action: 'syncYouTubeVideos', step: 'upsert' } })
       return {
         success: false,
         message: 'Failed to sync videos',
@@ -102,7 +103,7 @@ export async function syncYouTubeVideos(): Promise<SyncResult> {
       videosProcessed,
     }
   } catch (error) {
-    console.error('Error syncing YouTube videos:', error)
+    Sentry.captureException(error, { tags: { action: 'syncYouTubeVideos' } })
     return {
       success: false,
       message: 'Failed to sync videos',

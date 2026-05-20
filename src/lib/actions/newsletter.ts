@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 import { headers } from 'next/headers'
+import * as Sentry from '@sentry/nextjs'
 import { createClient } from '@/lib/supabase/server'
 import { validateAction } from '@/lib/validations'
 import { rateLimit } from '@/lib/rate-limit'
@@ -33,7 +34,7 @@ export async function subscribeNewsletter(formData: { email: string }) {
     if (error.code === '23505') {
       return { error: 'Cette adresse est deja inscrite.' }
     }
-    console.error('Newsletter subscribe error:', error)
+    Sentry.captureException(error, { tags: { action: 'subscribeNewsletter' } })
     return { error: 'Une erreur est survenue. Reessayez plus tard.' }
   }
 
