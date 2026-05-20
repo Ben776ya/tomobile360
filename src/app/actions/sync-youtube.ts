@@ -2,6 +2,7 @@
 
 import { createClient as createServerClient } from '@supabase/supabase-js'
 import { fetchYouTubeChannelVideos, categorizeVideo } from '@/lib/youtube'
+import { checkAdmin } from '@/lib/actions/admin'
 
 export interface SyncResult {
   success: boolean
@@ -15,6 +16,13 @@ export interface SyncResult {
  * This server action fetches all videos from the channel and updates the database
  */
 export async function syncYouTubeVideos(): Promise<SyncResult> {
+  // Admin guard: this action uses the service-role key and bypasses RLS,
+  // so it must be unreachable by non-admin sessions.
+  const auth = await checkAdmin()
+  if (auth.error) {
+    return { success: false, message: auth.error, error: auth.error }
+  }
+
   try {
     // Get API key from environment
     const apiKey = process.env.YOUTUBE_API_KEY

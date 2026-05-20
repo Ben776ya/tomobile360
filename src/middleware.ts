@@ -59,7 +59,8 @@ export async function middleware(request: NextRequest) {
 
   // Admin route protection (SEC-01)
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    // D-02: Unauthenticated -> redirect to homepage (admin login is handled by AdminAuthGate)
+    // D-02: Unauthenticated -> redirect to homepage. Admin sign-in is handled
+    // by the global /login route; the /admin layout enforces the role server-side.
     if (!user) {
       return NextResponse.redirect(new URL('/', request.url))
     }

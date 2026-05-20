@@ -2,12 +2,20 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { ImportedCar, validateCar, normalizeBrandName, ImportResult } from '@/lib/car-importer'
+import { checkAdmin } from '@/lib/actions/admin'
 
 /**
  * Import cars into the database
  * Creates brands and models if they don't exist
  */
 export async function importCars(cars: ImportedCar[]): Promise<ImportResult> {
+  // Admin guard: this action uses the service-role key and bypasses RLS,
+  // so it must be unreachable by non-admin sessions.
+  const auth = await checkAdmin()
+  if (auth.error) {
+    return { success: false, message: auth.error }
+  }
+
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY

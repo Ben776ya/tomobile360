@@ -6,7 +6,7 @@ import { NarsaVideoPlayer } from '@/components/narsa/NarsaVideoPlayer'
 
 const NARSA_WEBSITE = 'https://www.narsa.ma/fr'
 const SITE_URL = 'https://tomobile360.ma'
-const SUPABASE_STORAGE_URL = 'https://atbkdxmxuqorebrttzma.supabase.co/storage/v1/object/public/narsa-videos'
+const SUPABASE_STORAGE_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''}/storage/v1/object/public/narsa-videos`
 
 const capsuleVideos = [
   {
