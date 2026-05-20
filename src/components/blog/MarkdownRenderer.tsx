@@ -3,9 +3,16 @@
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 import rehypeSlug from 'rehype-slug'
 import Image from 'next/image'
 import type { Components } from 'react-markdown'
+
+// Defense-in-depth XSS sanitization. defaultSchema mirrors GitHub's sanitizer:
+// keeps the markdown-equivalent HTML tags (headings, lists, tables, code,
+// img/a/blockquote, plus title attrs we use for image meta), drops <script>,
+// <iframe>, inline event handlers, and javascript: URLs.
+const sanitizeSchema = defaultSchema
 
 interface MarkdownRendererProps {
   content: string
@@ -226,15 +233,14 @@ const components: Components = {
 }
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
-  // Trust boundary: rehypeRaw allows raw HTML in markdown. Acceptable today
-  // because blog posts are admin-only (POST /api/admin/blog is checkAdmin-gated).
-  // If guest authors or untrusted markdown sources are ever introduced, swap
-  // rehypeRaw for rehype-sanitize with the GFM schema.
+  // Plugin order matters: rehypeRaw parses raw HTML into HAST first,
+  // rehypeSanitize then walks the tree and removes anything not in the schema,
+  // rehypeSlug adds IDs to surviving headings for anchor linking.
   return (
     <div className="mx-auto max-w-[65ch] px-1 sm:px-0 after:content-[''] after:block after:clear-both">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw, rehypeSlug]}
+        rehypePlugins={[rehypeRaw, [rehypeSanitize, sanitizeSchema], rehypeSlug]}
         components={components}
       >
         {content}
