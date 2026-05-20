@@ -41,7 +41,6 @@ export function NarsaCampaign() {
           <Link
             href="/services/securite-routiere"
             className="
-              self-start
               inline-flex items-center gap-2
               px-4 py-2.5
               rounded-full bg-[#4057aa] hover:bg-[#2e3f7a]
