@@ -236,7 +236,7 @@ export default function Footer() {
               alt=""
               fill
               sizes="(max-width: 1024px) 100vw, 400px"
-              className="object-cover object-[35%_center] transition-transform duration-500 group-hover:scale-[1.02]"
+              className="object-contain transition-transform duration-500 group-hover:scale-[1.02]"
             />
           </Link>
 
