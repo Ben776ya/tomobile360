@@ -1,7 +1,10 @@
 'use server'
 
+import { headers } from 'next/headers'
+import * as Sentry from '@sentry/nextjs'
 import { createClient } from '@/lib/supabase/server'
 import { ControleBookingSchema, validateAction } from '@/lib/validations'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function submitControleBooking(formData: {
   city: string
@@ -12,6 +15,15 @@ export async function submitControleBooking(formData: {
   const validation = validateAction(ControleBookingSchema, formData)
   if (!validation.success) {
     return { error: validation.error, fieldErrors: validation.fieldErrors }
+  }
+
+  const headerList = await headers()
+  const ip = headerList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+
+  // 5 bookings per IP per hour. RLS allows anon INSERT; this is the
+  // app-layer cap that protects service_bookings from spam.
+  if (!rateLimit(`controle-booking:${ip}`, { maxRequests: 5, windowMs: 60 * 60 * 1000 })) {
+    return { error: 'Trop de tentatives. Réessayez dans quelques minutes.' }
   }
 
   const supabase = await createClient()
@@ -26,7 +38,7 @@ export async function submitControleBooking(formData: {
     })
 
   if (error) {
-    console.error('Controle booking error:', error)
+    Sentry.captureException(error, { tags: { action: 'submitControleBooking' } })
     return { error: 'Une erreur est survenue. Réessayez plus tard.' }
   }
 

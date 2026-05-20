@@ -226,6 +226,10 @@ const components: Components = {
 }
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
+  // Trust boundary: rehypeRaw allows raw HTML in markdown. Acceptable today
+  // because blog posts are admin-only (POST /api/admin/blog is checkAdmin-gated).
+  // If guest authors or untrusted markdown sources are ever introduced, swap
+  // rehypeRaw for rehype-sanitize with the GFM schema.
   return (
     <div className="mx-auto max-w-[65ch] px-1 sm:px-0 after:content-[''] after:block after:clear-both">
       <ReactMarkdown

@@ -1,8 +1,11 @@
 'use server'
 
 import { z } from 'zod'
+import { headers } from 'next/headers'
+import * as Sentry from '@sentry/nextjs'
 import { createClient } from '@/lib/supabase/server'
 import { validateAction } from '@/lib/validations'
+import { rateLimit } from '@/lib/rate-limit'
 
 const NewsletterSchema = z.object({
   email: z.string().email('Adresse email invalide'),
@@ -14,6 +17,14 @@ export async function subscribeNewsletter(formData: { email: string }) {
     return { error: validation.error }
   }
 
+  const headerList = await headers()
+  const ip = headerList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+
+  // 5 subscribe attempts per IP per hour — prevents enumeration / spam.
+  if (!rateLimit(`newsletter:${ip}`, { maxRequests: 5, windowMs: 60 * 60 * 1000 })) {
+    return { error: 'Trop de tentatives. Réessayez dans quelques minutes.' }
+  }
+
   const supabase = await createClient()
   const { error } = await supabase
     .from('newsletter_subscribers')
@@ -23,7 +34,7 @@ export async function subscribeNewsletter(formData: { email: string }) {
     if (error.code === '23505') {
       return { error: 'Cette adresse est deja inscrite.' }
     }
-    console.error('Newsletter subscribe error:', error)
+    Sentry.captureException(error, { tags: { action: 'subscribeNewsletter' } })
     return { error: 'Une erreur est survenue. Reessayez plus tard.' }
   }
 

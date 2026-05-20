@@ -117,4 +117,30 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+// Wrap with Sentry only if the SDK is installed AND a DSN is present.
+// This keeps local builds without Sentry credentials working unchanged.
+let exportedConfig = nextConfig
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { withSentryConfig } = require('@sentry/nextjs')
+  if (process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN) {
+    exportedConfig = withSentryConfig(nextConfig, {
+      // Org/project only needed for source-map upload; the SDK ignores
+      // these at runtime — they're for the build-time webpack plugin.
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      silent: !process.env.CI,
+      widenClientFileUpload: true,
+      tunnelRoute: '/monitoring',
+      webpack: {
+        treeshake: { removeDebugLogging: true },
+        automaticVercelMonitors: false,
+      },
+      // Source-map upload is skipped automatically when SENTRY_AUTH_TOKEN is unset.
+    })
+  }
+} catch {
+  // @sentry/nextjs not installed → ship vanilla config.
+}
+
+module.exports = exportedConfig

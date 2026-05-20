@@ -7,8 +7,10 @@ import type { CoupDeCoeurCategory } from '@/lib/types'
 import type { UpdateVideoInput, UpdateVehicleInput, CreateVehicleInput, UpdatePromotionInput, ArticleInput, UpdateFicheTechniqueInput, CreateFicheTechniqueInput } from '@/lib/validations'
 import { validateAction, UpdateVideoSchema, UpdateVehicleSchema, CreateVehicleSchema, UpdatePromotionSchema, ArticleSchema, UpdateFicheTechniqueSchema, CreateFicheTechniqueSchema } from '@/lib/validations'
 
-// Check if user is admin
-async function checkAdmin() {
+// Check if user is admin. Exported so other server actions/Server Components
+// (e.g. /admin layout, import-cars, sync-youtube) can reuse the same guard
+// instead of inlining their own.
+export async function checkAdmin() {
   const supabase = await createClient()
   const {
     data: { user },

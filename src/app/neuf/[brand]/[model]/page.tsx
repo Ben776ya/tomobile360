@@ -201,16 +201,32 @@ export default async function ModelDetailPage({ params }: PageProps) {
   )
   const canonicalUrl = `https://tomobile360.ma/neuf/${canonicalBrandSlug}/${canonicalModelSlug}`
 
-  const offers = variants
+  const variantOffers = variants
     .filter(v => v.price_min != null && v.price_min > 0)
     .map(v => ({
-      '@type': 'Offer',
+      '@type': 'Offer' as const,
       ...(v.version ? { name: v.version } : {}),
       price: v.price_min,
       priceCurrency: 'MAD',
       availability: 'https://schema.org/InStock',
-      seller: { '@type': 'Organization', name: 'Tomobile 360' },
+      seller: { '@type': 'Organization' as const, name: 'Tomobile 360' },
     }))
+
+  // Wrap multi-variant pricing in an AggregateOffer so SERPs render a
+  // price range (low–high) instead of a single Offer line.
+  const offers = (() => {
+    if (variantOffers.length === 0) return undefined
+    if (variantOffers.length === 1) return variantOffers[0]
+    const prices = variantOffers.map(o => o.price as number)
+    return {
+      '@type': 'AggregateOffer' as const,
+      offerCount: variantOffers.length,
+      lowPrice: Math.min(...prices),
+      highPrice: Math.max(...prices),
+      priceCurrency: 'MAD',
+      offers: variantOffers,
+    }
+  })()
 
   return (
     <div className="min-h-screen bg-background">
@@ -234,7 +250,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
             ...(transmissions.length > 0 ? { vehicleTransmission: transmissions.join(', ') } : {}),
             ...(images.length > 0 ? { image: images[0] } : {}),
             url: canonicalUrl,
-            ...(offers.length > 0 ? { offers } : {}),
+            ...(offers ? { offers } : {}),
           }}
         />
 

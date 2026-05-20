@@ -1,8 +1,10 @@
 'use server'
 
 import { headers } from 'next/headers'
+import * as Sentry from '@sentry/nextjs'
 import { createClient } from '@/lib/supabase/server'
 import { ContactMessageSchema, validateAction } from '@/lib/validations'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function submitContactMessage(formData: {
   name: string
@@ -21,6 +23,12 @@ export async function submitContactMessage(formData: {
   const ip = forwarded?.split(',')[0]?.trim() ?? null
   const userAgent = headerList.get('user-agent') ?? null
 
+  // 5 submissions per IP per hour. RLS allows anon INSERT; this is the
+  // app-layer cap that protects the contact_messages table from spam.
+  if (!rateLimit(`contact:${ip ?? 'unknown'}`, { maxRequests: 5, windowMs: 60 * 60 * 1000 })) {
+    return { error: 'Trop de tentatives. Réessayez dans quelques minutes.' }
+  }
+
   const supabase = await createClient()
   const { error } = await supabase
     .from('contact_messages')
@@ -35,7 +43,7 @@ export async function submitContactMessage(formData: {
     })
 
   if (error) {
-    console.error('Contact submit error:', error)
+    Sentry.captureException(error, { tags: { action: 'submitContactMessage' } })
     return { error: 'Une erreur est survenue. Réessayez plus tard.' }
   }
 
