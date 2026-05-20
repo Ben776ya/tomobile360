@@ -67,7 +67,7 @@ export function ModelManager({ brandId, initialModels: models }: ModelManagerPro
   const startEdit = (model: ModelWithCount) => {
     setEditingId(model.id)
     setEditName(model.name)
-    setEditCategory(model.category)
+    setEditCategory((model.category ?? 'Berline') as VehicleCategory)
     setEditError('')
   }
 
@@ -225,7 +225,7 @@ export function ModelManager({ brandId, initialModels: models }: ModelManagerPro
       ) : (
         <ul className="divide-y divide-white/5">
           {models.map((model) => {
-            const colorClass = CATEGORY_COLORS[model.category] ?? 'bg-gray-500/20 text-gray-300 border-gray-500/30'
+            const colorClass = (model.category && CATEGORY_COLORS[model.category as VehicleCategory]) ?? 'bg-gray-500/20 text-gray-300 border-gray-500/30'
             const isEditing = editingId === model.id
             const isDeleting = deleting === model.id
 

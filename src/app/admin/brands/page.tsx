@@ -25,9 +25,11 @@ export default async function AdminBrandsPage() {
 
   const brands = brandsResult.data ?? []
 
-  // Build count maps
+  // Build count maps. Models may have null brand_id (no FK constraint at DB
+  // layer), so skip those rows when counting.
   const modelCountMap: Record<string, number> = {}
   for (const row of modelsResult.data ?? []) {
+    if (!row.brand_id) continue
     modelCountMap[row.brand_id] = (modelCountMap[row.brand_id] ?? 0) + 1
   }
 

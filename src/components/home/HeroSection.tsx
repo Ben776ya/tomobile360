@@ -11,7 +11,7 @@ const HERO_IMAGE = '/hero-section.webp'
 
 interface HeroSectionProps {
   brands: Array<{ id: string; name: string }>
-  models?: Array<{ id: string; name: string; brand_id: string }>
+  models?: Array<{ id: string; name: string; brand_id: string | null }>
 }
 
 const budgetRanges = [

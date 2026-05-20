@@ -285,7 +285,7 @@ function NarsaVideosContent() {
                 {/* Actions */}
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <button
-                    onClick={() => handleTogglePublished(video.id, video.is_published)}
+                    onClick={() => handleTogglePublished(video.id, video.is_published ?? false)}
                     className="p-2 rounded-lg hover:bg-white/10 transition-colors"
                     title={video.is_published ? 'Masquer' : 'Publier'}
                   >

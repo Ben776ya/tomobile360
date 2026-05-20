@@ -13,17 +13,22 @@ export function formatPrice(price: number): string {
   return `${formatted} DH`
 }
 
-export function formatDate(date: Date | string): string {
+export function formatDate(date: Date | string | null | undefined): string {
+  if (!date) return ''
+  const parsed = new Date(date)
+  if (isNaN(parsed.getTime())) return ''
   return new Intl.DateTimeFormat('fr-MA', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }).format(new Date(date))
+  }).format(parsed)
 }
 
-export function formatRelativeTime(date: Date | string): string {
+export function formatRelativeTime(date: Date | string | null | undefined): string {
+  if (!date) return ''
   const now = new Date()
   const then = new Date(date)
+  if (isNaN(then.getTime())) return ''
   const seconds = Math.floor((now.getTime() - then.getTime()) / 1000)
 
   if (seconds < 60) return 'Il y a quelques secondes'

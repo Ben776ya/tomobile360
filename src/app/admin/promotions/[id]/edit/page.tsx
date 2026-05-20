@@ -3,6 +3,16 @@ import { PromotionForm } from '@/components/admin/PromotionForm'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import type { Promotion } from '@/lib/types'
+
+type PromotionWithVehicle = Promotion & {
+  vehicles_new?: {
+    id: string
+    brands?: { name: string }
+    models?: { name: string }
+    images?: string[]
+  }
+}
 
 export default async function EditPromotionPage({
   params,
@@ -23,7 +33,7 @@ export default async function EditPromotionPage({
       )
     `)
     .eq('id', params.id)
-    .single()
+    .single<PromotionWithVehicle>()
 
   if (!promotion) {
     notFound()

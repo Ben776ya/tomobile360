@@ -93,7 +93,9 @@ export default async function AdminUsersPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-sm text-dark-200">
-                        {u.email || 'N/A'}
+                        {/* Email lives on auth.users — not exposed via the
+                            profiles select. Surfaced as N/A in the admin grid. */}
+                        N/A
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -110,13 +112,15 @@ export default async function AdminUsersPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-sm text-dark-300">
-                        {new Date(u.created_at).toLocaleDateString('fr-FR')}
+                        {u.created_at
+                          ? new Date(u.created_at).toLocaleDateString('fr-FR')
+                          : '—'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <UserActions
                         userId={u.id}
-                        isAdmin={u.is_admin}
+                        isAdmin={u.is_admin ?? false}
                         fullName={u.full_name}
                         phone={u.phone}
                         city={u.city}

@@ -5,8 +5,20 @@ import { TrendingUp, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PromotionActions } from '@/components/admin/PromotionActions'
+import type { Tables } from '@/lib/database.types'
 
 export const revalidate = 30
+
+type PromotionWithVehicle = Tables<'promotions'> & {
+  vehicles_new:
+    | {
+        id: string
+        brands: { name: string } | null
+        models: { name: string } | null
+        images: string[] | null
+      }
+    | null
+}
 
 export default async function AdminPromotionsPage() {
   const supabase = await createClient()
@@ -24,6 +36,7 @@ export default async function AdminPromotionsPage() {
       )
     `)
     .order('created_at', { ascending: false })
+    .returns<PromotionWithVehicle[]>()
 
   return (
     <>
@@ -132,7 +145,7 @@ export default async function AdminPromotionsPage() {
                     <td className="px-6 py-4">
                       <PromotionActions
                         promotionId={promo.id}
-                        isActive={promo.is_active}
+                        isActive={promo.is_active ?? false}
                       />
                     </td>
                   </tr>

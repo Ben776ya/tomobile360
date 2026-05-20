@@ -2,6 +2,17 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { MessageSquare, Users, TrendingUp, Search } from 'lucide-react'
+import type { Tables } from '@/lib/database.types'
+
+// Latest topic shape returned by the join — the runtime select aliases
+// `profiles:author_id` but no such FK exists in the schema, so we annotate
+// the expected shape explicitly via .single<>().
+type LatestTopicWithAuthor = {
+  id: string
+  title: string
+  created_at: string | null
+  profiles: Pick<Tables<'profiles'>, 'full_name' | 'avatar_url'> | null
+}
 
 export const metadata: Metadata = {
   title: 'Forum Automobile Maroc — Discussions & Conseils',
@@ -61,7 +72,7 @@ export default async function ForumPage() {
         .eq('category_id', category.id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single()
+        .single<LatestTopicWithAuthor>()
 
       return {
         ...category,
@@ -158,7 +169,7 @@ export default async function ForumPage() {
           {categoriesWithStats.map((category) => (
             <Link
               key={category.id}
-              href={`/forum/${category.slug}`}
+              href={`/forum/${category.id}`}
               className="block bg-white rounded-lg shadow-card p-6 hover:shadow-elevated transition border border-gray-100 hover:border-secondary/20"
             >
               <div className="flex items-start gap-4">
