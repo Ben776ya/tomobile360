@@ -6,7 +6,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Services Automobiles au Maroc — Crédit, Assurance, Entretien',
-  description: 'Crédit auto SOFAC, assurance Atlanta Sanad, entretien rapide (pneus & detailing), contrôle technique, sécurité routière NARSA : tous les services automobiles au Maroc réunis sur Tomobile 360.',
+  description: 'Crédit auto SOFAC, assurance AtlantaSanad, entretien rapide (pneus & detailing), contrôle technique, sécurité routière NARSA : tous les services automobiles au Maroc réunis sur Tomobile 360.',
   alternates: {
     canonical: 'https://tomobile360.ma/services',
   },
@@ -39,8 +39,8 @@ const services: ServiceItem[] = [
   {
     icon: Shield,
     logoSrc: '/atlanta-sanad-logo.png',
-    title: 'Atlanta Sanad',
-    description: 'Obtenez votre devis d\'assurance auto avec notre partenaire Atlanta Sanad — leader de l\'assurance au Maroc.',
+    title: 'AtlantaSanad',
+    description: 'Obtenez votre devis d\'assurance auto avec notre partenaire AtlantaSanad — leader de l\'assurance au Maroc.',
     href: '/services/assurance',
     color: 'bg-[#EEF3FF]',
     iconColor: 'text-[#3b82f6]',
