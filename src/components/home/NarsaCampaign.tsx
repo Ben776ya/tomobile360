@@ -10,7 +10,7 @@ export function NarsaCampaign() {
         alt=""
         fill
         sizes="(min-width: 1024px) 66vw, 100vw"
-        className="object-cover object-left opacity-80"
+        className="object-contain object-left opacity-80"
         priority={false}
         aria-hidden="true"
       />
