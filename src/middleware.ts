@@ -59,8 +59,9 @@ export async function middleware(request: NextRequest) {
 
   // Admin route protection (SEC-01)
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    // D-02: Unauthenticated -> redirect to homepage. Admin sign-in is handled
-    // by the global /login route; the /admin layout enforces the role server-side.
+    // Unauthenticated -> redirect to homepage. There is no in-app /login page;
+    // admins authenticate via Supabase (dashboard / magic link) and the cookie
+    // session is what we read here. /admin layout re-checks role server-side.
     if (!user) {
       return NextResponse.redirect(new URL('/', request.url))
     }

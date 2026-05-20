@@ -1,27 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { checkAdminApi } from '@/lib/auth/check-admin'
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
-
-  // Auth check
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+  const auth = await checkAdminApi()
+  if (auth.error) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('is_admin')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile?.is_admin) {
-    return NextResponse.json({ error: 'Accès non autorisé' }, { status: 403 })
-  }
+  const { supabase } = auth
 
   try {
     const formData = await request.formData()
@@ -76,22 +64,11 @@ export async function POST(request: NextRequest) {
 
 // DELETE — remove image from storage
 export async function DELETE(request: NextRequest) {
-  const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return NextResponse.json({ error: 'Non authentifie' }, { status: 401 })
+  const auth = await checkAdminApi()
+  if (auth.error) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('is_admin')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile?.is_admin) {
-    return NextResponse.json({ error: 'Acces non autorise' }, { status: 403 })
-  }
+  const { supabase } = auth
 
   try {
     const { url } = await request.json()

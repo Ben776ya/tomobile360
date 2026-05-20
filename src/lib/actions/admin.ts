@@ -3,34 +3,15 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
+import { checkAdmin as _checkAdmin } from '@/lib/auth/check-admin'
 import type { CoupDeCoeurCategory } from '@/lib/types'
 import type { UpdateVideoInput, UpdateVehicleInput, CreateVehicleInput, UpdatePromotionInput, ArticleInput, UpdateFicheTechniqueInput, CreateFicheTechniqueInput } from '@/lib/validations'
 import { validateAction, UpdateVideoSchema, UpdateVehicleSchema, CreateVehicleSchema, UpdatePromotionSchema, ArticleSchema, UpdateFicheTechniqueSchema, CreateFicheTechniqueSchema } from '@/lib/validations'
 
-// Check if user is admin. Exported so other server actions/Server Components
-// (e.g. /admin layout, import-cars, sync-youtube) can reuse the same guard
-// instead of inlining their own.
+// Back-compat re-export so existing imports of `@/lib/actions/admin#checkAdmin`
+// continue to work. New code should import from `@/lib/auth/check-admin` directly.
 export async function checkAdmin() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { error: 'Non authentifié', user: null }
-  }
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('is_admin')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile?.is_admin) {
-    return { error: 'Accès non autorisé', user: null }
-  }
-
-  return { user }
+  return _checkAdmin()
 }
 
 // Article Actions
