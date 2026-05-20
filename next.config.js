@@ -35,14 +35,20 @@ const securityHeaders = [
 const nextConfig = {
   poweredByHeader: false,
   compress: true,
-  ...(isProductionBuild
-    ? {
-        experimental: {
+  experimental: {
+    // Tree-shake barrel imports for icon / utility packages. Without this,
+    // `import { Foo } from 'lucide-react'` pulls the whole barrel into the
+    // page chunk even if Foo is the only icon used on that page.
+    optimizePackageImports: ['lucide-react'],
+    ...(isProductionBuild
+      ? {
+          // Single-CPU during `next build` is needed to avoid OOM on the
+          // static-paths worker (see top-of-file comment).
           workerThreads: false,
           cpus: 1,
-        },
-      }
-    : {}),
+        }
+      : {}),
+  },
   async headers() {
     return [
       {
