@@ -229,14 +229,15 @@ export default function Footer() {
           <Link
             href="/qui-sommes-nous"
             aria-label="Découvrir l'équipe Tomobile 360 Magazine"
-            className="group relative block rounded-lg overflow-hidden border border-white/[0.08] min-h-[150px] isolate lg:self-center transition-all duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-dark-800"
+            className="group relative block rounded-lg overflow-hidden border border-white/[0.08] lg:self-center transition-all duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-dark-800"
           >
             <Image
               src="/footer_banner.jpg"
               alt=""
-              fill
+              width={1009}
+              height={282}
               sizes="(max-width: 1024px) 100vw, 400px"
-              className="object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+              className="block w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]"
             />
           </Link>
 
