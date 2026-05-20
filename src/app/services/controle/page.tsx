@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ClipboardCheck, Check, ArrowLeft, MapPin, Calendar, Clock } from 'lucide-react'
+import { ClipboardCheck, Check, ArrowLeft, MapPin, Calendar } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { BookingForm } from './BookingForm'
 
 export const metadata: Metadata = {
   title: 'Contrôle Technique Voiture au Maroc',
-  description: 'Passez votre contrôle technique dans plus de 40 centres partenaires agréés au Maroc. Réservation en ligne, 350 DH.',
+  description: "Service de contrôle technique en cours de déploiement avec un partenaire agréé. Réservez votre place pour être averti dès l'ouverture.",
   alternates: {
     canonical: 'https://tomobile360.ma/services/controle',
   },
@@ -22,15 +22,6 @@ const checkpoints = [
   'Équipements',
   'Organes mécaniques',
   'Pollution et niveau sonore',
-]
-
-const centers = [
-  { city: 'Casablanca', centers: 12 },
-  { city: 'Rabat', centers: 8 },
-  { city: 'Marrakech', centers: 6 },
-  { city: 'Tanger', centers: 5 },
-  { city: 'Fès', centers: 4 },
-  { city: 'Agadir', centers: 4 },
 ]
 
 export default function ControlePage() {
@@ -91,15 +82,11 @@ export default function ControlePage() {
                 <ul className="space-y-3">
                   <li className="flex items-center gap-3 text-sm text-gray-700">
                     <Calendar className="h-5 w-5 text-purple-400" />
-                    Réservation en ligne 24h/24
-                  </li>
-                  <li className="flex items-center gap-3 text-sm text-gray-700">
-                    <Clock className="h-5 w-5 text-purple-400" />
-                    Durée moyenne : 30 minutes
+                    Réservation en ligne 24h/24 dès l&apos;ouverture
                   </li>
                   <li className="flex items-center gap-3 text-sm text-gray-700">
                     <MapPin className="h-5 w-5 text-purple-400" />
-                    Plus de 40 centres partenaires
+                    Centres agréés sur tout le territoire marocain
                   </li>
                 </ul>
               </div>
@@ -111,21 +98,16 @@ export default function ControlePage() {
         </div>
       </section>
 
-      {/* Centers */}
+      {/* Coming soon — replace with real partner data when contracted */}
       <section className="py-16 md:py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-primary text-center mb-12">
-            Nos centres partenaires
+        <div className="container mx-auto px-4 max-w-2xl text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-primary mb-4">
+            Service en cours de déploiement
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {centers.map((center, idx) => (
-              <div key={idx} className="bg-white rounded-xl p-4 text-center shadow-card border border-gray-100">
-                <MapPin className="h-6 w-6 text-purple-400 mx-auto mb-2" />
-                <p className="font-semibold text-primary">{center.city}</p>
-                <p className="text-sm text-gray-400">{center.centers} centres</p>
-              </div>
-            ))}
-          </div>
+          <p className="text-gray-600">
+            Nous finalisons les accords avec un réseau de centres de contrôle technique agréés au Maroc.
+            Inscrivez-vous via le formulaire ci-dessus pour être averti dès l&apos;ouverture.
+          </p>
         </div>
       </section>
     </div>
