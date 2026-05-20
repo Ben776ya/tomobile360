@@ -210,6 +210,23 @@ export default function CreditAutoPage() {
         </div>
       </section>
 
+      <section className="py-8 bg-gray-50 border-t border-gray-100">
+        <div className="container mx-auto px-4 max-w-4xl text-xs text-gray-500 leading-relaxed">
+          <p className="mb-2">
+            <strong>Mentions légales du crédit :</strong> Offre de crédit auto proposée par
+            notre partenaire SOFAC, société de financement agréée par Bank Al-Maghrib.
+            Sous réserve d&apos;acceptation du dossier par SOFAC. Le coût total du crédit
+            dépend du Taux Effectif Global (TEG) en vigueur, communiqué par SOFAC lors de
+            l&apos;étude du dossier.
+          </p>
+          <p>
+            Tomobile 360 agit en tant qu&apos;apporteur d&apos;affaires et ne participe pas à
+            la décision d&apos;octroi du crédit. Aucun frais n&apos;est facturé par Tomobile
+            360 pour cette mise en relation.
+          </p>
+        </div>
+      </section>
+
     </div>
   )
 }

@@ -228,6 +228,23 @@ export default function AssurancePage() {
         </div>
       </section>
 
+      {/* Legal Disclaimer */}
+      <section className="py-8 bg-gray-50 border-t border-gray-100">
+        <div className="container mx-auto px-4 max-w-4xl text-xs text-gray-500 leading-relaxed">
+          <p className="mb-2">
+            <strong>Mentions légales d&apos;assurance :</strong> Contrats d&apos;assurance auto
+            proposés par notre partenaire AtlantaSanad, compagnie d&apos;assurance agréée par
+            l&apos;ACAPS (Autorité de Contrôle des Assurances et de la Prévoyance Sociale).
+            Les garanties, exclusions et conditions tarifaires sont définies par AtlantaSanad.
+          </p>
+          <p>
+            Tomobile 360 agit en tant qu&apos;intermédiaire de mise en relation et ne
+            participe pas à la souscription. Le devis définitif sera émis par AtlantaSanad
+            après étude personnalisée.
+          </p>
+        </div>
+      </section>
+
       {/* Devis Form Modal */}
       {showForm && (
         <div
