@@ -3,6 +3,9 @@ import { VehicleForm } from '@/components/admin/VehicleForm'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { toStringArray, toRecord, toVariantList } from '@/lib/json-utils'
+import type { VehicleNew, Variant } from '@/lib/types'
+import type { Tables } from '@/lib/database.types'
 
 export default async function EditVehiclePage({
   params,
@@ -11,14 +14,27 @@ export default async function EditVehiclePage({
 }) {
   const supabase = await createClient()
 
-  const { data: vehicle } = await supabase
+  const { data: row } = await supabase
     .from('vehicles_new')
     .select('*')
     .eq('id', params.id)
     .single()
 
-  if (!vehicle) {
+  if (!row) {
     notFound()
+  }
+
+  // The DB stores images / features / dimensions / variant_list as Json. The
+  // form expects the parsed shapes; cast through narrow helpers from
+  // @/lib/json-utils.
+  const dbVehicle: Tables<'vehicles_new'> = row
+  const vehicle: VehicleNew = {
+    ...dbVehicle,
+    images: toStringArray(dbVehicle.images),
+    features: toStringArray(dbVehicle.features),
+    safety_features: toStringArray(dbVehicle.safety_features),
+    dimensions: toRecord(dbVehicle.dimensions),
+    variant_list: toVariantList<Variant>(dbVehicle.variant_list),
   }
 
   const { data: brands } = await supabase

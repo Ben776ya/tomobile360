@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { checkAdmin } from '@/lib/auth/check-admin'
 import type { CoupDeCoeurCategory } from '@/lib/types'
+import type { Json } from '@/lib/database.types'
 import { validateAction, CreateVehicleSchema, UpdateVehicleSchema } from '@/lib/validations'
 import type { CreateVehicleInput, UpdateVehicleInput } from '@/lib/validations'
 
@@ -46,17 +47,17 @@ export async function createVehicle(data: CreateVehicleInput) {
       warranty_months: d.warranty_months ?? null,
       euro_norm: d.euro_norm || null,
       mileage: d.mileage ?? null,
-      features: d.features || [],
-      safety_features: d.safety_features || [],
-      images: d.images || [],
-      dimensions: d.dimensions ?? null,
+      features: (d.features || []) as Json,
+      safety_features: (d.safety_features || []) as Json,
+      images: (d.images || []) as Json,
+      dimensions: (d.dimensions ?? null) as Json | null,
       is_available: d.is_available ?? true,
       is_popular: d.is_popular ?? false,
       is_new_release: d.is_new_release ?? false,
       is_coming_soon: d.is_coming_soon ?? false,
       is_featured_offer: d.is_featured_offer ?? false,
       coup_de_coeur_reason: d.coup_de_coeur_reason || null,
-      variant_list: d.variant_list ?? null,
+      variant_list: (d.variant_list ?? null) as Json | null,
     })
     .select()
     .single()

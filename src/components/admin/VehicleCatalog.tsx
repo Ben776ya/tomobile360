@@ -176,7 +176,7 @@ export function VehicleCatalog({ brand, models, vehicles, allBrands, allModels }
                       {/* Badges */}
                       <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                         <button
-                          onClick={() => handleToggleBadge(vehicle.id, 'is_popular', vehicle.is_popular)}
+                          onClick={() => handleToggleBadge(vehicle.id, 'is_popular', vehicle.is_popular ?? false)}
                           disabled={actionLoading === vehicle.id}
                           title="Populaire"
                           className={`p-1.5 rounded border transition ${vehicle.is_popular ? 'bg-yellow-500/20 border-yellow-500/30' : 'border-white/10 hover:bg-white/5'}`}
@@ -184,7 +184,7 @@ export function VehicleCatalog({ brand, models, vehicles, allBrands, allModels }
                           <Star className={`h-3.5 w-3.5 ${vehicle.is_popular ? 'fill-yellow-500 text-yellow-500' : 'text-dark-400'}`} />
                         </button>
                         <button
-                          onClick={() => handleToggleBadge(vehicle.id, 'is_new_release', vehicle.is_new_release)}
+                          onClick={() => handleToggleBadge(vehicle.id, 'is_new_release', vehicle.is_new_release ?? false)}
                           disabled={actionLoading === vehicle.id}
                           title="Nouveauté"
                           className={`p-1.5 rounded border transition ${vehicle.is_new_release ? 'bg-green-500/20 border-green-500/30' : 'border-white/10 hover:bg-white/5'}`}

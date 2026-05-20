@@ -1,27 +1,31 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '@/lib/database.types'
 
-// NOTE: client is intentionally un-genericized.
+// Typed Supabase server client.
 //
-// Adding `<Database>` here surfaces 80+ type errors across admin pages
-// because the Supabase JS SDK's row inference from `.select('a, b, c')`
-// strings does not reliably propagate the generated row types — the parsed
-// types collapse to `never`, which then breaks every property access on
-// the result.
+// The `<Database>` generic propagates row, insert, and update types from the
+// auto-generated `database.types.ts` into every `.from('table')` builder so
+// callers get full type safety on query results, inserts, updates, and
+// filters.
 //
-// Tracked attempt: Cluster D of the 2026-05-20 audit (PR cluster-d). The
-// proper fix is a per-call-site migration to either:
-//   1. `.returns<RowType>()` annotations on every query, OR
-//   2. switching from `.select('col, col')` strings to typed builders
+// Call sites that use `.select('col, col')` string projections should pair
+// the query with `.returns<RowType>()` to give the SDK a precise return
+// shape — the column-string parser otherwise narrows the row to `never`.
+// For column subsets prefer `Pick<Tables<'foo'>, 'a' | 'b'>`; for queries
+// that include nested joins define an inline type that mirrors the join.
 //
-// Callers that need typed results today can use the generated row helpers:
-//   import type { Tables } from '@/lib/database.types'
-//   const brand = data as Tables<'brands'>
-// or pass an explicit type to `.returns<T>()` on the query.
-export function createClient() {
+// Implementation note: `@supabase/ssr@0.5.2`'s `createServerClient` forwards
+// its generics into a different set of slots than `SupabaseClient` from
+// `@supabase/supabase-js@2.93.x` expects (the newer class signature added a
+// `SchemaNameOrClientOptions` slot). The runtime client is correct either
+// way; we narrow the return type to `SupabaseClient<Database>` so callers
+// see the full typed `from()` / `rpc()` builders.
+export function createClient(): SupabaseClient<Database> {
   const cookieStore = cookies()
 
-  return createServerClient(
+  const client = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -47,4 +51,10 @@ export function createClient() {
       },
     },
   )
+
+  // Re-narrow via `unknown` because the SSR return type's third generic slot
+  // is `Schema` (an object), but the newer `SupabaseClient` class expects
+  // that slot to be `SchemaName` (a string literal). The runtime instance is
+  // identical; only the type parameter positions differ.
+  return client as unknown as SupabaseClient<Database>
 }

@@ -11,6 +11,33 @@ import { UsedListingCard } from '@/components/vehicles/UsedListingCard'
 import { ShareButton } from '@/components/shared/ShareButton'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import type { Tables } from '@/lib/database.types'
+import type { VehicleUsed } from '@/lib/types'
+
+// Metadata-only projection: just enough columns to render OG/Twitter tags.
+type ListingMeta = Pick<Tables<'vehicles_used'>, 'price' | 'year' | 'city' | 'fuel_type' | 'mileage' | 'images'> & {
+  brands: { name: string } | null
+  models: { name: string } | null
+}
+
+// Full listing for the detail page. The runtime query aliases the join as
+// `profiles:user_id` even though there is no declared FK in the schema, so
+// the SDK collapses that branch to a SelectQueryError. Annotate the actual
+// expected shape via .returns<>() / .single<>() so the rest of the file is
+// typed correctly.
+type ListingWithRelations = Tables<'vehicles_used'> & {
+  brands: { id: string; name: string; logo_url: string | null } | null
+  models: { id: string; name: string; category: string | null } | null
+  profiles: { full_name: string | null; avatar_url: string | null; phone: string | null; city: string | null } | null
+}
+
+// Similar listings reuse the public VehicleUsed type expected by
+// UsedListingCard, with a sub-shape for the joined brand/model/profile fields.
+type SimilarListing = VehicleUsed & {
+  brands?: { name: string; logo_url: string | null }
+  models?: { name: string }
+  profiles?: { full_name: string | null; avatar_url: string | null }
+}
 
 // Use dynamic rendering to ensure newly created listings are immediately available
 export const dynamic = 'force-dynamic'
@@ -31,18 +58,19 @@ export async function generateMetadata({ params }: PageProps) {
       models:model_id (name)
     `)
     .eq('id', params.id)
-    .single()
+    .single<ListingMeta>()
 
   if (!listing) return { title: 'Annonce non trouvée' }
 
-  const brandName = (listing.brands as any)?.name || ''
-  const modelName = (listing.models as any)?.name || ''
+  const brandName = listing.brands?.name || ''
+  const modelName = listing.models?.name || ''
   const price = listing.price
     ? `${Math.round(listing.price).toLocaleString('fr-MA')} DH`
     : ''
 
   const canonicalUrl = `https://tomobile360.ma/occasion/${params.id}`
-  const ogImage = (listing as any).images?.[0] || '/og-image.png'
+  const imagesArr = Array.isArray(listing.images) ? (listing.images as string[]) : []
+  const ogImage = imagesArr[0] || '/og-image.png'
 
   return {
     title: `${brandName} ${modelName} ${listing.year} — ${price} | Occasion Maroc`,
@@ -79,7 +107,7 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
         profiles:user_id (full_name, avatar_url, phone, city)
       `)
       .eq('id', params.id)
-      .single()
+      .single<ListingWithRelations>()
   ])
 
   // notFound guard between Wave A and Wave B (per D-08)
@@ -108,11 +136,12 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
     .eq('is_sold', false)
     .or(`brand_id.eq.${listing.brand_id},city.eq.${listing.city}`)
     .limit(4)
+    .returns<SimilarListing[]>()
 
   const brandName = listing.brands?.name || 'Unknown'
   const modelName = listing.models?.name || 'Unknown'
-  const images = listing.images || []
-  const sidebarViewsLabel = formatViewsLabel(listing.views)
+  const images: string[] = Array.isArray(listing.images) ? (listing.images as string[]) : []
+  const sidebarViewsLabel = formatViewsLabel(listing.views ?? 0)
   const seller = listing.profiles
 
   const whatsappPhone = listing.contact_phone

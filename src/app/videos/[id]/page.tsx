@@ -77,13 +77,17 @@ export default async function VideoDetailPage({ params }: PageProps) {
   // Increment view count
   void supabase.rpc('increment_video_views', { video_id: video.id })
 
-  // Fetch related videos (same category)
-  const { data: relatedVideos } = await supabase
+  // Fetch related videos (same category). If the current video has no
+  // category, fall back to "all published".
+  let relatedQuery = supabase
     .from('videos')
     .select('*')
     .eq('is_published', true)
-    .eq('category', video.category)
     .neq('id', params.id)
+  if (video.category) {
+    relatedQuery = relatedQuery.eq('category', video.category)
+  }
+  const { data: relatedVideos } = await relatedQuery
     .order('views', { ascending: false })
     .limit(3)
 

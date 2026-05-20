@@ -3,6 +3,9 @@ import { ArticleForm } from '@/components/admin/ArticleForm'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { toStringArray } from '@/lib/json-utils'
+import type { Article } from '@/lib/types'
+import type { Tables } from '@/lib/database.types'
 
 export default async function EditArticlePage({
   params,
@@ -11,14 +14,23 @@ export default async function EditArticlePage({
 }) {
   const supabase = await createClient()
 
-  const { data: article } = await supabase
+  const { data: row } = await supabase
     .from('articles')
     .select('*')
     .eq('id', params.id)
     .single()
 
-  if (!article) {
+  if (!row) {
     notFound()
+  }
+
+  // articles.tags is stored as `Json | null` in Postgres but the application
+  // treats it as `string[] | null`. Narrow it explicitly so the value the
+  // form receives matches our domain type.
+  const dbRow: Tables<'articles'> = row
+  const article: Article = {
+    ...dbRow,
+    tags: toStringArray(dbRow.tags),
   }
 
   return (

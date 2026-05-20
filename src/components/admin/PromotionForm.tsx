@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { createPromotion, updatePromotion } from '@/lib/actions/admin/promotions'
 import { Loader2, Car, Search, Check } from 'lucide-react'
-import type { Promotion } from '@/lib/types'
+import type { PromotionWithVehicle } from '@/lib/types'
 
 interface VehicleOption {
   id: string
@@ -21,7 +21,7 @@ interface VehicleOption {
 
 interface PromotionFormProps {
   vehicles: VehicleOption[]
-  promotion?: Promotion & { vehicles_new?: { id: string; brands?: { name: string }; models?: { name: string }; images?: string[] } }
+  promotion?: PromotionWithVehicle
   mode: 'create' | 'edit'
 }
 

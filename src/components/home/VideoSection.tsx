@@ -88,7 +88,7 @@ export function VideoSection({ videos }: VideoSectionProps) {
                   )}
                   <div className="flex items-center gap-1 text-xs text-gray-500">
                     <Eye className="w-3.5 h-3.5" />
-                    <span>{video.views.toLocaleString()} vues</span>
+                    <span>{(video.views ?? 0).toLocaleString()} vues</span>
                   </div>
                 </Link>
               ))}

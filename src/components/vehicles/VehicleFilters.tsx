@@ -7,8 +7,8 @@ import { X, SlidersHorizontal } from 'lucide-react'
 
 interface VehicleFiltersProps {
   brands: Array<{ id: string; name: string }>
-  models: Array<{ id: string; brand_id: string; name: string; category: string | null }>
-  categories: string[]
+  models: Array<{ id: string; brand_id: string | null; name: string; category: string | null }>
+  categories: Array<string | null>
   currentFilters: {
     brand?: string
     model?: string
@@ -219,7 +219,7 @@ export function VehicleFilters({
             className={selectClass}
           >
             <option value="">Toutes les catégories</option>
-            {categories.map((cat) => (
+            {categories.filter((cat): cat is string => !!cat).map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
               </option>

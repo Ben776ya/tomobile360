@@ -48,7 +48,9 @@ export async function POST(request: Request) {
     supabase.from('forum_topics').select('*').eq('user_id', user.id),
     supabase.from('forum_posts').select('*').eq('user_id', user.id),
     supabase.from('articles').select('*').eq('author_id', user.id),
-    supabase.from('video_likes').select('*').eq('user_id', user.id),
+    // `video_likes` was a planned table that never landed in the schema —
+    // export an empty array so the JSON shape stays stable.
+    Promise.resolve({ data: [], error: null }),
     supabase.from('favorites').select('*').eq('user_id', user.id),
     userEmail
       ? supabase.from('contact_messages').select('*').eq('email', userEmail)

@@ -132,7 +132,9 @@ export default async function AdminDashboardPage() {
                       </p>
                       <p className="text-xs text-dark-300">
                         par {(listing.profiles as any)?.full_name || 'Anonyme'} •{' '}
-                        {new Date(listing.created_at).toLocaleDateString('fr-FR')}
+                        {listing.created_at
+                          ? new Date(listing.created_at).toLocaleDateString('fr-FR')
+                          : '—'}
                       </p>
                     </div>
                   </div>

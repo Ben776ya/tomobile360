@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { MessageSquare, Eye } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { formatRelativeTime } from '@/lib/utils'
+import type { Tables } from '@/lib/database.types'
 
 export const revalidate = 30
 
@@ -11,6 +12,20 @@ interface PageProps {
   params: {
     id: string
   }
+}
+
+// The runtime query joins `profiles:author_id` / `forum_categories:category_id`
+// using aliases that don't match any declared FK in the generated schema, so
+// the SDK's select-parser produces SelectQueryError types. We annotate the
+// expected shape via .returns<>() so the rest of the file is type-safe; the
+// runtime semantics are unchanged.
+type TopicWithRelations = Tables<'forum_topics'> & {
+  profiles: Pick<Tables<'profiles'>, 'id' | 'full_name' | 'avatar_url' | 'created_at'> | null
+  forum_categories: Pick<Tables<'forum_categories'>, 'id' | 'name'> | null
+}
+
+type ReplyWithProfile = Tables<'forum_posts'> & {
+  profiles: Pick<Tables<'profiles'>, 'id' | 'full_name' | 'avatar_url' | 'created_at'> | null
 }
 
 export default async function TopicDetailPage({ params }: PageProps) {
@@ -22,10 +37,10 @@ export default async function TopicDetailPage({ params }: PageProps) {
     .select(`
       *,
       profiles:author_id (id, full_name, avatar_url, created_at),
-      forum_categories:category_id (name, slug)
+      forum_categories:category_id (id, name)
     `)
     .eq('id', params.id)
-    .single()
+    .single<TopicWithRelations>()
 
   if (!topic) {
     notFound()
@@ -43,6 +58,7 @@ export default async function TopicDetailPage({ params }: PageProps) {
     `)
     .eq('topic_id', params.id)
     .order('created_at', { ascending: true })
+    .returns<ReplyWithProfile[]>()
 
   return (
     <div className="min-h-screen bg-background">
@@ -54,8 +70,10 @@ export default async function TopicDetailPage({ params }: PageProps) {
               Forum
             </Link>
             <span className="text-gray-500">/</span>
+            {/* forum_categories has no `slug` column in DB; route by id.
+                The category detail page queries .eq('id', params.category). */}
             <Link
-              href={`/forum/${topic.forum_categories?.slug}`}
+              href={`/forum/${topic.forum_categories?.id}`}
               className="text-secondary hover:text-secondary-400"
             >
               {topic.forum_categories?.name}

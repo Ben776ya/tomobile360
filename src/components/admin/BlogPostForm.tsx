@@ -31,9 +31,9 @@ interface BlogPostFormProps {
       image_url: string
       alt_text: string | null
       caption: string | null
-      display_order: number
-      size: string
-      float_position: string
+      display_order: number | null
+      size: string | null
+      float_position: string | null
     }>
   }
   mode: 'create' | 'edit'

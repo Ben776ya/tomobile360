@@ -4,6 +4,16 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronLeft, Pin, Lock, MessageSquare, Eye, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import type { Tables } from '@/lib/database.types'
+
+// The runtime select aliases the join as `profiles:author_id` even though no
+// such FK exists in the schema, so the SDK's parser collapses that field to
+// a SelectQueryError. Annotate the actual shape via .returns<>() so the rest
+// of the page is type-safe.
+type TopicWithProfile = Tables<'forum_topics'> & {
+  profiles: Pick<Tables<'profiles'>, 'full_name' | 'avatar_url'> | null
+  forum_posts: Array<{ id: string }>
+}
 
 export async function generateMetadata({ params }: { params: { category: string } }): Promise<Metadata> {
   const supabase = await createClient()
@@ -43,10 +53,12 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const sort = searchParams.sort || 'recent'
 
   // Fetch category
+  // forum_categories has no `slug` column in DB; the category route param is
+  // an id (the forum homepage links to /forum/{category.id}).
   const { data: category } = await supabase
     .from('forum_categories')
     .select('*')
-    .eq('slug', params.category)
+    .eq('id', params.category)
     .single()
 
   if (!category) {
@@ -75,6 +87,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
     .order('is_pinned', { ascending: false })
     .order(orderColumn, { ascending: orderAscending })
     .range((page - 1) * itemsPerPage, page * itemsPerPage - 1)
+    .returns<TopicWithProfile[]>()
 
   const totalPages = Math.ceil((count || 0) / itemsPerPage)
 
