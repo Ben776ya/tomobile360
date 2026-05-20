@@ -30,6 +30,12 @@ export default function MentionsLegalesPage() {
               RC : {BUSINESS_INFO.RC_NUMBER}<br />
               ICE : {BUSINESS_INFO.ICE_NUMBER}<br />
               Directeur de la publication : {BUSINESS_INFO.DIRECTOR_NAME}
+              {BUSINESS_INFO.CAPITAL_SOCIAL && (
+                <>
+                  <br />
+                  Capital social : {BUSINESS_INFO.CAPITAL_SOCIAL}
+                </>
+              )}
             </p>
           </section>
 
