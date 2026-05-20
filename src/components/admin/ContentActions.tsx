@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Edit, Trash2, Eye } from 'lucide-react'
-import { deleteArticle, deleteVideo } from '@/lib/actions/admin'
+import { deleteArticle } from '@/lib/actions/admin/articles'
+import { deleteVideo } from '@/lib/actions/admin/videos'
 
 interface ContentActionsProps {
   itemId: string

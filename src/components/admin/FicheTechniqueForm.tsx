@@ -11,7 +11,7 @@ import {
   ChevronRight,
   ArrowLeft,
 } from 'lucide-react'
-import { updateFicheTechnique } from '@/lib/actions/admin'
+import { updateFicheTechnique } from '@/lib/actions/admin/fiches'
 import type { FicheTechnique } from '@/lib/types'
 
 interface FicheTechniqueFormProps {

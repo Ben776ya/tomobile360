@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Shield, Edit, Trash2, X, Loader2 } from 'lucide-react'
-import { toggleUserAdmin, updateUserProfile, deleteUser } from '@/lib/actions/admin'
+import { toggleUserAdmin, updateUserProfile, deleteUser } from '@/lib/actions/admin/users'
 
 interface UserActionsProps {
   userId: string

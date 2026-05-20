@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { FileText, Search, Trash2, Edit, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { deleteFicheTechnique } from '@/lib/actions/admin'
+import { deleteFicheTechnique } from '@/lib/actions/admin/fiches'
 import type { FicheTechnique } from '@/lib/types'
 
 export default function AdminFichesTechniquesPage() {

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
 import { VehicleForm } from '@/components/admin/VehicleForm'
-import { deleteVehicle, toggleVehicleBadge } from '@/lib/actions/admin'
+import { deleteVehicle, toggleVehicleBadge } from '@/lib/actions/admin/vehicles'
 import { CATEGORY_COLORS } from '@/lib/constants'
 import type { Brand, Model, VehicleNew, VehicleCategory } from '@/lib/types'
 
