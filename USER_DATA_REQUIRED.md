@@ -1,6 +1,6 @@
 # Tomobile 360 — Information to Provide Before Launch
 
-Last updated: 2026-05-20
+Last updated: 2026-05-20 (repo flipped to public — P0.9 closed)
 
 This is the consolidated list of every value the website needs from you before
 launch. Each item lists what it is, where to put it, why it's needed, and the
