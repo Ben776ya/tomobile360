@@ -37,8 +37,9 @@ export function CookieConsent() {
       className="fixed bottom-4 left-4 right-4 md:left-6 md:bottom-6 md:right-auto md:max-w-md z-50 rounded-lg bg-dark-800 text-white shadow-2xl border border-white/10 p-4 backdrop-blur"
     >
       <p className="text-sm leading-relaxed mb-3">
-        Nous utilisons des cookies essentiels au fonctionnement du site et, avec
-        votre accord, des cookies de mesure d&apos;audience. Voir notre{' '}
+        Nous utilisons des cookies strictement nécessaires au fonctionnement du
+        site. Aucun cookie de mesure d&apos;audience ou de publicité n&apos;est
+        déposé sans configuration explicite. Voir notre{' '}
         <Link href="/cookies" className="underline text-secondary">
           politique cookies
         </Link>

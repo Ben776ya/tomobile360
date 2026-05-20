@@ -3,13 +3,13 @@
 import { useState } from 'react'
 import { submitControleBooking } from '@/lib/actions/service-bookings'
 
-const centers = [
-  { city: 'Casablanca', centers: 12 },
-  { city: 'Rabat', centers: 8 },
-  { city: 'Marrakech', centers: 6 },
-  { city: 'Tanger', centers: 5 },
-  { city: 'Fès', centers: 4 },
-  { city: 'Agadir', centers: 4 },
+const cities = [
+  { city: 'Casablanca' },
+  { city: 'Rabat' },
+  { city: 'Marrakech' },
+  { city: 'Tanger' },
+  { city: 'Fès' },
+  { city: 'Agadir' },
 ]
 
 export function BookingForm() {
@@ -63,9 +63,9 @@ export function BookingForm() {
             className="w-full px-4 py-3 bg-white text-primary border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent"
           >
             <option value="">Sélectionnez une ville</option>
-            {centers.map((c) => (
+            {cities.map((c) => (
               <option key={c.city} value={c.city}>
-                {c.city} ({c.centers} centres)
+                {c.city}
               </option>
             ))}
           </select>
@@ -108,11 +108,7 @@ export function BookingForm() {
         </div>
 
         <div className="bg-gray-100 rounded-xl p-4 border border-gray-100">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-700">Tarif contrôle technique</span>
-            <span className="text-xl font-bold text-primary">350 DH</span>
-          </div>
-          <p className="text-xs text-gray-400 mt-1">Contre-visite gratuite en cas de défaillance</p>
+          <p className="text-xs text-muted-foreground">Tarification et conditions communiquées par le partenaire à confirmation de la prise de rendez-vous.</p>
         </div>
 
         {error && (

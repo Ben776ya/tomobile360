@@ -177,22 +177,7 @@ export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
           )
         })}
 
-        {/* Source URL */}
-        {fiche?.source_url && (
-          <div className="pt-4 border-t border-border">
-            <p className="text-xs text-muted-foreground">
-              Source:{' '}
-              <a
-                href={fiche.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-accent hover:underline"
-              >
-                Voir la fiche complète
-              </a>
-            </p>
-          </div>
-        )}
+        {/* External source link intentionally not rendered (internal reference only). */}
       </div>
     )
   }
@@ -313,6 +298,7 @@ export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
       })}
 
       {/* Source URL if available */}
+      {/* Legacy fallback. `vehicles_new.source_url` is NULL across all rows; do not repopulate without a render policy decision. */}
       {vehicle.source_url && (
         <div className="pt-4 border-t border-border">
           <p className="text-xs text-muted-foreground">
