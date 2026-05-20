@@ -1,23 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { checkAdminApi as checkAdmin } from '@/lib/auth/check-admin'
 import { extractInternalLinks } from '../../../../../scripts/lib/extract-internal-links'
 import { validateInternalHref } from '../../../../../scripts/lib/validate-route'
-
-async function checkAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Non authentifié', status: 401, supabase }
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('is_admin')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile?.is_admin) return { error: 'Accès non autorisé', status: 403, supabase }
-  return { supabase, user }
-}
 
 function slugify(text: string): string {
   return text

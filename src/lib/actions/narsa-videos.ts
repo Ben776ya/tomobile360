@@ -2,31 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { checkAdmin } from '@/lib/auth/check-admin'
 import type { NarsaVideo } from '@/lib/types'
-
-// Check if user is admin
-async function checkAdmin() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { error: 'Non authentifié', user: null }
-  }
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('is_admin')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile?.is_admin) {
-    return { error: 'Accès non autorisé', user: null }
-  }
-
-  return { user }
-}
 
 // Fetch ALL narsa videos (admin use)
 export async function getNarsaVideos(): Promise<{
