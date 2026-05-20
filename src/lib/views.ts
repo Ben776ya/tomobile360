@@ -4,7 +4,7 @@
 const PUBLIC_THRESHOLD = 5
 
 export function formatViewsLabel(views: number | null | undefined): string | null {
-  const n = typeof views === 'number' ? views : 0
+  const n = typeof views === 'number' && !isNaN(views) ? views : 0
   if (n < PUBLIC_THRESHOLD) return null
   return `${n.toLocaleString('fr-FR')} vues`
 }

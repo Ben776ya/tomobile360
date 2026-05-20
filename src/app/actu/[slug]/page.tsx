@@ -106,6 +106,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
   const categoryLabel = CATEGORY_LABELS[post.category] || post.category
   const categoryColor = CATEGORY_COLORS[post.category] || 'bg-gray-500 text-white'
+  const viewsLabel = formatViewsLabel(post.views)
 
   return (
     <div className="min-h-screen bg-background">
@@ -184,10 +185,10 @@ export default async function ArticleDetailPage({ params }: PageProps) {
               <Clock className="h-3.5 w-3.5" />
               {estimateReadTime(post.content)} de lecture
             </span>
-            {formatViewsLabel(post.views) && (
+            {viewsLabel && (
               <span className="flex items-center gap-1 text-xs sm:text-sm text-white/80">
                 <Eye className="h-3.5 w-3.5" />
-                {formatViewsLabel(post.views)}
+                {viewsLabel}
               </span>
             )}
           </div>

@@ -112,6 +112,7 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
   const brandName = listing.brands?.name || 'Unknown'
   const modelName = listing.models?.name || 'Unknown'
   const images = listing.images || []
+  const sidebarViewsLabel = formatViewsLabel(listing.views)
   const seller = listing.profiles
 
   const whatsappPhone = listing.contact_phone
@@ -358,9 +359,9 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
                   <MapPin className="h-4 w-4" />
                   <span>{listing.city}</span>
                 </div>
-                {formatViewsLabel(listing.views) && (
+                {sidebarViewsLabel && (
                   <p className="text-sm text-gray-500">
-                    <span className="font-semibold text-secondary">{listing.views || 0}</span> vues
+                    <span className="font-semibold text-secondary">{listing.views!.toLocaleString('fr-FR')}</span> vues
                   </p>
                 )}
                 <p className="text-xs text-gray-400">
