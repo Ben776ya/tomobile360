@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
 import { MessageSquare, Users, TrendingUp, Search } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import { Input } from '@/components/ui/input'
+import { formatRelativeTime } from '@/lib/utils'
 import type { Tables } from '@/lib/database.types'
 
 // Latest topic shape returned by the join — the runtime select aliases
@@ -21,8 +23,6 @@ export const metadata: Metadata = {
     canonical: 'https://tomobile360.ma/forum',
   },
 }
-import { Input } from '@/components/ui/input'
-import { formatRelativeTime } from '@/lib/utils'
 
 export const revalidate = 60
 
@@ -167,6 +167,8 @@ export default async function ForumPage() {
         {/* Categories */}
         <div className="space-y-4">
           {categoriesWithStats.map((category) => (
+            /* forum_categories has no `slug` column in DB; route by id.
+               The category detail page queries .eq('id', params.category). */
             <Link
               key={category.id}
               href={`/forum/${category.id}`}

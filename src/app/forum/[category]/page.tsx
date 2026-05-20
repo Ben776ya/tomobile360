@@ -53,10 +53,12 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const sort = searchParams.sort || 'recent'
 
   // Fetch category
+  // forum_categories has no `slug` column in DB; the category route param is
+  // an id (the forum homepage links to /forum/{category.id}).
   const { data: category } = await supabase
     .from('forum_categories')
     .select('*')
-    .eq('slug', params.category)
+    .eq('id', params.category)
     .single()
 
   if (!category) {

@@ -3,6 +3,7 @@ import { ArticleForm } from '@/components/admin/ArticleForm'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { toStringArray } from '@/lib/json-utils'
 import type { Article } from '@/lib/types'
 import type { Tables } from '@/lib/database.types'
 
@@ -29,7 +30,7 @@ export default async function EditArticlePage({
   const dbRow: Tables<'articles'> = row
   const article: Article = {
     ...dbRow,
-    tags: Array.isArray(dbRow.tags) ? (dbRow.tags as string[]) : null,
+    tags: toStringArray(dbRow.tags),
   }
 
   return (

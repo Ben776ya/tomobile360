@@ -3,16 +3,7 @@ import { PromotionForm } from '@/components/admin/PromotionForm'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import type { Promotion } from '@/lib/types'
-
-type PromotionWithVehicle = Promotion & {
-  vehicles_new?: {
-    id: string
-    brands?: { name: string }
-    models?: { name: string }
-    images?: string[]
-  }
-}
+import type { PromotionWithVehicle } from '@/lib/types'
 
 export default async function EditPromotionPage({
   params,

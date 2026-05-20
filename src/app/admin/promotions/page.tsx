@@ -5,20 +5,9 @@ import { TrendingUp, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PromotionActions } from '@/components/admin/PromotionActions'
-import type { Tables } from '@/lib/database.types'
+import type { PromotionWithVehicle } from '@/lib/types'
 
 export const revalidate = 30
-
-type PromotionWithVehicle = Tables<'promotions'> & {
-  vehicles_new:
-    | {
-        id: string
-        brands: { name: string } | null
-        models: { name: string } | null
-        images: string[] | null
-      }
-    | null
-}
 
 export default async function AdminPromotionsPage() {
   const supabase = await createClient()

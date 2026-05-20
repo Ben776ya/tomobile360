@@ -21,7 +21,7 @@ interface PageProps {
 // runtime semantics are unchanged.
 type TopicWithRelations = Tables<'forum_topics'> & {
   profiles: Pick<Tables<'profiles'>, 'id' | 'full_name' | 'avatar_url' | 'created_at'> | null
-  forum_categories: Pick<Tables<'forum_categories'>, 'name'> & { slug?: string | null } | null
+  forum_categories: Pick<Tables<'forum_categories'>, 'id' | 'name'> | null
 }
 
 type ReplyWithProfile = Tables<'forum_posts'> & {
@@ -37,7 +37,7 @@ export default async function TopicDetailPage({ params }: PageProps) {
     .select(`
       *,
       profiles:author_id (id, full_name, avatar_url, created_at),
-      forum_categories:category_id (name, slug)
+      forum_categories:category_id (id, name)
     `)
     .eq('id', params.id)
     .single<TopicWithRelations>()
@@ -70,8 +70,10 @@ export default async function TopicDetailPage({ params }: PageProps) {
               Forum
             </Link>
             <span className="text-gray-500">/</span>
+            {/* forum_categories has no `slug` column in DB; route by id.
+                The category detail page queries .eq('id', params.category). */}
             <Link
-              href={`/forum/${topic.forum_categories?.slug}`}
+              href={`/forum/${topic.forum_categories?.id}`}
               className="text-secondary hover:text-secondary-400"
             >
               {topic.forum_categories?.name}

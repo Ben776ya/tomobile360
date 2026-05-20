@@ -17,7 +17,10 @@ export type Model = {
   id: string
   brand_id: string | null
   name: string
-  category: VehicleCategory | string | null
+  // DB stores a free-text category; `VehicleCategory` lists the known values
+  // for reference but doesn't constrain reads (the union with `string` made
+  // the literal type useless, so we store as plain `string | null`).
+  category: string | null
   created_at: string | null
 }
 
@@ -49,8 +52,10 @@ export type Variant = {
   price_min: number | null
   price_max: number | null
   horsepower: number | null
-  fuel_type: FuelType | string | null
-  transmission: Transmission | string | null
+  // DB stores free-text values; the `FuelType` / `Transmission` literal unions
+  // above document the known values but don't constrain reads.
+  fuel_type: string | null
+  transmission: string | null
 }
 
 export type VehicleNew = {
@@ -61,8 +66,8 @@ export type VehicleNew = {
   year: number
   price_min: number | null
   price_max: number | null
-  fuel_type: FuelType | string | null
-  transmission: Transmission | string | null
+  fuel_type: string | null
+  transmission: string | null
   engine_size: number | null
   cylinders: number | null
   horsepower: number | null
@@ -73,7 +78,7 @@ export type VehicleNew = {
   fuel_consumption_highway: number | null
   fuel_consumption_combined: number | null
   co2_emissions: number | null
-  dimensions: Record<string, any> | null
+  dimensions: Record<string, unknown> | null
   cargo_capacity: number | null
   seating_capacity: number | null
   features: string[] | null
@@ -98,7 +103,7 @@ export type VehicleNew = {
   source_url: string | null
   mileage: number | null
   is_coup_de_coeur: boolean
-  coup_de_coeur_category: CoupDeCoeurCategory | string | null
+  coup_de_coeur_category: string | null
   coup_de_coeur_reason: string | null
   is_featured_offer: boolean
   variant_list: Variant[] | null
@@ -114,13 +119,13 @@ export type VehicleUsed = {
   year: number
   mileage: number
   price: number
-  fuel_type: FuelType | string | null
-  transmission: Transmission | string | null
+  fuel_type: string | null
+  transmission: string | null
   color: string | null
-  condition: Condition | string | null
+  condition: string | null
   description: string
   city: string
-  seller_type: SellerType | string | null
+  seller_type: string | null
   contact_phone: string
   contact_email: string
   images: string[] | null
@@ -167,6 +172,27 @@ export type Promotion = {
   dealerships?: Dealership
 }
 
+/**
+ * Promotion + nested vehicle shape returned by the admin promotions select:
+ *   .select(`*, vehicles_new:vehicle_id (id, brands:brand_id (name),
+ *            models:model_id (name), images)`)
+ *
+ * Supabase returns the nested object or `null` (never `undefined`) for
+ * to-one joins. Used by:
+ *   - src/app/admin/promotions/page.tsx (list)
+ *   - src/app/admin/promotions/[id]/edit/page.tsx (detail)
+ */
+export type PromotionWithVehicle = Promotion & {
+  vehicles_new:
+    | {
+        id: string
+        brands: { name: string } | null
+        models: { name: string } | null
+        images: string[] | null
+      }
+    | null
+}
+
 export type ForumCategory = {
   id: string
   name: string
@@ -210,7 +236,8 @@ export type Article = {
   content: string
   excerpt: string | null
   featured_image: string | null
-  category: 'morocco' | 'international' | 'market' | 'review' | 'news' | string | null
+  // Free-text in DB; known values: morocco | international | market | review | news
+  category: string | null
   tags: string[] | null
   is_published: boolean | null
   published_at: string | null
@@ -226,7 +253,8 @@ export type Video = {
   description: string | null
   embed_url: string
   thumbnail_url: string | null
-  category: 'review' | 'launch' | 'comparison' | 'tutorial' | 'news' | string | null
+  // Free-text in DB; known values: review | launch | comparison | tutorial | news
+  category: string | null
   vehicle_id: string | null
   duration: string | null
   views: number | null
