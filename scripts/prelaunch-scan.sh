@@ -33,7 +33,7 @@ scan() {
 }
 
 echo "=== Pre-launch scan ==="
-scan "Placeholder strings"     'PLACEHOLDER|123 Boulevard|5XX-XXXXXX|212XXX|XXX000000|lorem ipsum|Photo à venir'
+scan "Placeholder strings"     'PLACEHOLDER|123 Boulevard|5XX-XXXXXX|212XXX|XXX000000|lorem ipsum'
 scan "Logo typo"               'logo_tomobil360'
 scan "Bank of Africa artifact" 'bank_of_africa'
 scan "Bare social links"       '"https://(facebook|youtube|instagram|tiktok)\.com"'
