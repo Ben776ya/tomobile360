@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
 
-const HERO_IMAGE = '/hero-section.png'
+const HERO_IMAGE = '/hero-section.webp'
 
 interface HeroSectionProps {
   brands: Array<{ id: string; name: string }>

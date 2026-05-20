@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/server'
 import type { VehicleUsed, Video } from '@/lib/types'
 import type { BlogListItem } from '@/lib/types/blog'
@@ -8,7 +9,7 @@ type HomeUsedListing = VehicleUsed & {
   profiles?: { full_name: string | null; avatar_url: string | null }
 }
 
-// Components
+// Above-the-fold — eagerly imported so they're in the initial render.
 import { HeroSection } from '@/components/home/HeroSection'
 import { BrandCarousel } from '@/components/shared/BrandCarousel'
 import { OccasionServicesSection } from '@/components/home/OccasionServicesSection'
@@ -16,9 +17,17 @@ import { FeatureGrid } from '@/components/home/FeatureGrid'
 import { UsedListingCard } from '@/components/vehicles/UsedListingCard'
 import { ServicesSection } from '@/components/home/ServicesSection'
 import { PromoBanner } from '@/components/home/PromoBanner'
-import { VideoSection } from '@/components/home/VideoSection'
-import { NewsSection } from '@/components/home/NewsSection'
 import { MobileCarousel } from '@/components/shared/MobileCarousel'
+
+// Below-the-fold client components — code-split via dynamic import so their
+// JS chunks aren't blocking initial hydration. SSR stays on so the markup
+// still appears on first render (no CLS, no SEO regression).
+const VideoSection = dynamic(
+  () => import('@/components/home/VideoSection').then(m => m.VideoSection),
+)
+const NewsSection = dynamic(
+  () => import('@/components/home/NewsSection').then(m => m.NewsSection),
+)
 
 export const revalidate = 60 // Revalidate every 60 seconds
 
