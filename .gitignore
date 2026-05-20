@@ -64,5 +64,6 @@ scripts/*
 !scripts/extract-magazine-cover.py
 !scripts/upload-magazines-to-supabase.mjs
 !scripts/prelaunch-scan.sh
+!scripts/convert-png-to-webp.mjs
 !scripts/lib/
 !scripts/output/

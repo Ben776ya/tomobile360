@@ -165,7 +165,7 @@ export default function QuiSommesNousPage() {
           {/* Left — photo */}
           <div className="relative min-h-[320px] overflow-hidden">
             <Image
-              src="/clean_image.png"
+              src="/clean_image.webp"
               alt="Équipe Tomobile360"
               fill
               className="object-cover object-top"
