@@ -21,6 +21,21 @@ import { TestDriveDialog } from '@/components/shared/TestDriveDialog'
 import type { Variant } from '@/lib/types'
 import { BUSINESS_INFO } from '@/lib/business-info'
 
+type ServerSupabase = ReturnType<typeof createClient>
+
+// Shape of a row from the `models` table joined with `brands`. Supabase's
+// PostgREST may surface the join as a single object OR a single-element array
+// depending on FK cardinality inference, so callers must defensively check.
+type ModelBrandJoinRow = {
+  id: string
+  name: string
+  category: string | null
+  brands:
+    | { id: string; name: string; logo_url: string | null }
+    | { id: string; name: string; logo_url: string | null }[]
+    | null
+}
+
 export const revalidate = 60
 
 
@@ -35,7 +50,7 @@ async function resolveModel(brandParam: string, modelParam: string) {
     .from('models')
     .select('id, name, category, brands(id, name, logo_url)')
 
-  const target = (models ?? []).find((m: any) => {
+  const target = ((models ?? []) as ModelBrandJoinRow[]).find(m => {
     const brandName = Array.isArray(m.brands) ? m.brands[0]?.name : m.brands?.name
     if (!brandName) return false
     return slug(brandName) === slug(brandParam) && slug(m.name) === slug(modelParam)
@@ -439,12 +454,15 @@ export default async function ModelDetailPage({ params }: PageProps) {
   )
 }
 
-async function getSameCategoryModels(supabase: any, category?: string | null): Promise<string> {
+async function getSameCategoryModels(
+  supabase: ServerSupabase,
+  category?: string | null,
+): Promise<string> {
   if (!category) return ''
   const { data: models } = await supabase
     .from('models')
     .select('id')
     .eq('category', category)
     .limit(10)
-  return models?.map((m: any) => m.id).join(',') || ''
+  return (models as { id: string }[] | null)?.map(m => m.id).join(',') || ''
 }
