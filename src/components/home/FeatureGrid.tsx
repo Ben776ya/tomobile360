@@ -103,7 +103,7 @@ const featureItems: FeatureItem[] = [
     key: 'ev',
     title: 'EV/PHEV',
     subtitle: 'Découvrir la gamme',
-    imageSrc: '/blog/kia-maroc-siam-2026-stand-meknes-modeles-electriques-hero.png',
+    imageSrc: '/blog/kia-maroc-siam-2026-stand-meknes-modeles-electriques-hero.webp',
     imageAlt: 'Voitures EV et PHEV au Maroc',
     href: '/neuf?fuel=Electric',
     action: 'link',
