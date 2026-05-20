@@ -92,7 +92,34 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-700 mb-4">7. Conservation des données</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">7. Conformité loi 09-08 et CNDP</h2>
+            <p className="text-gray-600 mb-3">
+              Le traitement de vos données personnelles est effectué conformément à la loi
+              marocaine n° 09-08 relative à la protection des personnes physiques à
+              l&apos;égard du traitement des données à caractère personnel et à ses textes
+              d&apos;application.
+              {BUSINESS_INFO.CNDP_DECLARATION && (
+                <> Ce traitement a fait l&apos;objet d&apos;une déclaration auprès de la
+                Commission Nationale de contrôle de la protection des Données à caractère
+                Personnel (CNDP) sous le numéro {BUSINESS_INFO.CNDP_DECLARATION}.</>
+              )}
+            </p>
+            <p className="text-gray-600 mb-3">
+              Vous disposez d&apos;un droit d&apos;accès, de rectification, d&apos;opposition
+              et de suppression de vos données. Pour exercer ces droits, adressez-vous à
+              notre point de contact privacy à l&apos;adresse {BUSINESS_INFO.EMAIL_PRIVACY}.
+            </p>
+            <p className="text-gray-600">
+              En cas de réclamation non résolue à l&apos;amiable, vous pouvez saisir
+              directement la CNDP via son site officiel{' '}
+              <a href="https://www.cndp.ma" target="_blank" rel="noopener noreferrer" className="text-secondary underline">
+                cndp.ma
+              </a>.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">8. Conservation des données</h2>
             <p className="text-gray-600">
               Vos données sont conservées pendant la durée nécessaire aux finalités pour lesquelles
               elles ont été collectées, puis archivées conformément aux obligations légales en vigueur.
@@ -100,7 +127,7 @@ export default function ConfidentialitePage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-700 mb-4">8. Contact</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">9. Contact</h2>
             <p className="text-gray-600">
               Pour toute question concernant cette politique de confidentialité, contactez-nous :<br />
               Email : {BUSINESS_INFO.EMAIL_PRIVACY}<br />

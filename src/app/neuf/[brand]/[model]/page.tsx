@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Eye } from 'lucide-react'
+import { formatViewsLabel } from '@/lib/views'
 import { createClient } from '@/lib/supabase/server'
 import { slug } from '@/lib/slug'
 import { JsonLd } from '@/components/seo/JsonLd'
@@ -350,12 +351,14 @@ export default async function ModelDetailPage({ params }: PageProps) {
                   </Link>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="flex items-center gap-1.5 text-sm text-gray-400">
-                    <Eye className="h-4 w-4" />
-                    <span>Vu {totalViews.toLocaleString()} fois</span>
+                {formatViewsLabel(totalViews) && (
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <div className="flex items-center gap-1.5 text-sm text-gray-400">
+                      <Eye className="h-4 w-4" />
+                      <span>Vu {totalViews.toLocaleString()} fois</span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {variants.length > 1 && (

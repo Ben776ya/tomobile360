@@ -5,6 +5,7 @@ import { ChevronRight, MapPin, Calendar, Gauge, Phone, Mail, User, Eye, MessageC
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice, formatRelativeTime } from '@/lib/utils'
+import { formatViewsLabel } from '@/lib/views'
 import { ImageGallery } from '@/components/vehicles/ImageGallery'
 import { UsedListingCard } from '@/components/vehicles/UsedListingCard'
 import { ShareButton } from '@/components/shared/ShareButton'
@@ -111,6 +112,7 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
   const brandName = listing.brands?.name || 'Unknown'
   const modelName = listing.models?.name || 'Unknown'
   const images = listing.images || []
+  const sidebarViewsLabel = formatViewsLabel(listing.views)
   const seller = listing.profiles
 
   const whatsappPhone = listing.contact_phone
@@ -194,10 +196,12 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
                       </h1>
                       <div className="flex items-center gap-3 mt-1">
                         <p className="text-gray-400">{listing.year}</p>
-                        <div className="flex items-center gap-1 text-sm text-gray-400">
-                          <Eye className="h-4 w-4" />
-                          <span>Vu {(listing.views || 0).toLocaleString()} fois</span>
-                        </div>
+                        {formatViewsLabel(listing.views) && (
+                          <div className="flex items-center gap-1 text-sm text-gray-400">
+                            <Eye className="h-4 w-4" />
+                            <span>Vu {(listing.views || 0).toLocaleString()} fois</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -355,9 +359,11 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
                   <MapPin className="h-4 w-4" />
                   <span>{listing.city}</span>
                 </div>
-                <p className="text-sm text-gray-500">
-                  <span className="font-semibold text-secondary">{listing.views || 0}</span> vues
-                </p>
+                {sidebarViewsLabel && (
+                  <p className="text-sm text-gray-500">
+                    <span className="font-semibold text-secondary">{listing.views!.toLocaleString('fr-FR')}</span> vues
+                  </p>
+                )}
                 <p className="text-xs text-gray-400">
                   Publiée {formatRelativeTime(listing.created_at)}
                 </p>

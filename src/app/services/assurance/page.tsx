@@ -145,7 +145,7 @@ export default function AssurancePage() {
               <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
                 <Image
                   src="/atlanta-sanad-logo.png"
-                  alt="Atlanta Sanad"
+                  alt="AtlantaSanad"
                   width={52}
                   height={52}
                   className="w-13 h-13 object-contain"
@@ -156,7 +156,7 @@ export default function AssurancePage() {
               </h1>
             </div>
             <p className="text-lg md:text-xl text-gray-500">
-              Protégez votre véhicule avec Atlanta Sanad — leader de l&apos;assurance au Maroc.
+              Protégez votre véhicule avec AtlantaSanad — leader de l&apos;assurance au Maroc.
               Obtenez votre devis personnalisé en quelques minutes.
             </p>
           </div>
@@ -228,6 +228,23 @@ export default function AssurancePage() {
         </div>
       </section>
 
+      {/* Legal Disclaimer */}
+      <section className="py-8 bg-gray-50 border-t border-gray-100">
+        <div className="container mx-auto px-4 max-w-4xl text-xs text-gray-500 leading-relaxed">
+          <p className="mb-2">
+            <strong>Mentions légales d&apos;assurance :</strong> Contrats d&apos;assurance auto
+            proposés par notre partenaire AtlantaSanad, compagnie d&apos;assurance agréée par
+            l&apos;ACAPS (Autorité de Contrôle des Assurances et de la Prévoyance Sociale).
+            Les garanties, exclusions et conditions tarifaires sont définies par AtlantaSanad.
+          </p>
+          <p>
+            Tomobile 360 agit en tant qu&apos;intermédiaire de mise en relation et ne
+            participe pas à la souscription. Le devis définitif sera émis par AtlantaSanad
+            après étude personnalisée.
+          </p>
+        </div>
+      </section>
+
       {/* Devis Form Modal */}
       {showForm && (
         <div
@@ -241,14 +258,14 @@ export default function AssurancePage() {
               <div className="flex items-center gap-3">
                 <Image
                   src="/atlanta-sanad-logo.png"
-                  alt="Atlanta Sanad"
+                  alt="AtlantaSanad"
                   width={32}
                   height={32}
                   className="w-8 h-8 object-contain"
                 />
                 <div>
                   <p className="font-bold text-primary text-sm">Demande de devis</p>
-                  <p className="text-xs text-gray-400">Atlanta Sanad — Assurance Auto</p>
+                  <p className="text-xs text-gray-400">AtlantaSanad — Assurance Auto</p>
                 </div>
               </div>
               <button

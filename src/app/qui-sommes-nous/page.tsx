@@ -28,7 +28,8 @@ const team = [
     badgeBg: '#eff6ff',
     name: 'Rafik Kamal Lahlou',
     role: 'Fondateur & Directeur de rédaction',
-    email: 'rafiklahlou@gmail.com',
+    email: 'rafik@tomobile360.ma',
+    photoUrl: undefined as string | undefined,
     bio: "Véritable touche-à-tout, Rafik Lahlou est avant tout un fervent passionné de l'automobile depuis tout jeune. Il fut le premier à créer un site web consacré à l'automobile au Maroc (tomobile.net) en 2000. Directeur de rédaction des publications Challenge, VH Magazine et Lalla Fatima, il dirige conjointement avec Abdelmajid Alaoui l'atelier RM Automobiles Classiques. Vice-président de la Fédération Marocaine des Véhicules Anciens et du Royal Automobile Club Marocain.",
     socials: [
       { label: 'Instagram', icon: 'ig' },
@@ -43,7 +44,8 @@ const team = [
     badgeBg: '#f0fdf4',
     name: 'David Jérémie',
     role: 'Journaliste Automobile',
-    email: 'davidolivierjeremie@gmail.com',
+    email: 'david@tomobile360.ma',
+    photoUrl: undefined as string | undefined,
     bio: "David Jérémie a évolué dès l'entame de sa carrière en 1994 en Martinique dans l'automobile, le journalisme et la radio. C'est en 2002 qu'il intègre la presse marocaine, s'étant fait une spécialité dans le secteur de l'automobile sous toutes ses formes, du deux-roues et des sports mécaniques.",
     socials: [
       { label: 'Instagram', icon: 'ig' },
@@ -58,7 +60,8 @@ const team = [
     badgeBg: '#eef2ff',
     name: 'Amine Bouharaoui',
     role: 'Journaliste Spécialisé',
-    email: 'aminebouharaoui@gmail.com',
+    email: 'amine@tomobile360.ma',
+    photoUrl: undefined as string | undefined,
     bio: "Amine Bouharaoui est un passionné de l'automobile, tant des véhicules actuels que des véhicules anciens, de la mécanique, des nouvelles technologies liées à la mobilité électrique et du sport automobile. Ses connaissances techniques et son ressenti au volant lui permettent de se faire une idée précise sur tout type de véhicules.",
     socials: [
       { label: 'Instagram', icon: 'ig' },
@@ -74,7 +77,8 @@ const team = [
     badgeBg: '#fff7ed',
     name: 'Nabil Bennani (NAB)',
     role: 'Humoriste & Animateur',
-    email: 'nabnabilbennani@gmail.com',
+    email: 'nabil@tomobile360.ma',
+    photoUrl: undefined as string | undefined,
     bio: "NAB est un humoriste, animateur et voix-off marocain reconnu. Il observe avec humour les contradictions du quotidien moderne, créant une proximité naturelle avec un public large. Il anime une émission sur Radio MFM et collabore avec VH Magazine et Tomobile360, apportant son regard singulier sur l'univers automobile.",
     socials: [
       { label: 'Instagram', icon: 'ig' },
@@ -280,11 +284,13 @@ export default function QuiSommesNousPage() {
                   {member.initials}
                 </div>
 
-                {/* Photo coming pill */}
-                <div className="absolute bottom-3.5 right-3.5 flex items-center gap-1.5 bg-black/40 rounded-full px-3 py-1">
-                  <Camera size={10} className="text-white/85" />
-                  <span className="text-[10px] text-white/85 font-medium tracking-wide">Photo à venir</span>
-                </div>
+                {/* Photo coming pill — shown only when no photoUrl is set */}
+                {!member.photoUrl && (
+                  <div className="absolute bottom-3.5 right-3.5 flex items-center gap-1.5 bg-black/40 rounded-full px-3 py-1">
+                    <Camera size={10} className="text-white/85" />
+                    <span className="text-[10px] text-white/85 font-medium tracking-wide">Photo à venir</span>
+                  </div>
+                )}
               </div>
 
               {/* ── Content */}

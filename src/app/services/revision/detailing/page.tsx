@@ -5,7 +5,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Detailing Auto au Maroc — Nettoyage & Protection',
-  description: 'Detailing automobile au Maroc : nettoyage intérieur et extérieur, polissage, protection céramique. Centres partenaires bientôt disponibles sur Tomobile 360.',
+  description: "Detailing automobile au Maroc : nettoyage intérieur et extérieur, polissage, protection céramique — service en cours de déploiement sur Tomobile 360.",
   alternates: {
     canonical: 'https://tomobile360.ma/services/revision/detailing',
   },
@@ -59,7 +59,7 @@ const benefits = [
   {
     icon: ShieldCheck,
     title: 'Produits premium',
-    description: 'Cires, polish et traitements céramiques de marques reconnues — sans abîmer la peinture',
+    description: 'Cires, polish et traitements céramiques professionnels — sans abîmer la peinture',
   },
   {
     icon: Sun,
@@ -100,7 +100,7 @@ export default function DetailingPage() {
             </div>
             <p className="text-lg md:text-xl text-gray-500 mt-2">
               Nettoyage en profondeur, polissage, protection céramique — redonnez à votre véhicule
-              son éclat d&apos;origine grâce à nos centres detailing partenaires au Maroc.
+              son éclat d&apos;origine. Service en cours de déploiement au Maroc.
             </p>
           </div>
         </div>
@@ -188,8 +188,8 @@ export default function DetailingPage() {
               Réservez votre detailing
             </h2>
             <p className="text-white/85 mb-8 max-w-xl mx-auto">
-              Contactez-nous pour un devis personnalisé — nous vous orientons vers le centre
-              detailing partenaire le plus proche de chez vous.
+              Contactez-nous pour un devis personnalisé — notre équipe vous accompagne dans
+              votre projet de detailing.
             </p>
             <Link
               href="/contact?subject=service&topic=detailing"

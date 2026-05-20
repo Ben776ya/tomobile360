@@ -4,6 +4,7 @@ import { VehicleUsed } from '@/lib/types'
 import { Badge } from '@/components/ui/badge'
 import { cn, formatPrice, formatRelativeTime } from '@/lib/utils'
 import { MapPin, Calendar, Gauge, Eye, Fuel } from 'lucide-react'
+import { formatViewsLabel } from '@/lib/views'
 
 interface UsedListingCardProps {
   listing: VehicleUsed & {
@@ -17,6 +18,7 @@ export function UsedListingCard({ listing }: UsedListingCardProps) {
   const mainImage = listing.images?.[0] || '/placeholder-car.svg'
   const brandName = listing.brands?.name || 'Unknown'
   const modelName = listing.models?.name || 'Unknown'
+  const viewsLabel = formatViewsLabel(listing.views)
 
   return (
     <Link
@@ -102,10 +104,12 @@ export function UsedListingCard({ listing }: UsedListingCardProps) {
         </div>
 
         <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-          <div className="flex items-center gap-1.5 text-xs text-gray-400">
-            <Eye className="h-3.5 w-3.5" />
-            <span>{listing.views} vues</span>
-          </div>
+          {viewsLabel && (
+            <div className="flex items-center gap-1.5 text-xs text-gray-400">
+              <Eye className="h-3.5 w-3.5" />
+              <span>{viewsLabel}</span>
+            </div>
+          )}
           <span className="text-xs text-gray-400">
             {formatRelativeTime(listing.created_at)}
           </span>

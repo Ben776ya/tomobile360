@@ -22,7 +22,7 @@ const services = [
     logoSrc: '/atlanta-sanad-logo.png',
     logoSize: 'w-14 h-14 md:w-16 md:h-16',
     title: 'Assurance',
-    description: 'Obtenez votre devis d\'assurance auto avec notre partenaire Atlanta Sanad.',
+    description: 'Obtenez votre devis d\'assurance auto avec notre partenaire AtlantaSanad.',
     link: '/services/assurance',
     color: 'bg-[#EEF3FF]',
     glowColor: '',

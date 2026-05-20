@@ -1,6 +1,35 @@
 // Single source of truth for Tomobile 360 business identity.
-// USER: fill the values marked PLACEHOLDER before launch.
-// Anything imported from EXTERNAL_LINKS lives in src/lib/links.ts.
+// Values marked USER_REQUIRED are read from env vars at build time.
+// Set them in .env.local for dev / Vercel project settings for production.
+//
+// Env vars are accessed through ENV_VARS below (static keys). This is required
+// because Next.js webpack only inlines NEXT_PUBLIC_* env vars when the key is
+// a literal string in source — dynamic bracket access like process.env[name]
+// would not be inlined and would return undefined in client bundles.
+
+const ENV_VARS = {
+  NEXT_PUBLIC_RC_NUMBER:        process.env.NEXT_PUBLIC_RC_NUMBER,
+  NEXT_PUBLIC_ICE_NUMBER:       process.env.NEXT_PUBLIC_ICE_NUMBER,
+  NEXT_PUBLIC_DIRECTOR_NAME:    process.env.NEXT_PUBLIC_DIRECTOR_NAME,
+  NEXT_PUBLIC_WHATSAPP_DISPLAY: process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY,
+  NEXT_PUBLIC_WHATSAPP_E164:    process.env.NEXT_PUBLIC_WHATSAPP_E164,
+  NEXT_PUBLIC_CAPITAL_SOCIAL:   process.env.NEXT_PUBLIC_CAPITAL_SOCIAL,
+  NEXT_PUBLIC_CNDP_DECLARATION: process.env.NEXT_PUBLIC_CNDP_DECLARATION,
+} as const
+
+type EnvKey = keyof typeof ENV_VARS
+
+function required(name: EnvKey, fallback?: string): string {
+  const v = ENV_VARS[name]
+  if (v && v.trim().length > 0) return v
+  if (fallback !== undefined) return fallback
+  // In production builds, surface the missing value loudly.
+  // In dev, return a clearly-tagged sentinel so it shows up at runtime.
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(`Missing required env var: ${name}`)
+  }
+  return `__MISSING_${name}__`
+}
 
 export const BUSINESS_INFO = {
   // Public-facing contact channels
@@ -8,11 +37,13 @@ export const BUSINESS_INFO = {
   EMAIL_PRIVACY: 'privacy@tomobile360.ma',
   PHONE_DISPLAY: '+212 522 54 81 50 à 52', // landline range (3 lines: 50, 51, 52)
   PHONE_TEL: '+212522548150',              // first line of the range, for tel: links
-  WHATSAPP_DISPLAY: '+212 XXX-000000', // PLACEHOLDER — USER: real WhatsApp number
-  WHATSAPP_E164: '212XXX000000',       // PLACEHOLDER — same WhatsApp, no +/spaces, for wa.me/ links
+
+  // USER_REQUIRED — real WhatsApp number, set via env
+  WHATSAPP_DISPLAY: required('NEXT_PUBLIC_WHATSAPP_DISPLAY', '+212 522 54 81 50'),
+  WHATSAPP_E164: required('NEXT_PUBLIC_WHATSAPP_E164', '212522548150'),
 
   // Physical address
-  ADDRESS_SHORT: 'Quartier El Manar, Casablanca',                                // short form for cards
+  ADDRESS_SHORT: 'Quartier El Manar, Casablanca',
   ADDRESS_FULL: '2, Rue Mohamed Laghzaoui, Quartier El Manar, Casablanca 20370, Maroc',
   CITY: 'Casablanca',
   COUNTRY: 'Maroc',
@@ -23,9 +54,15 @@ export const BUSINESS_INFO = {
 
   // Legal identifiers (Morocco — required on mentions légales)
   COMPANY_LEGAL_NAME: 'Tomobile 360 SARL',
-  RC_NUMBER: 'PLACEHOLDER',          // USER: real Registre de Commerce number
-  ICE_NUMBER: 'PLACEHOLDER',         // USER: real ICE number
-  DIRECTOR_NAME: 'PLACEHOLDER',      // USER: real director of publication
+  RC_NUMBER: required('NEXT_PUBLIC_RC_NUMBER'),
+  ICE_NUMBER: required('NEXT_PUBLIC_ICE_NUMBER'),
+  DIRECTOR_NAME: required('NEXT_PUBLIC_DIRECTOR_NAME'),
+
+  // USER_REQUIRED — Capital social, only printed if set
+  CAPITAL_SOCIAL: ENV_VARS.NEXT_PUBLIC_CAPITAL_SOCIAL || '',
+
+  // USER_REQUIRED — CNDP declaration number, only printed if set
+  CNDP_DECLARATION: ENV_VARS.NEXT_PUBLIC_CNDP_DECLARATION || '',
 } as const
 
 // Helper used everywhere we open WhatsApp with a prefilled message

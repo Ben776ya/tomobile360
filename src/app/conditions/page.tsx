@@ -42,11 +42,11 @@ export default function ConditionsPage() {
               Tomobile360.ma propose les services suivants :
             </p>
             <ul className="list-disc pl-6 text-gray-600 space-y-2">
-              <li>Consultation d&apos;annonces de véhicules neufs et d&apos;occasion</li>
-              <li>Publication d&apos;annonces de vente de véhicules</li>
-              <li>Services de financement automobile</li>
-              <li>Services d&apos;assurance automobile</li>
-              <li>Informations et actualités automobiles</li>
+              <li>Consultation de fiches techniques et de prix de véhicules neufs au Maroc</li>
+              <li>Référencement d&apos;annonces de véhicules d&apos;occasion proposées par notre partenaire M-OCCAZ</li>
+              <li>Comparateurs, essais et actualités automobiles</li>
+              <li>Mise en relation avec nos partenaires services (crédit auto SOFAC, assurance AtlantaSanad, entretien, contrôle technique)</li>
+              <li>Inscription à la newsletter et au compte utilisateur (favoris, alertes)</li>
             </ul>
           </section>
 
@@ -61,16 +61,21 @@ export default function ConditionsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-700 mb-4">5. Publication d&apos;annonces</h2>
-            <p className="text-gray-600 mb-4">
-              En publiant une annonce, l&apos;utilisateur s&apos;engage à :
+            <h2 className="text-xl font-bold text-slate-700 mb-4">5. Annonces de véhicules d&apos;occasion</h2>
+            <p className="text-gray-600 mb-3">
+              Tomobile 360 n&apos;héberge pas directement d&apos;annonces de vente de
+              véhicules d&apos;occasion. Les annonces affichées sur la rubrique{' '}
+              <em>/occasion</em> proviennent de notre partenaire M-OCCAZ
+              (m-occaz.ma), qui assure la vérification, l&apos;hébergement et le
+              suivi commercial de chaque annonce.
             </p>
-            <ul className="list-disc pl-6 text-gray-600 space-y-2">
-              <li>Fournir des informations exactes et complètes sur le véhicule</li>
-              <li>Ne publier que des véhicules dont il est propriétaire ou mandataire autorisé</li>
-              <li>Ne pas publier de contenu illicite, trompeur ou portant atteinte aux droits de tiers</li>
-              <li>Respecter les tarifs et conditions de publication en vigueur</li>
-            </ul>
+            <p className="text-gray-600">
+              Pour publier une annonce, vendre ou estimer votre véhicule, les
+              utilisateurs sont redirigés vers M-OCCAZ et soumis à ses propres
+              conditions d&apos;utilisation. Tomobile 360 ne perçoit aucune
+              commission de vente et n&apos;intervient pas dans les transactions
+              entre vendeurs et acheteurs.
+            </p>
           </section>
 
           <section>

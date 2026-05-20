@@ -4,6 +4,7 @@ import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { Toaster } from '@/components/ui/toaster'
+import { CookieConsent } from '@/components/shared/CookieConsent'
 import { safeJsonLd } from '@/lib/utils'
 import { BUSINESS_INFO } from '@/lib/business-info'
 
@@ -129,6 +130,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <Toaster />
+        <CookieConsent />
       </body>
     </html>
   )
