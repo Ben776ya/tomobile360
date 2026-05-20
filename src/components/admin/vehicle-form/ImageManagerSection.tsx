@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useController, type Control } from 'react-hook-form'
+import { useController, useFormContext } from 'react-hook-form'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,11 +10,12 @@ import { createClient } from '@/lib/supabase/client'
 import type { VehicleFormValues } from './types'
 
 interface ImageManagerSectionProps {
-  control: Control<VehicleFormValues>
   onUploadError?: (message: string) => void
 }
 
-export function ImageManagerSection({ control, onUploadError }: ImageManagerSectionProps) {
+export function ImageManagerSection({ onUploadError }: ImageManagerSectionProps) {
+  const { control, getValues } = useFormContext<VehicleFormValues>()
+
   // useFieldArray wants an object array (each entry needs a stable id). We
   // store plain strings in form state, so wrap them through useController +
   // append/remove manually using the controller's `onChange`.
@@ -31,13 +32,15 @@ export function ImageManagerSection({ control, onUploadError }: ImageManagerSect
 
   const addImage = () => {
     if (newImageUrl.trim()) {
-      setImages([...images, newImageUrl.trim()])
+      // Read the freshest value at write time to avoid closure-stale state.
+      setImages([...(getValues('images') ?? []), newImageUrl.trim()])
       setNewImageUrl('')
     }
   }
 
   const removeImage = (idx: number) => {
-    setImages(images.filter((_, j) => j !== idx))
+    const current = getValues('images') ?? []
+    setImages(current.filter((_, j) => j !== idx))
   }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +49,6 @@ export function ImageManagerSection({ control, onUploadError }: ImageManagerSect
 
     setUploading(true)
     const supabase = createClient()
-    const uploaded: string[] = []
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
@@ -68,13 +70,12 @@ export function ImageManagerSection({ control, onUploadError }: ImageManagerSect
         .getPublicUrl(filePath)
 
       if (urlData?.publicUrl) {
-        uploaded.push(urlData.publicUrl)
+        // Per-file functional append: always read the freshest array at write
+        // time so concurrent uploads / re-renders don't clobber each other.
+        setImages([...(getValues('images') ?? []), urlData.publicUrl])
       }
     }
 
-    if (uploaded.length > 0) {
-      setImages([...images, ...uploaded])
-    }
     setUploading(false)
     e.target.value = ''
   }
@@ -135,7 +136,8 @@ export function ImageManagerSection({ control, onUploadError }: ImageManagerSect
                 <button
                   type="button"
                   onClick={() => removeImage(i)}
-                  className="text-[#32B75C] hover:text-[#fcd34d]"
+                  className="text-red-400 hover:text-red-300"
+                  aria-label="Supprimer cette image"
                 >
                   <X className="h-4 w-4" />
                 </button>

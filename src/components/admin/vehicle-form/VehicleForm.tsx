@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm, useWatch } from 'react-hook-form'
+import { useForm, useWatch, FormProvider } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { createVehicle, updateVehicle } from '@/lib/actions/admin/vehicles'
 import { createPromotion } from '@/lib/actions/admin/promotions'
@@ -81,7 +81,15 @@ export function VehicleForm({
   const form = useForm<VehicleFormValues>({
     defaultValues: buildDefaultValues(vehicle, defaultBrandId, defaultModelId),
   })
-  const { control, handleSubmit, register, setValue } = form
+  const { control, handleSubmit, register, setValue, reset } = form
+
+  // If a parent swaps the `vehicle` prop (e.g., admin edit page re-fetches
+  // after a save), refresh the form's values rather than showing stale state
+  // captured at first render.
+  useEffect(() => {
+    reset(buildDefaultValues(vehicle, defaultBrandId, defaultModelId))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vehicle?.id, defaultBrandId, defaultModelId])
 
   // Subscribe to brand_id so the model dropdown can react.
   const brandId = useWatch({ control, name: 'brand_id' })
@@ -149,7 +157,8 @@ export function VehicleForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <FormProvider {...form}>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <BasicInfoSection
         control={control}
         register={register}
@@ -162,9 +171,9 @@ export function VehicleForm({
 
       <PricingSection register={register} />
 
-      <VariantsSection control={control} />
+      <VariantsSection />
 
-      <ImageManagerSection control={control} onUploadError={(msg) => setError(msg)} />
+      <ImageManagerSection onUploadError={(msg) => setError(msg)} />
 
       <FlagsSection register={register} />
 
@@ -271,6 +280,7 @@ export function VehicleForm({
           Annuler
         </Button>
       </div>
-    </form>
+      </form>
+    </FormProvider>
   )
 }

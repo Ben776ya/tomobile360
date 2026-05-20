@@ -1,19 +1,15 @@
 'use client'
 
-import { useFieldArray, type Control } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Plus, X } from 'lucide-react'
-import type { FuelType, Transmission } from '@/lib/types'
 import type { VehicleFormValues } from './types'
 
-interface VariantsSectionProps {
-  control: Control<VehicleFormValues>
-}
-
-export function VariantsSection({ control }: VariantsSectionProps) {
-  const { fields, append, remove, update } = useFieldArray({
+export function VariantsSection() {
+  const { control, register } = useFormContext<VehicleFormValues>()
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'variant_list',
   })
@@ -57,8 +53,7 @@ export function VariantsSection({ control }: VariantsSectionProps) {
               <div className="md:col-span-4">
                 <Label className="text-xs text-dark-300">Nom de la version</Label>
                 <Input
-                  value={field.version ?? ''}
-                  onChange={(e) => update(i, { ...field, version: e.target.value })}
+                  {...register(`variant_list.${i}.version` as const)}
                   placeholder="ex: GT Line"
                   className="mt-1 bg-dark-700/80 border-white/10 text-white placeholder-dark-400 focus:ring-secondary/50"
                 />
@@ -67,10 +62,9 @@ export function VariantsSection({ control }: VariantsSectionProps) {
                 <Label className="text-xs text-dark-300">Prix min (DH)</Label>
                 <Input
                   type="number"
-                  value={field.price_min ?? ''}
-                  onChange={(e) =>
-                    update(i, { ...field, price_min: e.target.value === '' ? null : Number(e.target.value) })
-                  }
+                  {...register(`variant_list.${i}.price_min` as const, {
+                    setValueAs: (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
+                  })}
                   className="mt-1 bg-dark-700/80 border-white/10 text-white focus:ring-secondary/50"
                 />
               </div>
@@ -78,10 +72,9 @@ export function VariantsSection({ control }: VariantsSectionProps) {
                 <Label className="text-xs text-dark-300">Prix max (DH)</Label>
                 <Input
                   type="number"
-                  value={field.price_max ?? ''}
-                  onChange={(e) =>
-                    update(i, { ...field, price_max: e.target.value === '' ? null : Number(e.target.value) })
-                  }
+                  {...register(`variant_list.${i}.price_max` as const, {
+                    setValueAs: (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
+                  })}
                   className="mt-1 bg-dark-700/80 border-white/10 text-white focus:ring-secondary/50"
                 />
               </div>
@@ -89,20 +82,18 @@ export function VariantsSection({ control }: VariantsSectionProps) {
                 <Label className="text-xs text-dark-300">CV</Label>
                 <Input
                   type="number"
-                  value={field.horsepower ?? ''}
-                  onChange={(e) =>
-                    update(i, { ...field, horsepower: e.target.value === '' ? null : Number(e.target.value) })
-                  }
+                  {...register(`variant_list.${i}.horsepower` as const, {
+                    setValueAs: (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
+                  })}
                   className="mt-1 bg-dark-700/80 border-white/10 text-white focus:ring-secondary/50"
                 />
               </div>
               <div className="md:col-span-1">
                 <Label className="text-xs text-dark-300">Carb.</Label>
                 <select
-                  value={field.fuel_type ?? ''}
-                  onChange={(e) =>
-                    update(i, { ...field, fuel_type: (e.target.value || null) as FuelType | null })
-                  }
+                  {...register(`variant_list.${i}.fuel_type` as const, {
+                    setValueAs: (v) => (v === '' || v === null || v === undefined ? null : v),
+                  })}
                   className="mt-1 flex h-10 w-full rounded-md border border-white/10 bg-dark-700/80 px-2 py-2 text-sm text-white focus:ring-secondary/50 focus:ring-2 focus:outline-none"
                 >
                   <option value="">—</option>
@@ -116,10 +107,9 @@ export function VariantsSection({ control }: VariantsSectionProps) {
               <div className="md:col-span-1">
                 <Label className="text-xs text-dark-300">Boîte</Label>
                 <select
-                  value={field.transmission ?? ''}
-                  onChange={(e) =>
-                    update(i, { ...field, transmission: (e.target.value || null) as Transmission | null })
-                  }
+                  {...register(`variant_list.${i}.transmission` as const, {
+                    setValueAs: (v) => (v === '' || v === null || v === undefined ? null : v),
+                  })}
                   className="mt-1 flex h-10 w-full rounded-md border border-white/10 bg-dark-700/80 px-2 py-2 text-sm text-white focus:ring-secondary/50 focus:ring-2 focus:outline-none"
                 >
                   <option value="">—</option>
