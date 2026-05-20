@@ -7,12 +7,19 @@ import type { BlogPostFormValues } from './types'
  * the original BlogPostForm component. Lower-case, accent-strip, dash-join.
  */
 export function slugify(text: string): string {
+  // Mirrors the server slugify at src/app/api/admin/blog/route.ts to keep
+  // client- and server-generated slugs byte-identical:
+  //   lowercase → NFD normalize → strip diacritics → non-alnum→dash
+  //   → trim dashes → cap at 200 chars.
+  // The diacritic class uses \u-escapes so the file's source encoding can't
+  // shift the codepoints under us.
   return text
     .toLowerCase()
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
+    .substring(0, 200)
 }
 
 type BlogPostWithImages = BlogPost & {

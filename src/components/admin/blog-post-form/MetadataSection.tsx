@@ -99,8 +99,11 @@ export function MetadataSection({ mode }: MetadataSectionProps) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label className="text-dark-100">Catégorie *</Label>
+            <Label htmlFor="category" className="text-dark-100">
+              Catégorie *
+            </Label>
             <select
+              id="category"
               {...register('category')}
               className="mt-1 flex h-10 w-full rounded-md border border-white/10 bg-dark-700/80 px-3 py-2 text-sm text-white focus:ring-secondary/50 focus:ring-2 focus:outline-none"
             >

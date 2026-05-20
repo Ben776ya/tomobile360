@@ -98,7 +98,8 @@ describe('BlogPostForm', () => {
     const titleInput = screen.getByLabelText(/titre \*/i) as HTMLInputElement
     fireEvent.change(titleInput, { target: { value: 'Test submit' } })
 
-    const categorySelect = screen.getAllByRole('combobox')[0] as HTMLSelectElement
+    // Now that Catégorie label is wired with htmlFor/id we can locate by label.
+    const categorySelect = screen.getByLabelText(/catégorie/i) as HTMLSelectElement
     fireEvent.change(categorySelect, { target: { value: 'marche' } })
 
     // The content editor is a textarea (Markdown editor).
@@ -120,5 +121,32 @@ describe('BlogPostForm', () => {
     expect(body.content).toBe('Hello body')
     expect(body.category).toBe('marche')
     expect(body.status).toBe('published')
+  })
+
+  it('adds a tag chip and removes it', async () => {
+    const user = userEvent.setup()
+    render(<BlogPostForm mode="create" />)
+
+    // Add the tag via the input + Enter key (matches the keyboard UX in
+    // TagsSection.tsx — Enter is intercepted to call addTag()).
+    const tagInput = screen.getByPlaceholderText(
+      /ajouter un tag/i,
+    ) as HTMLInputElement
+    await user.type(tagInput, 'electrique{enter}')
+
+    // The chip is rendered inside a <span> alongside an aria-labelled remove
+    // button; assert the button (and therefore the chip) is in the DOM.
+    const removeBtn = screen.getByRole('button', {
+      name: /supprimer le tag electrique/i,
+    })
+    expect(removeBtn).toBeInTheDocument()
+
+    // Click the remove control; the chip and its remove button should vanish.
+    await user.click(removeBtn)
+    expect(
+      screen.queryByRole('button', {
+        name: /supprimer le tag electrique/i,
+      }),
+    ).not.toBeInTheDocument()
   })
 })

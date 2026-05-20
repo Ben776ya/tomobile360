@@ -10,18 +10,16 @@ import {
   type ManagedImage,
 } from '@/components/admin/BlogImageManager'
 import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
-import { parseMarkdownFile } from '@/lib/parseMarkdownFile'
-import { Edit, Eye, FileUp, MousePointerClick } from 'lucide-react'
+import { Edit, Eye, MousePointerClick } from 'lucide-react'
 import type { BlogPostFormValues } from './types'
-import { slugify } from './form-helpers'
+import { MdImporter } from './MdImporter'
 
 interface ContentSectionProps {
   mode: 'create' | 'edit'
 }
 
 export function ContentSection({ mode }: ContentSectionProps) {
-  const { control, getValues, setValue } = useFormContext<BlogPostFormValues>()
-  const mdFileRef = useRef<HTMLInputElement>(null)
+  const { control, getValues } = useFormContext<BlogPostFormValues>()
   const contentRef = useRef<HTMLTextAreaElement>(null)
 
   // Content textarea — bound through useController so its value reflects
@@ -48,36 +46,6 @@ export function ContentSection({ mode }: ContentSectionProps) {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [activeInsertId])
-
-  const handleMdUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      const text = event.target?.result as string
-      if (!text) return
-
-      const parsed = parseMarkdownFile(text)
-      setContent(parsed.content)
-
-      // Auto-fill metadata from frontmatter
-      const m = parsed.metadata
-      if (m.title) {
-        setValue('title', m.title)
-        if (mode === 'create') {
-          setValue('slug', m.slug || slugify(m.title))
-        }
-      }
-      if (m.slug && mode === 'create') setValue('slug', m.slug)
-      if (m.subtitle) setValue('subtitle', m.subtitle)
-      if (m.meta_description) setValue('meta_description', m.meta_description)
-      if (m.category) setValue('category', m.category)
-      if (m.tags && m.tags.length > 0) setValue('tags', m.tags)
-      if (m.author) setValue('author', m.author)
-    }
-    reader.readAsText(file)
-  }
 
   const handleInsertImage = useCallback(
     (markdown: string) => {
@@ -149,20 +117,8 @@ export function ContentSection({ mode }: ContentSectionProps) {
           Contenu (Markdown) *
         </h3>
         <div className="flex items-center gap-2">
-          {/* .md file import */}
-          <label className="cursor-pointer">
-            <input
-              ref={mdFileRef}
-              type="file"
-              accept=".md,.markdown,.txt"
-              onChange={handleMdUpload}
-              className="hidden"
-            />
-            <span className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-white/10 bg-dark-700/80 text-sm text-dark-100 hover:bg-dark-600/50 transition cursor-pointer">
-              <FileUp className="h-4 w-4" />
-              Importer .md
-            </span>
-          </label>
+          {/* .md file import (sibling component, owns its own file ref) */}
+          <MdImporter mode={mode} />
           {/* Preview toggle */}
           <Button
             type="button"
