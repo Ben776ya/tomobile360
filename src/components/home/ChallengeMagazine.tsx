@@ -56,8 +56,8 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
                 transition-all duration-200
               "
             >
-              <Download className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
               <span>Lire le PDF</span>
+              <Download className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
             </Link>
 
             <Link
@@ -87,8 +87,8 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
             aria-hidden="true"
             className="
               pointer-events-none absolute
-              right-[-8px] top-[-14px]
-              md:right-[-14px] md:top-[-24px]
+              right-[10px] top-[-4px]
+              md:right-[4px] md:top-[-12px]
               w-[150px] md:w-[175px]
               aspect-[180/245]
               rounded-[12px]
@@ -110,8 +110,8 @@ export function ChallengeMagazine({ issue }: { issue: Magazine | null }) {
             aria-label={`Ouvrir le PDF du numéro ${issue.issue_number}`}
             className="
               absolute
-              right-[-8px] top-[-32px]
-              md:right-[-14px] md:top-[-42px]
+              right-[10px] top-[-22px]
+              md:right-[4px] md:top-[-30px]
               w-[150px] md:w-[175px]
               aspect-[180/245]
               rounded-[6px]

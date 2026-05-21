@@ -48,6 +48,7 @@ export function NarsaCampaign() {
             className="
               inline-flex items-center gap-2
               px-4 py-2.5
+              -translate-x-2 md:-translate-x-3
               rounded-full bg-[#4057aa] hover:bg-[#2e3f7a]
               text-white font-bold text-[13px]
               shadow-[0_6px_16px_rgba(0,0,0,0.10)]
