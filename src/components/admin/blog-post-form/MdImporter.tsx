@@ -1,6 +1,5 @@
 'use client'
 
-import { useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { FileUp } from 'lucide-react'
 import { parseMarkdownFile } from '@/lib/parseMarkdownFile'
@@ -19,7 +18,6 @@ interface MdImporterProps {
  */
 export function MdImporter({ mode }: MdImporterProps) {
   const { setValue } = useFormContext<BlogPostFormValues>()
-  const mdFileRef = useRef<HTMLInputElement>(null)
 
   const handleMdUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -54,7 +52,6 @@ export function MdImporter({ mode }: MdImporterProps) {
   return (
     <label className="cursor-pointer">
       <input
-        ref={mdFileRef}
         type="file"
         accept=".md,.markdown,.txt"
         onChange={handleMdUpload}
