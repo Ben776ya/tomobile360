@@ -10,19 +10,24 @@ export function NarsaCampaign() {
         alt=""
         fill
         sizes="(min-width: 1024px) 66vw, 100vw"
-        className="object-contain object-left opacity-80"
+        className="object-cover object-center"
         priority={false}
         aria-hidden="true"
       />
 
       <div
-        className="absolute inset-0 bg-black/20 lg:hidden"
+        className="hidden lg:block absolute inset-y-0 right-0 w-[280px] bg-gradient-to-l from-white via-white/95 to-white/0"
+        aria-hidden="true"
+      />
+
+      <div
+        className="absolute inset-0 bg-black/25 lg:hidden"
         aria-hidden="true"
       />
 
       <div className="relative h-full w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] items-stretch">
-        <div className="px-6 lg:pl-56 pt-6 md:pt-7 pb-2 flex items-start justify-center">
-          <h3 className="text-xl sm:text-2xl md:text-[26px] font-extrabold leading-[1.2] text-white text-center max-w-[22ch] [text-shadow:0_2px_14px_rgba(0,0,0,0.75),0_1px_3px_rgba(0,0,0,0.45)]">
+        <div className="px-6 lg:pl-12 pt-6 md:pt-7 pb-2 flex items-start justify-center">
+          <h3 className="text-xl sm:text-2xl md:text-[26px] font-extrabold leading-[1.2] text-white text-center [text-shadow:0_2px_14px_rgba(0,0,0,0.75),0_1px_3px_rgba(0,0,0,0.45)]">
             Roulez en toute sécurité
             <br />
             avec NARSA
