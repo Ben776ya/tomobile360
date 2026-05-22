@@ -16,11 +16,9 @@ interface HeroSectionProps {
 
 const budgetRanges = [
   { value: '', label: 'BUDGET' },
-  { value: '0-100000', label: 'Moins de 100 000 DH' },
-  { value: '100000-200000', label: '100 000 - 200 000 DH' },
-  { value: '200000-400000', label: '200 000 - 400 000 DH' },
-  { value: '400000-600000', label: '400 000 - 600 000 DH' },
-  { value: '600000-1000000', label: '600 000 - 1 000 000 DH' },
+  { value: '0-400000', label: 'Moins de 400 000 DH' },
+  { value: '400000-800000', label: '400 000 - 800 000 DH' },
+  { value: '800000-1000000', label: '800 000 - 1 000 000 DH' },
   { value: '1000000+', label: '+1 000 000 DH' },
 ]
 
@@ -71,7 +69,6 @@ const selectStyle = {
 
 export function HeroSection({ brands }: HeroSectionProps) {
   const router = useRouter()
-  const [vehicleCondition, setVehicleCondition] = useState<'neuf' | 'occasion'>('neuf')
   const [selectedType, setSelectedType] = useState('')
   const [selectedBrand, setSelectedBrand] = useState('')
   const [selectedBudget, setSelectedBudget] = useState('')
@@ -84,17 +81,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
   useEffect(() => {
     const fetchCount = async () => {
       try {
-        if (vehicleCondition === 'occasion') {
-          const params = new URLSearchParams()
-          const brandName = selectedBrand ? brands.find(b => b.id === selectedBrand)?.name : ''
-          if (brandName) params.set('brand', brandName)
-          if (selectedFuel) params.set('fuel', selectedFuel)
-          const res = await fetch(`/api/search/moccaz?${params.toString()}`)
-          const data = await res.json()
-          setResultCount(Array.isArray(data) ? data.length : 0)
-          return
-        }
-
         const supabase = createClient()
 
         const selectStr = selectedType ? '*, models!inner(*)' : '*'
@@ -108,23 +94,12 @@ export function HeroSection({ brands }: HeroSectionProps) {
           const parts = selectedBudget.split('-')
           const min = parseInt(parts[0])
           const max = parts[1] ? parseInt(parts[1]) : null
-          if (vehicleCondition === 'neuf') {
-            if (min > 0) query = query.gte('price_min', min)
-            if (max && !selectedBudget.includes('+')) query = query.lte('price_min', max)
-          } else {
-            if (min > 0) query = query.gte('price', min)
-            if (max && !selectedBudget.includes('+')) query = query.lte('price', max)
-          }
+          if (min > 0) query = query.gte('price_min', min)
+          if (max && !selectedBudget.includes('+')) query = query.lte('price_min', max)
         }
 
-        if (priceRange[0] > 0) {
-          if (vehicleCondition === 'neuf') query = query.gte('price_min', priceRange[0])
-          else query = query.gte('price', priceRange[0])
-        }
-        if (priceRange[1] < 1000000) {
-          if (vehicleCondition === 'neuf') query = query.lte('price_min', priceRange[1])
-          else query = query.lte('price', priceRange[1])
-        }
+        if (priceRange[0] > 0) query = query.gte('price_min', priceRange[0])
+        if (priceRange[1] < 1000000) query = query.lte('price_min', priceRange[1])
 
         if (selectedFiscalPower && fiscalPowerToHP[selectedFiscalPower]) {
           const hpRange = fiscalPowerToHP[selectedFiscalPower]
@@ -141,18 +116,10 @@ export function HeroSection({ brands }: HeroSectionProps) {
 
     const timer = setTimeout(fetchCount, 300)
     return () => clearTimeout(timer)
-  }, [vehicleCondition, selectedBrand, selectedType, selectedFuel, selectedBudget, selectedFiscalPower, priceRange, brands])
+  }, [selectedBrand, selectedType, selectedFuel, selectedBudget, selectedFiscalPower, priceRange])
 
   const handleSearch = () => {
     const params = new URLSearchParams()
-
-    if (vehicleCondition === 'occasion') {
-      const brandName = selectedBrand ? brands.find(b => b.id === selectedBrand)?.name : ''
-      if (brandName) params.set('brand', brandName)
-      if (selectedFuel) params.set('fuel', selectedFuel)
-      router.push(`/occasion?${params.toString()}`)
-      return
-    }
 
     if (selectedBrand) params.set('brand', selectedBrand)
     if (selectedType) params.set('category', selectedType)
@@ -186,7 +153,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
       <div className="absolute inset-0">
         <Image
           src={HERO_IMAGE}
-          alt="Guide d'achat automobile Maroc — recherche de voitures neuves et occasion"
+          alt="Guide d'achat automobile Maroc — recherche de voitures neuves"
           fill
           className="object-cover"
           priority
@@ -206,36 +173,6 @@ export function HeroSection({ brands }: HeroSectionProps) {
           <h2 className="font-display text-xl lg:text-2xl font-bold text-white leading-tight mb-3 text-center">
             Trouvez la voiture idéale
           </h2>
-
-          {/* NEUF / OCCASION Toggle */}
-          <div className="flex justify-center mb-3">
-          <div className="inline-flex rounded-xl bg-white/10 p-0.5 border border-white/5">
-            <button
-              type="button"
-              onClick={() => setVehicleCondition('neuf')}
-              aria-pressed={vehicleCondition === 'neuf'}
-              className={`px-5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${
-                vehicleCondition === 'neuf'
-                  ? 'bg-secondary text-white shadow-sm'
-                  : 'text-white/80 hover:text-white'
-              }`}
-            >
-              NEUF
-            </button>
-            <button
-              type="button"
-              onClick={() => setVehicleCondition('occasion')}
-              aria-pressed={vehicleCondition === 'occasion'}
-              className={`px-5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${
-                vehicleCondition === 'occasion'
-                  ? 'bg-secondary text-white shadow-sm'
-                  : 'text-white/80 hover:text-white'
-              }`}
-            >
-              OCCAZ
-            </button>
-          </div>
-          </div>
 
           {/* Vehicle Type Icons */}
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 mb-2.5">
