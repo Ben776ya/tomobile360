@@ -62,6 +62,7 @@ scripts/*
 !scripts/validate-content.ts
 !scripts/fix-broken-links.ts
 !scripts/extract-magazine-cover.py
+!scripts/compress-magazine-pdf.py
 !scripts/upload-magazines-to-supabase.mjs
 !scripts/prelaunch-scan.sh
 !scripts/convert-png-to-webp.mjs
