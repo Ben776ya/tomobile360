@@ -317,8 +317,11 @@ export type FicheTechnique = {
   models?: Model & { brands?: Brand }
 }
 
+export type PublicationSlug = 'challenge-auto' | 'vh-speciale-automobile'
+
 export type Magazine = {
   id: string
+  publication: PublicationSlug
   issue_number: number
   issue_date: string | null
   dossier_title: string
