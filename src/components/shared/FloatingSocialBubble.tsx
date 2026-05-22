@@ -1,8 +1,17 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Share2 } from 'lucide-react'
 import { EXTERNAL_LINKS } from '@/lib/links'
+
+const INSTAGRAM_GRADIENT = 'linear-gradient(135deg, #833AB4, #FD1D1D, #F77737)'
+
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+    </svg>
+  )
+}
 
 const socialLinks = [
   {
@@ -26,17 +35,6 @@ const socialLinks = [
     ),
   },
   {
-    href: EXTERNAL_LINKS.INSTAGRAM,
-    label: 'Instagram',
-    color: 'linear-gradient(135deg, #833AB4, #FD1D1D, #F77737)',
-    isGradient: true,
-    icon: (
-      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-      </svg>
-    ),
-  },
-  {
     href: EXTERNAL_LINKS.TIKTOK,
     label: 'TikTok',
     color: '#000000',
@@ -48,9 +46,11 @@ const socialLinks = [
   },
 ]
 
+const STEP = 56
+
 export function FloatingSocialBubble() {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [bottomOffset, setBottomOffset] = useState(32) // default 2rem (bottom-8)
+  const [isOpen, setIsOpen] = useState(false)
+  const [bottomOffset, setBottomOffset] = useState(32)
   const bubbleRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -60,11 +60,9 @@ export function FloatingSocialBubble() {
 
       const footerRect = footer.getBoundingClientRect()
       const windowHeight = window.innerHeight
-      // The bubble sits at bottom: 32px, it's 48-56px tall (responsive), so its top edge is at:
-      const bubbleTopEdge = windowHeight - 32 - 48
+      const bubbleTopEdge = windowHeight - 32 - 40
 
       if (footerRect.top < bubbleTopEdge + 16) {
-        // Footer overlaps with bubble position — push bubble above footer
         const newBottom = windowHeight - footerRect.top + 16
         setBottomOffset(newBottom)
       } else {
@@ -77,87 +75,83 @@ export function FloatingSocialBubble() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Calculate positions for quarter-circle layout expanding UP and LEFT
-  const getPosition = (index: number, total: number) => {
-    // Quarter circle from 90° (up) to 180° (left)
-    const startAngle = 90
-    const endAngle = 180
-    const angleStep = (endAngle - startAngle) / (total - 1)
-    const angle = startAngle + angleStep * index
-    const radians = (angle * Math.PI) / 180
-    const radius = 110
-
-    return {
-      x: Math.cos(radians) * radius,
-      y: -Math.sin(radians) * radius,
+  useEffect(() => {
+    if (!isOpen) return
+    const handlePointer = (e: MouseEvent) => {
+      if (!bubbleRef.current?.contains(e.target as Node)) setIsOpen(false)
     }
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false)
+    }
+    document.addEventListener('mousedown', handlePointer)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handlePointer)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [isOpen])
+
+  const handleTriggerClick = () => {
+    if (!isOpen) {
+      setIsOpen(true)
+      return
+    }
+    window.open(EXTERNAL_LINKS.INSTAGRAM, '_blank', 'noopener,noreferrer')
+    setIsOpen(false)
   }
 
   return (
     <div
       ref={bubbleRef}
-      className="fixed right-4 sm:right-6 z-40 flex transition-all duration-200"
+      className="fixed right-4 sm:right-6 z-40"
       style={{ bottom: `${bottomOffset}px` }}
-      onMouseEnter={() => setIsExpanded(true)}
-      onMouseLeave={() => setIsExpanded(false)}
     >
-      {/* Invisible hover bridge - covers the quarter-circle expansion area
-          (up and left from the button) so cursor can travel to any icon */}
-      <div
-        className="absolute"
-        style={{
-          top: '-140px',
-          left: '-140px',
-          width: '210px',
-          height: '210px',
-          pointerEvents: isExpanded ? 'auto' : 'none',
-        }}
-      />
-
-      {/* Social Icons - Quarter-circle expansion up-left */}
-      {socialLinks.map((social, index) => {
-        const pos = getPosition(index, socialLinks.length)
+      {socialLinks.map((social, i) => {
+        const openY = STEP * (socialLinks.length - i)
         return (
           <a
             key={social.label}
             href={social.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 ease-out"
+            className="absolute w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl hover:scale-110"
             style={{
-              background: social.isGradient ? social.color : undefined,
-              backgroundColor: !social.isGradient ? social.color : undefined,
-              transform: isExpanded
-                ? `translate(${pos.x}px, ${pos.y}px) scale(1)`
-                : 'translate(0, 0) scale(0)',
-              opacity: isExpanded ? 1 : 0,
-              transitionDelay: isExpanded ? `${index * 50}ms` : '0ms',
-              zIndex: 10,
-              top: '50%',
               left: '50%',
-              marginTop: '-20px',
-              marginLeft: '-20px',
+              bottom: 0,
+              transform: isOpen
+                ? `translate(-50%, -${openY}px) scale(1)`
+                : 'translate(-50%, 0) scale(0)',
+              opacity: isOpen ? 1 : 0,
+              transitionProperty: 'transform, opacity, box-shadow',
+              transitionDuration: '300ms',
+              transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+              transitionDelay: isOpen
+                ? `${(socialLinks.length - 1 - i) * 50}ms`
+                : `${i * 30}ms`,
+              backgroundColor: social.color,
+              pointerEvents: isOpen ? 'auto' : 'none',
+              zIndex: 10,
             }}
             aria-label={social.label}
             title={social.label}
+            tabIndex={isOpen ? 0 : -1}
+            aria-hidden={!isOpen}
           >
             {social.icon}
           </a>
         )
       })}
 
-      {/* Main Bubble Button */}
       <button
         type="button"
-        className={`relative z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-transform duration-300 shadow-lg ${
-          isExpanded
-            ? 'bg-primary text-white rotate-180 scale-110'
-            : 'bg-secondary text-white hover:bg-secondary-600 hover:scale-110'
-        }`}
-        aria-label="Réseaux sociaux"
-        aria-expanded={isExpanded}
+        onClick={handleTriggerClick}
+        className="relative z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-lg transition-transform duration-300 hover:scale-110"
+        style={{ background: INSTAGRAM_GRADIENT }}
+        aria-label={isOpen ? 'Instagram' : 'Réseaux sociaux'}
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
       >
-        <Share2 className="h-6 w-6" />
+        <InstagramIcon className="w-5 h-5" />
       </button>
     </div>
   )
