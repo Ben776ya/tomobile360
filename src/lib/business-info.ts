@@ -53,7 +53,7 @@ export const BUSINESS_INFO = {
   HOURS_SATURDAY: 'Sam: 9h00 - 13h00',
 
   // Legal identifiers (Morocco — required on mentions légales)
-  COMPANY_LEGAL_NAME: 'Tomobile 360 SARL',
+  COMPANY_LEGAL_NAME: 'EDITIONS DE LA GAZETTE',
   RC_NUMBER: required('NEXT_PUBLIC_RC_NUMBER'),
   ICE_NUMBER: required('NEXT_PUBLIC_ICE_NUMBER'),
   DIRECTOR_NAME: required('NEXT_PUBLIC_DIRECTOR_NAME'),

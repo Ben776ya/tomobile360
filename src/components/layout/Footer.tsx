@@ -175,7 +175,7 @@ export default function Footer() {
               />
             </Link>
             <p className="text-xs leading-[1.5] text-white/[0.62] max-w-[38ch] mb-2.5">
-              Tomobile 360 est votre guide d&apos;achat automobile au Maroc — prix, fiches techniques, comparatifs et essais de voitures neuves.
+              Tomobile 360, votre guide d&apos;achat automobile au Maroc&nbsp;: prix des voitures neuves et d&apos;occasion, fiches techniques, comparatifs, essais auto, actualité automobile, nouveautés, conseils d&apos;experts et bons plans pour acheter votre voiture au meilleur prix à Casablanca, Rabat et partout au Maroc.
             </p>
 
             <ul className="list-none m-0 mb-2.5 p-0 flex flex-col gap-[5px]">
