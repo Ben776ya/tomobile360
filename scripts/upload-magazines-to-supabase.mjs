@@ -40,12 +40,13 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
 })
 
 const ISSUES = [
-  { number: 644, pdf: 'Challenge AUTO 644.pdf' },
-  { number: 1, pdf: 'CHALLENGE AUTO N°1.pdf' },
-  { number: 2, pdf: 'ChallengeAUTO N°2.pdf' },
-  { number: 3, pdf: 'PDF CHALLENGE AUTO N°3.pdf' },
-  { number: 4, pdf: 'PDF CHALLENGE AUTO N° 4.pdf' },
-  { number: 5, pdf: 'CHALLENGE AUTO N°5.pdf' },
+  { publication: 'challenge-auto', number: 644, pdf: 'Challenge AUTO 644.pdf', coverFilename: 'challenge-auto-644.jpg' },
+  { publication: 'challenge-auto', number: 1, pdf: 'CHALLENGE AUTO N°1.pdf', coverFilename: 'challenge-auto-1.jpg' },
+  { publication: 'challenge-auto', number: 2, pdf: 'ChallengeAUTO N°2.pdf', coverFilename: 'challenge-auto-2.jpg' },
+  { publication: 'challenge-auto', number: 3, pdf: 'PDF CHALLENGE AUTO N°3.pdf', coverFilename: 'challenge-auto-3.jpg' },
+  { publication: 'challenge-auto', number: 4, pdf: 'PDF CHALLENGE AUTO N° 4.pdf', coverFilename: 'challenge-auto-4.jpg' },
+  { publication: 'challenge-auto', number: 5, pdf: 'CHALLENGE AUTO N°5.pdf', coverFilename: 'challenge-auto-5.jpg' },
+  { publication: 'vh-speciale-automobile', number: 87, pdf: 'VH N°87.pdf', coverFilename: 'vh-speciale-automobile-87.jpg' },
 ]
 
 async function uploadOne(localPath, bucketPath, contentType) {
@@ -66,15 +67,15 @@ async function main() {
   console.log(`Uploading ${ISSUES.length} magazines to Supabase Storage bucket "magazines"...`)
   for (const issue of ISSUES) {
     const pdfLocal = resolve(MAGAZINE_DIR, issue.pdf)
-    const coverLocal = resolve(COVER_STAGING_DIR, `challenge-auto-${issue.number}.jpg`)
-    const pdfBucketPath = `pdfs/challenge-auto-${issue.number}.pdf`
-    const coverBucketPath = `covers/challenge-auto-${issue.number}.jpg`
+    const coverLocal = resolve(COVER_STAGING_DIR, issue.coverFilename)
+    const pdfBucketPath = `pdfs/${issue.publication}-${issue.number}.pdf`
+    const coverBucketPath = `covers/${issue.publication}-${issue.number}.jpg`
 
-    console.log(`\n[N°${issue.number}] uploading PDF (${issue.pdf})`)
+    console.log(`\n[${issue.publication} N°${issue.number}] uploading PDF (${issue.pdf})`)
     const pdfUrl = await uploadOne(pdfLocal, pdfBucketPath, 'application/pdf')
     console.log(`  -> ${pdfUrl}`)
 
-    console.log(`[N°${issue.number}] uploading cover`)
+    console.log(`[${issue.publication} N°${issue.number}] uploading cover`)
     const coverUrl = await uploadOne(coverLocal, coverBucketPath, 'image/jpeg')
     console.log(`  -> ${coverUrl}`)
   }
