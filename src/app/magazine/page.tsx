@@ -1,86 +1,109 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { Download } from 'lucide-react'
+import type { Metadata } from 'next'
 import { getAllMagazines } from '@/lib/data/challenge-magazines'
+import { PUBLICATIONS, PUBLICATION_ORDER } from '@/lib/magazines/publications'
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { MagazineSection } from '@/components/magazine/MagazineSection'
+
+const BASE_URL = 'https://tomobile360.ma'
 
 export const revalidate = 60
 
-export const metadata = {
-  title: 'Archives Challenge Auto — Tomobile 360',
+export const metadata: Metadata = {
+  title: 'Magazines automobiles Maroc — Challenge Auto & VH Spéciale Automobile',
   description:
-    'Tous les numéros du Challenge Auto en accès libre — actualités auto, dossiers, essais et tendances du marché marocain.',
+    "Tous les numéros de Challenge Auto et VH Spéciale Automobile en accès libre — magazines automobiles marocains : essais voiture, dossiers du marché, guide d'achat et nouveautés.",
+  keywords: [
+    'magazine automobile Maroc',
+    'Challenge Auto',
+    'VH Spéciale Automobile',
+    'revue automobile marocaine',
+    'PDF magazine auto',
+    'actualité automobile Maroc',
+    "guide d'achat voiture Maroc",
+  ],
+  alternates: { canonical: '/magazine' },
+  openGraph: {
+    title: 'Magazines automobiles Maroc — Challenge Auto & VH Spéciale Automobile',
+    description:
+      'Téléchargez les derniers numéros de Challenge Auto et VH Spéciale Automobile.',
+    url: '/magazine',
+    siteName: 'Tomobile 360',
+    type: 'website',
+  },
 }
 
 export default async function MagazineArchivePage() {
-  const magazines = await getAllMagazines()
+  const [challengeIssues, vhIssues] = await Promise.all([
+    getAllMagazines('challenge-auto'),
+    getAllMagazines('vh-speciale-automobile'),
+  ])
+
+  const issuesByPublication = {
+    'challenge-auto': challengeIssues,
+    'vh-speciale-automobile': vhIssues,
+  } as const
+
+  const collectionSchema = {
+    '@type': 'CollectionPage',
+    name: 'Magazines automobiles Maroc',
+    description:
+      'Bibliothèque des magazines automobiles Tomobile 360 : Challenge Auto et VH Spéciale Automobile.',
+    inLanguage: 'fr-MA',
+    url: `${BASE_URL}/magazine`,
+    hasPart: PUBLICATION_ORDER.map((slug) => ({
+      '@type': 'Periodical',
+      name: PUBLICATIONS[slug].displayName,
+      url: `${BASE_URL}/magazine#publication-${slug}`,
+    })),
+  }
 
   return (
     <main className="bg-white">
       <section className="container mx-auto px-4 py-10 md:py-14">
-        <header className="max-w-3xl mb-8 md:mb-10">
+        <JsonLd data={collectionSchema} />
+
+        <Breadcrumbs items={[{ name: 'Magazines' }]} />
+
+        <header className="max-w-3xl mb-10 md:mb-14">
           <p className="text-[12px] font-bold uppercase tracking-wider text-[#DC2626] mb-2">
             Archives
           </p>
           <h1 className="text-3xl md:text-4xl font-extrabold text-[#1c2541] leading-tight">
-            Tous les numéros du Challenge Auto
+            Magazines automobiles Maroc
           </h1>
           <p className="mt-3 text-sm md:text-base text-gray-600 leading-relaxed">
-            Du plus récent au plus ancien — téléchargez chaque numéro en PDF.
+            Retrouvez tous les numéros de <strong>Challenge Auto</strong> et de
+            {' '}<strong>VH Spéciale Automobile</strong> — actualités du marché,
+            essais, dossiers et guides d&apos;achat — en téléchargement PDF
+            gratuit.
           </p>
+          <nav aria-label="Naviguer entre les publications" className="mt-5 flex flex-wrap gap-2">
+            {PUBLICATION_ORDER.map((slug) => (
+              <a
+                key={slug}
+                href={`#publication-${slug}`}
+                className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors"
+                style={{
+                  borderColor: PUBLICATIONS[slug].accentColor,
+                  color: PUBLICATIONS[slug].accentColor,
+                }}
+              >
+                {PUBLICATIONS[slug].displayName}
+              </a>
+            ))}
+          </nav>
         </header>
 
-        {magazines.length === 0 ? (
-          <p className="text-sm text-gray-500">
-            Aucun numéro publié pour le moment.
-          </p>
-        ) : (
-          <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
-            {magazines.map((issue) => (
-              <li key={issue.id} className="flex flex-col">
-                <Link
-                  href={issue.pdf_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Ouvrir le PDF du numéro ${issue.issue_number}`}
-                  className="relative block group"
-                >
-                  <div className="relative w-full aspect-[250/350] rounded-lg overflow-hidden ring-1 ring-[#1c2541]/15 shadow-md transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:shadow-lg bg-gray-100">
-                    <Image
-                      src={issue.cover_url}
-                      alt={`Couverture Challenge Magazine N°${issue.issue_number} — ${issue.dossier_title}`}
-                      fill
-                      sizes="(min-width: 1024px) 240px, (min-width: 768px) 30vw, 45vw"
-                      className="object-cover"
-                    />
-                  </div>
-                </Link>
-                <div className="mt-3 flex flex-col gap-1">
-                  <p className="text-sm font-bold text-[#1c2541]">
-                    N°{issue.issue_number}
-                    {issue.issue_date ? (
-                      <>
-                        {' '}<span className="text-gray-400 font-medium">·</span>{' '}
-                        <span className="font-medium text-gray-600">{issue.issue_date}</span>
-                      </>
-                    ) : null}
-                  </p>
-                  <p className="text-[13px] text-gray-700 leading-snug line-clamp-2">
-                    {issue.dossier_title}
-                  </p>
-                  <Link
-                    href={issue.pdf_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-1 self-start inline-flex items-center gap-1.5 text-xs font-semibold text-[#DC2626] hover:text-[#B91C1C] transition-colors"
-                  >
-                    <Download className="w-3.5 h-3.5" aria-hidden="true" />
-                    Lire le PDF
-                  </Link>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="flex flex-col gap-14 md:gap-20">
+          {PUBLICATION_ORDER.map((slug) => (
+            <MagazineSection
+              key={slug}
+              publication={PUBLICATIONS[slug]}
+              issues={issuesByPublication[slug]}
+            />
+          ))}
+        </div>
       </section>
     </main>
   )
