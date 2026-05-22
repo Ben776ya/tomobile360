@@ -704,6 +704,7 @@ export type Database = {
           issue_number: number
           order_position: number
           pdf_url: string
+          publication: string
           tags: Json
           updated_at: string
         }
@@ -718,6 +719,7 @@ export type Database = {
           issue_number: number
           order_position: number
           pdf_url: string
+          publication: string
           tags?: Json
           updated_at?: string
         }
@@ -732,6 +734,7 @@ export type Database = {
           issue_number?: number
           order_position?: number
           pdf_url?: string
+          publication?: string
           tags?: Json
           updated_at?: string
         }
