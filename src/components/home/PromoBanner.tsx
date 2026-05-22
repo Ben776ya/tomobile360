@@ -3,7 +3,7 @@ import { ChallengeMagazine } from '@/components/home/ChallengeMagazine'
 import { getLatestMagazine } from '@/lib/data/challenge-magazines'
 
 export async function PromoBanner() {
-  const latestIssue = await getLatestMagazine()
+  const latestIssue = await getLatestMagazine('challenge-auto')
 
   return (
     <section className="py-6 md:py-10 bg-white">
