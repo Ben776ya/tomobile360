@@ -269,8 +269,125 @@ async function loadDbIndex() {
 }
 
 // ---------------------------------------------------------------------------
+// findModelMatch — fuzzy-resolves a source (brandSlug, modelSlug) pair against
+// the DB model index. Source folders often use a shorter slug than the DB row
+// (e.g. source `audi/a1` vs DB `A1 Sportback` → slug `a1-sportback`), so we
+// try a series of progressively looser matching rules. First hit wins.
+//
+// Rules (in order):
+//   1. Exact slug match           db.slug === src.slug
+//   2. Slug-without-dashes match  removes hyphens from both sides
+//                                 (handles `c4x` ↔ `c4-x`)
+//   3. Source prefixes DB         db.slug === `${src.slug}-${suffix}`
+//                                 (handles `a1` ↔ `a1-sportback`)
+//   4. DB prefixes source         src.slug === `${db.slug}-${suffix}`
+//                                 (handles `poer` ↔ `poer-dc`)
+//   5. Mercedes `classe-` strip   if src.slug starts with `classe-`, retry
+//                                 rules 1–4 with the prefix removed
+//                                 (handles `classe-cla` ↔ `cla-coupe`)
+//
+// Candidate selection when multiple DB rows match under the same rule:
+//   - prefer the candidate with FEWEST existing images
+//   - on ties: prefer the shortest DB model name (most generic)
+//   - if ALL candidates have imageCount >= IMAGE_KEEP_THRESHOLD →
+//     return { ambiguous: true, ... } so the caller emits SKIP_AMBIGUOUS
+//     (we don't want to overwrite a populated row, nor create a duplicate)
+//
+// Returns one of:
+//   null
+//   { matched: <dbModelEntry>, matchRule, candidateCount }
+//   { ambiguous: true, candidates: [...], reason, matchRule }
+// ---------------------------------------------------------------------------
+function findModelMatch(srcBrandSlug, srcModelSlug, idx) {
+  // Collect every model belonging to this brand once — cheaper than repeated
+  // full-map scans for each rule.
+  const brandModels = []
+  for (const entry of idx.modelByKey.values()) {
+    if (entry.brandSlug === srcBrandSlug) brandModels.push(entry)
+  }
+  if (brandModels.length === 0) return null
+
+  const tryRules = (querySlug) => {
+    // Rule 1 — exact
+    let hits = brandModels.filter(m => slug(m.modelName) === querySlug)
+    if (hits.length) return { hits, matchRule: 'exact' }
+
+    // Rule 2 — slug without dashes
+    const queryFlat = querySlug.replace(/-/g, '')
+    hits = brandModels.filter(m => slug(m.modelName).replace(/-/g, '') === queryFlat)
+    if (hits.length) return { hits, matchRule: 'no-dashes' }
+
+    // Rule 3 — source prefixes DB with a dash boundary
+    hits = brandModels.filter(m => {
+      const ds = slug(m.modelName)
+      return ds.length > querySlug.length && ds.startsWith(querySlug + '-')
+    })
+    if (hits.length) return { hits, matchRule: 'src-prefixes-db' }
+
+    // Rule 4 — DB prefixes source with a dash boundary
+    hits = brandModels.filter(m => {
+      const ds = slug(m.modelName)
+      return querySlug.length > ds.length && querySlug.startsWith(ds + '-')
+    })
+    if (hits.length) return { hits, matchRule: 'db-prefixes-src' }
+
+    return null
+  }
+
+  let result = tryRules(srcModelSlug)
+  let appliedRule = result?.matchRule
+
+  // Rule 5 — Mercedes "classe-" prefix strip → retry rules 1-4
+  if (!result && srcModelSlug.startsWith('classe-')) {
+    const stripped = srcModelSlug.slice('classe-'.length)
+    if (stripped.length > 0) {
+      const retried = tryRules(stripped)
+      if (retried) {
+        result = retried
+        appliedRule = 'classe-strip'  // override — caller wants the strip rule reported
+      }
+    }
+  }
+
+  if (!result) return null
+
+  const { hits } = result
+
+  // Pick best candidate: fewest images, then shortest name.
+  const sortedHits = [...hits].sort((a, b) => {
+    if (a.imageCount !== b.imageCount) return a.imageCount - b.imageCount
+    return a.modelName.length - b.modelName.length
+  })
+
+  const candidatesSnapshot = sortedHits.map(c => ({
+    modelId: c.modelId,
+    modelName: c.modelName,
+    imageCount: c.imageCount,
+    hasFiche: c.hasFiche,
+  }))
+
+  // Ambiguous: more than one candidate AND every single one is already populated.
+  // Picking any would either overwrite a healthy row or leave duplicates.
+  if (hits.length > 1 && hits.every(h => h.imageCount >= IMAGE_KEEP_THRESHOLD)) {
+    return {
+      ambiguous: true,
+      candidates: candidatesSnapshot,
+      matchRule: appliedRule,
+      reason: `multiple matches (${hits.length}) all with >= ${IMAGE_KEEP_THRESHOLD} images — refusing to overwrite or duplicate`,
+    }
+  }
+
+  return {
+    matched: sortedHits[0],
+    matchRule: appliedRule,
+    candidateCount: hits.length,
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Classifier — walks curated-images/ and assigns each model an action bucket.
-// Returns: { skip, replace, create, errors } where each entry has full provenance.
+// Returns: { skip, replace, create, skipAmbiguous, errors } where each entry
+// has full provenance.
 // ---------------------------------------------------------------------------
 function classifySources(idx) {
   if (!fs.existsSync(CURATED_DIR)) {
@@ -278,28 +395,51 @@ function classifySources(idx) {
     process.exit(1)
   }
 
-  const skip = []      // existing model with >= 6 images → no-op
-  const replace = []   // existing model with <= 5 images → re-upload images + refresh fiche
-  const create = []    // model not in DB → create model+vehicle+images+fiche (and brand if missing)
-  const errors = []    // unparseable / missing fiche / no images / dup folder
+  const skip = []           // existing model with >= 6 images → no-op
+  const replace = []        // existing model with <= 5 images → re-upload images + refresh fiche
+  const create = []         // model not in DB → create model+vehicle+images+fiche (and brand if missing)
+  const skipAmbiguous = []  // multiple DB candidates all populated → don't touch, don't duplicate
+  const errors = []         // unparseable / missing fiche / no images / dup folder
 
-  // Track the brand folders we've already processed (case-insensitive) so the
-  // "Aston Martin" + "aston-martin" duplicate doesn't double-up under Windows.
-  const seenBrandSlugs = new Set()
-
-  const brandFolders = fs.readdirSync(CURATED_DIR, { withFileTypes: true })
+  const rawBrandFolders = fs.readdirSync(CURATED_DIR, { withFileTypes: true })
     .filter(d => d.isDirectory())
     .map(d => d.name)
     .sort()
 
+  // Pre-pass: when two folders slug to the same brand (Windows quirk —
+  // `Aston Martin` AND `aston-martin` both slug to `aston-martin`), prefer
+  // the folder whose raw name is already the canonical slug form. The other
+  // is recorded as a DUPLICATE_BRAND_FOLDER error so it's visible in the report.
+  const folderBySlug = new Map()
+  for (const f of rawBrandFolders) {
+    const s = slug(f)
+    const existing = folderBySlug.get(s)
+    if (!existing) {
+      folderBySlug.set(s, f)
+    } else {
+      // tiebreak: keep the one whose raw name equals its slug (canonical)
+      const existingIsCanonical = existing === s
+      const newIsCanonical = f === s
+      if (newIsCanonical && !existingIsCanonical) {
+        // The new candidate is canonical — swap, push the previous one to errors.
+        errors.push({ kind: 'DUPLICATE_BRAND_FOLDER', brandFolder: existing, brandSlug: s,
+                      reason: `another folder ("${f}") with the same brand slug is canonical and was preferred` })
+        folderBySlug.set(s, f)
+      } else {
+        // Existing wins (either it's canonical, or neither is and we keep first-seen).
+        errors.push({ kind: 'DUPLICATE_BRAND_FOLDER', brandFolder: f, brandSlug: s,
+                      reason: `another folder ("${existing}") with the same brand slug was already preferred` })
+      }
+    }
+  }
+
+  // Iterate the dedup'd brand folders in deterministic slug order.
+  const brandFolders = [...folderBySlug.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([, folder]) => folder)
+
   for (const brandFolder of brandFolders) {
     const brandSlug = slug(brandFolder)
-    if (seenBrandSlugs.has(brandSlug)) {
-      errors.push({ kind: 'DUPLICATE_BRAND_FOLDER', brandFolder, brandSlug,
-                    reason: 'a folder with the same brand slug was already processed' })
-      continue
-    }
-    seenBrandSlugs.add(brandSlug)
 
     // Resolve brand: explicit alias → DB row, else slug match, else mark NEW
     const aliasedName = BRAND_ALIAS[brandSlug]
@@ -347,18 +487,27 @@ function classifySources(idx) {
       }
 
       const dbBrandSlug = aliasedName ? slug(aliasedName) : brandSlug
-      const key = `${dbBrandSlug}::${modelSlug}`
-      const dbModel = idx.modelByKey.get(key)
+      const match = findModelMatch(dbBrandSlug, modelSlug, idx)
 
-      if (dbModel) {
+      if (match && match.ambiguous) {
+        skipAmbiguous.push({
+          ...baseEntry,
+          candidates: match.candidates,
+          matchRule: match.matchRule,
+          reason: match.reason,
+        })
+      } else if (match && match.matched) {
+        const dbModel = match.matched
         if (dbModel.imageCount >= IMAGE_KEEP_THRESHOLD) {
           skip.push({ ...baseEntry, modelId: dbModel.modelId, modelName: dbModel.modelName,
                       existingImageCount: dbModel.imageCount,
+                      matchRule: match.matchRule, candidateCount: match.candidateCount,
                       reason: `existing vehicles_new row has ${dbModel.imageCount} images (>= ${IMAGE_KEEP_THRESHOLD})` })
         } else {
           replace.push({ ...baseEntry, modelId: dbModel.modelId, modelName: dbModel.modelName,
                          vehicleId: dbModel.vehicleId, existingImageCount: dbModel.imageCount,
-                         existingHasFiche: dbModel.hasFiche })
+                         existingHasFiche: dbModel.hasFiche,
+                         matchRule: match.matchRule, candidateCount: match.candidateCount })
         }
       } else {
         create.push({ ...baseEntry,
@@ -368,18 +517,19 @@ function classifySources(idx) {
     }
   }
 
-  return { skip, replace, create, errors }
+  return { skip, replace, create, skipAmbiguous, errors }
 }
 
 async function main() {
   const idx = await loadDbIndex()
-  const { skip, replace, create, errors } = classifySources(idx)
+  const { skip, replace, create, skipAmbiguous, errors } = classifySources(idx)
 
   console.log('========== CLASSIFICATION SUMMARY ==========')
-  console.log(`SKIP    (existing, >=6 images, no-op): ${skip.length}`)
-  console.log(`REPLACE (existing, <=5 images):        ${replace.length}`)
-  console.log(`CREATE  (new model, possibly new brand): ${create.length}`)
-  console.log(`ERRORS  (unparseable / no images / dup): ${errors.length}`)
+  console.log(`SKIP     (existing, >=6 images, no-op):           ${skip.length}`)
+  console.log(`REPLACE  (existing, <=5 images):                  ${replace.length}`)
+  console.log(`CREATE   (new model, possibly new brand):         ${create.length}`)
+  console.log(`SKIP_AMB (multiple matches, all >=6 imgs):        ${skipAmbiguous.length}`)
+  console.log(`ERRORS   (unparseable / no images / dup):         ${errors.length}`)
   const newBrands = [...new Set(create.filter(c => c.willCreateBrand).map(c => c.newBrandName))]
   console.log(`Brands to create: ${newBrands.join(', ') || '(none)'}`)
   console.log('============================================\n')
@@ -387,9 +537,10 @@ async function main() {
   const report = {
     generatedAt: new Date().toISOString(),
     mode: APPLY ? 'apply' : 'dry-run',
-    summary: { skip: skip.length, replace: replace.length, create: create.length, errors: errors.length,
+    summary: { skip: skip.length, replace: replace.length, create: create.length,
+               skipAmbiguous: skipAmbiguous.length, errors: errors.length,
                newBrands },
-    skip, replace, create, errors,
+    skip, replace, create, skipAmbiguous, errors,
   }
   fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2))
   console.log(`Report written to: ${REPORT_PATH}\n`)
