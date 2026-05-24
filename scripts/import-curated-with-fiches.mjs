@@ -593,6 +593,36 @@ async function main() {
   }
   report.createResults = createResults
   fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2))
+
+  // ---------------------------------------------------------------------------
+  // FINAL SUMMARY
+  // ---------------------------------------------------------------------------
+  const tally = {
+    skip: skip.length,
+    replace_ok: replaceResults.filter(r => r.status === 'OK').length,
+    replace_partial: replaceResults.filter(r => r.status === 'PARTIAL').length,
+    replace_fail: replaceResults.filter(r => r.status === 'FAIL').length,
+    create_ok: createResults.filter(r => r.status === 'OK').length,
+    create_partial: createResults.filter(r => r.status === 'PARTIAL').length,
+    create_fail: createResults.filter(r => r.status === 'FAIL').length,
+    errors: errors.length,
+    brands_created: createdBrands.filter(b => b.created).length,
+  }
+  report.finalTally = tally
+  fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2))
+
+  console.log('\n=================== FINAL TALLY ===================')
+  for (const [k, v] of Object.entries(tally)) console.log(`  ${k.padEnd(20)} ${v}`)
+  console.log('===================================================')
+  console.log('\nBrands created (only those not previously in DB):')
+  if (createdBrands.filter(b => b.created).length === 0) {
+    console.log('  (none)')
+  } else {
+    for (const b of createdBrands.filter(b => b.created)) {
+      console.log(`  - ${b.name}  (logo: ${b.logoUrl ?? 'none — set manually in /admin/brands'})`)
+    }
+  }
+  console.log(`\nFull report: ${REPORT_PATH}`)
 }
 main().catch(e => { console.error('FATAL:', e); process.exit(1) })
 
