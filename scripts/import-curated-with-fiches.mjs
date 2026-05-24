@@ -556,6 +556,25 @@ async function main() {
   report.brandsCreated = createdBrands
   fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2))
 
+  const replaceResults = []
+  console.log(`\n--- REPLACE (${replace.length} models with <=5 images) ---`)
+  for (let i = 0; i < replace.length; i++) {
+    const e = replace[i]
+    const tag = `[R ${String(i+1).padStart(3,'0')}/${replace.length}]`
+    try {
+      const r = await applyReplace(e)
+      replaceResults.push(r)
+      console.log(`${tag} ${r.status} ${r.folder} → ${e.modelName} ` +
+                  `(${r.uploaded} imgs, fiche=${r.ficheStatus}, prev=${e.existingImageCount})`)
+    } catch (err) {
+      replaceResults.push({ folder: `${e.brandFolder}/${e.modelFolder}`, status: 'FAIL',
+                            error: err.message })
+      console.error(`${tag} FAIL ${e.brandFolder}/${e.modelFolder}: ${err.message}`)
+    }
+  }
+  report.replaceResults = replaceResults
+  fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2))
+
   // (per-model apply branches — added in later tasks)
 }
 main().catch(e => { console.error('FATAL:', e); process.exit(1) })
@@ -747,4 +766,60 @@ async function uploadImageSet(entry) {
   for (const f of detailFiles) { await uploadOne(path.join(detailDir, f), 'detail', i++) }
 
   return { urls, failures, counts: { curated: curatedFiles.length, detail: detailFiles.length } }
+}
+
+// ---------------------------------------------------------------------------
+// REPLACE branch — existing model with <= 5 images.
+// Re-uploads images and updates vehicles_new.images. Also refreshes
+// fiches_techniques (upsert by model_id). Does NOT touch other vehicle columns.
+// ---------------------------------------------------------------------------
+async function applyReplace(entry) {
+  const { urls, failures, counts } = await uploadImageSet(entry)
+  if (urls.length === 0) {
+    return { folder: `${entry.brandFolder}/${entry.modelFolder}`, status: 'IMG_UPLOAD_EMPTY',
+             uploaded: 0, ...counts, errors: failures.map(f => f.message) }
+  }
+
+  let rowsUpdated = 0
+  if (APPLY) {
+    const { data, error } = await supabase
+      .from('vehicles_new')
+      .update({ images: urls })
+      .eq('model_id', entry.modelId)
+      .select('id')
+    if (error) throw new Error(`vehicles_new update failed for ${entry.modelId}: ${error.message}`)
+    rowsUpdated = data?.length || 0
+  }
+
+  // Refresh fiche
+  let ficheStatus = 'NO_FICHE_FILE'
+  if (entry.ficheExists) {
+    const raw = loadFiche(path.join(FICHES_DIR, entry.ficheRelPath))
+    const transformed = transformFiche(raw)
+    if (!transformed) {
+      ficheStatus = `PARSE_ERROR:${raw?._parseError || 'unknown'}`
+    } else if (APPLY) {
+      const { error } = await supabase
+        .from('fiches_techniques')
+        .upsert({
+          model_id: entry.modelId,
+          specs: transformed.specs,
+          en_detail: transformed.en_detail,
+          source_url: transformed.source_url,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'model_id' })
+      if (error) throw new Error(`fiches_techniques upsert failed for ${entry.modelId}: ${error.message}`)
+      ficheStatus = 'UPSERTED'
+    } else {
+      ficheStatus = 'DRY_RUN_OK'
+    }
+  }
+
+  return {
+    folder: `${entry.brandFolder}/${entry.modelFolder}`,
+    status: failures.length > 0 ? 'PARTIAL' : 'OK',
+    modelId: entry.modelId, modelName: entry.modelName,
+    uploaded: urls.length, ...counts, rowsUpdated, ficheStatus,
+    errors: failures.map(f => f.message),
+  }
 }
