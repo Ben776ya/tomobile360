@@ -198,3 +198,79 @@ function parseFirstFloat(val) {
   const m = String(val).replace(/\./g, '').replace(/,/g, '.').match(/(\d+(?:\.\d+)?)/)
   return m ? parseFloat(m[1]) : null
 }
+
+// ---------------------------------------------------------------------------
+// DB loader — returns
+//   brandBySlug:    Map<brandSlug, { id, name }>
+//   modelByKey:     Map<`${brandSlug}::${modelSlug}`, { modelId, modelName, brandId,
+//                       vehicleId, imageCount, hasFiche }>
+// ---------------------------------------------------------------------------
+async function loadDbIndex() {
+  const { data: brands, error: brandsErr } = await supabase
+    .from('brands')
+    .select('id, name')
+  if (brandsErr) { console.error('ERROR fetching brands:', brandsErr.message); process.exit(1) }
+
+  const { data: models, error: modelsErr } = await supabase
+    .from('models')
+    .select('id, name, brand_id, brands(name)')
+  if (modelsErr) { console.error('ERROR fetching models:', modelsErr.message); process.exit(1) }
+
+  const { data: vehicles, error: vehErr } = await supabase
+    .from('vehicles_new')
+    .select('id, model_id, images')
+  if (vehErr) { console.error('ERROR fetching vehicles_new:', vehErr.message); process.exit(1) }
+
+  const { data: fiches, error: fichErr } = await supabase
+    .from('fiches_techniques')
+    .select('model_id')
+  if (fichErr) { console.error('ERROR fetching fiches_techniques:', fichErr.message); process.exit(1) }
+
+  const brandBySlug = new Map()
+  for (const b of brands) {
+    brandBySlug.set(slug(b.name), { id: b.id, name: b.name })
+  }
+
+  const vehByModel = new Map()
+  for (const v of vehicles) {
+    const count = Array.isArray(v.images) ? v.images.length : 0
+    // If multiple legacy rows still exist for one model, keep the row with the
+    // most images (defensive — the 2026-05-18 collapse should leave 1:1).
+    const cur = vehByModel.get(v.model_id)
+    if (!cur || count > cur.imageCount) {
+      vehByModel.set(v.model_id, { vehicleId: v.id, imageCount: count })
+    }
+  }
+
+  const ficheModelIds = new Set(fiches.map(f => f.model_id))
+
+  const modelByKey = new Map()
+  for (const m of models) {
+    const brandName = Array.isArray(m.brands) ? m.brands[0]?.name : m.brands?.name
+    if (!brandName) continue
+    const bSlug = slug(brandName)
+    const mSlug = slug(m.name)
+    const v = vehByModel.get(m.id) || { vehicleId: null, imageCount: 0 }
+    modelByKey.set(`${bSlug}::${mSlug}`, {
+      modelId: m.id,
+      modelName: m.name,
+      brandId: m.brand_id,
+      brandSlug: bSlug,
+      brandName,
+      vehicleId: v.vehicleId,
+      imageCount: v.imageCount,
+      hasFiche: ficheModelIds.has(m.id),
+    })
+  }
+
+  console.log(`[DB] Loaded ${brands.length} brands, ${models.length} models, ` +
+              `${vehicles.length} vehicles, ${fiches.length} fiches\n`)
+  return { brandBySlug, modelByKey }
+}
+
+async function main() {
+  const idx = await loadDbIndex()
+  console.log(`Sample brand slugs: ${Array.from(idx.brandBySlug.keys()).slice(0, 5).join(', ')}`)
+  console.log(`Sample model keys: ${Array.from(idx.modelByKey.keys()).slice(0, 5).join(', ')}`)
+}
+main().catch(e => { console.error('FATAL:', e); process.exit(1) })
