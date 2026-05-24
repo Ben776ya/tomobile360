@@ -575,7 +575,24 @@ async function main() {
   report.replaceResults = replaceResults
   fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2))
 
-  // (per-model apply branches — added in later tasks)
+  const createResults = []
+  console.log(`\n--- CREATE (${create.length} new models) ---`)
+  for (let i = 0; i < create.length; i++) {
+    const e = create[i]
+    const tag = `[C ${String(i+1).padStart(3,'0')}/${create.length}]`
+    try {
+      const r = await applyCreate(e, idx)
+      createResults.push(r)
+      console.log(`${tag} ${r.status} ${r.folder} → ${r.brandName} ${r.modelName} ` +
+                  `(${r.uploaded} imgs, fiche=${r.ficheStatus})`)
+    } catch (err) {
+      createResults.push({ folder: `${e.brandFolder}/${e.modelFolder}`, status: 'FAIL',
+                           error: err.message })
+      console.error(`${tag} FAIL ${e.brandFolder}/${e.modelFolder}: ${err.message}`)
+    }
+  }
+  report.createResults = createResults
+  fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2))
 }
 main().catch(e => { console.error('FATAL:', e); process.exit(1) })
 
@@ -820,6 +837,97 @@ async function applyReplace(entry) {
     status: failures.length > 0 ? 'PARTIAL' : 'OK',
     modelId: entry.modelId, modelName: entry.modelName,
     uploaded: urls.length, ...counts, rowsUpdated, ficheStatus,
+    errors: failures.map(f => f.message),
+  }
+}
+
+// ---------------------------------------------------------------------------
+// CREATE branch — model doesn't exist in DB.
+// 1. Look up brand_id (already created by ensureNewBrands if it was missing).
+// 2. Compute model display name from folder slug.
+// 3. Insert models row (handle 23505 unique-violation by re-fetching).
+// 4. Insert vehicles_new row with defaults from fiche.
+// 5. Upload images, update vehicles_new.images.
+// 6. Upsert fiches_techniques.
+// ---------------------------------------------------------------------------
+async function applyCreate(entry, idx) {
+  const dbBrandSlug = entry.resolvedBrandSlug
+  const dbBrand = idx.brandBySlug.get(dbBrandSlug)
+  if (!dbBrand) throw new Error(`brand ${dbBrandSlug} not in index after ensureNewBrands`)
+
+  const modelDisplayName = modelSlugToName(entry.modelSlug)
+  const ficheRaw = loadFiche(path.join(FICHES_DIR, entry.ficheRelPath))
+  const transformed = transformFiche(ficheRaw)
+
+  let modelId
+  if (APPLY) {
+    // Skip the insert if it already exists (defensive — handles re-runs)
+    const { data: existingModel } = await supabase
+      .from('models').select('id')
+      .eq('brand_id', dbBrand.id).eq('name', modelDisplayName).maybeSingle()
+    if (existingModel) {
+      modelId = existingModel.id
+    } else {
+      const { data, error } = await supabase
+        .from('models')
+        .insert({ brand_id: dbBrand.id, name: modelDisplayName, category: DEFAULT_CATEGORY })
+        .select('id').single()
+      if (error) throw new Error(`model insert failed: ${error.message}`)
+      modelId = data.id
+    }
+  } else {
+    modelId = `DRY-RUN-${dbBrandSlug}-${entry.modelSlug}`
+  }
+
+  // Upload images
+  const { urls, failures, counts } = await uploadImageSet(entry)
+
+  // Insert vehicles_new (or update if it already exists)
+  const vehicleDefaults = vehicleDefaultsFromFiche(ficheRaw)
+  if (APPLY) {
+    const { data: existingVeh } = await supabase
+      .from('vehicles_new').select('id').eq('model_id', modelId).maybeSingle()
+    if (existingVeh) {
+      // Existing vehicle row but model wasn't in our index — refresh images only
+      const { error } = await supabase
+        .from('vehicles_new').update({ images: urls }).eq('id', existingVeh.id)
+      if (error) throw new Error(`vehicles_new update failed: ${error.message}`)
+    } else {
+      const { error } = await supabase
+        .from('vehicles_new').insert({
+          brand_id: dbBrand.id, model_id: modelId,
+          images: urls,
+          ...vehicleDefaults,
+        })
+      if (error) throw new Error(`vehicles_new insert failed: ${error.message}`)
+    }
+  }
+
+  // Upsert fiche
+  let ficheStatus = 'NO_FICHE_FILE'
+  if (transformed) {
+    if (APPLY) {
+      const { error } = await supabase.from('fiches_techniques').upsert({
+        model_id: modelId,
+        specs: transformed.specs,
+        en_detail: transformed.en_detail,
+        source_url: transformed.source_url,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'model_id' })
+      if (error) throw new Error(`fiche upsert failed: ${error.message}`)
+      ficheStatus = 'UPSERTED'
+    } else {
+      ficheStatus = 'DRY_RUN_OK'
+    }
+  } else if (ficheRaw && ficheRaw._parseError) {
+    ficheStatus = `PARSE_ERROR:${ficheRaw._parseError}`
+  }
+
+  return {
+    folder: `${entry.brandFolder}/${entry.modelFolder}`,
+    status: failures.length > 0 ? 'PARTIAL' : 'OK',
+    brandName: dbBrand.name, modelName: modelDisplayName, modelId,
+    uploaded: urls.length, ...counts, ficheStatus,
     errors: failures.map(f => f.message),
   }
 }
