@@ -84,3 +84,117 @@ console.log(`\n=== import-curated-with-fiches — Mode: ${MODE_BANNER} ===\n`)
 console.log(`Curated images: ${CURATED_DIR}`)
 console.log(`Fiches:         ${FICHES_DIR}`)
 console.log(`Report:         ${REPORT_PATH}\n`)
+
+// ---------------------------------------------------------------------------
+// Canonical slug — MUST match src/lib/slug.ts and scripts/curated-images/audit-mapping.mjs
+// ---------------------------------------------------------------------------
+function slug(input) {
+  return String(input)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+// ---------------------------------------------------------------------------
+// Brand-slug aliases: source folder name → DB brand canonical name
+// ---------------------------------------------------------------------------
+const BRAND_ALIAS = {
+  'mercedes-benz': 'Mercedes',  // source folder uses hyphenated form, DB row is "Mercedes"
+}
+
+// Display names for brands we expect to create (must be slug-stable).
+const NEW_BRAND_DISPLAY_NAMES = {
+  'alpine': 'Alpine',
+  'aston-martin': 'Aston Martin',
+  'bentley': 'Bentley',
+  'chevrolet': 'Chevrolet',
+  'ferrari': 'Ferrari',
+  'foton': 'Foton',
+  'isuzu': 'Isuzu',
+}
+
+const IMG_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp'])
+const CONTENT_TYPE = {
+  '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+  '.png': 'image/png',  '.webp': 'image/webp',
+}
+
+function listImages(dir) {
+  if (!fs.existsSync(dir)) return []
+  return fs.readdirSync(dir)
+    .filter(f => IMG_EXT.has(path.extname(f).toLowerCase()))
+    .sort()
+}
+
+// Convert a hyphenated model folder slug ("rs-q8", "range-rover-vogue") to a
+// display name ("RS-Q8", "Range Rover Vogue"). Same convention as
+// scripts/import-cars.mjs modelSlugToName().
+// NOTE: For trailing-dash slugs ("gtc4lusso-", "poer-", "levante-"), the caller
+// is expected to strip the trailing dash BEFORE passing the slug in.
+function modelSlugToName(s) {
+  return s.split('-').map(word => {
+    if (['phev','hev','ev','gt','rs','amg','gtx','gti','gte','tdi','tfsi','tsi','bvm']
+        .includes(word.toLowerCase())) return word.toUpperCase()
+    if (/^\d+$/.test(word)) return word
+    return word.charAt(0).toUpperCase() + word.slice(1)
+  }).join(' ')
+}
+
+// ---------------------------------------------------------------------------
+// Fiche field mappers — match scripts/import-cars.mjs conventions
+// ---------------------------------------------------------------------------
+function mapFuelType(carburant) {
+  if (!carburant) return null
+  const e = String(carburant).toLowerCase()
+  if (e.includes('electrique') || e === 'électrique' || e === 'electric') return 'Electric'
+  if (e.includes('hybride rechargeable') || e.includes('phev')) return 'PHEV'
+  if (e.includes('hybride') || e.includes('hybrid')) return 'Hybrid'
+  if (e.includes('diesel')) return 'Diesel'
+  if (e.includes('essence')) return 'Essence'
+  return null
+}
+
+function mapTransmission(boite) {
+  if (!boite) return null
+  const b = String(boite).toLowerCase()
+  if (b.includes('cvt')) return 'CVT'
+  if (b.includes('double embrayage') || b.includes('dct') || b.includes('dsg')) return 'DCT'
+  if (b.includes('automatique') || b.includes('auto')) return 'Automatic'
+  if (b.includes('manuelle') || b.includes('manuel')) return 'Manual'
+  return null
+}
+
+function mapVariantFuel(fuel) { return mapFuelType(fuel) }
+function mapVariantTransmission(t) { return mapTransmission(t) }
+
+// Default category for new models. The fiche files don't carry a clean category
+// signal; use 'SUV' as the existing import-cars.mjs fallback. Operators can
+// edit per-model in /admin/vehicles after the import.
+const DEFAULT_CATEGORY = 'SUV'
+
+// Parse "116 ch" → 116
+function parseChNumber(val) {
+  if (val == null) return null
+  const m = String(val).match(/(\d+)/)
+  return m ? parseInt(m[1], 10) : null
+}
+// Parse "200 nm" / "200 Nm" → 200
+function parseNm(val) {
+  if (val == null) return null
+  const m = String(val).match(/(\d+)/)
+  return m ? parseInt(m[1], 10) : null
+}
+// Parse "335 L", "335 litre" → 335
+function parseLitres(val) {
+  if (val == null) return null
+  const m = String(val).match(/(\d+)/)
+  return m ? parseInt(m[1], 10) : null
+}
+// Parse "1210 kg" → 1210; "200.0 km/h" → 200; "5.5 L/100km" → 5.5
+function parseFirstFloat(val) {
+  if (val == null) return null
+  const m = String(val).replace(/\./g, '').replace(/,/g, '.').match(/(\d+(?:\.\d+)?)/)
+  return m ? parseFloat(m[1]) : null
+}
