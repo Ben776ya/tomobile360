@@ -702,3 +702,49 @@ async function ensureNewBrands(idx, brandsReferencedBySources) {
   }
   return created
 }
+
+// ---------------------------------------------------------------------------
+// Image upload — uploads the 8 curated + 5 detail-shots picks for one model,
+// returns the ordered list of public URLs. Filenames are renamed for stable
+// gallery order and SEO: <brandSlug>-<modelSlug>-curated-NN.<ext> first,
+// then <brandSlug>-<modelSlug>-detail-NN.<ext>.
+// ---------------------------------------------------------------------------
+async function uploadImageSet(entry) {
+  const { brandFolder, modelFolder, brandSlug, modelSlug, resolvedBrandSlug } = entry
+  const curatedDir = path.join(CURATED_DIR, brandFolder, modelFolder, 'curated')
+  const detailDir = path.join(CURATED_DIR, brandFolder, modelFolder, 'detail-shots')
+  const curatedFiles = listImages(curatedDir).slice(0, CURATED_TAKE)
+  const detailFiles = listImages(detailDir).slice(0, DETAIL_TAKE)
+
+  const targetBrandSlug = resolvedBrandSlug  // mercedes-benz → mercedes, etc.
+  const urls = []
+  const failures = []
+
+  const uploadOne = async (localPath, kind, seq) => {
+    const ext = path.extname(localPath).toLowerCase()
+    const dstName = `${targetBrandSlug}-${modelSlug}-${kind}-${String(seq).padStart(2, '0')}${ext}`
+    const storagePath = `${STORAGE_PREFIX}/${targetBrandSlug}/${modelSlug}/${dstName}`
+    if (!APPLY) {
+      urls.push(`${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${storagePath}`)
+      return
+    }
+    const buf = fs.readFileSync(localPath)
+    const { error } = await supabase.storage.from(BUCKET).upload(storagePath, buf, {
+      contentType: CONTENT_TYPE[ext] || 'application/octet-stream',
+      upsert: true,
+    })
+    if (error) {
+      failures.push({ storagePath, message: error.message })
+      return
+    }
+    const { data } = supabase.storage.from(BUCKET).getPublicUrl(storagePath)
+    urls.push(data.publicUrl)
+  }
+
+  let i = 1
+  for (const f of curatedFiles) { await uploadOne(path.join(curatedDir, f), 'curated', i++) }
+  i = 1
+  for (const f of detailFiles) { await uploadOne(path.join(detailDir, f), 'detail', i++) }
+
+  return { urls, failures, counts: { curated: curatedFiles.length, detail: detailFiles.length } }
+}
