@@ -549,7 +549,14 @@ async function main() {
     console.log('Dry-run complete. Review the report, then re-run with --apply to mutate.')
     return
   }
-  // (apply branches added in later tasks)
+
+  // Brand pre-pass: which source brand slugs are referenced?
+  const referencedBrandSlugs = new Set([...create, ...replace, ...skip].map(e => e.brandSlug))
+  const createdBrands = await ensureNewBrands(idx, referencedBrandSlugs)
+  report.brandsCreated = createdBrands
+  fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2))
+
+  // (per-model apply branches — added in later tasks)
 }
 main().catch(e => { console.error('FATAL:', e); process.exit(1) })
 
@@ -659,4 +666,39 @@ function vehicleDefaultsFromFiche(raw) {
     is_available: true,
     source_url: raw.url || null,
   }
+}
+
+// ---------------------------------------------------------------------------
+// Brand creation — inserts any brand listed in NEW_BRAND_DISPLAY_NAMES that
+// doesn't already exist in the DB index. Updates the index in place so the
+// subsequent create/replace passes can resolve the new brand_id.
+// Returns: array of { name, slug, logoUrl, brandId, created: boolean }
+// ---------------------------------------------------------------------------
+async function ensureNewBrands(idx, brandsReferencedBySources) {
+  const created = []
+  for (const [bSlug, displayName] of Object.entries(NEW_BRAND_DISPLAY_NAMES)) {
+    if (!brandsReferencedBySources.has(bSlug)) continue
+    if (idx.brandBySlug.has(bSlug)) continue  // already exists, skip
+
+    const logoFile = path.join(PUBLIC_BRANDS_DIR, `${bSlug}.png`)
+    const logoUrl = fs.existsSync(logoFile) ? `/brands/${bSlug}.png` : null
+
+    if (!APPLY) {
+      created.push({ name: displayName, slug: bSlug, logoUrl, brandId: null, created: false })
+      // In dry-run, simulate the brand existing so downstream classification is realistic
+      idx.brandBySlug.set(bSlug, { id: `DRY-RUN-${bSlug}`, name: displayName })
+      continue
+    }
+
+    const { data, error } = await supabase
+      .from('brands')
+      .insert({ name: displayName, logo_url: logoUrl })
+      .select('id, name')
+      .single()
+    if (error) throw new Error(`Failed to create brand ${displayName}: ${error.message}`)
+    idx.brandBySlug.set(bSlug, { id: data.id, name: data.name })
+    created.push({ name: displayName, slug: bSlug, logoUrl, brandId: data.id, created: true })
+    console.log(`  [BRAND CREATED] ${displayName} (slug=${bSlug}, logo=${logoUrl ?? 'none'})`)
+  }
+  return created
 }
