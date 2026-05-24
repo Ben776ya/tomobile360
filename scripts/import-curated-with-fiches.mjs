@@ -268,9 +268,136 @@ async function loadDbIndex() {
   return { brandBySlug, modelByKey }
 }
 
+// ---------------------------------------------------------------------------
+// Classifier — walks curated-images/ and assigns each model an action bucket.
+// Returns: { skip, replace, create, errors } where each entry has full provenance.
+// ---------------------------------------------------------------------------
+function classifySources(idx) {
+  if (!fs.existsSync(CURATED_DIR)) {
+    console.error('ERROR: curated-images folder not found at', CURATED_DIR)
+    process.exit(1)
+  }
+
+  const skip = []      // existing model with >= 6 images → no-op
+  const replace = []   // existing model with <= 5 images → re-upload images + refresh fiche
+  const create = []    // model not in DB → create model+vehicle+images+fiche (and brand if missing)
+  const errors = []    // unparseable / missing fiche / no images / dup folder
+
+  // Track the brand folders we've already processed (case-insensitive) so the
+  // "Aston Martin" + "aston-martin" duplicate doesn't double-up under Windows.
+  const seenBrandSlugs = new Set()
+
+  const brandFolders = fs.readdirSync(CURATED_DIR, { withFileTypes: true })
+    .filter(d => d.isDirectory())
+    .map(d => d.name)
+    .sort()
+
+  for (const brandFolder of brandFolders) {
+    const brandSlug = slug(brandFolder)
+    if (seenBrandSlugs.has(brandSlug)) {
+      errors.push({ kind: 'DUPLICATE_BRAND_FOLDER', brandFolder, brandSlug,
+                    reason: 'a folder with the same brand slug was already processed' })
+      continue
+    }
+    seenBrandSlugs.add(brandSlug)
+
+    // Resolve brand: explicit alias → DB row, else slug match, else mark NEW
+    const aliasedName = BRAND_ALIAS[brandSlug]
+    const resolveSlug = aliasedName ? slug(aliasedName) : brandSlug
+    const dbBrand = idx.brandBySlug.get(resolveSlug)
+    const brandKnownNew = !dbBrand && NEW_BRAND_DISPLAY_NAMES[brandSlug]
+    if (!dbBrand && !brandKnownNew) {
+      errors.push({ kind: 'UNKNOWN_BRAND', brandFolder, brandSlug,
+                    reason: `brand slug "${brandSlug}" is not in DB and not in the known-new-brand list` })
+      continue
+    }
+
+    const brandDir = path.join(CURATED_DIR, brandFolder)
+    const modelFolders = fs.readdirSync(brandDir, { withFileTypes: true })
+      .filter(d => d.isDirectory())
+      .map(d => d.name)
+      .sort()
+
+    for (const modelFolder of modelFolders) {
+      const modelSlug = slug(modelFolder).replace(/-+$/g, '')  // trim trailing dash (gtc4lusso-, poer-, levante-)
+      const curatedDir = path.join(brandDir, modelFolder, 'curated')
+      const detailDir = path.join(brandDir, modelFolder, 'detail-shots')
+      const curatedFiles = listImages(curatedDir).slice(0, CURATED_TAKE)
+      const detailFiles = listImages(detailDir).slice(0, DETAIL_TAKE)
+      const totalImages = curatedFiles.length + detailFiles.length
+
+      const ficheRelPath = path.join(brandSlug, `${modelSlug}.json`)
+      const ficheAbsPath = path.join(FICHES_DIR, ficheRelPath)
+      const ficheExists = fs.existsSync(ficheAbsPath)
+
+      const baseEntry = {
+        brandFolder, modelFolder, brandSlug, modelSlug,
+        resolvedBrandSlug: resolveSlug,
+        curatedCount: curatedFiles.length,
+        detailCount: detailFiles.length,
+        totalImages,
+        ficheExists,
+        ficheRelPath,
+      }
+
+      if (totalImages === 0) {
+        errors.push({ ...baseEntry, kind: 'NO_IMAGES',
+                      reason: 'no usable JPG/PNG/WEBP files under curated/ or detail-shots/' })
+        continue
+      }
+
+      const dbBrandSlug = aliasedName ? slug(aliasedName) : brandSlug
+      const key = `${dbBrandSlug}::${modelSlug}`
+      const dbModel = idx.modelByKey.get(key)
+
+      if (dbModel) {
+        if (dbModel.imageCount >= IMAGE_KEEP_THRESHOLD) {
+          skip.push({ ...baseEntry, modelId: dbModel.modelId, modelName: dbModel.modelName,
+                      existingImageCount: dbModel.imageCount,
+                      reason: `existing vehicles_new row has ${dbModel.imageCount} images (>= ${IMAGE_KEEP_THRESHOLD})` })
+        } else {
+          replace.push({ ...baseEntry, modelId: dbModel.modelId, modelName: dbModel.modelName,
+                         vehicleId: dbModel.vehicleId, existingImageCount: dbModel.imageCount,
+                         existingHasFiche: dbModel.hasFiche })
+        }
+      } else {
+        create.push({ ...baseEntry,
+                      willCreateBrand: !dbBrand,
+                      newBrandName: dbBrand ? null : NEW_BRAND_DISPLAY_NAMES[brandSlug] })
+      }
+    }
+  }
+
+  return { skip, replace, create, errors }
+}
+
 async function main() {
   const idx = await loadDbIndex()
-  console.log(`Sample brand slugs: ${Array.from(idx.brandBySlug.keys()).slice(0, 5).join(', ')}`)
-  console.log(`Sample model keys: ${Array.from(idx.modelByKey.keys()).slice(0, 5).join(', ')}`)
+  const { skip, replace, create, errors } = classifySources(idx)
+
+  console.log('========== CLASSIFICATION SUMMARY ==========')
+  console.log(`SKIP    (existing, >=6 images, no-op): ${skip.length}`)
+  console.log(`REPLACE (existing, <=5 images):        ${replace.length}`)
+  console.log(`CREATE  (new model, possibly new brand): ${create.length}`)
+  console.log(`ERRORS  (unparseable / no images / dup): ${errors.length}`)
+  const newBrands = [...new Set(create.filter(c => c.willCreateBrand).map(c => c.newBrandName))]
+  console.log(`Brands to create: ${newBrands.join(', ') || '(none)'}`)
+  console.log('============================================\n')
+
+  const report = {
+    generatedAt: new Date().toISOString(),
+    mode: APPLY ? 'apply' : 'dry-run',
+    summary: { skip: skip.length, replace: replace.length, create: create.length, errors: errors.length,
+               newBrands },
+    skip, replace, create, errors,
+  }
+  fs.writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2))
+  console.log(`Report written to: ${REPORT_PATH}\n`)
+
+  if (!APPLY) {
+    console.log('Dry-run complete. Review the report, then re-run with --apply to mutate.')
+    return
+  }
+  // (apply branches added in later tasks)
 }
 main().catch(e => { console.error('FATAL:', e); process.exit(1) })
