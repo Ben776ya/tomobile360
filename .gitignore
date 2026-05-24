@@ -66,5 +66,6 @@ scripts/*
 !scripts/upload-magazines-to-supabase.mjs
 !scripts/prelaunch-scan.sh
 !scripts/convert-png-to-webp.mjs
+!scripts/import-curated-with-fiches.mjs
 !scripts/lib/
 !scripts/output/
