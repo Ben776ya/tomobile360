@@ -552,3 +552,111 @@ async function main() {
   // (apply branches added in later tasks)
 }
 main().catch(e => { console.error('FATAL:', e); process.exit(1) })
+
+// ---------------------------------------------------------------------------
+// Fiche loader + transformer
+//
+// Source shape (fiches_tomobile_format/<brand>/<model>.json):
+//   {
+//     brand, model,
+//     carburant, transmission, motorisation,
+//     prix_min, prix_max, prix_text,
+//     versions: [{ name, power_ch, power_kw, fuel, transmission, price_text }],
+//     caracteristiques_techniques: { "Puissance dynamique": "116 ch", ... },
+//     confort: { "Climatisation": "Oui", ... },
+//     securite: { ... },
+//     esthetique: { ... },
+//     connectivite_multimedia: { ... },
+//     extras: { ... }
+//   }
+//
+// Target shape (fiches_techniques row):
+//   specs:    Same shape as caracteristiques_techniques (flat key:string-value object)
+//   en_detail: {
+//     "Confort":               ["Climatisation", "Sièges chauffants", ...],
+//     "Sécurité":              [...],
+//     "Esthétique":            [...],
+//     "Connectivité & Multimédia": [...]
+//   }
+//   (Each section: keys whose value is truthy / "Oui", as an array of feature labels.)
+// ---------------------------------------------------------------------------
+function loadFiche(ficheAbsPath) {
+  if (!fs.existsSync(ficheAbsPath)) return null
+  try {
+    return JSON.parse(fs.readFileSync(ficheAbsPath, 'utf8'))
+  } catch (e) {
+    return { _parseError: e.message }
+  }
+}
+
+function isTruthyOui(v) {
+  if (v === true) return true
+  if (typeof v === 'string') {
+    const t = v.trim().toLowerCase()
+    return t === 'oui' || t === 'yes' || (t !== '' && t !== 'non' && t !== 'no' && t !== 'false')
+  }
+  return false
+}
+
+function transformFiche(raw) {
+  if (!raw || raw._parseError) return null
+  const specs = raw.caracteristiques_techniques && typeof raw.caracteristiques_techniques === 'object'
+    ? { ...raw.caracteristiques_techniques } : {}
+
+  const en_detail = {}
+  const sectionMap = {
+    confort: 'Confort',
+    securite: 'Sécurité',
+    esthetique: 'Esthétique',
+    connectivite_multimedia: 'Connectivité & Multimédia',
+  }
+  for (const [srcKey, dstKey] of Object.entries(sectionMap)) {
+    const section = raw[srcKey]
+    if (!section || typeof section !== 'object') continue
+    const labels = Object.entries(section)
+      .filter(([_, v]) => isTruthyOui(v))
+      .map(([k]) => k)
+    if (labels.length > 0) en_detail[dstKey] = labels
+  }
+
+  return { specs, en_detail, source_url: raw.url || null }
+}
+
+// Build vehicles_new column defaults from a fiche, used ONLY when creating a
+// brand-new vehicle row. Does not run for the "replace images" branch.
+function vehicleDefaultsFromFiche(raw) {
+  if (!raw) return { year: 2025, is_available: true }
+  const ct = raw.caracteristiques_techniques || {}
+  const versionList = Array.isArray(raw.versions) ? raw.versions.map(v => ({
+    version: v.name || null,
+    price_min: v.price_text ? parseInt(String(v.price_text).replace(/\D/g, '')) || null : null,
+    price_max: v.price_text ? parseInt(String(v.price_text).replace(/\D/g, '')) || null : null,
+    horsepower: v.power_ch || parseChNumber(v.power_ch) || null,
+    fuel_type: mapVariantFuel(v.fuel),
+    transmission: mapVariantTransmission(v.transmission),
+  })) : []
+
+  const dims = {}
+  if (ct['Longueur']) dims.length = ct['Longueur']
+  if (ct['Largeur']) dims.width = ct['Largeur']
+  if (ct['Hauteur']) dims.height = ct['Hauteur']
+  if (ct['Empattement']) dims.wheelbase = ct['Empattement']
+  if (ct['Poids à vide']) dims.weight = ct['Poids à vide']
+
+  return {
+    year: 2025,
+    fuel_type: mapFuelType(raw.carburant),
+    transmission: mapTransmission(raw.transmission),
+    horsepower: parseChNumber(ct['Puissance dynamique'] || ct['Puissance cumulée']),
+    torque: parseNm(ct['Couple maxi.']),
+    top_speed: ct['Vitesse maxi.'] ? Math.round(parseFirstFloat(ct['Vitesse maxi.'])) : null,
+    fuel_consumption_combined: parseFirstFloat(ct['Conso. mixte']),
+    cargo_capacity: parseLitres(ct['Volume de coffre']),
+    price_min: raw.prix_min != null ? Math.round(raw.prix_min) : null,
+    price_max: raw.prix_max != null ? Math.round(raw.prix_max) : null,
+    dimensions: Object.keys(dims).length ? dims : null,
+    variant_list: versionList.length ? versionList : null,
+    is_available: true,
+    source_url: raw.url || null,
+  }
+}
