@@ -192,11 +192,19 @@ function parseLitres(val) {
   const m = String(val).match(/(\d+)/)
   return m ? parseInt(m[1], 10) : null
 }
-// Parse "1210 kg" → 1210; "200.0 km/h" → 200; "5.5 L/100km" → 5.5
+// Parse "1210 kg" → 1210; "200.0 km/h" → 200; "5.5 L/100km" → 5.5;
+// "1.234.567" → 1234567; "1.234,56" → 1234.56; "5,5 L/100km" → 5.5.
 function parseFirstFloat(val) {
   if (val == null) return null
-  const m = String(val).replace(/\./g, '').replace(/,/g, '.').match(/(\d+(?:\.\d+)?)/)
-  return m ? parseFloat(m[1]) : null
+  // Match the first numeric token, accepting either '.' or ',' as decimal separator.
+  // Strip period-thousand-separators only when followed by exactly 3 digits AND not the
+  // last decimal group (e.g. "1.234.567" → "1234567"; "200.0" must stay "200.0").
+  let s = String(val).trim()
+  // Drop period-thousand groups: \d.\d{3}(?!\d) iteratively
+  while (/\d\.\d{3}(?!\d)/.test(s)) s = s.replace(/(\d)\.(\d{3})(?!\d)/g, '$1$2')
+  const m = s.match(/(\d+(?:[.,]\d+)?)/)
+  if (!m) return null
+  return parseFloat(m[1].replace(',', '.'))
 }
 
 // ---------------------------------------------------------------------------
