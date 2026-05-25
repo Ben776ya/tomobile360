@@ -65,9 +65,12 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
 })
 
 const APPLY = process.argv.includes('--apply')
-const MODE_BANNER = APPLY
-  ? 'APPLY (will create brands/models, upload images, update DB)'
-  : 'DRY-RUN (no writes)'
+const BACKFILL_FIELDS = process.argv.includes('--backfill-fields')
+const MODE_BANNER = BACKFILL_FIELDS
+  ? (APPLY ? 'BACKFILL-FIELDS APPLY (recompute top_speed + fuel_consumption_combined)'
+           : 'BACKFILL-FIELDS DRY-RUN (no writes)')
+  : (APPLY ? 'APPLY (will create brands/models, upload images, update DB)'
+           : 'DRY-RUN (no writes)')
 
 const CURATED_DIR = path.join(repoRoot, 'curated-images')
 const FICHES_DIR = path.join(repoRoot, 'fiches_tomobile_format')
@@ -529,6 +532,100 @@ function classifySources(idx) {
   return { skip, replace, create, skipAmbiguous, errors }
 }
 
+// ---------------------------------------------------------------------------
+// BACKFILL — one-off cleanup mode (--backfill-fields). After fixing the
+// parseFirstFloat bug, many already-imported rows still hold corrupted
+// top_speed / fuel_consumption_combined values (e.g. 2300 km/h instead of 230,
+// 72.00 L/100km instead of 7.2). Walk every SKIP + REPLACE entry whose model
+// has a fiche on disk, recompute those two fields with the FIXED parser, and
+// UPDATE only those two columns (never touch others — many may be hand-edited).
+// ---------------------------------------------------------------------------
+async function runBackfillFields({ skip, replace }) {
+  const candidates = [...skip, ...replace].filter(e => e.ficheExists && e.modelId)
+  console.log(`\n--- BACKFILL top_speed + fuel_consumption_combined ---`)
+  console.log(`Candidates (SKIP + REPLACE with fiche on disk): ${candidates.length}`)
+  console.log(`Mode: ${APPLY ? 'APPLY (will UPDATE rows)' : 'DRY-RUN (no writes)'}\n`)
+
+  let updated = 0
+  let skippedNoFiche = 0
+  let skippedNoRow = 0
+  let skippedNoChange = 0
+  let failed = 0
+
+  for (let i = 0; i < candidates.length; i++) {
+    const e = candidates[i]
+    const tag = `[B ${String(i+1).padStart(3,'0')}/${candidates.length}]`
+    const raw = loadFiche(path.join(FICHES_DIR, e.ficheRelPath))
+    if (!raw || raw._parseError) {
+      skippedNoFiche++
+      console.log(`${tag} SKIP_PARSE ${e.brandFolder}/${e.modelFolder}`)
+      continue
+    }
+    const ct = raw.caracteristiques_techniques || {}
+    const newTopSpeed = ct['Vitesse maxi.'] ? Math.round(parseFirstFloat(ct['Vitesse maxi.'])) : null
+    const newFuel = parseFirstFloat(ct['Conso. mixte'])
+
+    // Fetch current row to compare (and to confirm a row exists)
+    const { data: row, error: fetchErr } = await supabase
+      .from('vehicles_new')
+      .select('id, top_speed, fuel_consumption_combined')
+      .eq('model_id', e.modelId)
+      .maybeSingle()
+    if (fetchErr) {
+      failed++
+      console.error(`${tag} FAIL_FETCH ${e.brandFolder}/${e.modelFolder}: ${fetchErr.message}`)
+      continue
+    }
+    if (!row) {
+      skippedNoRow++
+      console.log(`${tag} SKIP_NO_ROW ${e.brandFolder}/${e.modelFolder} (model ${e.modelId})`)
+      continue
+    }
+
+    const curTop = row.top_speed
+    const curFuel = row.fuel_consumption_combined == null ? null : Number(row.fuel_consumption_combined)
+    const topChanged = newTopSpeed !== curTop
+    const fuelChanged = (newFuel == null ? null : Number(newFuel)) !== curFuel
+
+    if (!topChanged && !fuelChanged) {
+      skippedNoChange++
+      continue
+    }
+
+    const patch = {}
+    if (topChanged) patch.top_speed = newTopSpeed
+    if (fuelChanged) patch.fuel_consumption_combined = newFuel
+
+    if (!APPLY) {
+      console.log(`${tag} DRY ${e.brandFolder}/${e.modelFolder} ` +
+                  `top: ${curTop} → ${newTopSpeed} | fuel: ${curFuel} → ${newFuel}`)
+      updated++
+      continue
+    }
+
+    const { error: updErr } = await supabase
+      .from('vehicles_new')
+      .update(patch)
+      .eq('id', row.id)
+    if (updErr) {
+      failed++
+      console.error(`${tag} FAIL_UPDATE ${e.brandFolder}/${e.modelFolder}: ${updErr.message}`)
+      continue
+    }
+    updated++
+    console.log(`${tag} OK  ${e.brandFolder}/${e.modelFolder} ` +
+                `top: ${curTop} → ${newTopSpeed} | fuel: ${curFuel} → ${newFuel}`)
+  }
+
+  console.log('\n=================== BACKFILL TALLY ===================')
+  console.log(`  updated         ${updated}`)
+  console.log(`  no_change       ${skippedNoChange}`)
+  console.log(`  parse_failed    ${skippedNoFiche}`)
+  console.log(`  no_vehicle_row  ${skippedNoRow}`)
+  console.log(`  failed          ${failed}`)
+  console.log('======================================================')
+}
+
 async function main() {
   const idx = await loadDbIndex()
   const { skip, replace, create, skipAmbiguous, errors } = classifySources(idx)
@@ -542,6 +639,11 @@ async function main() {
   const newBrands = [...new Set(create.filter(c => c.willCreateBrand).map(c => c.newBrandName))]
   console.log(`Brands to create: ${newBrands.join(', ') || '(none)'}`)
   console.log('============================================\n')
+
+  if (BACKFILL_FIELDS) {
+    await runBackfillFields({ skip, replace })
+    return
+  }
 
   const report = {
     generatedAt: new Date().toISOString(),
