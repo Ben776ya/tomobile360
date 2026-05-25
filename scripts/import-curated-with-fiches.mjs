@@ -513,6 +513,7 @@ function classifySources(idx) {
                       reason: `existing vehicles_new row has ${dbModel.imageCount} images (>= ${IMAGE_KEEP_THRESHOLD})` })
         } else {
           replace.push({ ...baseEntry, modelId: dbModel.modelId, modelName: dbModel.modelName,
+                         brandId: dbModel.brandId,
                          vehicleId: dbModel.vehicleId, existingImageCount: dbModel.imageCount,
                          existingHasFiche: dbModel.hasFiche,
                          matchRule: match.matchRule, candidateCount: match.candidateCount })
@@ -608,6 +609,7 @@ async function main() {
   const tally = {
     skip: skip.length,
     replace_ok: replaceResults.filter(r => r.status === 'OK').length,
+    replace_inserted: replaceResults.filter(r => r.status === 'OK_INSERTED').length,
     replace_partial: replaceResults.filter(r => r.status === 'PARTIAL').length,
     replace_fail: replaceResults.filter(r => r.status === 'FAIL').length,
     create_ok: createResults.filter(r => r.status === 'OK').length,
@@ -824,11 +826,27 @@ async function uploadImageSet(entry) {
 }
 
 // ---------------------------------------------------------------------------
-// REPLACE branch — existing model with <= 5 images.
-// Re-uploads images and updates vehicles_new.images. Also refreshes
-// fiches_techniques (upsert by model_id). Does NOT touch other vehicle columns.
+// REPLACE branch — existing model (in `models`) whose vehicles_new row either
+// has <= 5 images OR doesn't exist yet.
+//
+// Path A (vehicles_new row exists): re-uploads images and UPDATEs
+//   vehicles_new.images. Does NOT touch other vehicle columns (price, variants,
+//   etc. may have been hand-edited).
+// Path B (vehicles_new row missing): INSERTs a new vehicles_new row using
+//   vehicleDefaultsFromFiche() — same defaults logic as applyCreate — so the
+//   model's public page stops 404'ing.
+//
+// Always refreshes fiches_techniques (upsert by model_id) when a fiche file
+// exists.
 // ---------------------------------------------------------------------------
 async function applyReplace(entry) {
+  // Load fiche raw up front — needed for both the INSERT defaults and the
+  // fiche upsert below.
+  const ficheRaw = entry.ficheExists
+    ? loadFiche(path.join(FICHES_DIR, entry.ficheRelPath))
+    : null
+  const transformed = transformFiche(ficheRaw)
+
   const { urls, failures, counts } = await uploadImageSet(entry)
   if (urls.length === 0) {
     return { folder: `${entry.brandFolder}/${entry.modelFolder}`, status: 'IMG_UPLOAD_EMPTY',
@@ -836,6 +854,7 @@ async function applyReplace(entry) {
   }
 
   let rowsUpdated = 0
+  let inserted = false
   if (APPLY) {
     const { data, error } = await supabase
       .from('vehicles_new')
@@ -844,15 +863,32 @@ async function applyReplace(entry) {
       .select('id')
     if (error) throw new Error(`vehicles_new update failed for ${entry.modelId}: ${error.message}`)
     rowsUpdated = data?.length || 0
+
+    // Path B: no vehicles_new row existed — INSERT one so the model's public
+    // page can render. Use the same defaults logic applyCreate uses.
+    if (rowsUpdated === 0) {
+      if (!entry.brandId) {
+        throw new Error(`vehicles_new INSERT requires brandId on entry for ${entry.modelId}`)
+      }
+      const vehicleDefaults = vehicleDefaultsFromFiche(ficheRaw)
+      const { error: insErr } = await supabase
+        .from('vehicles_new')
+        .insert({
+          brand_id: entry.brandId,
+          model_id: entry.modelId,
+          images: urls,
+          ...vehicleDefaults,
+        })
+      if (insErr) throw new Error(`vehicles_new insert failed for ${entry.modelId}: ${insErr.message}`)
+      inserted = true
+    }
   }
 
   // Refresh fiche
   let ficheStatus = 'NO_FICHE_FILE'
   if (entry.ficheExists) {
-    const raw = loadFiche(path.join(FICHES_DIR, entry.ficheRelPath))
-    const transformed = transformFiche(raw)
     if (!transformed) {
-      ficheStatus = `PARSE_ERROR:${raw?._parseError || 'unknown'}`
+      ficheStatus = `PARSE_ERROR:${ficheRaw?._parseError || 'unknown'}`
     } else if (APPLY) {
       const { error } = await supabase
         .from('fiches_techniques')
@@ -872,9 +908,9 @@ async function applyReplace(entry) {
 
   return {
     folder: `${entry.brandFolder}/${entry.modelFolder}`,
-    status: failures.length > 0 ? 'PARTIAL' : 'OK',
+    status: failures.length > 0 ? 'PARTIAL' : (inserted ? 'OK_INSERTED' : 'OK'),
     modelId: entry.modelId, modelName: entry.modelName,
-    uploaded: urls.length, ...counts, rowsUpdated, ficheStatus,
+    uploaded: urls.length, ...counts, rowsUpdated, inserted, ficheStatus,
     errors: failures.map(f => f.message),
   }
 }
