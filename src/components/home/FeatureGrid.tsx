@@ -155,7 +155,7 @@ const STICKER_ICON_STROKE: Record<FeatureKey, string> = {
   offres: '#F97316',
   coeur: '#F43F5E',
   top: '#A16207',
-  chinese: '#B91C1C',
+  chinese: '#15803D',
 }
 
 /* ─── Reusable feature card ─── */
