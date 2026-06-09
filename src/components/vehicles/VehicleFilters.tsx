@@ -145,7 +145,14 @@ export function VehicleFilters({
           ))}
           {activeFilters.length > 1 && (
             <button
-              onClick={() => router.replace('?', { scroll: false })}
+              onClick={() => {
+                // Preserve the origin "mode" (e.g. ?origin=chinese set by the homepage
+                // card) when clearing the user-applied filter chips.
+                const params = new URLSearchParams()
+                const origin = searchParams.get('origin')
+                if (origin) params.set('origin', origin)
+                router.replace(`?${params.toString()}`, { scroll: false })
+              }}
               className="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors duration-150"
             >
               Tout effacer

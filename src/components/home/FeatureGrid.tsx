@@ -78,7 +78,7 @@ const featureItems: FeatureItem[] = [
     subtitle: 'Laquelle choisir?',
     imageSrc: '/blog/kia-maroc-siam-2026-stand-meknes-modeles-electriques-hero.webp',
     imageAlt: 'Voitures EV et PHEV au Maroc',
-    href: '/neuf?fuel=Electric',
+    href: '/neuf?origin=chinese',
     action: 'link',
   },
   {

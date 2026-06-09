@@ -360,6 +360,7 @@ export type Database = {
           id: string
           logo_url: string | null
           name: string
+          origin: string | null
         }
         Insert: {
           created_at?: string | null
@@ -367,6 +368,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name: string
+          origin?: string | null
         }
         Update: {
           created_at?: string | null
@@ -374,6 +376,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name?: string
+          origin?: string | null
         }
         Relationships: []
       }

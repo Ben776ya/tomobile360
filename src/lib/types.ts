@@ -5,6 +5,7 @@ export type Brand = {
   name: string
   logo_url: string | null
   description: string | null
+  origin: string | null
   created_at: string | null
 }
 
