@@ -6,6 +6,7 @@ import { VehicleFilters } from '@/components/vehicles/VehicleFilters'
 import { BrandHeader } from '@/components/vehicles/BrandHeader'
 import { SlidersHorizontal } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { resolveOriginDbValue, ORIGIN_LABELS } from '@/lib/vehicles/origin-filter'
 
 export const revalidate = 60
 
@@ -26,6 +27,7 @@ interface SearchParams {
   priceMin?: string
   priceMax?: string
   yearMin?: string
+  origin?: string
   sort?: string
   page?: string
 }
@@ -46,6 +48,8 @@ export default async function NewVehiclesPage({
   const priceMin = searchParams.priceMin ? parseInt(searchParams.priceMin) : undefined
   const priceMax = searchParams.priceMax ? parseInt(searchParams.priceMax) : undefined
   const yearMin = searchParams.yearMin ? parseInt(searchParams.yearMin) : undefined
+  const originDbValue = resolveOriginDbValue(searchParams.origin)
+  const originLabel = originDbValue ? ORIGIN_LABELS[originDbValue] : null
   const sort = searchParams.sort || (brand ? 'price-asc' : 'newest')
   const page = searchParams.page ? parseInt(searchParams.page) : 1
   const itemsPerPage = 12
@@ -81,10 +85,25 @@ export default async function NewVehiclesPage({
   if (priceMax) query = query.lte('price_min', priceMax)
   if (yearMin) query = query.gte('year', yearMin)
 
+  // Origin filter (e.g. "Voitures chinoises") — constrain to brands tagged with this origin
+  let originHasNoMatch = false
+  if (originDbValue) {
+    const { data: originBrands } = await supabase
+      .from('brands')
+      .select('id')
+      .eq('origin', originDbValue)
+    const originBrandIds = (originBrands ?? []).map((b) => b.id)
+    if (originBrandIds.length > 0) {
+      query = query.in('brand_id', originBrandIds)
+    } else {
+      originHasNoMatch = true
+    }
+  }
+
   // Sort at DB level for consistent ordering within groups
   query = query.order('price_min', { ascending: true })
 
-  const { data: vehicles } = await query
+  const { data: vehicles } = originHasNoMatch ? { data: [] } : await query
 
   // Group vehicles by model (shared helper)
   const modelGroups = buildModelGroups((vehicles ?? []) as unknown as Parameters<typeof buildModelGroups>[0])
@@ -140,6 +159,7 @@ export default async function NewVehiclesPage({
     const params = new URLSearchParams()
     if (brand) params.set('brand', brand)
     if (model) params.set('model', model)
+    if (searchParams.origin) params.set('origin', searchParams.origin)
     if (category && key !== 'category') params.set('category', category)
     if (fuel && key !== 'fuel') params.set('fuel', fuel)
     if (transmission) params.set('transmission', transmission)
