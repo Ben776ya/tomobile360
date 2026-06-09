@@ -1,28 +1,29 @@
-import { test } from 'node:test'
-import assert from 'node:assert/strict'
+import { describe, test, expect } from 'vitest'
 import { resolveOriginDbValue, ORIGIN_PARAM_TO_DB, ORIGIN_LABELS } from '../origin-filter'
 
-test('resolveOriginDbValue — known slug maps to DB value', () => {
-  assert.equal(resolveOriginDbValue('chinese'), 'China')
-})
+describe('resolveOriginDbValue', () => {
+  test('known slug maps to DB value', () => {
+    expect(resolveOriginDbValue('chinese')).toBe('China')
+  })
 
-test('resolveOriginDbValue — is case-insensitive', () => {
-  assert.equal(resolveOriginDbValue('Chinese'), 'China')
-  assert.equal(resolveOriginDbValue('CHINESE'), 'China')
-})
+  test('is case-insensitive', () => {
+    expect(resolveOriginDbValue('Chinese')).toBe('China')
+    expect(resolveOriginDbValue('CHINESE')).toBe('China')
+  })
 
-test('resolveOriginDbValue — empty / undefined / null returns null', () => {
-  assert.equal(resolveOriginDbValue(undefined), null)
-  assert.equal(resolveOriginDbValue(null), null)
-  assert.equal(resolveOriginDbValue(''), null)
-})
+  test('empty / undefined / null returns null', () => {
+    expect(resolveOriginDbValue(undefined)).toBeNull()
+    expect(resolveOriginDbValue(null)).toBeNull()
+    expect(resolveOriginDbValue('')).toBeNull()
+  })
 
-test('resolveOriginDbValue — unknown slug returns null', () => {
-  assert.equal(resolveOriginDbValue('german'), null)
+  test('unknown slug returns null', () => {
+    expect(resolveOriginDbValue('german')).toBeNull()
+  })
 })
 
 test('every mapped origin DB value has a display label', () => {
   for (const dbValue of Object.values(ORIGIN_PARAM_TO_DB)) {
-    assert.ok(ORIGIN_LABELS[dbValue], `missing ORIGIN_LABELS entry for ${dbValue}`)
+    expect(ORIGIN_LABELS[dbValue], `missing ORIGIN_LABELS entry for ${dbValue}`).toBeTruthy()
   }
 })

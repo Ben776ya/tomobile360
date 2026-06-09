@@ -11,7 +11,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:moccaz": "npx tsx scripts/test-moccaz.ts",
-    "test:unit": "tsx --test src/lib/vehicles/__tests__/origin-filter.test.ts",
+    "test:unit": "vitest run src/lib/vehicles/__tests__/origin-filter.test.ts",
     "test:audit": "tsx --test scripts/lib/__tests__/validate-route.test.ts scripts/lib/__tests__/extract-internal-links.test.ts scripts/lib/__tests__/audit-articles.test.ts",
     "audit:internal-links": "tsx --env-file=.env.local scripts/audit-internal-links.ts",
     "validate-content": "tsx --env-file-if-exists=.env.local scripts/validate-content.ts",
