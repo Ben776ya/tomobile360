@@ -73,6 +73,15 @@ const featureItems: FeatureItem[] = [
     action: 'expand',
   },
   {
+    key: 'ev',
+    title: 'Voitures chinoises',
+    subtitle: 'Laquelle choisir?',
+    imageSrc: '/blog/kia-maroc-siam-2026-stand-meknes-modeles-electriques-hero.webp',
+    imageAlt: 'Voitures EV et PHEV au Maroc',
+    href: '/neuf?fuel=Electric',
+    action: 'link',
+  },
+  {
     key: 'offres',
     title: 'Offres Spéciales',
     subtitle: 'Promotions du moment',
@@ -97,15 +106,6 @@ const featureItems: FeatureItem[] = [
     imageSrc: '/features/top-ventes-voitures-populaires-maroc.png',
     imageAlt: 'Top ventes voitures populaires au Maroc',
     href: '/neuf/populaires',
-    action: 'link',
-  },
-  {
-    key: 'ev',
-    title: 'EV/PHEV',
-    subtitle: 'Découvrir la gamme',
-    imageSrc: '/blog/kia-maroc-siam-2026-stand-meknes-modeles-electriques-hero.webp',
-    imageAlt: 'Voitures EV et PHEV au Maroc',
-    href: '/neuf?fuel=Electric',
     action: 'link',
   },
 ]
