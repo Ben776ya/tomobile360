@@ -138,7 +138,7 @@ export default async function NewVehiclesPage({
     { data: categories },
     { data: allModels },
   ] = await Promise.all([
-    supabase.from('brands').select('id, name, logo_url, description, created_at').order('name'),
+    supabase.from('brands').select('id, name, logo_url, description, origin, created_at').order('name'),
     supabase.from('models').select('category').order('category'),
     supabase.from('models').select('id, brand_id, name, category').order('name'),
   ])
