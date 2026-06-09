@@ -19,7 +19,7 @@ export default async function AdminBrandDetailPage({
 
   const { data: brand } = await supabase
     .from('brands')
-    .select('id, name, logo_url, description, created_at')
+    .select('id, name, logo_url, description, origin, created_at')
     .eq('id', params.id)
     .single()
 
@@ -43,7 +43,7 @@ export default async function AdminBrandDetailPage({
       .order('price_min', { ascending: true }),
     supabase
       .from('brands')
-      .select('id, name, logo_url, description, created_at')
+      .select('id, name, logo_url, description, origin, created_at')
       .order('name', { ascending: true }),
     supabase
       .from('models')

@@ -39,7 +39,7 @@ export default async function EditVehiclePage({
 
   const { data: brands } = await supabase
     .from('brands')
-    .select('*')
+    .select('id, name, logo_url, description, origin, created_at')
     .order('name')
 
   const { data: models } = await supabase

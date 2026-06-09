@@ -13,7 +13,7 @@ export default async function AdminBrandsPage() {
   const [brandsResult, modelsResult, vehiclesResult] = await Promise.all([
     supabase
       .from('brands')
-      .select('id, name, logo_url, description, created_at')
+      .select('id, name, logo_url, description, origin, created_at')
       .order('name', { ascending: true }),
     supabase
       .from('models')
