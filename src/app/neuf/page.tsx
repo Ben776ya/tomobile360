@@ -187,10 +187,14 @@ export default async function NewVehiclesPage({
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-2">
-            Découvrez vos véhicules neufs : Le meilleur choix au Maroc !
+            {originLabel
+              ? `${originLabel} au Maroc 2026`
+              : 'Découvrez vos véhicules neufs : Le meilleur choix au Maroc !'}
           </h1>
           <p className="text-gray-500">
-            Trouvez des véhicules correspondant à votre budget parmi notre catalogue complet
+            {originLabel
+              ? `${originLabel} : prix, fiches techniques et disponibilité au Maroc.`
+              : 'Trouvez des véhicules correspondant à votre budget parmi notre catalogue complet'}
           </p>
         </div>
 
