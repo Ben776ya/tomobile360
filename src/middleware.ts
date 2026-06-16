@@ -59,11 +59,11 @@ export async function middleware(request: NextRequest) {
 
   // Admin route protection (SEC-01)
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    // Unauthenticated -> redirect to homepage. There is no in-app /login page;
-    // admins authenticate via Supabase (dashboard / magic link) and the cookie
-    // session is what we read here. /admin layout re-checks role server-side.
+    // Unauthenticated -> send to the login page so the admin can sign in.
+    // The session cookie set there is what we read here; the /admin layout
+    // re-checks the is_admin role server-side.
     if (!user) {
-      return NextResponse.redirect(new URL('/', request.url))
+      return NextResponse.redirect(new URL('/login', request.url))
     }
 
     // D-04: Query profiles table for admin status (session client, RLS allows own row)
