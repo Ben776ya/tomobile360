@@ -38,6 +38,7 @@ export function VehicleFilters({
   const priceMin = searchParams.get('priceMin') || ''
   const priceMax = searchParams.get('priceMax') || ''
   const sort = searchParams.get('sort') || ''
+  const origin = searchParams.get('origin') || ''
 
   // Filter models by selected brand
   const filteredModels = useMemo(() => {
@@ -60,7 +61,12 @@ export function VehicleFilters({
     { value: 'popular', label: 'Plus populaires' },
     { value: 'price-asc', label: 'Prix croissant' },
     { value: 'price-desc', label: 'Prix décroissant' },
+    { value: 'name-asc', label: 'Ordre alphabétique' },
   ]
+
+  // Mirror the page's default sort so the dropdown reflects the order actually
+  // shown — origin listings (e.g. "Voitures chinoises") default to alphabetical.
+  const effectiveSort = sort || (origin ? 'name-asc' : 'newest')
 
   const handleFilterChange = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -111,7 +117,7 @@ export function VehicleFilters({
     priceMin: (v) => `Min ${parseInt(v).toLocaleString()} DH`,
     priceMax: (v) => `Max ${parseInt(v).toLocaleString()} DH`,
     sort: (v) => {
-      const labels: Record<string, string> = { newest: 'Plus récents', popular: 'Plus populaires', 'price-asc': 'Prix ↑', 'price-desc': 'Prix ↓' }
+      const labels: Record<string, string> = { newest: 'Plus récents', popular: 'Plus populaires', 'price-asc': 'Prix ↑', 'price-desc': 'Prix ↓', 'name-asc': 'A → Z' }
       return labels[v] || v
     },
   }
@@ -167,7 +173,7 @@ export function VehicleFilters({
         <div>
           <Label className="mb-2 block">Trier par</Label>
           <select
-            value={sort || 'newest'}
+            value={effectiveSort}
             onChange={(e) => handleFilterChange('sort', e.target.value)}
             className={selectClass}
           >
