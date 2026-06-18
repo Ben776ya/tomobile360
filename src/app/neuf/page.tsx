@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { ModelCard } from '@/components/vehicles/ModelCard'
-import { buildModelGroups } from '@/lib/vehicles/group-by-model'
+import { buildModelGroups, type VehicleRowForGrouping } from '@/lib/vehicles/group-by-model'
 import { VehicleFilters } from '@/components/vehicles/VehicleFilters'
 import { BrandHeader } from '@/components/vehicles/BrandHeader'
 import { SlidersHorizontal } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
-import { resolveOriginDbValue, ORIGIN_LABELS } from '@/lib/vehicles/origin-filter'
+import { resolveOriginDbValue, ORIGIN_LABELS, isOriginExcludedModel } from '@/lib/vehicles/origin-filter'
 
 export const revalidate = 60
 
@@ -50,7 +50,8 @@ export default async function NewVehiclesPage({
   const yearMin = searchParams.yearMin ? parseInt(searchParams.yearMin) : undefined
   const originDbValue = resolveOriginDbValue(searchParams.origin)
   const originLabel = originDbValue ? ORIGIN_LABELS[originDbValue] : null
-  const sort = searchParams.sort || (brand ? 'price-asc' : 'newest')
+  // Origin listings (e.g. "Voitures chinoises") default to alphabetical order.
+  const sort = searchParams.sort || (originDbValue ? 'name-asc' : brand ? 'price-asc' : 'newest')
   const page = searchParams.page ? parseInt(searchParams.page) : 1
   const itemsPerPage = 12
 
@@ -105,11 +106,30 @@ export default async function NewVehiclesPage({
 
   const { data: vehicles } = originHasNoMatch ? { data: [] } : await query
 
+  // When an origin filter is active, hide specific models that shouldn't appear
+  // in that listing (e.g. utility vans among "Voitures chinoises"). Pickups stay.
+  const allRows = (vehicles ?? []) as unknown as VehicleRowForGrouping[]
+  const visibleRows = originDbValue
+    ? allRows.filter((v) => {
+        const brandName = Array.isArray(v.brands) ? v.brands[0]?.name : v.brands?.name
+        const modelName = Array.isArray(v.models) ? v.models[0]?.name : v.models?.name
+        return !(brandName && modelName && isOriginExcludedModel(brandName, modelName))
+      })
+    : allRows
+
   // Group vehicles by model (shared helper)
-  const modelGroups = buildModelGroups((vehicles ?? []) as unknown as Parameters<typeof buildModelGroups>[0])
+  const modelGroups = buildModelGroups(visibleRows)
 
   // Sort model groups
   switch (sort) {
+    case 'name-asc':
+      modelGroups.sort((a, b) =>
+        `${a.brandName} ${a.modelName}`.localeCompare(`${b.brandName} ${b.modelName}`, 'fr', {
+          sensitivity: 'base',
+          numeric: true,
+        })
+      )
+      break
     case 'price-asc':
       modelGroups.sort((a, b) => (a.minPrice ?? Infinity) - (b.minPrice ?? Infinity))
       break
@@ -296,7 +316,7 @@ export default async function NewVehiclesPage({
                 <span className="font-semibold text-secondary">{totalModels}</span> modèle
                 {totalModels > 1 ? 's' : ''} trouvé{totalModels > 1 ? 's' : ''}
                 <span className="text-gray-400 ml-1">
-                  ({(vehicles ?? []).length} version{(vehicles ?? []).length !== 1 ? 's' : ''})
+                  ({visibleRows.length} version{visibleRows.length !== 1 ? 's' : ''})
                 </span>
               </p>
 
