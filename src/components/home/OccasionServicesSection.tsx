@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Car, Calculator, Search, Gauge, Calendar, Fuel, ChevronRight, Zap, GitFork, ExternalLink } from 'lucide-react'
+import { Car, Calculator, Search, Gauge, Calendar, Fuel, ChevronRight, Zap, GitFork, ExternalLink, LifeBuoy, ArrowRight } from 'lucide-react'
 import { getMoccazListings, type MoccazListing } from '@/lib/scrapers/moccaz'
 import { MobileCarousel } from '@/components/shared/MobileCarousel'
 
@@ -152,21 +152,43 @@ export async function OccasionServicesSection() {
               <MOccazCard key={listing.slug} listing={listing} />
             ))}
 
-            {/* Ad Banner */}
-            <a
-              href="https://m-occaz.ma"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="h-[469px] rounded-xl overflow-hidden border border-gray-200 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 block relative"
-            >
-              <Image
-                src="/moccaz-ad.png"
-                alt="M-OCCAZ — Le choix Malin"
-                fill
-                className="object-contain"
-                sizes="246px"
-              />
-            </a>
+            {/* Ad Banner (full size) + services CTA stacked beneath it */}
+            <div className="flex flex-col gap-3">
+              <a
+                href="https://m-occaz.ma"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative block h-[469px] rounded-xl overflow-hidden border border-gray-200 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300"
+              >
+                <Image
+                  src="/moccaz-ad.png"
+                  alt="M-OCCAZ — Le choix Malin"
+                  fill
+                  className="object-contain"
+                  sizes="246px"
+                />
+              </a>
+
+              {/* Services / assistance CTA — sits in the empty space under the ad */}
+              <a
+                href="https://m-occaz.ma/assistance-moccaz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative flex flex-shrink-0 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl bg-gradient-to-br from-[#23924A] via-[#32B75C] to-[#41C96B] px-4 py-4 text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+              >
+                <span className="pointer-events-none absolute -right-6 -top-8 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25 transition-transform duration-300 group-hover:scale-105">
+                  <LifeBuoy className="h-5 w-5 text-white" />
+                </span>
+                <span className="font-display text-sm font-bold leading-tight text-white">
+                  Assistance &amp; Services M-Occaz
+                </span>
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-white/90">
+                  Découvrir
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+              </a>
+            </div>
           </MobileCarousel>
 
           {/* Spacer for mobile (MobileCarousel has no mb) */}

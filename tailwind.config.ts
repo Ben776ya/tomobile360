@@ -118,6 +118,7 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-sora)', 'system-ui', 'sans-serif'],
         display: ['var(--font-montserrat-alternates)', 'system-ui', 'sans-serif'],
+        roboto: ['var(--font-roboto)', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         'xl': '0.75rem',
