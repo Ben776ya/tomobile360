@@ -9,10 +9,10 @@ import { HeroSlider, type HeroSlide } from '@/components/home/HeroSlider'
 
 // Hero background slideshow. Images live in public/hero/ (WebP, ~2:1). See HeroSlider.tsx.
 const HERO_IMAGES: HeroSlide[] = [
-  { src: '/hero/es.webp', alt: 'Exlantix ES — berline électrique disponible au Maroc' },
+  { src: '/hero/et-reev.webp', alt: 'Exlantix ET REEV — SUV disponible au Maroc' },
   { src: '/hero/vx.webp', alt: 'Exeed VX — SUV disponible au Maroc' },
   { src: '/hero/rx.webp', alt: 'Exeed RX — SUV disponible au Maroc' },
-  { src: '/hero/et-reev.webp', alt: 'Exlantix ET REEV — SUV disponible au Maroc' },
+  { src: '/hero/es.webp', alt: 'Exlantix ES — berline électrique disponible au Maroc' },
 ]
 
 interface HeroSectionProps {
