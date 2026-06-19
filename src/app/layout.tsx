@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Sora, Montserrat_Alternates } from 'next/font/google'
+import { Sora, Montserrat_Alternates, Roboto } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -20,6 +20,14 @@ const montserratAlternates = Montserrat_Alternates({
   weight: ['700', '800'],
   style: ['normal', 'italic'],
   variable: '--font-montserrat-alternates',
+  display: 'swap',
+})
+
+// Used for the "challenge" partnership tag in the news section.
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-roboto',
   display: 'swap',
 })
 
@@ -75,7 +83,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="fr" className={`${sora.variable} ${montserratAlternates.variable}`}>
+    <html lang="fr" className={`${sora.variable} ${montserratAlternates.variable} ${roboto.variable}`}>
       <body>
         <script
           type="application/ld+json"
