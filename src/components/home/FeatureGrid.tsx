@@ -50,7 +50,7 @@ const FUEL_LABELS: Record<string, string> = {
 
 /* ─── Feature card data ─── */
 
-type FeatureKey = 'comparateur' | 'offres' | 'coeur' | 'top' | 'ev'
+type FeatureKey = 'comparateur' | 'offres' | 'coeur' | 'top' | 'chinese'
 
 type FeatureItem = {
   key: FeatureKey
@@ -71,6 +71,15 @@ const featureItems: FeatureItem[] = [
     imageAlt: 'Comparateur de voitures neuves au Maroc',
     href: null,
     action: 'expand',
+  },
+  {
+    key: 'chinese',
+    title: 'Voitures chinoises',
+    subtitle: 'Laquelle choisir?',
+    imageSrc: '/blog/kia-maroc-siam-2026-stand-meknes-modeles-electriques-hero.webp',
+    imageAlt: 'Voitures chinoises au Maroc',
+    href: '/neuf?origin=chinese',
+    action: 'link',
   },
   {
     key: 'offres',
@@ -99,15 +108,6 @@ const featureItems: FeatureItem[] = [
     href: '/neuf/populaires',
     action: 'link',
   },
-  {
-    key: 'ev',
-    title: 'EV/PHEV',
-    subtitle: 'Découvrir la gamme',
-    imageSrc: '/blog/kia-maroc-siam-2026-stand-meknes-modeles-electriques-hero.webp',
-    imageAlt: 'Voitures EV et PHEV au Maroc',
-    href: '/neuf?fuel=Electric',
-    action: 'link',
-  },
 ]
 
 const STICKER_LABELS: Record<FeatureKey, string> = {
@@ -115,7 +115,7 @@ const STICKER_LABELS: Record<FeatureKey, string> = {
   offres: 'Découvrir',
   coeur: 'Explorer',
   top: 'Voir',
-  ev: 'Voir',
+  chinese: 'Voir',
 }
 
 const ICON_PATHS: Record<FeatureKey, ReactNode> = {
@@ -140,8 +140,13 @@ const ICON_PATHS: Record<FeatureKey, ReactNode> = {
       <path d="M14 7h7v7" />
     </>
   ),
-  ev: (
-    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+  chinese: (
+    <>
+      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" />
+      <circle cx="7" cy="17" r="2" />
+      <path d="M9 17h6" />
+      <circle cx="17" cy="17" r="2" />
+    </>
   ),
 }
 
@@ -150,7 +155,7 @@ const STICKER_ICON_STROKE: Record<FeatureKey, string> = {
   offres: '#F97316',
   coeur: '#F43F5E',
   top: '#A16207',
-  ev: '#15803D',
+  chinese: '#15803D',
 }
 
 /* ─── Reusable feature card ─── */

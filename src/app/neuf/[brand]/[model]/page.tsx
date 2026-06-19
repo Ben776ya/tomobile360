@@ -31,8 +31,8 @@ type ModelBrandJoinRow = {
   name: string
   category: string | null
   brands:
-    | { id: string; name: string; logo_url: string | null }
-    | { id: string; name: string; logo_url: string | null }[]
+    | { id: string; name: string; logo_url: string | null; description: string | null }
+    | { id: string; name: string; logo_url: string | null; description: string | null }[]
     | null
 }
 
@@ -48,7 +48,7 @@ async function resolveModel(brandParam: string, modelParam: string) {
 
   const { data: models } = await supabase
     .from('models')
-    .select('id, name, category, brands(id, name, logo_url)')
+    .select('id, name, category, brands(id, name, logo_url, description)')
 
   const target = ((models ?? []) as ModelBrandJoinRow[]).find(m => {
     const brandName = Array.isArray(m.brands) ? m.brands[0]?.name : m.brands?.name
@@ -96,7 +96,7 @@ async function resolveModel(brandParam: string, modelParam: string) {
 
   return {
     model: { id: target.id as string, name: target.name as string, category: target.category as string | null },
-    brand: { id: brand?.id as string, name: brand?.name as string, logo_url: brand?.logo_url as string | null },
+    brand: { id: brand?.id as string, name: brand?.name as string, logo_url: brand?.logo_url as string | null, description: brand?.description as string | null },
     vehicle: vehicle as any,
     variants,
   }
@@ -313,6 +313,13 @@ export default async function ModelDetailPage({ params }: PageProps) {
                   />
                 </div>
               </div>
+
+              {/* Brand blurb — same description shown when browsing by marque */}
+              {brand.description && (
+                <p className="text-sm text-gray-500 leading-relaxed mt-4 pt-4 border-t border-gray-100">
+                  {brand.description}
+                </p>
+              )}
             </div>
 
             {(representative.horsepower || representative.fuel_type || representative.transmission || representative.acceleration || representative.fuel_consumption_combined || representative.co2_emissions || fiche) && (

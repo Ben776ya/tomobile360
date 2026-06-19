@@ -25,7 +25,7 @@ export async function getBrands(): Promise<{ error: string | null; data: Brand[]
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('brands')
-    .select('id, name, logo_url, description, created_at')
+    .select('id, name, logo_url, description, origin, created_at')
     .order('name', { ascending: true })
 
   if (error) return { error: error.message, data: null }

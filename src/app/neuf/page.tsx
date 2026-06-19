@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { ModelCard } from '@/components/vehicles/ModelCard'
-import { buildModelGroups } from '@/lib/vehicles/group-by-model'
+import { buildModelGroups, type VehicleRowForGrouping } from '@/lib/vehicles/group-by-model'
 import { VehicleFilters } from '@/components/vehicles/VehicleFilters'
 import { BrandHeader } from '@/components/vehicles/BrandHeader'
 import { SlidersHorizontal } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { resolveOriginDbValue, ORIGIN_LABELS, isOriginExcludedModel } from '@/lib/vehicles/origin-filter'
 
 export const revalidate = 60
 
@@ -26,6 +27,7 @@ interface SearchParams {
   priceMin?: string
   priceMax?: string
   yearMin?: string
+  origin?: string
   sort?: string
   page?: string
 }
@@ -46,7 +48,10 @@ export default async function NewVehiclesPage({
   const priceMin = searchParams.priceMin ? parseInt(searchParams.priceMin) : undefined
   const priceMax = searchParams.priceMax ? parseInt(searchParams.priceMax) : undefined
   const yearMin = searchParams.yearMin ? parseInt(searchParams.yearMin) : undefined
-  const sort = searchParams.sort || (brand ? 'price-asc' : 'newest')
+  const originDbValue = resolveOriginDbValue(searchParams.origin)
+  const originLabel = originDbValue ? ORIGIN_LABELS[originDbValue] : null
+  // Origin listings (e.g. "Voitures chinoises") default to alphabetical order.
+  const sort = searchParams.sort || (originDbValue ? 'name-asc' : brand ? 'price-asc' : 'newest')
   const page = searchParams.page ? parseInt(searchParams.page) : 1
   const itemsPerPage = 12
 
@@ -81,16 +86,50 @@ export default async function NewVehiclesPage({
   if (priceMax) query = query.lte('price_min', priceMax)
   if (yearMin) query = query.gte('year', yearMin)
 
+  // Origin filter (e.g. "Voitures chinoises") — constrain to brands tagged with this origin
+  let originHasNoMatch = false
+  if (originDbValue) {
+    const { data: originBrands } = await supabase
+      .from('brands')
+      .select('id')
+      .eq('origin', originDbValue)
+    const originBrandIds = (originBrands ?? []).map((b) => b.id)
+    if (originBrandIds.length > 0) {
+      query = query.in('brand_id', originBrandIds)
+    } else {
+      originHasNoMatch = true
+    }
+  }
+
   // Sort at DB level for consistent ordering within groups
   query = query.order('price_min', { ascending: true })
 
-  const { data: vehicles } = await query
+  const { data: vehicles } = originHasNoMatch ? { data: [] } : await query
+
+  // When an origin filter is active, hide specific models that shouldn't appear
+  // in that listing (e.g. utility vans among "Voitures chinoises"). Pickups stay.
+  const allRows = (vehicles ?? []) as unknown as VehicleRowForGrouping[]
+  const visibleRows = originDbValue
+    ? allRows.filter((v) => {
+        const brandName = Array.isArray(v.brands) ? v.brands[0]?.name : v.brands?.name
+        const modelName = Array.isArray(v.models) ? v.models[0]?.name : v.models?.name
+        return !(brandName && modelName && isOriginExcludedModel(brandName, modelName))
+      })
+    : allRows
 
   // Group vehicles by model (shared helper)
-  const modelGroups = buildModelGroups((vehicles ?? []) as unknown as Parameters<typeof buildModelGroups>[0])
+  const modelGroups = buildModelGroups(visibleRows)
 
   // Sort model groups
   switch (sort) {
+    case 'name-asc':
+      modelGroups.sort((a, b) =>
+        `${a.brandName} ${a.modelName}`.localeCompare(`${b.brandName} ${b.modelName}`, 'fr', {
+          sensitivity: 'base',
+          numeric: true,
+        })
+      )
+      break
     case 'price-asc':
       modelGroups.sort((a, b) => (a.minPrice ?? Infinity) - (b.minPrice ?? Infinity))
       break
@@ -119,7 +158,7 @@ export default async function NewVehiclesPage({
     { data: categories },
     { data: allModels },
   ] = await Promise.all([
-    supabase.from('brands').select('id, name, logo_url, description, created_at').order('name'),
+    supabase.from('brands').select('id, name, logo_url, description, origin, created_at').order('name'),
     supabase.from('models').select('category').order('category'),
     supabase.from('models').select('id, brand_id, name, category').order('name'),
   ])
@@ -140,6 +179,7 @@ export default async function NewVehiclesPage({
     const params = new URLSearchParams()
     if (brand) params.set('brand', brand)
     if (model) params.set('model', model)
+    if (searchParams.origin) params.set('origin', searchParams.origin)
     if (category && key !== 'category') params.set('category', category)
     if (fuel && key !== 'fuel') params.set('fuel', fuel)
     if (transmission) params.set('transmission', transmission)
@@ -167,10 +207,14 @@ export default async function NewVehiclesPage({
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-2">
-            Découvrez vos véhicules neufs : Le meilleur choix au Maroc !
+            {originLabel
+              ? `${originLabel} au Maroc 2026`
+              : 'Découvrez vos véhicules neufs : Le meilleur choix au Maroc !'}
           </h1>
           <p className="text-gray-500">
-            Trouvez des véhicules correspondant à votre budget parmi notre catalogue complet
+            {originLabel
+              ? `${originLabel} : prix, fiches techniques et disponibilité au Maroc.`
+              : 'Trouvez des véhicules correspondant à votre budget parmi notre catalogue complet'}
           </p>
         </div>
 
@@ -272,7 +316,7 @@ export default async function NewVehiclesPage({
                 <span className="font-semibold text-secondary">{totalModels}</span> modèle
                 {totalModels > 1 ? 's' : ''} trouvé{totalModels > 1 ? 's' : ''}
                 <span className="text-gray-400 ml-1">
-                  ({(vehicles ?? []).length} version{(vehicles ?? []).length !== 1 ? 's' : ''})
+                  ({visibleRows.length} version{visibleRows.length !== 1 ? 's' : ''})
                 </span>
               </p>
 

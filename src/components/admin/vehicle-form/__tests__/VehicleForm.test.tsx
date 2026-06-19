@@ -36,7 +36,7 @@ vi.mock('@/lib/actions/admin/promotions', () => ({
 import { VehicleForm } from '@/components/admin/VehicleForm'
 
 const baseBrands = [
-  { id: '1', name: 'Renault', logo_url: null, description: null, created_at: null },
+  { id: '1', name: 'Renault', logo_url: null, description: null, origin: null, created_at: null },
 ]
 const baseModels = [
   { id: '1', name: 'Clio', brand_id: '1', category: null, created_at: null },

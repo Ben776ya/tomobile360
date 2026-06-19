@@ -1,13 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { Search, Car, Truck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
+import { HeroSlider, type HeroSlide } from '@/components/home/HeroSlider'
 
-const HERO_IMAGE = '/hero-section.webp'
+// Hero background slideshow. Images live in public/hero/ (WebP, ~2:1). See HeroSlider.tsx.
+const HERO_IMAGES: HeroSlide[] = [
+  { src: '/hero/et-reev.webp', alt: 'Exlantix ET REEV — SUV disponible au Maroc' },
+  { src: '/hero/vx.webp', alt: 'Exeed VX — SUV disponible au Maroc' },
+  { src: '/hero/rx.webp', alt: 'Exeed RX — SUV disponible au Maroc' },
+  { src: '/hero/es.webp', alt: 'Exlantix ES — berline électrique disponible au Maroc' },
+]
 
 interface HeroSectionProps {
   brands: Array<{ id: string; name: string }>
@@ -149,25 +155,16 @@ export function HeroSection({ brands }: HeroSectionProps) {
   return (
     <section className="relative min-h-[55vh] sm:min-h-[60vh] flex items-center overflow-hidden">
 
-      {/* Static hero background */}
-      <div className="absolute inset-0">
-        <Image
-          src={HERO_IMAGE}
-          alt="Guide d'achat automobile Maroc — recherche de voitures neuves"
-          fill
-          className="object-cover"
-          priority
-          sizes="100vw"
-        />
-      </div>
+      {/* Hero background slideshow */}
+      <HeroSlider images={HERO_IMAGES} />
 
       {/* Dark blue gradient overlay — solid at left edge, fades quickly */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#010920] via-[#010920] via-[3%] to-transparent to-[15%] pointer-events-none" />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#010920] via-[#010920] via-[3%] to-transparent to-[15%] pointer-events-none" />
 
       {/* Content */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10 py-6 lg:py-8">
         {/* Search panel — solid dark navy card anchored left */}
-        <div className="w-full max-w-xl bg-[#010920]/95 rounded-2xl border border-white/10 px-4 py-6 sm:px-5 sm:py-7 lg:px-6 lg:py-8">
+        <div className="w-full max-w-xl bg-[#010920]/95 rounded-2xl border border-white/10 px-4 py-6 sm:px-5 sm:py-7 lg:px-6 lg:py-8 lg:-ml-12">
 
           {/* Title */}
           <h2 className="font-display text-xl lg:text-2xl font-bold text-white leading-tight mb-3 text-center">

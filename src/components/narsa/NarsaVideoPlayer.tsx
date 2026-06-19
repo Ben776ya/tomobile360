@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { Play } from 'lucide-react'
 
 type NarsaVideoPlayerProps = {
@@ -16,22 +16,20 @@ export function NarsaVideoPlayer({ src, title }: NarsaVideoPlayerProps) {
   function handlePlay() {
     setHasError(false)
     setIsPlaying(true)
-  }
-
-  useEffect(() => {
     const video = videoRef.current
-    if (isPlaying && video) {
-      video.src = src
+    if (video) {
       video.play().catch(() => {})
     }
-  }, [isPlaying, src])
+  }
 
   return (
     <div className="relative aspect-video bg-gradient-to-br from-[#2e3f7a] to-[#4057aa] rounded-t-xl overflow-hidden">
       <video
         ref={videoRef}
+        src={`${src}#t=0.1`}
         controls={isPlaying}
-        preload="none"
+        preload="metadata"
+        playsInline
         crossOrigin="anonymous"
         className="w-full h-full object-cover"
         onEnded={() => setIsPlaying(false)}
