@@ -13,15 +13,14 @@ import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
 import { VehicleSpecs, KeySpecsStrip } from '@/components/vehicles/VehicleSpecs'
 import { ImageGallery } from '@/components/vehicles/ImageGallery'
-import { ModelCard } from '@/components/vehicles/ModelCard'
-import { buildModelGroups } from '@/lib/vehicles/group-by-model'
+import { ModelCard, type ModelGroup } from '@/components/vehicles/ModelCard'
+import { buildModelGroups, type VehicleRowForGrouping } from '@/lib/vehicles/group-by-model'
+import { rankSimilarModels } from '@/lib/vehicles/similar-vehicles'
 import { ShareButton } from '@/components/shared/ShareButton'
 import { ContactDealerDialog } from '@/components/shared/ContactDealerDialog'
 import { TestDriveDialog } from '@/components/shared/TestDriveDialog'
 import type { Variant } from '@/lib/types'
 import { BUSINESS_INFO } from '@/lib/business-info'
-
-type ServerSupabase = ReturnType<typeof createClient>
 
 // Shape of a row from the `models` table joined with `brands`. Supabase's
 // PostgREST may surface the join as a single object OR a single-element array
@@ -31,8 +30,8 @@ type ModelBrandJoinRow = {
   name: string
   category: string | null
   brands:
-    | { id: string; name: string; logo_url: string | null; description: string | null }
-    | { id: string; name: string; logo_url: string | null; description: string | null }[]
+    | { id: string; name: string; logo_url: string | null; description: string | null; origin: string | null }
+    | { id: string; name: string; logo_url: string | null; description: string | null; origin: string | null }[]
     | null
 }
 
@@ -48,7 +47,7 @@ async function resolveModel(brandParam: string, modelParam: string) {
 
   const { data: models } = await supabase
     .from('models')
-    .select('id, name, category, brands(id, name, logo_url, description)')
+    .select('id, name, category, brands(id, name, logo_url, description, origin)')
 
   const target = ((models ?? []) as ModelBrandJoinRow[]).find(m => {
     const brandName = Array.isArray(m.brands) ? m.brands[0]?.name : m.brands?.name
@@ -96,7 +95,7 @@ async function resolveModel(brandParam: string, modelParam: string) {
 
   return {
     model: { id: target.id as string, name: target.name as string, category: target.category as string | null },
-    brand: { id: brand?.id as string, name: brand?.name as string, logo_url: brand?.logo_url as string | null, description: brand?.description as string | null },
+    brand: { id: brand?.id as string, name: brand?.name as string, logo_url: brand?.logo_url as string | null, description: brand?.description as string | null, origin: brand?.origin as string | null },
     vehicle: vehicle as any,
     variants,
   }
@@ -161,25 +160,44 @@ export default async function ModelDetailPage({ params }: PageProps) {
 
   void supabase.rpc('increment_vehicle_views', { vehicle_id: representative.id })
 
-  const sameCategoryModelIds = await getSameCategoryModels(supabase, model.category)
-  const similarFilter = sameCategoryModelIds
-    ? `brand_id.eq.${brand.id},model_id.in.(${sameCategoryModelIds})`
-    : `brand_id.eq.${brand.id}`
-  const { data: similarRows } = await supabase
-    .from('vehicles_new')
-    .select(`
-      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, brand_id, model_id,
-      brands:brand_id (name, logo_url),
-      models:model_id (name),
-      promotions (discount_percentage, is_active)
-    `)
-    .neq('model_id', model.id)
-    .eq('is_available', true)
-    .or(similarFilter)
-    .order('price_min', { ascending: true, nullsFirst: false })
-  const similarModelGroups = buildModelGroups(
-    (similarRows ?? []) as unknown as Parameters<typeof buildModelGroups>[0]
-  ).slice(0, 4)
+  // Build the reference profile of the opened car.
+  const openedPrices = variants
+    .map((v) => v.price_min)
+    .filter((p): p is number => p != null)
+  const anchorPrice = openedPrices.length > 0 ? Math.min(...openedPrices) : null
+  const openedFuelTypes = Array.from(
+    new Set(variants.map((v) => v.fuel_type).filter((f): f is string => !!f)),
+  )
+
+  // Same-category candidates only (hard filter); ranking handles price + boosts.
+  let similarModelGroups: ModelGroup[] = []
+  if (model.category) {
+    const { data: similarRows } = await supabase
+      .from('vehicles_new')
+      .select(`
+        id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, brand_id, model_id,
+        brands:brand_id (name, logo_url, origin),
+        models:model_id!inner (name, category),
+        promotions (discount_percentage, is_active)
+      `)
+      .neq('model_id', model.id)
+      .eq('is_available', true)
+      .eq('models.category', model.category)
+      .order('price_min', { ascending: true, nullsFirst: false })
+
+    const rows = (similarRows ?? []) as unknown as VehicleRowForGrouping[]
+    const originByModel: Record<string, string | null> = {}
+    for (const row of rows) {
+      const b = Array.isArray(row.brands) ? row.brands[0] : row.brands
+      originByModel[row.model_id] = b?.origin ?? null
+    }
+
+    similarModelGroups = rankSimilarModels(buildModelGroups(rows), originByModel, {
+      anchorPrice,
+      fuelTypes: openedFuelTypes,
+      origin: brand.origin,
+    })
+  }
 
   const prices = variants.map(v => v.price_min).filter((p): p is number => p != null)
   const maxPrices = variants.map(v => v.price_max ?? v.price_min).filter((p): p is number => p != null)
@@ -459,17 +477,4 @@ export default async function ModelDetailPage({ params }: PageProps) {
       </div>
     </div>
   )
-}
-
-async function getSameCategoryModels(
-  supabase: ServerSupabase,
-  category?: string | null,
-): Promise<string> {
-  if (!category) return ''
-  const { data: models } = await supabase
-    .from('models')
-    .select('id')
-    .eq('category', category)
-    .limit(10)
-  return (models as { id: string }[] | null)?.map(m => m.id).join(',') || ''
 }
