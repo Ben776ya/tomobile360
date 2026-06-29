@@ -31,8 +31,8 @@ type ModelBrandJoinRow = {
   name: string
   category: string | null
   brands:
-    | { id: string; name: string; logo_url: string | null; description: string | null }
-    | { id: string; name: string; logo_url: string | null; description: string | null }[]
+    | { id: string; name: string; logo_url: string | null; description: string | null; origin: string | null }
+    | { id: string; name: string; logo_url: string | null; description: string | null; origin: string | null }[]
     | null
 }
 
@@ -48,7 +48,7 @@ async function resolveModel(brandParam: string, modelParam: string) {
 
   const { data: models } = await supabase
     .from('models')
-    .select('id, name, category, brands(id, name, logo_url, description)')
+    .select('id, name, category, brands(id, name, logo_url, description, origin)')
 
   const target = ((models ?? []) as ModelBrandJoinRow[]).find(m => {
     const brandName = Array.isArray(m.brands) ? m.brands[0]?.name : m.brands?.name
@@ -96,7 +96,7 @@ async function resolveModel(brandParam: string, modelParam: string) {
 
   return {
     model: { id: target.id as string, name: target.name as string, category: target.category as string | null },
-    brand: { id: brand?.id as string, name: brand?.name as string, logo_url: brand?.logo_url as string | null, description: brand?.description as string | null },
+    brand: { id: brand?.id as string, name: brand?.name as string, logo_url: brand?.logo_url as string | null, description: brand?.description as string | null, origin: brand?.origin as string | null },
     vehicle: vehicle as any,
     variants,
   }
