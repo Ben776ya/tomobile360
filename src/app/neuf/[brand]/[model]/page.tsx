@@ -16,6 +16,8 @@ import { ImageGallery } from '@/components/vehicles/ImageGallery'
 import { ModelCard, type ModelGroup } from '@/components/vehicles/ModelCard'
 import { buildModelGroups, type VehicleRowForGrouping } from '@/lib/vehicles/group-by-model'
 import { rankSimilarModels } from '@/lib/vehicles/similar-vehicles'
+import { VideoCard } from '@/components/videos/VideoCard'
+import { filterVideosForCar } from '@/lib/videos/match-video-to-car'
 import { ShareButton } from '@/components/shared/ShareButton'
 import { ContactDealerDialog } from '@/components/shared/ContactDealerDialog'
 import { TestDriveDialog } from '@/components/shared/TestDriveDialog'
@@ -198,6 +200,16 @@ export default async function ModelDetailPage({ params }: PageProps) {
       origin: brand.origin,
     })
   }
+
+  // Videos related to this car: imported videos have no vehicle_id, so match by
+  // title/description text (brand + model) against the published catalogue.
+  const { data: allVideos } = await supabase
+    .from('videos')
+    .select('id, title, description, thumbnail_url, duration, views')
+    .eq('is_published', true)
+    .order('created_at', { ascending: false })
+    .limit(200)
+  const carVideos = filterVideosForCar(allVideos ?? [], brand.name, model.name, 4)
 
   const prices = variants.map(v => v.price_min).filter((p): p is number => p != null)
   const maxPrices = variants.map(v => v.price_max ?? v.price_min).filter((p): p is number => p != null)
@@ -449,6 +461,24 @@ export default async function ModelDetailPage({ params }: PageProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {similarModelGroups.map((mg) => (
                 <ModelCard key={mg.modelId} model={mg} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {carVideos.length > 0 && (
+          <div className="mt-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-primary">
+                Vidéos — {brand.name} {model.name}
+              </h2>
+              <Link href="/videos" className="text-sm text-secondary hover:underline whitespace-nowrap">
+                Voir toutes les vidéos →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {carVideos.map((video) => (
+                <VideoCard key={video.id} {...video} />
               ))}
             </div>
           </div>
