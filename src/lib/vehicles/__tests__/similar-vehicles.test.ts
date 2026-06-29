@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest'
+import { test, expect } from 'vitest'
 import type { ModelGroup } from '@/components/vehicles/ModelCard'
 import { rankSimilarModels, PRICE_BAND, type SimilarityReference } from '../similar-vehicles'
 
