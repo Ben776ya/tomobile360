@@ -75,8 +75,11 @@ function modelMatches(haystackTokens: string[], modelName: string): boolean {
 }
 
 /**
- * True when the video's text names BOTH the car's brand and model. Description
- * is included alongside the title to catch models mentioned only there.
+ * True when the video is about this car: the model name must appear in the
+ * TITLE (that is what makes a video about a specific car), while the brand may
+ * appear in the title or description. Matching the model against descriptions
+ * is deliberately avoided — long descriptions list many models in passing
+ * (e.g. "...Seal 08 and Sealion 08...") and would produce false positives.
  */
 export function videoMatchesCar(
   title: string,
@@ -84,9 +87,10 @@ export function videoMatchesCar(
   brandName: string,
   modelName: string,
 ): boolean {
+  const titleTokens = tokenize(title)
+  if (titleTokens.length === 0) return false
   const haystackTokens = tokenize(`${title} ${description ?? ''}`)
-  if (haystackTokens.length === 0) return false
-  return brandMatches(haystackTokens, brandName) && modelMatches(haystackTokens, modelName)
+  return brandMatches(haystackTokens, brandName) && modelMatches(titleTokens, modelName)
 }
 
 /**

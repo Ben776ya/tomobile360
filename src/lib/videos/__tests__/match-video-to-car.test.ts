@@ -48,8 +48,20 @@ test('brand alias: title says "Mercedes" without "Benz"', () => {
   expect(videoMatchesCar('Mercedes EQE SUV en détail', null, 'Mercedes-Benz', 'EQE SUV')).toBe(true)
 })
 
-test('model named only in the description still matches', () => {
-  expect(videoMatchesCar('Essai complet', 'On teste la BYD Atto 3 cette semaine', 'BYD', 'Atto 3')).toBe(true)
+test('model named only in the description does NOT match (model must headline the title)', () => {
+  expect(videoMatchesCar('Essai complet', 'On teste la BYD Atto 3 cette semaine', 'BYD', 'Atto 3')).toBe(false)
+})
+
+test('brand may live in the description while the model headlines the title', () => {
+  expect(videoMatchesCar('Clio 6 : Prix au Maroc', 'La nouvelle Renault arrive', 'Renault', 'Clio')).toBe(true)
+})
+
+test('regression: a description listing other models does not create a false positive', () => {
+  // Real case: a BYD travel vlog whose description mentions "Seal 08 and Sealion 08"
+  // must NOT match the BYD Seal page, because the title is not about the Seal.
+  const description =
+    'Essais exclusifs des modèles BYD ... ainsi que les nouveaux modèles familiaux Seal 08 et Sealion 08.'
+  expect(videoMatchesCar('BYD e-Journey : notre voyage exclusif en Chine', description, 'BYD', 'Seal')).toBe(false)
 })
 
 test('empty / whitespace title with null description does not match', () => {
