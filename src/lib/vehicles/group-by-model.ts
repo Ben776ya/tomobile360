@@ -18,7 +18,7 @@ export interface VehicleRowForGrouping {
   images: string[] | null
   is_new_release: boolean | null
   is_popular: boolean | null
-  brands: { name: string; logo_url: string | null } | { name: string; logo_url: string | null }[] | null
+  brands: { name: string; logo_url: string | null; origin?: string | null } | { name: string; logo_url: string | null; origin?: string | null }[] | null
   models: { name: string } | { name: string }[] | null
   promotions?: { discount_percentage: number | null; is_active?: boolean }[] | null
 }
