@@ -18,6 +18,8 @@ import { buildModelGroups, type VehicleRowForGrouping } from '@/lib/vehicles/gro
 import { rankSimilarModels } from '@/lib/vehicles/similar-vehicles'
 import { VideoCard } from '@/components/videos/VideoCard'
 import { filterVideosForCar } from '@/lib/videos/match-video-to-car'
+import { ArticleCard } from '@/components/articles/ArticleCard'
+import { filterArticlesForBrand } from '@/lib/articles/match-article-to-brand'
 import { ShareButton } from '@/components/shared/ShareButton'
 import { ContactDealerDialog } from '@/components/shared/ContactDealerDialog'
 import { TestDriveDialog } from '@/components/shared/TestDriveDialog'
@@ -210,6 +212,16 @@ export default async function ModelDetailPage({ params }: PageProps) {
     .order('created_at', { ascending: false })
     .limit(200)
   const carVideos = filterVideosForCar(allVideos ?? [], brand.name, model.name, 4)
+
+  // Articles related to the brand (brand-level): blog_posts have no brand link,
+  // so match the brand name in title or tags against the published catalogue.
+  const { data: allPosts } = await supabase
+    .from('blog_posts')
+    .select('id, title, slug, subtitle, category, tags, hero_image_url, published_at')
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .limit(200)
+  const brandArticles = filterArticlesForBrand(allPosts ?? [], brand.name, 3)
 
   const prices = variants.map(v => v.price_min).filter((p): p is number => p != null)
   const maxPrices = variants.map(v => v.price_max ?? v.price_min).filter((p): p is number => p != null)
@@ -479,6 +491,22 @@ export default async function ModelDetailPage({ params }: PageProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {carVideos.map((video) => (
                 <VideoCard key={video.id} {...video} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {brandArticles.length > 0 && (
+          <div className="mt-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-primary">Articles — {brand.name}</h2>
+              <Link href="/actu" className="text-sm text-secondary hover:underline whitespace-nowrap">
+                Voir toutes les actualités →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {brandArticles.map((post) => (
+                <ArticleCard key={post.id} {...post} />
               ))}
             </div>
           </div>
