@@ -6,17 +6,10 @@ import { Calendar, ChevronRight, ArrowRight } from 'lucide-react'
 import type { BlogListItem } from '@/lib/types/blog'
 import { formatDate } from '@/lib/utils'
 import { MobileCarousel } from '@/components/shared/MobileCarousel'
+import { CATEGORY_LABELS, CATEGORY_PILL_COLORS } from '@/lib/blog/categories'
 
 interface NewsSectionProps {
   articles: BlogListItem[]
-}
-
-const categoryConfig: Record<string, { label: string; bg: string }> = {
-  marche:        { label: 'MARCHÉ',        bg: 'bg-emerald-500' },
-  nouveautes:    { label: 'NOUVEAUTÉS',    bg: 'bg-secondary' },
-  pratique:      { label: 'PRATIQUE',      bg: 'bg-orange-500' },
-  tendances:     { label: 'TENDANCES',     bg: 'bg-purple-500' },
-  interview:     { label: 'INTERVIEW',     bg: 'bg-rose-500' },
 }
 
 export function NewsSection({ articles }: NewsSectionProps) {
@@ -47,7 +40,10 @@ export function NewsSection({ articles }: NewsSectionProps) {
         <div className="mb-10">
           <MobileCarousel desktopClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" autoPlayMs={5000}>
           {displayArticles.map((post) => {
-            const cat = categoryConfig[post.category] || { label: post.category.toUpperCase(), bg: 'bg-gray-500' }
+            const cat = {
+              label: (CATEGORY_LABELS[post.category] || post.category).toUpperCase(),
+              bg: CATEGORY_PILL_COLORS[post.category] || 'bg-gray-500 text-white',
+            }
             const excerpt = post.subtitle || ''
 
             return (
@@ -64,7 +60,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
                   {/* Category tag */}
-                  <span className={`tag absolute top-3 left-3 ${cat.bg} text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-md`}>
+                  <span className={`tag absolute top-3 left-3 ${cat.bg} text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-md`}>
                     {cat.label}
                   </span>
                 </div>

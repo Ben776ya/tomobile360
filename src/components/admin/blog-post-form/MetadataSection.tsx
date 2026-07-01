@@ -5,18 +5,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { BlogPostFormValues } from './types'
 import { slugify } from './form-helpers'
+import { BLOG_CATEGORIES } from '@/lib/blog/categories'
 
 interface MetadataSectionProps {
   mode: 'create' | 'edit'
 }
-
-const CATEGORIES = [
-  { value: 'marche', label: 'Marché' },
-  { value: 'nouveautes', label: 'Nouveautés' },
-  { value: 'pratique', label: 'Pratique' },
-  { value: 'tendances', label: 'Tendances' },
-  { value: 'interview', label: 'Interview' },
-]
 
 export function MetadataSection({ mode }: MetadataSectionProps) {
   const { register, setValue, watch } = useFormContext<BlogPostFormValues>()
@@ -108,7 +101,7 @@ export function MetadataSection({ mode }: MetadataSectionProps) {
               className="mt-1 flex h-10 w-full rounded-md border border-white/10 bg-dark-700/80 px-3 py-2 text-sm text-white focus:ring-secondary/50 focus:ring-2 focus:outline-none"
             >
               <option value="">Sélectionner...</option>
-              {CATEGORIES.map((c) => (
+              {BLOG_CATEGORIES.map((c) => (
                 <option key={c.value} value={c.value}>
                   {c.label}
                 </option>

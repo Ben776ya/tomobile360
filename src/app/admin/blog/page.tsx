@@ -20,14 +20,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/lib/supabase/client'
-
-const CATEGORY_LABELS: Record<string, string> = {
-  marche: 'Marché',
-  nouveautes: 'Nouveautés',
-  pratique: 'Pratique',
-  tendances: 'Tendances',
-  interview: 'Interview',
-}
+import { CATEGORY_LABELS } from '@/lib/blog/categories'
 
 type SortField = 'published_at' | 'views' | 'title'
 type SortDir = 'asc' | 'desc'

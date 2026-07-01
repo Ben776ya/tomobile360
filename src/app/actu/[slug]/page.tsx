@@ -10,27 +10,15 @@ import { formatDate, formatRelativeTime } from '@/lib/utils'
 import { formatViewsLabel } from '@/lib/views'
 import { getPostBySlug, getRelatedPosts, incrementViews } from '@/lib/blog'
 import type { BlogListItem } from '@/lib/types/blog'
+import {
+  CATEGORY_LABELS,
+  CATEGORY_PILL_COLORS as CATEGORY_COLORS,
+} from '@/lib/blog/categories'
 
 export const revalidate = 30
 
 interface PageProps {
   params: { slug: string }
-}
-
-const CATEGORY_LABELS: Record<string, string> = {
-  marche: 'Marché',
-  nouveautes: 'Nouveautés',
-  pratique: 'Pratique',
-  tendances: 'Tendances',
-  interview: 'Interview',
-}
-
-const CATEGORY_COLORS: Record<string, string> = {
-  marche: 'bg-emerald-500 text-white',
-  nouveautes: 'bg-secondary text-white',
-  pratique: 'bg-orange-500 text-white',
-  tendances: 'bg-purple-500 text-white',
-  interview: 'bg-rose-500 text-white',
 }
 
 function estimateReadTime(content: string): string {

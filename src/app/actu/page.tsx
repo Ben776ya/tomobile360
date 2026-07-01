@@ -7,6 +7,12 @@ import { formatDate } from '@/lib/utils'
 import { getPublishedPosts, getFeaturedPost } from '@/lib/blog'
 import type { BlogListItem } from '@/lib/types/blog'
 import type { Metadata } from 'next'
+import { CategoryCarousel } from '@/components/actu/CategoryCarousel'
+import {
+  CATEGORY_LABELS,
+  CATEGORY_PILL_COLORS,
+  CATEGORY_TEXT_COLORS,
+} from '@/lib/blog/categories'
 
 export const revalidate = 60
 
@@ -48,40 +54,14 @@ export async function generateMetadata({
 
 const ITEMS_PER_PAGE = 12
 
-const CATEGORIES = [
-  { value: 'all', label: 'Tout' },
-  { value: 'marche', label: 'Marché' },
-  { value: 'nouveautes', label: 'Nouveautés' },
-  { value: 'pratique', label: 'Pratique' },
-  { value: 'tendances', label: 'Tendances' },
-  { value: 'interview', label: 'Interview' },
-] as const
-
-const categoryColors: Record<string, string> = {
-  marche: 'bg-emerald-500 text-white',
-  nouveautes: 'bg-secondary text-white',
-  pratique: 'bg-orange-500 text-white',
-  tendances: 'bg-purple-500 text-white',
-  interview: 'bg-rose-500 text-white',
-}
-
-const categoryTextColors: Record<string, string> = {
-  marche: 'text-emerald-400',
-  nouveautes: 'text-secondary',
-  pratique: 'text-orange-400',
-  tendances: 'text-purple-400',
-  interview: 'text-rose-400',
-}
-
 interface SearchParams {
   category?: string
   page?: string
 }
 
 function ArticleCard({ post }: { post: BlogListItem }) {
-  const color = categoryColors[post.category] || 'bg-gray-500 text-white'
-  const label =
-    CATEGORIES.find((c) => c.value === post.category)?.label || post.category
+  const color = CATEGORY_PILL_COLORS[post.category] || 'bg-gray-500 text-white'
+  const label = CATEGORY_LABELS[post.category] || post.category
 
   return (
     <Link
@@ -165,11 +145,10 @@ export default async function ActuPage({
     : posts
 
   const featuredCategoryTextColor = featured
-    ? categoryTextColors[featured.category] || 'text-gray-400'
+    ? CATEGORY_TEXT_COLORS[featured.category] || 'text-gray-400'
     : ''
   const featuredLabel = featured
-    ? CATEGORIES.find((c) => c.value === featured.category)?.label ||
-      featured.category
+    ? CATEGORY_LABELS[featured.category] || featured.category
     : ''
 
   return (
@@ -213,24 +192,8 @@ export default async function ActuPage({
             meilleur choix.
           </p>
 
-          {/* Category Pills */}
-          <div className="flex flex-wrap gap-2 sm:gap-3">
-            {CATEGORIES.map((cat) => (
-              <Link
-                key={cat.value}
-                href={
-                  cat.value === 'all' ? '/actu' : `/actu?category=${cat.value}`
-                }
-                className={`px-5 py-2.5 rounded-full text-sm font-semibold uppercase tracking-wide transition-all duration-200 ${
-                  category === cat.value
-                    ? 'bg-secondary text-white font-bold shadow-[0_4px_15px_rgba(0,110,254,0.4)]'
-                    : 'bg-white/[0.08] text-white/85 border border-white/10 hover:bg-white/[0.15] hover:text-white'
-                }`}
-              >
-                {cat.label}
-              </Link>
-            ))}
-          </div>
+          {/* Category Carousel */}
+          <CategoryCarousel activeCategory={category} />
         </div>
 
         {/* Featured Article — page 1, no category filter */}
