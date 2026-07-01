@@ -42,7 +42,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
           {displayArticles.map((post) => {
             const cat = {
               label: (CATEGORY_LABELS[post.category] || post.category).toUpperCase(),
-              bg: CATEGORY_PILL_COLORS[post.category] || 'bg-gray-500',
+              bg: CATEGORY_PILL_COLORS[post.category] || 'bg-gray-500 text-white',
             }
             const excerpt = post.subtitle || ''
 
@@ -60,7 +60,7 @@ export function NewsSection({ articles }: NewsSectionProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
                   {/* Category tag */}
-                  <span className={`tag absolute top-3 left-3 ${cat.bg} text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-md`}>
+                  <span className={`tag absolute top-3 left-3 ${cat.bg} text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full shadow-md`}>
                     {cat.label}
                   </span>
                 </div>

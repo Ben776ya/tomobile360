@@ -58,4 +58,29 @@ describe('CategoryCarousel', () => {
     expect(screen.getByLabelText('Catégories suivantes')).toBeInTheDocument()
     expect(screen.queryByLabelText('Catégories précédentes')).not.toBeInTheDocument()
   })
+
+  it('shows both arrows when scrolled to the middle', () => {
+    render(<CategoryCarousel activeCategory="all" />)
+    const row = screen.getByTestId('category-scroll')
+    Object.defineProperty(row, 'scrollWidth', { value: 900, configurable: true })
+    Object.defineProperty(row, 'clientWidth', { value: 300, configurable: true })
+    Object.defineProperty(row, 'scrollLeft', { value: 200, configurable: true, writable: true })
+    fireEvent.scroll(row)
+    expect(screen.getByLabelText('Catégories précédentes')).toBeInTheDocument()
+    expect(screen.getByLabelText('Catégories suivantes')).toBeInTheDocument()
+  })
+
+  it('scrolls the row when an arrow is clicked', () => {
+    render(<CategoryCarousel activeCategory="all" />)
+    const row = screen.getByTestId('category-scroll')
+    const scrollBy = vi.fn()
+    // happy-dom does not implement scrollBy; attach a spy.
+    Object.defineProperty(row, 'scrollBy', { value: scrollBy, configurable: true })
+    Object.defineProperty(row, 'scrollWidth', { value: 900, configurable: true })
+    Object.defineProperty(row, 'clientWidth', { value: 300, configurable: true })
+    Object.defineProperty(row, 'scrollLeft', { value: 0, configurable: true, writable: true })
+    fireEvent.scroll(row)
+    fireEvent.click(screen.getByLabelText('Catégories suivantes'))
+    expect(scrollBy).toHaveBeenCalledWith({ left: 240, behavior: 'smooth' })
+  })
 })
