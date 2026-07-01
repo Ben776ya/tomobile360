@@ -2,22 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Calendar } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
-
-const categoryColors: Record<string, string> = {
-  marche: 'bg-emerald-500 text-white',
-  nouveautes: 'bg-secondary text-white',
-  pratique: 'bg-orange-500 text-white',
-  tendances: 'bg-purple-500 text-white',
-  interview: 'bg-rose-500 text-white',
-}
-
-const categoryLabels: Record<string, string> = {
-  marche: 'Marché',
-  nouveautes: 'Nouveautés',
-  pratique: 'Pratique',
-  tendances: 'Tendances',
-  interview: 'Interview',
-}
+import { CATEGORY_LABELS, CATEGORY_PILL_COLORS } from '@/lib/blog/categories'
 
 interface ArticleCardProps {
   slug: string
@@ -30,8 +15,8 @@ interface ArticleCardProps {
 
 /** Light-theme blog card for the car detail page's "Articles" section. */
 export function ArticleCard({ slug, title, subtitle, category, hero_image_url, published_at }: ArticleCardProps) {
-  const color = categoryColors[category] || 'bg-gray-500 text-white'
-  const label = categoryLabels[category] || category
+  const color = CATEGORY_PILL_COLORS[category] || 'bg-gray-500 text-white'
+  const label = CATEGORY_LABELS[category] || category
 
   return (
     <Link
