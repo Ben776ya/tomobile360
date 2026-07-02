@@ -242,6 +242,21 @@ export default async function ArticleDetailPage({ params }: PageProps) {
                 </div>
               </div>
             )}
+
+            {/* Author box — end of article */}
+            <div className="mt-10 pt-8 border-t border-gray-100 flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-secondary to-secondary/70 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                {getInitials(post.author)}
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">
+                  Écrit par
+                </p>
+                <p className="font-bold text-primary text-lg leading-tight">
+                  {post.author}
+                </p>
+              </div>
+            </div>
           </article>
 
           {/* Sidebar — hidden on mobile, sticky on desktop */}

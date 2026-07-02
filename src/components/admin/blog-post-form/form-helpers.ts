@@ -1,6 +1,7 @@
 import type { BlogPost } from '@/lib/types/blog'
 import type { ManagedImage } from '@/components/admin/BlogImageManager'
 import type { BlogPostFormValues } from './types'
+import { DEFAULT_AUTHOR } from '@/lib/blog/authors'
 
 /**
  * Slug-from-title generator. Mirrors the implementation that lived inline in
@@ -47,7 +48,7 @@ export function buildDefaultValues(
     subtitle: post?.subtitle || '',
     meta_description: post?.meta_description || '',
     category: post?.category || '',
-    author: post?.author || 'Rédaction Tomobile360',
+    author: post?.author || DEFAULT_AUTHOR,
     tags: post?.tags || [],
     hero_image_url: post?.hero_image_url || '',
     hero_image_caption: post?.hero_image_caption || '',
