@@ -23,10 +23,16 @@ export function NewsSection({ articles }: NewsSectionProps) {
         <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-card p-6 md:p-8">
         {/* Section Header */}
         <div className="text-center mb-12 relative">
-          {/* Partnership tag — "challenge", stuck on the top-right like a label */}
-          <span className="absolute -top-2 right-0 sm:right-2 z-10 inline-block rotate-[-7deg] rounded-md bg-[#DB0E16] px-3 py-1 font-roboto text-sm md:text-base font-bold lowercase text-white shadow-lg shadow-[#DB0E16]/30 ring-1 ring-black/5 transition-transform duration-300 hover:rotate-[-3deg]">
-            challenge
-          </span>
+          {/* Partnership badge — "En partenariat avec" caption above a horizontal
+              "challenge" label, floated on the right between the title and subtitle */}
+          <div className="absolute right-2 sm:right-4 md:right-6 top-3 md:top-4 z-10 flex flex-col items-center gap-1.5">
+            <span className="text-gray-500 text-xs md:text-sm leading-none">
+              En partenariat avec
+            </span>
+            <span className="inline-block rounded-md bg-[#DB0E16] px-4 py-1.5 font-roboto text-base md:text-lg font-bold lowercase text-white shadow-lg shadow-[#DB0E16]/30 ring-1 ring-black/5">
+              challenge
+            </span>
+          </div>
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-4">
             Restez informé des dernières actualités automobiles
           </h2>
