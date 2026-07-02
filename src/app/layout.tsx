@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { Toaster } from '@/components/ui/toaster'
 import { CookieConsent } from '@/components/shared/CookieConsent'
+import { Analytics } from '@vercel/analytics/next'
 import { safeJsonLd } from '@/lib/utils'
 import { BUSINESS_INFO } from '@/lib/business-info'
 
@@ -139,6 +140,7 @@ export default function RootLayout({
         <Footer />
         <Toaster />
         <CookieConsent />
+        <Analytics />
       </body>
     </html>
   )
