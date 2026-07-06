@@ -37,7 +37,7 @@ function makePost(overrides: Partial<BlogPost> = {}): BlogPost {
     slug: 'test-article',
     subtitle: null,
     meta_description: null,
-    category: 'marche',
+    category: 'business',
     tags: null,
     content: 'Hello world content',
     hero_image_url: null,
@@ -73,10 +73,10 @@ describe('BlogPostForm', () => {
   it('renders all 5 category options in the select', () => {
     render(<BlogPostForm mode="create" />)
     // The category select has no label `for`, so query by the placeholder text.
-    expect(screen.getByRole('option', { name: 'Marché' })).toBeInTheDocument()
     expect(screen.getByRole('option', { name: 'Nouveautés' })).toBeInTheDocument()
-    expect(screen.getByRole('option', { name: 'Pratique' })).toBeInTheDocument()
-    expect(screen.getByRole('option', { name: 'Tendances' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Business' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Essai' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Classic Cars' })).toBeInTheDocument()
     expect(screen.getByRole('option', { name: 'Interview' })).toBeInTheDocument()
   })
 
@@ -100,7 +100,7 @@ describe('BlogPostForm', () => {
 
     // Now that Catégorie label is wired with htmlFor/id we can locate by label.
     const categorySelect = screen.getByLabelText(/catégorie/i) as HTMLSelectElement
-    fireEvent.change(categorySelect, { target: { value: 'marche' } })
+    fireEvent.change(categorySelect, { target: { value: 'business' } })
 
     // The content editor is a textarea (Markdown editor).
     const contentEditor = screen.getByPlaceholderText(/markdown/i) as HTMLTextAreaElement
@@ -119,7 +119,7 @@ describe('BlogPostForm', () => {
     const body = JSON.parse((init as { body: string }).body)
     expect(body.title).toBe('Test submit')
     expect(body.content).toBe('Hello body')
-    expect(body.category).toBe('marche')
+    expect(body.category).toBe('business')
     expect(body.status).toBe('published')
   })
 
@@ -148,5 +148,26 @@ describe('BlogPostForm', () => {
         name: /supprimer le tag electrique/i,
       }),
     ).not.toBeInTheDocument()
+  })
+
+  it('splits a pasted "#A#B#C" chunk into separate tag chips', async () => {
+    const user = userEvent.setup()
+    render(<BlogPostForm mode="create" />)
+
+    const tagInput = screen.getByPlaceholderText(
+      /ajouter un tag/i,
+    ) as HTMLInputElement
+    // Writer pastes a glued hashtag block and hits Enter.
+    await user.type(
+      tagInput,
+      '#AFRIQUEAUTOMOBILE#ALGERIEINDUSTRIE#FASTLANE2030{enter}',
+    )
+
+    // Each hashtag becomes its own chip, not one blob.
+    for (const t of ['AFRIQUEAUTOMOBILE', 'ALGERIEINDUSTRIE', 'FASTLANE2030']) {
+      expect(
+        screen.getByRole('button', { name: new RegExp(`supprimer le tag ${t}`, 'i') }),
+      ).toBeInTheDocument()
+    }
   })
 })

@@ -16,20 +16,39 @@ function Wrapper() {
 }
 
 describe('MetadataSection category dropdown', () => {
-  it('offers all nine categories including the new ones', () => {
+  it('offers the five categories', () => {
     render(<Wrapper />)
     for (const label of [
       'Nouveautés',
-      'Tendances',
       'Business',
-      'Marché',
       'Essai',
       'Classic Cars',
       'Interview',
-      'Reportage',
-      'Pratique',
     ]) {
       expect(screen.getByRole('option', { name: label })).toBeInTheDocument()
+    }
+  })
+
+  it('no longer offers the dropped categories', () => {
+    render(<Wrapper />)
+    for (const label of ['Tendances', 'Marché', 'Reportage', 'Pratique']) {
+      expect(
+        screen.queryByRole('option', { name: label }),
+      ).not.toBeInTheDocument()
+    }
+  })
+})
+
+describe('MetadataSection author dropdown', () => {
+  it('offers the curated writers including the newly added ones', () => {
+    render(<Wrapper />)
+    for (const name of [
+      'Rédaction Tomobile360',
+      'David Jérémie',
+      'Amine Bouharaoui',
+      'Rafik Kamal Lahlou',
+    ]) {
+      expect(screen.getByRole('option', { name })).toBeInTheDocument()
     }
   })
 })

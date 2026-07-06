@@ -8,25 +8,27 @@ import {
 } from '../categories'
 
 describe('blog categories', () => {
-  it('lists categories in the required order with pratique last', () => {
+  it('lists categories in the required order', () => {
     expect(BLOG_CATEGORIES.map((c) => c.value)).toEqual([
       'nouveautes',
-      'tendances',
       'business',
-      'marche',
       'essai',
       'classic-cars',
       'interview',
-      'reportage',
-      'pratique',
     ])
   })
 
-  it('exposes labels for the new categories as written', () => {
+  it('exposes labels for the categories as written', () => {
     expect(CATEGORY_LABELS['business']).toBe('Business')
     expect(CATEGORY_LABELS['essai']).toBe('Essai')
     expect(CATEGORY_LABELS['classic-cars']).toBe('Classic Cars')
-    expect(CATEGORY_LABELS['reportage']).toBe('Reportage')
+    expect(CATEGORY_LABELS['interview']).toBe('Interview')
+  })
+
+  it('no longer exposes the dropped categories', () => {
+    for (const dropped of ['tendances', 'marche', 'reportage', 'pratique']) {
+      expect(CATEGORY_LABELS[dropped]).toBeUndefined()
+    }
   })
 
   it('exposes a pill and text color for every category', () => {

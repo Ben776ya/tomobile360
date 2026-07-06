@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { BlogPost, BlogListItem, BlogCategory, BlogImage } from '@/lib/types/blog'
+import { filterByTag } from '@/lib/blog/tags'
 
 const LIST_COLUMNS = 'id, title, slug, subtitle, category, tags, hero_image_url, author, published_at, views, featured' as const
 
@@ -104,6 +105,20 @@ export async function getRelatedPosts(
   }
 
   return posts
+}
+
+export async function getPostsByTag(tag: string): Promise<BlogListItem[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select(LIST_COLUMNS)
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+
+  if (error) throw error
+
+  return filterByTag((data as BlogListItem[]) ?? [], tag)
 }
 
 export async function incrementViews(postId: string): Promise<void> {
