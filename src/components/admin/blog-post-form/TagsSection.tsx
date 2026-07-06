@@ -5,6 +5,7 @@ import { useController, useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Plus, X } from 'lucide-react'
+import { normalizeTags } from '@/lib/blog/tags'
 import type { BlogPostFormValues } from './types'
 
 export function TagsSection() {
@@ -23,12 +24,15 @@ export function TagsSection() {
   const [newTag, setNewTag] = useState('')
 
   const addTag = useCallback(() => {
-    const trimmed = newTag.trim()
-    if (!trimmed) return
+    // Split on '#'/commas/newlines so a pasted "#A#B#C" chunk becomes
+    // individual tags instead of one glued blob.
+    const additions = normalizeTags([newTag])
+    if (additions.length === 0) return
     // Read freshest value at write time to avoid closure-captured stale arrays.
     const current = getValues('tags') ?? []
-    if (current.includes(trimmed)) return
-    setTags([...current, trimmed])
+    // Re-normalize the merged set to dedupe (case-insensitive) against existing tags.
+    const merged = normalizeTags([...current, ...additions])
+    setTags(merged)
     setNewTag('')
   }, [newTag, getValues, setTags])
 

@@ -149,4 +149,25 @@ describe('BlogPostForm', () => {
       }),
     ).not.toBeInTheDocument()
   })
+
+  it('splits a pasted "#A#B#C" chunk into separate tag chips', async () => {
+    const user = userEvent.setup()
+    render(<BlogPostForm mode="create" />)
+
+    const tagInput = screen.getByPlaceholderText(
+      /ajouter un tag/i,
+    ) as HTMLInputElement
+    // Writer pastes a glued hashtag block and hits Enter.
+    await user.type(
+      tagInput,
+      '#AFRIQUEAUTOMOBILE#ALGERIEINDUSTRIE#FASTLANE2030{enter}',
+    )
+
+    // Each hashtag becomes its own chip, not one blob.
+    for (const t of ['AFRIQUEAUTOMOBILE', 'ALGERIEINDUSTRIE', 'FASTLANE2030']) {
+      expect(
+        screen.getByRole('button', { name: new RegExp(`supprimer le tag ${t}`, 'i') }),
+      ).toBeInTheDocument()
+    }
+  })
 })
