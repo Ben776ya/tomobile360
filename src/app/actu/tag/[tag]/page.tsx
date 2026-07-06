@@ -3,39 +3,59 @@ import { Calendar } from 'lucide-react'
 import type { Metadata } from 'next'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { ArticleCard } from '@/components/actu/ArticleCard'
+import { Pagination } from '@/components/actu/Pagination'
 import { getPostsByTag } from '@/lib/blog'
 
 export const revalidate = 60
 
+const ITEMS_PER_PAGE = 12
+
 interface PageProps {
   params: { tag: string }
+  searchParams: { page?: string }
 }
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: PageProps): Promise<Metadata> {
   const tag = decodeURIComponent(params.tag)
-  const title = `${tag} — Actualités Tomobile 360`
+  const page = parseInt(searchParams.page || '1')
+  const base = `/actu/tag/${encodeURIComponent(tag)}`
+  const canonical = page > 1 ? `${base}?page=${page}` : base
+  const titleSuffix = page > 1 ? ` — Page ${page}` : ''
+  const title = `${tag} — Actualités Tomobile 360${titleSuffix}`
   const description = `Tous les articles Tomobile 360 sur ${tag} : actualités, essais et tendances automobiles au Maroc.`
   return {
     title,
     description,
     alternates: {
-      canonical: `/actu/tag/${encodeURIComponent(tag)}`,
+      canonical,
     },
     openGraph: {
       title,
       description,
-      url: `/actu/tag/${encodeURIComponent(tag)}`,
+      url: canonical,
       siteName: 'Tomobile 360',
       type: 'website',
     },
   }
 }
 
-export default async function TagArchivePage({ params }: PageProps) {
+export default async function TagArchivePage({
+  params,
+  searchParams,
+}: PageProps) {
   const tag = decodeURIComponent(params.tag)
-  const posts = await getPostsByTag(tag)
+  const allPosts = await getPostsByTag(tag)
+
+  const totalPages = Math.ceil(allPosts.length / ITEMS_PER_PAGE)
+  const requestedPage = parseInt(searchParams.page || '1')
+  const page = Math.min(Math.max(1, requestedPage || 1), Math.max(1, totalPages))
+  const posts = allPosts.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE,
+  )
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,8 +73,8 @@ export default async function TagArchivePage({ params }: PageProps) {
             #{tag}
           </h1>
           <p className="text-white/85 text-sm sm:text-base">
-            {posts.length} article{posts.length > 1 ? 's' : ''} lié
-            {posts.length > 1 ? 's' : ''} à ce tag
+            {allPosts.length} article{allPosts.length > 1 ? 's' : ''} lié
+            {allPosts.length > 1 ? 's' : ''} à ce tag
           </p>
         </div>
 
@@ -82,6 +102,21 @@ export default async function TagArchivePage({ params }: PageProps) {
             >
               &larr; Retour aux actualités
             </Link>
+          </div>
+        )}
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          hrefFor={(p) => `/actu/tag/${encodeURIComponent(tag)}?page=${p}`}
+        />
+
+        {/* Results count */}
+        {allPosts.length > 0 && totalPages > 1 && (
+          <div className="text-center mt-4 text-sm text-gray-400">
+            Page {page} sur {totalPages} &middot; {allPosts.length} article
+            {allPosts.length > 1 ? 's' : ''}
           </div>
         )}
       </div>

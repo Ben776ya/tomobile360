@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { formatDate } from '@/lib/utils'
@@ -8,6 +8,7 @@ import { getPublishedPosts, getFeaturedPost } from '@/lib/blog'
 import type { Metadata } from 'next'
 import { CategoryCarousel } from '@/components/actu/CategoryCarousel'
 import { ArticleCard } from '@/components/actu/ArticleCard'
+import { Pagination } from '@/components/actu/Pagination'
 import { CATEGORY_LABELS, CATEGORY_TEXT_COLORS } from '@/lib/blog/categories'
 
 export const revalidate = 60
@@ -218,72 +219,13 @@ export default async function ActuPage({
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2 mt-10">
-            {page > 1 && (
-              <Link
-                href={`/actu?page=${page - 1}${category !== 'all' ? `&category=${category}` : ''}`}
-                className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-secondary/10 hover:border-secondary transition-all duration-300 flex items-center gap-1 text-sm"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Précédent
-              </Link>
-            )}
-
-            <div className="flex items-center gap-1">
-              {(() => {
-                const pages: number[] = []
-                if (totalPages <= 7) {
-                  for (let i = 1; i <= totalPages; i++) pages.push(i)
-                } else {
-                  pages.push(1)
-                  if (page > 3) pages.push(-1)
-                  for (
-                    let i = Math.max(2, page - 1);
-                    i <= Math.min(totalPages - 1, page + 1);
-                    i++
-                  ) {
-                    pages.push(i)
-                  }
-                  if (page < totalPages - 2) pages.push(-2)
-                  pages.push(totalPages)
-                }
-                return pages.map((p, idx) => {
-                  if (p < 0) {
-                    return (
-                      <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">
-                        ...
-                      </span>
-                    )
-                  }
-                  return (
-                    <Link
-                      key={p}
-                      href={`/actu?page=${p}${category !== 'all' ? `&category=${category}` : ''}`}
-                      className={`px-4 py-2 rounded-xl text-sm transition-all duration-300 ${
-                        p === page
-                          ? 'bg-secondary text-white font-bold shadow-[0_0_12px_rgba(0,110,254,0.25)] ring-2 ring-secondary/30'
-                          : 'bg-white border border-gray-200 text-gray-600 hover:bg-secondary/10 hover:border-secondary'
-                      }`}
-                    >
-                      {p}
-                    </Link>
-                  )
-                })
-              })()}
-            </div>
-
-            {page < totalPages && (
-              <Link
-                href={`/actu?page=${page + 1}${category !== 'all' ? `&category=${category}` : ''}`}
-                className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-secondary/10 hover:border-secondary transition-all duration-300 flex items-center gap-1 text-sm"
-              >
-                Suivant
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            )}
-          </div>
-        )}
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          hrefFor={(p) =>
+            `/actu?page=${p}${category !== 'all' ? `&category=${category}` : ''}`
+          }
+        />
 
         {/* Results count */}
         {count > 0 && (
