@@ -9,6 +9,7 @@ import { MarkdownRenderer } from '@/components/blog/MarkdownRenderer'
 import { formatDate, formatRelativeTime } from '@/lib/utils'
 import { formatViewsLabel } from '@/lib/views'
 import { getPostBySlug, getRelatedPosts, incrementViews } from '@/lib/blog'
+import { normalizeTags } from '@/lib/blog/tags'
 import type { BlogListItem } from '@/lib/types/blog'
 import {
   CATEGORY_LABELS,
@@ -227,17 +228,19 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             {/* Markdown Body */}
             <MarkdownRenderer content={post.content} />
 
-            {/* Tags */}
-            {post.tags && post.tags.length > 0 && (
+            {/* Tags — normalized so a pasted "#A#B#C" chunk renders as separate,
+                wrappable pills; each links to its tag archive. */}
+            {normalizeTags(post.tags).length > 0 && (
               <div className="mt-8 pt-6 border-t border-gray-100">
                 <div className="flex flex-wrap gap-2">
-                  {post.tags.map((tag) => (
-                    <span
+                  {normalizeTags(post.tags).map((tag) => (
+                    <Link
                       key={tag}
-                      className="border border-gray-200 text-gray-500 px-4 py-1.5 rounded-full text-xs font-medium"
+                      href={`/actu/tag/${encodeURIComponent(tag)}`}
+                      className="border border-gray-200 text-gray-500 px-4 py-1.5 rounded-full text-xs font-medium max-w-full break-words hover:border-secondary hover:text-secondary transition-colors"
                     >
                       {tag}
-                    </span>
+                    </Link>
                   ))}
                 </div>
               </div>
