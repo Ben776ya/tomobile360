@@ -5,6 +5,9 @@
 export const BLOG_AUTHORS = [
   'Rédaction Tomobile360',
   'Tomobile360',
+  'David Jérémie',
+  'Amine Bouharaoui',
+  'Rafik Kamal Lahlou',
 ] as const
 
 export type BlogAuthor = (typeof BLOG_AUTHORS)[number]
