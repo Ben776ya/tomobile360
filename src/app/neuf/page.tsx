@@ -142,7 +142,15 @@ export default async function NewVehiclesPage({
       break
     case 'newest':
     default:
-      modelGroups.sort((a, b) => (b.hasNewRelease ? 1 : 0) - (a.hasNewRelease ? 1 : 0))
+      // Priced models first, "Prix sur demande" (falsy minPrice — null or 0,
+      // matching ModelCard's detection) pushed to the end; newest-first within
+      // each group.
+      modelGroups.sort((a, b) => {
+        const aOnRequest = !a.minPrice
+        const bOnRequest = !b.minPrice
+        if (aOnRequest !== bOnRequest) return aOnRequest ? 1 : -1
+        return (b.hasNewRelease ? 1 : 0) - (a.hasNewRelease ? 1 : 0)
+      })
       break
   }
 
@@ -247,16 +255,6 @@ export default async function NewVehiclesPage({
                 brands={brands || []}
                 models={allModels || []}
                 categories={uniqueCategories}
-                currentFilters={{
-                  brand,
-                  model,
-                  category,
-                  fuel,
-                  transmission,
-                  priceMin: priceMin?.toString(),
-                  priceMax: priceMax?.toString(),
-                  sort,
-                }}
               />
             </div>
           </details>
@@ -269,16 +267,6 @@ export default async function NewVehiclesPage({
               brands={brands || []}
               models={allModels || []}
               categories={uniqueCategories}
-              currentFilters={{
-                brand,
-                model,
-                category,
-                fuel,
-                transmission,
-                priceMin: priceMin?.toString(),
-                priceMax: priceMax?.toString(),
-                sort,
-              }}
             />
           </aside>
 

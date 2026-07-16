@@ -4,21 +4,12 @@ import { useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Label } from '@/components/ui/label'
 import { X, SlidersHorizontal } from 'lucide-react'
+import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
 
 interface VehicleFiltersProps {
   brands: Array<{ id: string; name: string }>
   models: Array<{ id: string; brand_id: string | null; name: string; category: string | null }>
   categories: Array<string | null>
-  currentFilters: {
-    brand?: string
-    model?: string
-    category?: string
-    fuel?: string
-    transmission?: string
-    priceMin?: string
-    priceMax?: string
-    sort?: string
-  }
 }
 
 export function VehicleFilters({
@@ -112,8 +103,8 @@ export function VehicleFilters({
     brand: (v, b) => b.find(br => br.id === v)?.name || v,
     model: (v) => models.find(m => m.id === v)?.name || v,
     category: (v) => v,
-    fuel: (v) => v,
-    transmission: (v) => v,
+    fuel: (v) => fuelLabel(v),
+    transmission: (v) => transmissionLabel(v),
     priceMin: (v) => `Min ${parseInt(v).toLocaleString()} DH`,
     priceMax: (v) => `Max ${parseInt(v).toLocaleString()} DH`,
     sort: (v) => {
@@ -282,7 +273,7 @@ export function VehicleFilters({
             <option value="">Tous les carburants</option>
             {fuelTypes.map((f) => (
               <option key={f} value={f}>
-                {f}
+                {fuelLabel(f)}
               </option>
             ))}
           </select>
@@ -299,7 +290,7 @@ export function VehicleFilters({
             <option value="">Toutes les transmissions</option>
             {transmissionTypes.map((t) => (
               <option key={t} value={t}>
-                {t}
+                {transmissionLabel(t)}
               </option>
             ))}
           </select>
