@@ -16,6 +16,8 @@ import { ImageGallery } from '@/components/vehicles/ImageGallery'
 import { ModelCard, type ModelGroup } from '@/components/vehicles/ModelCard'
 import { buildModelGroups, type VehicleRowForGrouping } from '@/lib/vehicles/group-by-model'
 import { rankSimilarModels } from '@/lib/vehicles/similar-vehicles'
+import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
+import { buildModelFaq } from '@/lib/vehicles/model-faq'
 import { VideoCard } from '@/components/videos/VideoCard'
 import { filterVideosForCar } from '@/lib/videos/match-video-to-car'
 import { ArticleCard } from '@/components/articles/ArticleCard'
@@ -111,13 +113,14 @@ export async function generateMetadata({ params }: PageProps) {
   if (!resolved) return { title: 'Modèle non trouvé' }
 
   const { brand, model, vehicle, variants } = resolved
-  const variantPrices = variants.map(v => v.price_min).filter((p): p is number => p != null)
+  const variantPrices = variants.map(v => v.price_min).filter((p): p is number => p != null && p > 0)
   const minPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : null
+  const year = new Date().getFullYear()
   const canonicalUrl = `https://www.tomobile360.ma/neuf/${slug(brand.name)}/${slug(model.name)}`
-  const title = `${brand.name} ${model.name} — Prix, Versions et Fiche Technique au Maroc`
+  const title = `Prix ${brand.name} ${model.name} Maroc ${year} — Fiche Technique et Versions`
   const description = minPrice
-    ? `Découvrez le ${brand.name} ${model.name} au Maroc : ${variants.length} version${variants.length > 1 ? 's' : ''}, prix à partir de ${formatPrice(minPrice)}, fiche technique complète.`
-    : `Découvrez le ${brand.name} ${model.name} au Maroc : ${variants.length} version${variants.length > 1 ? 's' : ''}, fiche technique complète.`
+    ? `Prix du ${brand.name} ${model.name} au Maroc en ${year} : à partir de ${formatPrice(minPrice)}, ${variants.length} version${variants.length > 1 ? 's' : ''}, fiche technique complète.`
+    : `${brand.name} ${model.name} au Maroc en ${year} : ${variants.length} version${variants.length > 1 ? 's' : ''}, fiche technique complète et prix sur demande.`
   const ogImage = vehicle.images?.[0] || '/og-image.png'
 
   return {
@@ -180,7 +183,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
     const { data: similarRows } = await supabase
       .from('vehicles_new')
       .select(`
-        id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, brand_id, model_id,
+        id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, brand_id, model_id, variant_list,
         brands:brand_id (name, logo_url, origin),
         models:model_id!inner (name, category),
         promotions (discount_percentage, is_active)
@@ -233,6 +236,31 @@ export default async function ModelDetailPage({ params }: PageProps) {
   const hasPopular = !!representative.is_popular
   const fuelTypes = Array.from(new Set(variants.map(v => v.fuel_type).filter(Boolean)))
   const transmissions = Array.from(new Set(variants.map(v => v.transmission).filter(Boolean)))
+
+  // Freshness signal shown near the title (explicit fr-MA locale, never a bare
+  // toLocaleDateString whose output depends on the server locale).
+  const updatedAtLabel = representative.updated_at
+    ? new Date(representative.updated_at).toLocaleDateString('fr-MA', { day: 'numeric', month: 'long', year: 'numeric' })
+    : null
+
+  // FAQ — built from data only, then reused verbatim for the visible block AND
+  // the FAQPage JSON-LD so the two can never disagree. Fiscal power is pulled
+  // from the fiche only when a matching key holds a meaningful value.
+  const ficheSpecsRecord = (fiche?.specs ?? {}) as Record<string, unknown>
+  const fiscalPowerEntry = Object.entries(ficheSpecsRecord).find(([k]) => /fiscal/i.test(k))
+  const fiscalPower = fiscalPowerEntry && isMeaningfulSpecValue(fiscalPowerEntry[1])
+    ? String(fiscalPowerEntry[1])
+    : null
+  const faqItems = buildModelFaq({
+    brandName: brand.name,
+    modelName: model.name,
+    minPrice,
+    maxPrice,
+    consumptionCombined: representative.fuel_consumption_combined ?? null,
+    fiscalPower,
+    transmissions: transmissions as string[],
+    versionCount: variants.length,
+  })
 
   type Promo = { discount_percentage: number | null; is_active?: boolean; valid_until?: string | null; title?: string | null }
   const activePromos: Promo[] = ((representative.promotions as Promo[] | null) ?? []).filter(p =>
@@ -333,6 +361,9 @@ export default async function ModelDetailPage({ params }: PageProps) {
                       <p className="text-gray-400">
                         {variants.length} version{variants.length > 1 ? 's' : ''} disponible{variants.length > 1 ? 's' : ''}
                       </p>
+                      {updatedAtLabel && (
+                        <p className="text-xs text-gray-400 mt-0.5">Mis à jour le {updatedAtLabel}</p>
+                      )}
                     </div>
                   </div>
 
@@ -469,6 +500,34 @@ export default async function ModelDetailPage({ params }: PageProps) {
             </div>
           </div>
         </div>
+
+        {faqItems.length > 0 && (
+          <section className="mt-12" aria-labelledby="faq-heading">
+            {/* FAQPage JSON-LD — an exact mirror of the visible block below,
+                both driven by `faqItems` (single source of truth). */}
+            <JsonLd
+              data={{
+                '@type': 'FAQPage',
+                mainEntity: faqItems.map((f) => ({
+                  '@type': 'Question',
+                  name: f.question,
+                  acceptedAnswer: { '@type': 'Answer', text: f.answer },
+                })),
+              }}
+            />
+            <h2 id="faq-heading" className="text-2xl font-bold text-primary mb-6">
+              Questions fréquentes — {brand.name} {model.name}
+            </h2>
+            <div className="space-y-4">
+              {faqItems.map((f, i) => (
+                <div key={i} className="bg-white rounded-xl border border-gray-200 p-5">
+                  <h3 className="text-base font-semibold text-slate-700 mb-2">{f.question}</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">{f.answer}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {similarModelGroups.length > 0 && (
           <div className="mt-12">
