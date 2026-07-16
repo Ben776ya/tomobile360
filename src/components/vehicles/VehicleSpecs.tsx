@@ -1,4 +1,5 @@
 import { VehicleNew, FicheTechnique } from '@/lib/types'
+import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
 import {
   Fuel,
   Gauge,
@@ -27,27 +28,23 @@ type KeySpec = {
 }
 
 export function KeySpecsStrip({ vehicle, fiche }: VehicleSpecsProps) {
-  const specs: KeySpec[] = []
   const ficheSpecs = fiche?.specs || {}
 
-  if (vehicle.horsepower || ficheSpecs['Puissance dynamique']) {
-    specs.push({ icon: Zap, label: 'Puissance', value: vehicle.horsepower ? `${vehicle.horsepower} ch` : ficheSpecs['Puissance dynamique'] })
-  }
-  if (vehicle.fuel_type || ficheSpecs['Motorisation']) {
-    specs.push({ icon: Fuel, label: 'Carburant', value: vehicle.fuel_type || ficheSpecs['Motorisation'] })
-  }
-  if (vehicle.transmission || ficheSpecs['Boîte à vitesse']) {
-    specs.push({ icon: Cog, label: 'Boîte', value: vehicle.transmission || ficheSpecs['Boîte à vitesse'] })
-  }
-  if (ficheSpecs['Vitesse maxi.'] || vehicle.top_speed) {
-    specs.push({ icon: Car, label: 'V. Max', value: ficheSpecs['Vitesse maxi.'] || `${vehicle.top_speed} km/h` })
-  }
-  if (ficheSpecs['Volume de coffre'] || vehicle.cargo_capacity) {
-    specs.push({ icon: Ruler, label: 'Coffre', value: ficheSpecs['Volume de coffre'] || `${vehicle.cargo_capacity} L` })
-  }
-  if (ficheSpecs['Couple maxi.'] || vehicle.torque) {
-    specs.push({ icon: Gauge, label: 'Couple', value: ficheSpecs['Couple maxi.'] || `${vehicle.torque} Nm` })
-  }
+  // Resolve each key spec (vehicle column preferred, fiche as fallback), then
+  // keep only the ones with a meaningful value — this hides placeholder zeros
+  // like a fiche "Couple maxi." stored as "0 Nm" and guards against building a
+  // "null km/h" string when neither source has the field.
+  const makeSpec = (icon: any, label: string, value: string | number | null | undefined): KeySpec | null =>
+    isMeaningfulSpecValue(value) ? { icon, label, value: String(value) } : null
+
+  const specs = [
+    makeSpec(Zap, 'Puissance', vehicle.horsepower ? `${vehicle.horsepower} ch` : ficheSpecs['Puissance dynamique']),
+    makeSpec(Fuel, 'Carburant', vehicle.fuel_type || ficheSpecs['Motorisation']),
+    makeSpec(Cog, 'Boîte', vehicle.transmission || ficheSpecs['Boîte à vitesse']),
+    makeSpec(Car, 'V. Max', ficheSpecs['Vitesse maxi.'] || (vehicle.top_speed ? `${vehicle.top_speed} km/h` : null)),
+    makeSpec(Ruler, 'Coffre', ficheSpecs['Volume de coffre'] || (vehicle.cargo_capacity ? `${vehicle.cargo_capacity} L` : null)),
+    makeSpec(Gauge, 'Couple', ficheSpecs['Couple maxi.'] || (vehicle.torque ? `${vehicle.torque} Nm` : null)),
+  ].filter((s): s is KeySpec => s !== null)
 
   if (specs.length === 0) return null
 
@@ -114,8 +111,13 @@ function getDetailCategoryConfig(category: string): { icon: typeof Car; color: s
 }
 
 export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
-  // Priority 1: Render from fiches_techniques table data
-  const hasSpecs = fiche && Object.keys(fiche.specs || {}).length > 0
+  // Priority 1: Render from fiches_techniques table data.
+  // Drop placeholder/zero values (e.g. "0 Nm", "", "-") up front so a fiche
+  // full of empty cells doesn't render an empty "CARACTÉRISTIQUES" box.
+  const meaningfulSpecs = Object.entries(fiche?.specs || {}).filter(([, value]) =>
+    isMeaningfulSpecValue(value)
+  )
+  const hasSpecs = meaningfulSpecs.length > 0
   const hasDetail = fiche && Object.keys(fiche.en_detail || {}).length > 0
 
   if (hasSpecs || hasDetail) {
@@ -133,7 +135,7 @@ export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
               <h4 className="text-base font-bold text-blue-600">CARACTÉRISTIQUES TECHNIQUES</h4>
             </div>
             <div className="divide-y divide-border">
-              {Object.entries(fiche!.specs).map(([key, value], index) => (
+              {meaningfulSpecs.map(([key, value], index) => (
                 <div
                   key={key}
                   className={`flex items-center justify-between px-5 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}

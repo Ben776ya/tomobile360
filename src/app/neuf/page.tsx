@@ -59,7 +59,7 @@ export default async function NewVehiclesPage({
   let query = supabase
     .from('vehicles_new')
     .select(`
-      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, horsepower, brand_id, model_id, created_at, views,
+      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, horsepower, brand_id, model_id, created_at, views, variant_list,
       brands:brand_id (name, logo_url),
       models:model_id (name),
       promotions (discount_percentage, is_active)
@@ -156,6 +156,8 @@ export default async function NewVehiclesPage({
 
   // Paginate model groups
   const totalModels = modelGroups.length
+  // R4: total versions = sum of each model's version count (not the row count).
+  const totalVersions = modelGroups.reduce((sum, g) => sum + g.versionCount, 0)
   const totalPages = Math.ceil(totalModels / itemsPerPage)
   const from = (page - 1) * itemsPerPage
   const paginatedModels = modelGroups.slice(from, from + itemsPerPage)
@@ -304,7 +306,7 @@ export default async function NewVehiclesPage({
                 <span className="font-semibold text-secondary">{totalModels}</span> modèle
                 {totalModels > 1 ? 's' : ''} trouvé{totalModels > 1 ? 's' : ''}
                 <span className="text-gray-400 ml-1">
-                  ({visibleRows.length} version{visibleRows.length !== 1 ? 's' : ''})
+                  ({totalVersions} version{totalVersions !== 1 ? 's' : ''})
                 </span>
               </p>
 
