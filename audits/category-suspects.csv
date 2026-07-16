@@ -1,1 +1,4 @@
 brand,model,current_category,reason,confidence
+KGM,Musso Grand,SUV,Le nom évoque un pick-up,high
+Mitsubishi,L200,SUV,Le nom évoque un pick-up,high
+Chevrolet,Spark,SUV,Le nom évoque une citadine,medium

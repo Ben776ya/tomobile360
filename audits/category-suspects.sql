@@ -60,7 +60,7 @@ from (
          'Le nom évoque un pick-up' as reason, 'high', 3
   from base
   where current_category is distinct from 'Pick-up'
-    and exists (select 1 from pickup_kw where base.lname like '%' || kw || '%')
+    and exists (select 1 from pickup_kw where base.lname ~ ('\y' || kw || '\y'))
 
   union all
   -- 4) City-car nameplate categorised as a larger body style
@@ -69,6 +69,6 @@ from (
          'Le nom évoque une citadine' as reason, 'medium', 4
   from base
   where current_category in ('SUV', 'Pick-up', 'Monospace', 'Break', 'Utilitaire')
-    and exists (select 1 from citadine_kw where base.lname like '%' || kw || '%')
+    and exists (select 1 from citadine_kw where base.lname ~ ('\y' || kw || '\y'))
 ) s
 order by ord, brand, model;
