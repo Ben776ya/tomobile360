@@ -14,7 +14,7 @@ export const metadata = {
   title: 'Voitures Neuves au Maroc 2026 — Prix, Fiches Techniques et Comparatifs',
   description: 'Consultez le catalogue complet des voitures neuves au Maroc : prix, équipements, puissance fiscale. Comparez et trouvez le modèle idéal.',
   alternates: {
-    canonical: 'https://tomobile360.ma/neuf',
+    canonical: 'https://www.tomobile360.ma/neuf',
   },
 }
 

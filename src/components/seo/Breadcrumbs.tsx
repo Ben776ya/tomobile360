@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { JsonLd } from './JsonLd'
 
-const BASE_URL = 'https://tomobile360.ma'
+const BASE_URL = 'https://www.tomobile360.ma'
 
 interface BreadcrumbItem {
   name: string

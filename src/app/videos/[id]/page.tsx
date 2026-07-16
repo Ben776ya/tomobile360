@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: PageProps) {
     title: `${video.title} — Tomobile 360 TV`,
     description: video.description?.substring(0, 155) || 'Regardez les meilleures vidéos automobile du Maroc sur Tomobile 360 TV.',
     alternates: {
-      canonical: `https://tomobile360.ma/videos/${params.id}`,
+      canonical: `https://www.tomobile360.ma/videos/${params.id}`,
     },
     openGraph: {
       title: video.title,
@@ -132,7 +132,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
           '@type': 'VideoObject',
           name: video.title,
           description: video.description?.substring(0, 200) || '',
-          thumbnailUrl: [video.thumbnail_url || 'https://tomobile360.ma/og-image.png'],
+          thumbnailUrl: [video.thumbnail_url || 'https://www.tomobile360.ma/og-image.png'],
           uploadDate: video.created_at,
           ...(video.duration ? { duration: toIsoDuration(video.duration) } : {}),
           ...(embedUrl ? { embedUrl } : {}),
@@ -141,7 +141,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
             name: 'Tomobile 360',
             logo: {
               '@type': 'ImageObject',
-              url: 'https://tomobile360.ma/logo_tomobile360.png',
+              url: 'https://www.tomobile360.ma/logo_tomobile360.png',
             },
           },
         }}

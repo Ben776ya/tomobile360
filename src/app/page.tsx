@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/server'
 import type { VehicleUsed, Video } from '@/lib/types'
@@ -30,6 +31,28 @@ const NewsSection = dynamic(
 )
 
 export const revalidate = 60 // Revalidate every 60 seconds
+
+// Explicit homepage metadata. The root layout's default title/OG already
+// describe the homepage, but declaring it here (with an `absolute` title so the
+// '%s | Tomobile 360' template doesn't double-brand it) decouples the homepage
+// identity from the root defaults and gives it a self-referential og:url.
+export const metadata: Metadata = {
+  title: {
+    absolute: 'Tomobile 360 — Prix, Fiches Techniques et Guide d\'Achat Auto au Maroc',
+  },
+  description:
+    'Découvrez les prix et fiches techniques de toutes les voitures neuves au Maroc. Comparatifs, essais vidéo et guide d\'achat complet sur Tomobile 360.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: 'Tomobile 360 — Prix et Fiches Techniques Auto au Maroc',
+    description:
+      'Découvrez les prix et fiches techniques de toutes les voitures neuves au Maroc. Comparatifs, essais vidéo et guide d\'achat complet.',
+    url: '/',
+    siteName: 'Tomobile 360',
+    type: 'website',
+    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+  },
+}
 
 export default async function HomePage() {
   const supabase = await createClient()

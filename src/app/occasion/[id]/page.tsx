@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: PageProps) {
     ? `${Math.round(listing.price).toLocaleString('fr-MA')} DH`
     : ''
 
-  const canonicalUrl = `https://tomobile360.ma/occasion/${params.id}`
+  const canonicalUrl = `https://www.tomobile360.ma/occasion/${params.id}`
   const imagesArr = Array.isArray(listing.images) ? (listing.images as string[]) : []
   const ogImage = imagesArr[0] || '/og-image.png'
 
@@ -170,15 +170,15 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
           ...(listing.fuel_type ? { fuelType: listing.fuel_type } : {}),
           ...(listing.transmission ? { vehicleTransmission: listing.transmission } : {}),
           ...(listing.color ? { color: listing.color } : {}),
-          image: images.length > 0 ? images.slice(0, 3) : ['https://tomobile360.ma/og-image.png'],
+          image: images.length > 0 ? images.slice(0, 3) : ['https://www.tomobile360.ma/og-image.png'],
           ...(listing.description ? { description: listing.description } : {}),
-          url: `https://tomobile360.ma/occasion/${params.id}`,
+          url: `https://www.tomobile360.ma/occasion/${params.id}`,
           offers: {
             '@type': 'Offer',
             price: listing.price,
             priceCurrency: 'MAD',
             availability: 'https://schema.org/InStock',
-            url: `https://tomobile360.ma/occasion/${params.id}`,
+            url: `https://www.tomobile360.ma/occasion/${params.id}`,
             itemCondition: 'https://schema.org/UsedCondition',
             seller: {
               '@type': 'Person',

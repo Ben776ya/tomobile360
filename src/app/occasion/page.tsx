@@ -3,16 +3,15 @@ import Link from 'next/link'
 import { ExternalLink, Calendar, Gauge, Fuel, Zap, GitFork, Car } from 'lucide-react'
 import { getMoccazListings, type MoccazListing } from '@/lib/scrapers/moccaz'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
 export const revalidate = 0
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Voitures d\'Occasion Vérifiées au Maroc — M-OCCAZ',
   description: 'Trouvez votre voiture d\'occasion vérifiée au Maroc. Véhicules M-OCCAZ contrôlés et garantis : prix, kilométrage, historique complet sur Tomobile 360.',
-  alternates: {
-    canonical: 'https://tomobile360.ma/occasion',
-  },
-}
+  path: '/occasion',
+})
 
 function MOccazCard({ listing }: { listing: MoccazListing }) {
   return (

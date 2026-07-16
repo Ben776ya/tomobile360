@@ -1,16 +1,14 @@
-import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Check, ArrowLeft, Truck, ShieldCheck, Zap } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'DabaPneu — Pneus & Montage au Maroc',
   description: 'Trouvez et commandez vos pneus en ligne avec DabaPneu — livraison rapide partout au Maroc et montage chez nos garages partenaires.',
-  alternates: {
-    canonical: 'https://tomobile360.ma/services/revision/dabapneu',
-  },
-}
+  path: '/services/revision/dabapneu',
+})
 
 const DABAPNEU_WEBSITE = 'https://www.dabapneu.ma'
 

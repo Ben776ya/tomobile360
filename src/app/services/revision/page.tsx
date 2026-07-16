@@ -1,16 +1,14 @@
-import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Wrench, Sparkles, ChevronRight } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Entretien Rapide Auto au Maroc — Pneus, Detailing & Plus',
   description: 'Entretien rapide pour votre voiture au Maroc : pneus DabaPneu, detailing professionnel et plus. Choisissez le service qui vous convient sur Tomobile 360.',
-  alternates: {
-    canonical: 'https://tomobile360.ma/services/revision',
-  },
-}
+  path: '/services/revision',
+})
 
 type SubService = {
   title: string

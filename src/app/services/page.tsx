@@ -1,16 +1,14 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { CreditCard, Shield, Car, Wrench, CalendarCheck, ShieldCheck, ChevronRight, Calculator, FileCheck } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Services Automobiles au Maroc — Crédit, Assurance, Entretien',
   description: 'Crédit auto SOFAC, assurance AtlantaSanad, entretien rapide (pneus & detailing), contrôle technique, sécurité routière NARSA : tous les services automobiles au Maroc réunis sur Tomobile 360.',
-  alternates: {
-    canonical: 'https://tomobile360.ma/services',
-  },
-}
+  path: '/services',
+})
 
 type ServiceItem = {
   icon: React.ComponentType<{ className?: string }>

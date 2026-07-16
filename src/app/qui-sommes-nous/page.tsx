@@ -1,15 +1,13 @@
-import type { Metadata } from 'next'
 import Image from 'next/image'
 import { AtSign, Camera } from 'lucide-react'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Qui Sommes-Nous',
   description:
     "Découvrez l'équipe de passionnés derrière Tomobile 360, la plateforme de référence pour l'automobile au Maroc.",
-  alternates: {
-    canonical: 'https://tomobile360.ma/qui-sommes-nous',
-  },
-}
+  path: '/qui-sommes-nous',
+})
 
 // ── Data ────────────────────────────────────────────────────────────────────
 

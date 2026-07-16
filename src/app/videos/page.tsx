@@ -4,16 +4,15 @@ import { createClient } from '@/lib/supabase/server'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { Play, Eye, Clock } from 'lucide-react'
 import { formatRelativeTime } from '@/lib/utils'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
 export const revalidate = 60
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Essais Auto et Tests Vidéo au Maroc',
   description: 'Regardez nos essais, comparatifs et guides automobiles en vidéo. Tomobile 360 TV — la référence auto en vidéo au Maroc.',
-  alternates: {
-    canonical: 'https://tomobile360.ma/videos',
-  },
-}
+  path: '/videos',
+})
 
 interface SearchParams {
   category?: string

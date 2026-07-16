@@ -5,7 +5,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { MagazineSection } from '@/components/magazine/MagazineSection'
 
-const BASE_URL = 'https://tomobile360.ma'
+const BASE_URL = 'https://www.tomobile360.ma'
 
 export const revalidate = 60
 

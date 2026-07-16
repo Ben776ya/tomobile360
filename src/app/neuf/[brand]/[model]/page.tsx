@@ -112,7 +112,7 @@ export async function generateMetadata({ params }: PageProps) {
   const { brand, model, vehicle, variants } = resolved
   const variantPrices = variants.map(v => v.price_min).filter((p): p is number => p != null)
   const minPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : null
-  const canonicalUrl = `https://tomobile360.ma/neuf/${slug(brand.name)}/${slug(model.name)}`
+  const canonicalUrl = `https://www.tomobile360.ma/neuf/${slug(brand.name)}/${slug(model.name)}`
   const title = `${brand.name} ${model.name} — Prix, Versions et Fiche Technique au Maroc`
   const description = minPrice
     ? `Découvrez le ${brand.name} ${model.name} au Maroc : ${variants.length} version${variants.length > 1 ? 's' : ''}, prix à partir de ${formatPrice(minPrice)}, fiche technique complète.`
@@ -256,7 +256,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
   const whatsappText = encodeURIComponent(
     `Bonjour, je suis intéressé(e) par la ${brand.name} ${model.name} sur Tomobile 360.`
   )
-  const canonicalUrl = `https://tomobile360.ma/neuf/${canonicalBrandSlug}/${canonicalModelSlug}`
+  const canonicalUrl = `https://www.tomobile360.ma/neuf/${canonicalBrandSlug}/${canonicalModelSlug}`
 
   const variantOffers = variants
     .filter(v => v.price_min != null && v.price_min > 0)

@@ -8,7 +8,7 @@ export const EXTERNAL_LINKS = {
 } as const
 
 export const SITE_CONFIG = {
-  DOMAIN: 'https://tomobile360.ma',
+  DOMAIN: 'https://www.tomobile360.ma',
   NAME: 'Tomobile 360',
   DESCRIPTION: 'Guide d\'achat automobile au Maroc — voitures neuves, fiches techniques, essais et comparatifs.',
 } as const

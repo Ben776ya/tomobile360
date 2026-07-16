@@ -41,7 +41,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://tomobile360.ma'),
+  metadataBase: new URL('https://www.tomobile360.ma'),
   title: {
     default: 'Tomobile 360 — Guide d\'Achat Automobile au Maroc : Voitures Neuves, Prix et Fiches Techniques',
     template: '%s | Tomobile 360',
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Tomobile 360 — Guide d\'Achat Automobile au Maroc',
     description: 'Découvrez les prix et fiches techniques de toutes les voitures neuves au Maroc. Comparatifs, essais vidéo et guide d\'achat complet sur Tomobile 360.',
-    url: 'https://tomobile360.ma',
+    url: 'https://www.tomobile360.ma',
     siteName: 'Tomobile 360',
     images: [
       {
@@ -72,9 +72,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
     languages: {
-      'fr-MA': 'https://tomobile360.ma',
-      'fr': 'https://tomobile360.ma',
-      'x-default': 'https://tomobile360.ma',
+      'fr-MA': 'https://www.tomobile360.ma',
+      'fr': 'https://www.tomobile360.ma',
+      'x-default': 'https://www.tomobile360.ma',
     },
   },
 }
@@ -95,27 +95,27 @@ export default function RootLayout({
               '@graph': [
                 {
                   '@type': 'WebSite',
-                  '@id': 'https://tomobile360.ma/#website',
+                  '@id': 'https://www.tomobile360.ma/#website',
                   name: 'Tomobile 360',
-                  url: 'https://tomobile360.ma',
+                  url: 'https://www.tomobile360.ma',
                   inLanguage: 'fr-MA',
                   potentialAction: {
                     '@type': 'SearchAction',
                     target: {
                       '@type': 'EntryPoint',
-                      urlTemplate: 'https://tomobile360.ma/neuf?q={search_term_string}',
+                      urlTemplate: 'https://www.tomobile360.ma/neuf?q={search_term_string}',
                     },
                     'query-input': 'required name=search_term_string',
                   },
                 },
                 {
                   '@type': 'AutoDealer',
-                  '@id': 'https://tomobile360.ma/#organization',
+                  '@id': 'https://www.tomobile360.ma/#organization',
                   name: 'Tomobile 360',
-                  url: 'https://tomobile360.ma',
+                  url: 'https://www.tomobile360.ma',
                   logo: {
                     '@type': 'ImageObject',
-                    url: 'https://tomobile360.ma/logo_tomobile360.png',
+                    url: 'https://www.tomobile360.ma/logo_tomobile360.png',
                   },
                   email: BUSINESS_INFO.EMAIL,
                   contactPoint: {

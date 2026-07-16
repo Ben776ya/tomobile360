@@ -47,11 +47,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: post.title,
     description: post.meta_description || post.subtitle || undefined,
-    alternates: { canonical: `https://tomobile360.ma/actu/${post.slug}` },
+    alternates: { canonical: `https://www.tomobile360.ma/actu/${post.slug}` },
     openGraph: {
       title: post.title,
       description: post.meta_description || post.subtitle || undefined,
-      url: `https://tomobile360.ma/actu/${post.slug}`,
+      url: `https://www.tomobile360.ma/actu/${post.slug}`,
       siteName: 'Tomobile 360',
       images: post.hero_image_url
         ? [{ url: post.hero_image_url, width: 1200, height: 630, alt: post.title }]
@@ -107,7 +107,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           image: [
             {
               '@type': 'ImageObject',
-              url: post.hero_image_url || 'https://tomobile360.ma/og-image.png',
+              url: post.hero_image_url || 'https://www.tomobile360.ma/og-image.png',
               width: 1200,
               height: 630,
             },
@@ -120,13 +120,13 @@ export default async function ArticleDetailPage({ params }: PageProps) {
             name: 'Tomobile 360',
             logo: {
               '@type': 'ImageObject',
-              url: 'https://tomobile360.ma/logo_tomobile360.png',
+              url: 'https://www.tomobile360.ma/logo_tomobile360.png',
             },
           },
-          url: `https://tomobile360.ma/actu/${post.slug}`,
+          url: `https://www.tomobile360.ma/actu/${post.slug}`,
           mainEntityOfPage: {
             '@type': 'WebPage',
-            '@id': `https://tomobile360.ma/actu/${post.slug}`,
+            '@id': `https://www.tomobile360.ma/actu/${post.slug}`,
           },
         }}
       />
