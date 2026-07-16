@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Politique d'utilisation des cookies sur la plateforme Tomobile 360.",
   robots: { index: false, follow: true },
   alternates: {
-    canonical: 'https://tomobile360.ma/cookies',
+    canonical: 'https://www.tomobile360.ma/cookies',
   },
 }
 

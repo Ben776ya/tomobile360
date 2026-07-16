@@ -3,7 +3,7 @@ import type { Publication } from '@/lib/magazines/publications'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { MagazineCard } from './MagazineCard'
 
-const BASE_URL = 'https://tomobile360.ma'
+const BASE_URL = 'https://www.tomobile360.ma'
 
 export function MagazineSection({
   publication,

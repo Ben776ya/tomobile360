@@ -7,6 +7,7 @@ import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Send, Plus } from 'l
 import { subscribeNewsletter } from '@/lib/actions/newsletter'
 import { EXTERNAL_LINKS } from '@/lib/links'
 import { BUSINESS_INFO } from '@/lib/business-info'
+import { gaEvents } from '@/lib/analytics/gtag'
 
 const socialLinks = [
   {
@@ -120,6 +121,7 @@ export default function Footer() {
       } else {
         setMessage({ type: 'success', text: 'Merci pour votre inscription !' })
         setEmail('')
+        gaEvents.newsletterSignup({ context: 'footer' })
       }
     } catch {
       setMessage({ type: 'error', text: 'Une erreur est survenue. Reessayez plus tard.' })

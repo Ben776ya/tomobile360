@@ -4,16 +4,15 @@ import { ModelCard } from '@/components/vehicles/ModelCard'
 import { buildModelGroups } from '@/lib/vehicles/group-by-model'
 import { Car, Mountain, Truck, Zap } from 'lucide-react'
 import type { CoupDeCoeurCategory } from '@/lib/types'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
 export const revalidate = 60
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Nos Coups de Coeur',
   description: 'Notre sélection des meilleurs véhicules par segment : Voiture, SUV, Pick-up et Électrique.',
-  alternates: {
-    canonical: 'https://tomobile360.ma/coups-de-coeur',
-  },
-}
+  path: '/coups-de-coeur',
+})
 
 type CategoryConfig = {
   value: CoupDeCoeurCategory

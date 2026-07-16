@@ -5,7 +5,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { NarsaVideoPlayer } from '@/components/narsa/NarsaVideoPlayer'
 
 const NARSA_WEBSITE = 'https://www.narsa.ma/fr'
-const SITE_URL = 'https://tomobile360.ma'
+const SITE_URL = 'https://www.tomobile360.ma'
 const SUPABASE_STORAGE_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''}/storage/v1/object/public/narsa-videos`
 
 const capsuleVideos = [

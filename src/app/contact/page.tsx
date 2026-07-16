@@ -5,6 +5,7 @@ import { Mail, Phone, MapPin, Send, Clock, MessageCircle, AlertCircle } from 'lu
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { submitContactMessage } from '@/lib/actions/contact'
 import { BUSINESS_INFO, whatsappLink } from '@/lib/business-info'
+import { gaEvents } from '@/lib/analytics/gtag'
 
 interface FormErrors {
   name?: string
@@ -216,6 +217,7 @@ export default function ContactPage() {
                   href={whatsappLink('Bonjour Tomobile 360, j\'aimerais discuter avec votre équipe.')}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => gaEvents.whatsappClick({ context: 'contact' })}
                   className="w-full inline-flex items-center justify-center px-4 py-2 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary-400 transition-colors"
                 >
                   Démarrer le chat

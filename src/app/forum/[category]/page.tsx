@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronLeft, Pin, Lock, MessageSquare, Eye, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 import type { Tables } from '@/lib/database.types'
 
 // The runtime select aliases the join as `profiles:author_id` even though no
@@ -25,10 +26,11 @@ export async function generateMetadata({ params }: { params: { category: string 
 
   if (!category) return { title: 'Forum' }
 
-  return {
+  return pageMetadata({
     title: `${category.name} — Forum Automobile Maroc`,
     description: category.description || `Discussions et conseils sur ${category.name} dans le forum automobile Tomobile 360.`,
-  }
+    path: `/forum/${params.category}`,
+  })
 }
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'

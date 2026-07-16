@@ -14,7 +14,7 @@ export const metadata = {
   title: 'Voitures Neuves au Maroc 2026 — Prix, Fiches Techniques et Comparatifs',
   description: 'Consultez le catalogue complet des voitures neuves au Maroc : prix, équipements, puissance fiscale. Comparez et trouvez le modèle idéal.',
   alternates: {
-    canonical: 'https://tomobile360.ma/neuf',
+    canonical: 'https://www.tomobile360.ma/neuf',
   },
 }
 
@@ -59,7 +59,7 @@ export default async function NewVehiclesPage({
   let query = supabase
     .from('vehicles_new')
     .select(`
-      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, horsepower, brand_id, model_id, created_at, views,
+      id, images, price_min, price_max, is_new_release, is_popular, version, year, fuel_type, transmission, horsepower, brand_id, model_id, created_at, views, variant_list,
       brands:brand_id (name, logo_url),
       models:model_id (name),
       promotions (discount_percentage, is_active)
@@ -142,12 +142,22 @@ export default async function NewVehiclesPage({
       break
     case 'newest':
     default:
-      modelGroups.sort((a, b) => (b.hasNewRelease ? 1 : 0) - (a.hasNewRelease ? 1 : 0))
+      // Priced models first, "Prix sur demande" (falsy minPrice — null or 0,
+      // matching ModelCard's detection) pushed to the end; newest-first within
+      // each group.
+      modelGroups.sort((a, b) => {
+        const aOnRequest = !a.minPrice
+        const bOnRequest = !b.minPrice
+        if (aOnRequest !== bOnRequest) return aOnRequest ? 1 : -1
+        return (b.hasNewRelease ? 1 : 0) - (a.hasNewRelease ? 1 : 0)
+      })
       break
   }
 
   // Paginate model groups
   const totalModels = modelGroups.length
+  // R4: total versions = sum of each model's version count (not the row count).
+  const totalVersions = modelGroups.reduce((sum, g) => sum + g.versionCount, 0)
   const totalPages = Math.ceil(totalModels / itemsPerPage)
   const from = (page - 1) * itemsPerPage
   const paginatedModels = modelGroups.slice(from, from + itemsPerPage)
@@ -247,16 +257,6 @@ export default async function NewVehiclesPage({
                 brands={brands || []}
                 models={allModels || []}
                 categories={uniqueCategories}
-                currentFilters={{
-                  brand,
-                  model,
-                  category,
-                  fuel,
-                  transmission,
-                  priceMin: priceMin?.toString(),
-                  priceMax: priceMax?.toString(),
-                  sort,
-                }}
               />
             </div>
           </details>
@@ -269,16 +269,6 @@ export default async function NewVehiclesPage({
               brands={brands || []}
               models={allModels || []}
               categories={uniqueCategories}
-              currentFilters={{
-                brand,
-                model,
-                category,
-                fuel,
-                transmission,
-                priceMin: priceMin?.toString(),
-                priceMax: priceMax?.toString(),
-                sort,
-              }}
             />
           </aside>
 
@@ -316,7 +306,7 @@ export default async function NewVehiclesPage({
                 <span className="font-semibold text-secondary">{totalModels}</span> modèle
                 {totalModels > 1 ? 's' : ''} trouvé{totalModels > 1 ? 's' : ''}
                 <span className="text-gray-400 ml-1">
-                  ({visibleRows.length} version{visibleRows.length !== 1 ? 's' : ''})
+                  ({totalVersions} version{totalVersions !== 1 ? 's' : ''})
                 </span>
               </p>
 

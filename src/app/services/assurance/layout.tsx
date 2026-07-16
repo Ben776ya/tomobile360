@@ -1,12 +1,10 @@
-import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Assurance Auto au Maroc — Comparez les Offres',
   description: 'Comparez et souscrivez votre assurance auto au Maroc. Tous risques, au tiers, responsabilité civile.',
-  alternates: {
-    canonical: 'https://tomobile360.ma/services/assurance',
-  },
-}
+  path: '/services/assurance',
+})
 
 export default function AssuranceLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>

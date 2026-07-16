@@ -1,16 +1,14 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ClipboardCheck, Check, ArrowLeft, MapPin, Calendar } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { BookingForm } from './BookingForm'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Contrôle Technique Voiture au Maroc',
   description: "Service de contrôle technique en cours de déploiement avec un partenaire agréé. Réservez votre place pour être averti dès l'ouverture.",
-  alternates: {
-    canonical: 'https://tomobile360.ma/services/controle',
-  },
-}
+  path: '/services/controle',
+})
 
 const checkpoints = [
   'Freinage',

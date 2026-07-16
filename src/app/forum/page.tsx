@@ -1,9 +1,9 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import { MessageSquare, Users, TrendingUp, Search } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Input } from '@/components/ui/input'
 import { formatRelativeTime } from '@/lib/utils'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 import type { Tables } from '@/lib/database.types'
 
 // Latest topic shape returned by the join — the runtime select aliases
@@ -16,13 +16,11 @@ type LatestTopicWithAuthor = {
   profiles: Pick<Tables<'profiles'>, 'full_name' | 'avatar_url'> | null
 }
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Forum Automobile Maroc — Discussions & Conseils',
   description: 'Rejoignez la communauté automobile marocaine. Posez vos questions, partagez vos expériences et obtenez des conseils sur votre voiture.',
-  alternates: {
-    canonical: 'https://tomobile360.ma/forum',
-  },
-}
+  path: '/forum',
+})
 
 export const revalidate = 60
 

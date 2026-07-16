@@ -95,13 +95,13 @@ export default async function ActuPage({
           name: 'Actualités Automobile Maroc',
           description:
             "Toute l'actualité automobile au Maroc : essais, nouveautés, tendances du marché.",
-          url: 'https://tomobile360.ma/actu',
+          url: 'https://www.tomobile360.ma/actu',
           publisher: {
             '@type': 'Organization',
             name: 'Tomobile 360',
             logo: {
               '@type': 'ImageObject',
-              url: 'https://tomobile360.ma/logo_tomobile360.png',
+              url: 'https://www.tomobile360.ma/logo_tomobile360.png',
             },
           },
         }}

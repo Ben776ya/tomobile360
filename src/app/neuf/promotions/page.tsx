@@ -1,17 +1,15 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { ModelCard } from '@/components/vehicles/ModelCard'
 import { buildModelGroups } from '@/lib/vehicles/group-by-model'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Promotions Voitures Neuves au Maroc',
   description: 'Profitez des meilleures promotions sur les voitures neuves au Maroc. Remises, offres spéciales et prix barrés chez les concessionnaires.',
-  alternates: {
-    canonical: 'https://tomobile360.ma/neuf/promotions',
-  },
-}
+  path: '/neuf/promotions',
+})
 
 export const revalidate = 60
 

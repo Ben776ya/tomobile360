@@ -16,6 +16,8 @@ export interface VehicleRowForGrouping {
   fuel_type: string | null
   transmission: string | null
   images: string[] | null
+  /** JSONB list of this row's versions. Its length is the true version count. */
+  variant_list?: unknown[] | null
   is_new_release: boolean | null
   is_popular: boolean | null
   brands: { name: string; logo_url: string | null; origin?: string | null } | { name: string; logo_url: string | null; origin?: string | null }[] | null
@@ -79,7 +81,14 @@ export function buildModelGroups(rows: VehicleRowForGrouping[]): ModelGroup[] {
       minPrice,
       maxPrice,
       mainImage: representative.images?.[0] || '/placeholder-car.svg',
-      versionCount: groupVehicles.length,
+      // R4: the real version count is the sum of each row's `variant_list`
+      // length (versions live inside that JSONB, not as separate rows). A row
+      // with no/empty variant_list still represents one version.
+      versionCount: groupVehicles.reduce(
+        (sum, v) =>
+          sum + (Array.isArray(v.variant_list) && v.variant_list.length > 0 ? v.variant_list.length : 1),
+        0
+      ),
       fuelTypes: Object.keys(fuelSet),
       transmissions: Object.keys(transSet),
       hasNewRelease: groupVehicles.some(v => !!v.is_new_release),

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'Consultez la politique de confidentialité de Tomobile 360 concernant la collecte et le traitement de vos données personnelles.',
   robots: { index: false, follow: true },
   alternates: {
-    canonical: 'https://tomobile360.ma/confidentialite',
+    canonical: 'https://www.tomobile360.ma/confidentialite',
   },
 }
 

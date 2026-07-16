@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "Consultez les conditions générales d'utilisation de la plateforme Tomobile 360.",
   robots: { index: false, follow: true },
   alternates: {
-    canonical: 'https://tomobile360.ma/conditions',
+    canonical: 'https://www.tomobile360.ma/conditions',
   },
 }
 

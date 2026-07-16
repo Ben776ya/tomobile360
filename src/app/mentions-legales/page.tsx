@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'Mentions légales de Tomobile 360, guide d\'achat automobile au Maroc.',
   robots: { index: false, follow: true },
   alternates: {
-    canonical: 'https://tomobile360.ma/mentions-legales',
+    canonical: 'https://www.tomobile360.ma/mentions-legales',
   },
 }
 

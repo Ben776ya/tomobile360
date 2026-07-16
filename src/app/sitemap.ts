@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { slug } from '@/lib/slug'
+import { normalizeTags } from '@/lib/blog/tags'
 
-const BASE_URL = 'https://tomobile360.ma'
+const BASE_URL = 'https://www.tomobile360.ma'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
@@ -25,7 +26,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/services/credit`, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE_URL}/services/assurance`, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE_URL}/services/revision`, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${BASE_URL}/services/revision/detailing`, changeFrequency: 'monthly', priority: 0.4 },
+    { url: `${BASE_URL}/services/revision/dabapneu`, changeFrequency: 'monthly', priority: 0.4 },
     { url: `${BASE_URL}/services/controle`, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${BASE_URL}/services/securite-routiere`, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${BASE_URL}/magazine`, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE_URL}/qui-sommes-nous`, changeFrequency: 'monthly', priority: 0.4 },
     { url: `${BASE_URL}/contact`, changeFrequency: 'monthly', priority: 0.4 },
     { url: `${BASE_URL}/conditions`, changeFrequency: 'yearly', priority: 0.2 },
@@ -37,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic: blog post pages
   const { data: blogPosts } = await supabase
     .from('blog_posts')
-    .select('slug, published_at, updated_at')
+    .select('slug, published_at, updated_at, tags')
     .eq('status', 'published')
     .order('published_at', { ascending: false })
     .limit(500)
@@ -48,6 +53,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'monthly' as const,
     priority: 0.6,
   }))
+
+  // Dynamic: blog tag-archive pages (/actu/tag/[tag]). Enumerate distinct
+  // normalized tags across published posts, deduped case-insensitively so a
+  // tag written in mixed casing yields a single URL (matches the case-
+  // insensitive filter used by the tag page). URL uses the raw tag string,
+  // encoded — the page reads params.tag via decodeURIComponent.
+  const seenTagKeys = new Set<string>()
+  const tagPages: MetadataRoute.Sitemap = []
+  for (const post of blogPosts || []) {
+    for (const tag of normalizeTags(post.tags as string[] | null)) {
+      const key = tag.toLowerCase()
+      if (seenTagKeys.has(key)) continue
+      seenTagKeys.add(key)
+      tagPages.push({
+        url: `${BASE_URL}/actu/tag/${encodeURIComponent(tag)}`,
+        changeFrequency: 'weekly' as const,
+        priority: 0.4,
+      })
+    }
+  }
 
   // Dynamic: model-level new vehicle pages (one URL per model)
   // Only models with at least one available vehicle.
@@ -94,5 +119,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  return [...staticPages, ...articlePages, ...vehiclePages, ...usedVehiclePages]
+  return [...staticPages, ...articlePages, ...tagPages, ...vehiclePages, ...usedVehiclePages]
 }

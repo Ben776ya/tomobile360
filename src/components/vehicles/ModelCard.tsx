@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { cn, formatPrice } from '@/lib/utils'
 import { Fuel, Gauge, Layers } from 'lucide-react'
 import { slug } from '@/lib/slug'
+import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
 
 export interface ModelGroup {
   brandId: string
@@ -122,13 +123,13 @@ export function ModelCard({ model }: ModelCardProps) {
           {model.fuelTypes.length > 0 && (
             <div className="flex items-center gap-1">
               <Fuel className="h-3.5 w-3.5" />
-              <span>{model.fuelTypes.join(', ')}</span>
+              <span>{model.fuelTypes.map(fuelLabel).join(', ')}</span>
             </div>
           )}
           {model.transmissions.length > 0 && (
             <div className="flex items-center gap-1">
               <Gauge className="h-3.5 w-3.5" />
-              <span>{model.transmissions.join(', ')}</span>
+              <span>{model.transmissions.map(transmissionLabel).join(', ')}</span>
             </div>
           )}
         </div>

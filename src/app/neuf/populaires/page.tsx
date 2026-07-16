@@ -1,17 +1,15 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { ModelCard } from '@/components/vehicles/ModelCard'
 import { buildModelGroups } from '@/lib/vehicles/group-by-model'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Voitures Populaires au Maroc',
   description: 'Les voitures neuves les plus populaires au Maroc. Comparez les modèles les plus vendus et trouvez votre prochaine voiture.',
-  alternates: {
-    canonical: 'https://tomobile360.ma/neuf/populaires',
-  },
-}
+  path: '/neuf/populaires',
+})
 
 export const revalidate = 60
 

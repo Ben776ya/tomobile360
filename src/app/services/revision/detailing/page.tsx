@@ -1,15 +1,13 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Check, ArrowLeft, Sparkles, ShieldCheck, Droplets, Sun } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Detailing Auto au Maroc — Nettoyage & Protection',
   description: "Detailing automobile au Maroc : nettoyage intérieur et extérieur, polissage, protection céramique — service en cours de déploiement sur Tomobile 360.",
-  alternates: {
-    canonical: 'https://tomobile360.ma/services/revision/detailing',
-  },
-}
+  path: '/services/revision/detailing',
+})
 
 const detailingPackages = [
   {
