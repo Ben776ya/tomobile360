@@ -11,6 +11,7 @@ import { UsedListingCard } from '@/components/vehicles/UsedListingCard'
 import { ShareButton } from '@/components/shared/ShareButton'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { TrackedLink } from '@/components/analytics/TrackedLink'
 import type { Tables } from '@/lib/database.types'
 import type { VehicleUsed } from '@/lib/types'
 
@@ -344,7 +345,9 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
               </div>
 
               {/* WhatsApp CTA and Contact Info */}
-              <a
+              <TrackedLink
+                event="whatsapp_click"
+                eventParams={{ context: 'used_detail' }}
                 href={`https://wa.me/${whatsappPhone}?text=${whatsappText}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -353,7 +356,7 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
               >
                 <MessageCircle className="h-5 w-5" />
                 Contacter sur WhatsApp
-              </a>
+              </TrackedLink>
 
               <div className="space-y-3">
                 {listing.contact_phone && (
@@ -431,7 +434,9 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
             Appeler
           </a>
         )}
-        <a
+        <TrackedLink
+          event="whatsapp_click"
+          eventParams={{ context: 'used_sticky' }}
           href={`https://wa.me/${whatsappPhone}?text=${whatsappText}`}
           target="_blank"
           rel="noopener noreferrer"
@@ -440,7 +445,7 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
         >
           <MessageCircle className="h-4 w-4" />
           WhatsApp
-        </a>
+        </TrackedLink>
       </div>
     </div>
   )

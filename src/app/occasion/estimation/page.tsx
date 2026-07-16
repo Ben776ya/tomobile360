@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
+import { gaEvents } from '@/lib/analytics/gtag'
 
 export default function ValuationPage() {
   const [brands, setBrands] = useState<any[]>([])
@@ -61,6 +62,8 @@ export default function ValuationPage() {
       alert('Veuillez remplir tous les champs')
       return
     }
+
+    gaEvents.estimationRequest({ year: parseInt(formData.year) })
 
     const supabase = createClient()
 

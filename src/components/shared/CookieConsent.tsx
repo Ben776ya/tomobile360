@@ -2,15 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-
-const STORAGE_KEY = 'tomobile360-cookie-consent-v1'
+import { CONSENT_STORAGE_KEY, setConsent } from '@/lib/analytics/consent'
 
 export function CookieConsent() {
   const [decided, setDecided] = useState<boolean | null>(null)
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY)
+      const stored = localStorage.getItem(CONSENT_STORAGE_KEY)
       setDecided(stored !== null)
     } catch {
       setDecided(true)
@@ -18,12 +17,12 @@ export function CookieConsent() {
   }, [])
 
   function accept() {
-    try { localStorage.setItem(STORAGE_KEY, 'accepted') } catch {}
+    setConsent('accepted')
     setDecided(true)
   }
 
   function refuse() {
-    try { localStorage.setItem(STORAGE_KEY, 'refused') } catch {}
+    setConsent('refused')
     setDecided(true)
   }
 

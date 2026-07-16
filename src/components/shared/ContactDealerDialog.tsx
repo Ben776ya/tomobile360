@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { gaEvents } from '@/lib/analytics/gtag'
 
 interface ContactDealerDialogProps {
   vehicleName: string
@@ -37,6 +38,7 @@ export function ContactDealerDialog({
     e.preventDefault()
     const message = `Bonjour, je suis interesse(e) par ${vehicleName}.%0A%0ANom: ${formData.name}%0ATelephone: ${formData.phone}%0AEmail: ${formData.email}%0A%0A${formData.message}`
     const phone = dealerPhone ? dealerPhone.replace(/[^0-9]/g, '') : ''
+    gaEvents.dealerContact({ vehicle: vehicleName })
     window.open(`https://wa.me/${phone}?text=${message}`, '_blank')
     setOpen(false)
     setFormData({
