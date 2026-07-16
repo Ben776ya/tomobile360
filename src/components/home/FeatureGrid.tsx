@@ -39,6 +39,15 @@ const CDC_CATEGORIES = [
   { id: 'pickup', label: 'Pick-up', Icon: Truck },
 ]
 
+// Maps each homepage coup-de-cœur segment to the model.category values used to
+// build the popular-models fallback when a curated slot is empty — so the
+// section is never blank (Phase 1D).
+const CDC_CATEGORY_MODEL_MAP: Record<string, string[]> = {
+  voiture: ['Citadine', 'Compacte', 'Berline', 'Coupé', 'Cabriolet', 'Monospace', 'Break'],
+  suv: ['SUV'],
+  pickup: ['Pick-up'],
+}
+
 const FUEL_ELECTRIC = ['Electric']
 const FUEL_LABELS: Record<string, string> = {
   Essence: 'Essence',
@@ -252,6 +261,7 @@ export function FeatureGrid() {
   const [cdcOpen, setCdcOpen] = useState(false)
   const [cdcCategory, setCdcCategory] = useState('voiture')
   const [cdcByCategory, setCdcByCategory] = useState<Record<string, CdcVehicle[]>>({})
+  const [cdcFallbackByCategory, setCdcFallbackByCategory] = useState<Record<string, CdcVehicle[]>>({})
   const [cdcLoading, setCdcLoading] = useState(false)
 
   /* ─── Comparateur fetch ─── */
@@ -292,9 +302,32 @@ export function FeatureGrid() {
     setCdcLoading(false)
   }, [cdcByCategory])
 
+  /* ─── CDC fallback fetch: popular available models of the segment, used to
+     fill empty curated slots so the section is never blank. ─── */
+  const fetchCdcFallback = useCallback(async (category: string) => {
+    if (cdcFallbackByCategory[category]) return
+    const cats = CDC_CATEGORY_MODEL_MAP[category]
+    if (!cats) return
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('vehicles_new')
+      .select('id, model_id, fuel_type, horsepower, price_min, images, version, year, coup_de_coeur_reason, brands:brand_id (name), models:model_id!inner (name, category)')
+      .eq('is_available', true)
+      .in('models.category', cats)
+      .order('is_popular', { ascending: false })
+      .order('views', { ascending: false })
+      .limit(20)
+    setCdcFallbackByCategory(prev => ({ ...prev, [category]: (data as unknown as CdcVehicle[]) || [] }))
+  }, [cdcFallbackByCategory])
+
   useEffect(() => {
-    if (cdcOpen) fetchCdcVehicles(cdcCategory)
-  }, [cdcOpen, cdcCategory, fetchCdcVehicles])
+    if (!cdcOpen) return
+    fetchCdcVehicles(cdcCategory)
+    // Also load EV-tagged coups de cœur (no dedicated homepage tab) so electric
+    // picks can surface, plus the popular-models fallback for this segment.
+    fetchCdcVehicles('electrique')
+    fetchCdcFallback(cdcCategory)
+  }, [cdcOpen, cdcCategory, fetchCdcVehicles, fetchCdcFallback])
 
   const handleAdd = (vehicleId: string) => {
     if (selectedIds.length >= 3) return
@@ -464,38 +497,60 @@ export function FeatureGrid() {
                 <div className="h-5 w-5 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (() => {
-              const vehicles = cdcByCategory[cdcCategory] || []
-              const seenModels = new Set<string>()
-              const dedupedByModel = vehicles.filter(v => {
-                if (seenModels.has(v.model_id)) return false
-                seenModels.add(v.model_id)
-                return true
-              })
-              const carburant = dedupedByModel.find(v => !FUEL_ELECTRIC.includes(v.fuel_type))
-              const electric = dedupedByModel.find(v => FUEL_ELECTRIC.includes(v.fuel_type))
+              const curated = cdcByCategory[cdcCategory] || []
+              const curatedElectrique = cdcByCategory['electrique'] || []
+              const fallback = cdcFallbackByCategory[cdcCategory] || []
+              const isEl = (v: CdcVehicle) => FUEL_ELECTRIC.includes(v.fuel_type)
+
+              // Pick up to two distinct-model cards: prefer one thermal + one EV.
+              // EV picks also draw from the dedicated 'electrique' coup-de-cœur
+              // category (no homepage tab of its own). Empty slots fall back to
+              // popular models of the same segment, so the section is never blank.
+              const usedModels = new Set<string>()
+              const chosen: CdcVehicle[] = []
+              const take = (pool: CdcVehicle[], pred: (v: CdcVehicle) => boolean) => {
+                const v = pool.find(x => pred(x) && !usedModels.has(x.model_id))
+                if (v) { usedModels.add(v.model_id); chosen.push(v) }
+                return !!v
+              }
+              // One thermal pick: curated first, else popular fallback.
+              if (!take(curated, v => !isEl(v))) take(fallback, v => !isEl(v))
+              // One EV pick: curated segment, else 'electrique' category, else fallback.
+              if (!take(curated, isEl) && !take(curatedElectrique, isEl)) take(fallback, isEl)
+              // Guarantee two cards even if the segment has no distinct second fuel.
+              if (chosen.length < 2 && !take(curated, () => true)) take(fallback, () => true)
+
+              if (chosen.length === 0) {
+                return (
+                  <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center">
+                    <p className="text-sm text-gray-500 mb-3">Notre sélection arrive bientôt pour ce segment.</p>
+                    <Link href="/neuf" className="text-sm font-semibold text-secondary hover:underline">
+                      Voir toutes les voitures neuves →
+                    </Link>
+                  </div>
+                )
+              }
 
               return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {([
-                    { vehicle: carburant, isElectric: false },
-                    { vehicle: electric, isElectric: true },
-                  ] as const).map(({ vehicle, isElectric }) => {
-                    const fuelLabel = vehicle ? (FUEL_LABELS[vehicle.fuel_type] ?? vehicle.fuel_type) : (isElectric ? 'Électrique' : '—')
-                    const fuelStyle = isElectric
+                  {chosen.map((vehicle) => {
+                    const electric = isEl(vehicle)
+                    const fuelLabel = FUEL_LABELS[vehicle.fuel_type] ?? vehicle.fuel_type
+                    const fuelStyle = electric
                       ? { bg: '#6366F112', color: '#6366F1', border: '#6366F130', Icon: Zap }
-                      : vehicle?.fuel_type === 'Hybrid' || vehicle?.fuel_type === 'PHEV'
+                      : vehicle.fuel_type === 'Hybrid' || vehicle.fuel_type === 'PHEV'
                         ? { bg: '#10B98112', color: '#059669', border: '#10B98130', Icon: Fuel }
                         : { bg: '#F59E0B12', color: '#D97706', border: '#F59E0B30', Icon: Fuel }
 
                     return (
                       <div
-                        key={isElectric ? 'electric' : 'carburant'}
+                        key={vehicle.id}
                         className="rounded-2xl overflow-hidden border border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow duration-300 flex"
                         style={{ minHeight: 220 }}
                       >
                         {/* Left: image */}
                         <div className="relative flex-shrink-0 overflow-hidden bg-gray-100 w-[45%] sm:w-[55%]">
-                          {vehicle?.images?.[0] ? (
+                          {vehicle.images?.[0] ? (
                             <Image
                               src={vehicle.images[0]}
                               alt={`${vehicle.brands?.name} ${vehicle.models?.name}`}
@@ -513,45 +568,37 @@ export function FeatureGrid() {
 
                         {/* Right: text */}
                         <div className="flex-1 px-3 sm:px-5 py-4 sm:py-5 flex flex-col justify-between">
-                          {vehicle ? (
-                            <>
-                              <div>
-                                <h4 className="font-bold text-primary text-base leading-snug mb-1">
-                                  {vehicle.brands?.name} {vehicle.models?.name}
-                                </h4>
-                                {vehicle.version && (
-                                  <p className="text-xs text-gray-400 mb-3">
-                                    {vehicle.version}{vehicle.year ? ` · ${vehicle.year}` : ''}
-                                  </p>
-                                )}
+                          <div>
+                            <h4 className="font-bold text-primary text-base leading-snug mb-1">
+                              {vehicle.brands?.name} {vehicle.models?.name}
+                            </h4>
+                            {vehicle.version && (
+                              <p className="text-xs text-gray-400 mb-3">
+                                {vehicle.version}{vehicle.year ? ` · ${vehicle.year}` : ''}
+                              </p>
+                            )}
 
-                                <div className="flex items-center gap-2 mb-3">
-                                  <span
-                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold"
-                                    style={{ background: fuelStyle.bg, color: fuelStyle.color, border: `1px solid ${fuelStyle.border}` }}
-                                  >
-                                    <fuelStyle.Icon className="w-3 h-3" />
-                                    {fuelLabel}
-                                  </span>
-                                  {vehicle.horsepower && (
-                                    <span className="text-xs text-gray-400 font-medium">{vehicle.horsepower} ch</span>
-                                  )}
-                                </div>
-
-                                <p className="text-sm text-gray-500 leading-relaxed line-clamp-4">
-                                  {vehicle.coup_de_coeur_reason || 'Un véhicule soigneusement sélectionné pour son rapport qualité-prix, ses équipements et son agrément de conduite.'}
-                                </p>
-                              </div>
-
-                              {vehicle.price_min && (
-                                <p className="mt-4 text-sm font-bold" style={{ color: '#F43F5E' }}>
-                                  À partir de {vehicle.price_min.toLocaleString('fr-MA')} DH
-                                </p>
+                            <div className="flex items-center gap-2 mb-3">
+                              <span
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold"
+                                style={{ background: fuelStyle.bg, color: fuelStyle.color, border: `1px solid ${fuelStyle.border}` }}
+                              >
+                                <fuelStyle.Icon className="w-3 h-3" />
+                                {fuelLabel}
+                              </span>
+                              {vehicle.horsepower && (
+                                <span className="text-xs text-gray-400 font-medium">{vehicle.horsepower} ch</span>
                               )}
-                            </>
-                          ) : (
-                            <p className="text-xs text-center py-4 text-gray-300 self-center w-full">
-                              {isElectric ? 'Aucun modèle électrique disponible' : 'Aucun modèle disponible'}
+                            </div>
+
+                            <p className="text-sm text-gray-500 leading-relaxed line-clamp-4">
+                              {vehicle.coup_de_coeur_reason || 'Un véhicule soigneusement sélectionné pour son rapport qualité-prix, ses équipements et son agrément de conduite.'}
+                            </p>
+                          </div>
+
+                          {vehicle.price_min && (
+                            <p className="mt-4 text-sm font-bold" style={{ color: '#F43F5E' }}>
+                              À partir de {vehicle.price_min.toLocaleString('fr-MA')} DH
                             </p>
                           )}
                         </div>
