@@ -18,11 +18,16 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      // googletagmanager.com hosts gtag.js (GA4). Consent-gated in
+      // GoogleAnalytics.tsx, so it only loads after the visitor accepts cookies.
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
       "style-src 'self' 'unsafe-inline'",
+      // img-src already allows https: (covers GA measurement pixels).
       "img-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+      // GA4 sends its /g/collect beacon to *.google-analytics.com (region
+      // endpoints) / *.analytics.google.com; gtag also fetches from GTM.
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com",
       "frame-src 'self' https://www.youtube.com https://youtube.com",
       "media-src 'self' https://*.supabase.co",
       "object-src 'none'",
