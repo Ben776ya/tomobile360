@@ -1,6 +1,7 @@
 import 'server-only'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/lib/database.types'
 import {
   FALLBACK_RATES,
   FALLBACK_RATES_AS_OF,
@@ -34,9 +35,23 @@ export async function getEnergyRates(): Promise<EnergyRatesResult> {
     isFallback: true,
   })
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn(
+      `[energy-rates] Supabase env not configured; using ${FALLBACK_RATES_AS_OF} fallback rates.`,
+    )
+    return fallback()
+  }
+
   let data: Array<{ rate_type: string; value_dh: number; effective_date: string }> | null = null
   try {
-    const supabase = await createClient()
+    // Cookieless anon client: energy_rates is global public pricing data with no
+    // per-user component, so we avoid cookies() and keep the page statically
+    // generated + ISR (revalidate 3600) rather than forcing dynamic rendering.
+    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      auth: { persistSession: false },
+    })
     const res = await supabase
       .from('energy_rates')
       .select(ENERGY_RATES_COLUMNS)
