@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest'
-import { normalizeText, videoMatchesCar, filterVideosForCar } from '../match-video-to-car'
+import { normalizeText, videoMatchesCar, filterVideosForCar, scoreVideoMatch } from '../match-video-to-car'
 
 test('normalizeText lowercases, strips accents, and collapses punctuation to spaces', () => {
   expect(normalizeText('Mercedes-Benz EQE SUV')).toBe('mercedes benz eqe suv')
@@ -86,4 +86,22 @@ test('filterVideosForCar treats null views as zero when sorting', () => {
     { id: 'y', title: 'BYD Han prix', description: null, views: 10 },
   ]
   expect(filterVideosForCar(videos, 'BYD', 'Han').map((v) => v.id)).toEqual(['y', 'x'])
+})
+
+test('scoreVideoMatch returns null when there is no match', () => {
+  expect(scoreVideoMatch('BMW iX vs Audi Q4', null, 'Mercedes-Benz', 'EQE SUV')).toBeNull()
+})
+
+test('scoreVideoMatch is high when brand + a non-risky model headline the title', () => {
+  expect(scoreVideoMatch('Essai BYD Atto 3 au Maroc', null, 'BYD', 'Atto 3')).toBe('high')
+  expect(scoreVideoMatch('Nouveau Peugeot 3008 2024', null, 'Peugeot', '3008')).toBe('high')
+})
+
+test('scoreVideoMatch is medium when the brand is only in the description', () => {
+  expect(scoreVideoMatch('Clio 6 : Prix au Maroc', 'La nouvelle Renault arrive', 'Renault', 'Clio')).toBe('medium')
+})
+
+test('scoreVideoMatch is medium for short/numeric model tokens even with brand in title', () => {
+  expect(scoreVideoMatch('Zeekr X électrique - Essai', null, 'Zeekr', 'X')).toBe('medium')
+  expect(scoreVideoMatch('Seres 3 Prix Maroc', null, 'Seres', '3')).toBe('medium')
 })
