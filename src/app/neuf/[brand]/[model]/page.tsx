@@ -2,7 +2,7 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Eye } from 'lucide-react'
+import { Eye, Calculator, ChevronRight } from 'lucide-react'
 import { formatViewsLabel } from '@/lib/views'
 import { createClient } from '@/lib/supabase/server'
 import { slug } from '@/lib/slug'
@@ -19,6 +19,7 @@ import { rankSimilarModels } from '@/lib/vehicles/similar-vehicles'
 import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
 import { buildModelFaq } from '@/lib/vehicles/model-faq'
 import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
+import { fuelTypeToEnergyParam, type EnergyKind } from '@/lib/outils/cout-100km'
 import { VideoCard } from '@/components/videos/VideoCard'
 import { filterVideosForCar } from '@/lib/videos/match-video-to-car'
 import { ArticleCard } from '@/components/articles/ArticleCard'
@@ -238,6 +239,21 @@ export default async function ModelDetailPage({ params }: PageProps) {
   const fuelTypes = Array.from(new Set(variants.map(v => v.fuel_type).filter(Boolean)))
   const transmissions = Array.from(new Set(variants.map(v => v.transmission).filter(Boolean)))
 
+  // Cost-per-100km calculator deep link — only surfaced for hybrid/electric
+  // models (per brief). Prefer the greenest energy present; pass the combined
+  // consumption for hybrids (electric kWh/100km isn't stored, so the calculator
+  // falls back to its own default for those).
+  const calcEnergy: EnergyKind | null = (() => {
+    const kinds = fuelTypes.map((f) => fuelTypeToEnergyParam(f as string))
+    if (kinds.includes('electrique')) return 'electrique'
+    if (kinds.includes('hybride')) return 'hybride'
+    return null
+  })()
+  const calcConso = representative.fuel_consumption_combined
+  const calcHref = calcEnergy
+    ? `/outils/cout-100km?energie=${calcEnergy}${calcEnergy === 'hybride' && calcConso ? `&conso=${calcConso}` : ''}`
+    : null
+
   // Freshness signal shown near the title (explicit fr-MA locale, never a bare
   // toLocaleDateString whose output depends on the server locale).
   const updatedAtLabel = representative.updated_at
@@ -406,6 +422,21 @@ export default async function ModelDetailPage({ params }: PageProps) {
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <VehicleSpecs vehicle={representative as any} fiche={fiche as any} />
             </div>
+
+            {calcHref && (
+              <Link
+                href={calcHref}
+                className="flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 transition-colors hover:bg-emerald-100/60"
+              >
+                <span className="flex items-center gap-3">
+                  <Calculator className="h-5 w-5 shrink-0 text-emerald-600" />
+                  <span className="text-sm font-medium text-emerald-900">
+                    Combien coûte 100 km avec ce modèle ? Comparez essence, hybride et électrique.
+                  </span>
+                </span>
+                <ChevronRight className="h-5 w-5 shrink-0 text-emerald-600" />
+              </Link>
+            )}
           </div>
 
           {/* Sidebar */}

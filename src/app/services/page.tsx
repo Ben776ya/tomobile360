@@ -81,6 +81,15 @@ const services: ServiceItem[] = [
     iconColor: 'text-[#4057aa]',
     features: ['Conseils sécurité', 'Actualités NARSA', 'Vidéos sensibilisation'],
   },
+  {
+    icon: Calculator,
+    title: 'Coût au 100 km',
+    description: 'Comparez le coût réel de 100 km entre essence, diesel, hybride et électrique selon votre consommation.',
+    href: '/outils/cout-100km',
+    color: 'bg-[#E8F5F0]',
+    iconColor: 'text-emerald-600',
+    features: ['Essence vs électrique', 'Budget annuel', 'Tarifs Maroc'],
+  },
 ]
 
 const additionalServices = [
