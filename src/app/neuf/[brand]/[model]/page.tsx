@@ -18,6 +18,7 @@ import { buildModelGroups, type VehicleRowForGrouping } from '@/lib/vehicles/gro
 import { rankSimilarModels } from '@/lib/vehicles/similar-vehicles'
 import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
 import { buildModelFaq } from '@/lib/vehicles/model-faq'
+import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
 import { VideoCard } from '@/components/videos/VideoCard'
 import { filterVideosForCar } from '@/lib/videos/match-video-to-car'
 import { ArticleCard } from '@/components/articles/ArticleCard'
@@ -332,8 +333,8 @@ export default async function ModelDetailPage({ params }: PageProps) {
             brand: { '@type': 'Brand', name: brand.name },
             model: model.name,
             ...(representative.year ? { vehicleModelDate: representative.year.toString() } : {}),
-            ...(fuelTypes.length > 0 ? { fuelType: fuelTypes.join(', ') } : {}),
-            ...(transmissions.length > 0 ? { vehicleTransmission: transmissions.join(', ') } : {}),
+            ...(fuelTypes.length > 0 ? { fuelType: fuelTypes.map(fuelLabel).join(', ') } : {}),
+            ...(transmissions.length > 0 ? { vehicleTransmission: transmissions.map(transmissionLabel).join(', ') } : {}),
             ...(images.length > 0 ? { image: images[0] } : {}),
             url: canonicalUrl,
             ...(offers ? { offers } : {}),
@@ -485,8 +486,8 @@ export default async function ModelDetailPage({ params }: PageProps) {
                           {v.version || `${brand.name} ${model.name}`}
                         </p>
                         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500 mt-1">
-                          {v.fuel_type && <span>{v.fuel_type}</span>}
-                          {v.transmission && <span>{v.transmission}</span>}
+                          {v.fuel_type && <span>{fuelLabel(v.fuel_type)}</span>}
+                          {v.transmission && <span>{transmissionLabel(v.transmission)}</span>}
                           {v.horsepower && <span>{v.horsepower} ch</span>}
                         </div>
                         {v.price_min && (
