@@ -67,5 +67,6 @@ scripts/*
 !scripts/prelaunch-scan.sh
 !scripts/convert-png-to-webp.mjs
 !scripts/import-curated-with-fiches.mjs
+!scripts/map-videos-to-models.ts
 !scripts/lib/
 !scripts/output/

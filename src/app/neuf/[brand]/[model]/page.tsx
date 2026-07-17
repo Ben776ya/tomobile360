@@ -21,7 +21,9 @@ import { buildModelFaq } from '@/lib/vehicles/model-faq'
 import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
 import { fuelTypeToEnergyParam, type EnergyKind } from '@/lib/outils/cout-100km'
 import { VideoCard } from '@/components/videos/VideoCard'
+import { LazyVideoEmbed } from '@/components/videos/LazyVideoEmbed'
 import { filterVideosForCar } from '@/lib/videos/match-video-to-car'
+import { getMappedVideosForModel } from '@/lib/videos/video-model-map'
 import { ArticleCard } from '@/components/articles/ArticleCard'
 import { filterArticlesForBrand } from '@/lib/articles/match-article-to-brand'
 import { ShareButton } from '@/components/shared/ShareButton'
@@ -218,6 +220,10 @@ export default async function ModelDetailPage({ params }: PageProps) {
     .order('created_at', { ascending: false })
     .limit(200)
   const carVideos = filterVideosForCar(allVideos ?? [], brand.name, model.name, 4)
+
+  // Curated (human-validated) videos featured as embedded players. Empty until
+  // src/config/video-model-map.json is populated after validating the audit CSV.
+  const mappedVideos = getMappedVideosForModel(model.id)
 
   // Articles related to the brand (brand-level): blog_posts have no brand link,
   // so match the brand name in title or tags against the published catalogue.
@@ -567,6 +573,26 @@ export default async function ModelDetailPage({ params }: PageProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {similarModelGroups.map((mg) => (
                 <ModelCard key={mg.modelId} model={mg} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {mappedVideos.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-primary mb-6">
+              En vidéo — {brand.name} {model.name}
+            </h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {mappedVideos.map((v, i) => (
+                <LazyVideoEmbed
+                  key={i}
+                  videoUrl={v.videoUrl}
+                  title={v.title}
+                  thumbnailUrl={v.thumbnailUrl}
+                  duration={v.duration}
+                  uploadDate={v.uploadDate}
+                />
               ))}
             </div>
           </div>
