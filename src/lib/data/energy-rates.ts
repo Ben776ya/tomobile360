@@ -28,24 +28,38 @@ export interface EnergyRatesResult {
  * works before the migration is applied.
  */
 export async function getEnergyRates(): Promise<EnergyRatesResult> {
-  const supabase = await createClient()
+  const fallback = (): EnergyRatesResult => ({
+    rates: { ...FALLBACK_RATES },
+    effectiveDate: FALLBACK_RATES_AS_OF,
+    isFallback: true,
+  })
 
-  const { data, error } = await supabase
-    .from('energy_rates')
-    .select(ENERGY_RATES_COLUMNS)
-    .eq('is_active', true)
-    .order('effective_date', { ascending: false })
+  let data: Array<{ rate_type: string; value_dh: number; effective_date: string }> | null = null
+  try {
+    const supabase = await createClient()
+    const res = await supabase
+      .from('energy_rates')
+      .select(ENERGY_RATES_COLUMNS)
+      .eq('is_active', true)
+      .order('effective_date', { ascending: false })
 
-  if (error) {
+    if (res.error) {
+      console.warn(
+        `[energy-rates] table read failed (${res.error.message}); using ${FALLBACK_RATES_AS_OF} fallback rates.`,
+      )
+      return fallback()
+    }
+    data = res.data
+  } catch (err) {
     console.warn(
-      `[energy-rates] table read failed (${error.message}); using ${FALLBACK_RATES_AS_OF} fallback rates.`,
+      `[energy-rates] query threw (${err instanceof Error ? err.message : String(err)}); using ${FALLBACK_RATES_AS_OF} fallback rates.`,
     )
-    return { rates: { ...FALLBACK_RATES }, effectiveDate: FALLBACK_RATES_AS_OF, isFallback: true }
+    return fallback()
   }
 
   if (!data || data.length === 0) {
     console.warn(`[energy-rates] table empty; using ${FALLBACK_RATES_AS_OF} fallback rates.`)
-    return { rates: { ...FALLBACK_RATES }, effectiveDate: FALLBACK_RATES_AS_OF, isFallback: true }
+    return fallback()
   }
 
   // Rows arrive newest-first, so the first row seen for each rate_type holds the
