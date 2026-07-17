@@ -496,6 +496,46 @@ export type Database = {
           },
         ]
       }
+      // Hand-added 2026-07-17 (Phase 3A). `energy_rates` is a new public pricing
+      // table. The DB boundary was closed this session, so this block could not
+      // be regenerated via the Supabase MCP — regenerate to reconcile once
+      // migrations/create-energy-rates.sql has been applied.
+      energy_rates: {
+        Row: {
+          created_at: string
+          effective_date: string
+          id: string
+          is_active: boolean
+          rate_type: string
+          source: string | null
+          unit: string
+          updated_at: string
+          value_dh: number
+        }
+        Insert: {
+          created_at?: string
+          effective_date: string
+          id?: string
+          is_active?: boolean
+          rate_type: string
+          source?: string | null
+          unit: string
+          updated_at?: string
+          value_dh: number
+        }
+        Update: {
+          created_at?: string
+          effective_date?: string
+          id?: string
+          is_active?: boolean
+          rate_type?: string
+          source?: string | null
+          unit?: string
+          updated_at?: string
+          value_dh?: number
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string | null
