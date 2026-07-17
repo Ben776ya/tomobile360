@@ -496,6 +496,42 @@ export type Database = {
           },
         ]
       }
+      energy_rates: {
+        Row: {
+          created_at: string
+          effective_date: string
+          id: string
+          is_active: boolean
+          rate_type: string
+          source: string | null
+          unit: string
+          updated_at: string
+          value_dh: number
+        }
+        Insert: {
+          created_at?: string
+          effective_date: string
+          id?: string
+          is_active?: boolean
+          rate_type: string
+          source?: string | null
+          unit: string
+          updated_at?: string
+          value_dh: number
+        }
+        Update: {
+          created_at?: string
+          effective_date?: string
+          id?: string
+          is_active?: boolean
+          rate_type?: string
+          source?: string | null
+          unit?: string
+          updated_at?: string
+          value_dh?: number
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string | null

@@ -1,0 +1,105 @@
+import 'server-only'
+
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/lib/database.types'
+import {
+  FALLBACK_RATES,
+  FALLBACK_RATES_AS_OF,
+  type EnergyRates,
+  type RateType,
+} from '@/lib/outils/cout-100km'
+
+const ENERGY_RATES_COLUMNS = 'rate_type, value_dh, effective_date, source, is_active'
+
+const RATE_TYPES: RateType[] = ['essence', 'diesel', 'kwh_home', 'kwh_public']
+
+export interface EnergyRatesResult {
+  /** Current DH-per-unit prices, keyed by rate type. */
+  rates: EnergyRates
+  /** ISO date (YYYY-MM-DD) the shown prices took effect. */
+  effectiveDate: string
+  /** True when the energy_rates table was absent/empty and code defaults were used. */
+  isFallback: boolean
+}
+
+/**
+ * Read current energy prices from the `energy_rates` table, newest effective_date
+ * per type. Degrades gracefully: if the table does not exist yet, errors, or is
+ * empty, returns the dated code fallback and logs a warning — so the calculator
+ * works before the migration is applied.
+ */
+export async function getEnergyRates(): Promise<EnergyRatesResult> {
+  const fallback = (): EnergyRatesResult => ({
+    rates: { ...FALLBACK_RATES },
+    effectiveDate: FALLBACK_RATES_AS_OF,
+    isFallback: true,
+  })
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn(
+      `[energy-rates] Supabase env not configured; using ${FALLBACK_RATES_AS_OF} fallback rates.`,
+    )
+    return fallback()
+  }
+
+  let data: Array<{ rate_type: string; value_dh: number; effective_date: string }> | null = null
+  try {
+    // Cookieless anon client: energy_rates is global public pricing data with no
+    // per-user component, so we avoid cookies() and keep the page statically
+    // generated + ISR (revalidate 3600) rather than forcing dynamic rendering.
+    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      auth: { persistSession: false },
+    })
+    const res = await supabase
+      .from('energy_rates')
+      .select(ENERGY_RATES_COLUMNS)
+      .eq('is_active', true)
+      .order('effective_date', { ascending: false })
+
+    if (res.error) {
+      console.warn(
+        `[energy-rates] table read failed (${res.error.message}); using ${FALLBACK_RATES_AS_OF} fallback rates.`,
+      )
+      return fallback()
+    }
+    data = res.data
+  } catch (err) {
+    console.warn(
+      `[energy-rates] query threw (${err instanceof Error ? err.message : String(err)}); using ${FALLBACK_RATES_AS_OF} fallback rates.`,
+    )
+    return fallback()
+  }
+
+  if (!data || data.length === 0) {
+    console.warn(`[energy-rates] table empty; using ${FALLBACK_RATES_AS_OF} fallback rates.`)
+    return fallback()
+  }
+
+  // Rows arrive newest-first, so the first row seen for each rate_type holds the
+  // current price. Unknown/missing types keep their code-fallback value.
+  const rates: EnergyRates = { ...FALLBACK_RATES }
+  const seen = new Set<RateType>()
+  let latestDate = ''
+  for (const row of data) {
+    const type = row.rate_type as RateType
+    if (!RATE_TYPES.includes(type) || seen.has(type)) continue
+    rates[type] = Number(row.value_dh)
+    seen.add(type)
+    if (row.effective_date > latestDate) latestDate = row.effective_date
+  }
+
+  const missing = RATE_TYPES.filter((t) => !seen.has(t))
+  if (missing.length > 0) {
+    console.warn(
+      `[energy-rates] missing rate type(s) [${missing.join(', ')}]; using fallback for those.`,
+    )
+  }
+
+  return {
+    rates,
+    effectiveDate: latestDate || FALLBACK_RATES_AS_OF,
+    isFallback: false,
+  }
+}

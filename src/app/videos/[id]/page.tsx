@@ -10,6 +10,7 @@ import { formatRelativeTime } from '@/lib/utils'
 import { LinkifyText } from '@/components/shared/LinkifyText'
 import { VideoShareButton } from '@/components/videos/VideoShareButton'
 import { slug } from '@/lib/slug'
+import { getVideoEmbedUrl, toIsoDuration } from '@/lib/videos/youtube'
 
 export const revalidate = 30
 
@@ -91,31 +92,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
     .order('views', { ascending: false })
     .limit(3)
 
-  // Extract video ID from URL (supports YouTube and Vimeo)
-  const getVideoEmbedUrl = (url: string) => {
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      const videoId = url.includes('youtu.be')
-        ? url.split('youtu.be/')[1]?.split('?')[0]
-        : new URL(url).searchParams.get('v')
-      return `https://www.youtube.com/embed/${videoId}`
-    }
-    if (url.includes('vimeo.com')) {
-      const videoId = url.split('vimeo.com/')[1]?.split('?')[0]
-      return `https://player.vimeo.com/video/${videoId}`
-    }
-    return url
-  }
-
   const embedUrl = getVideoEmbedUrl((video as any).embed_url || (video as any).video_url || '')
-
-  // Convert "MM:SS" or "H:MM:SS" to ISO 8601 duration
-  const toIsoDuration = (display: string | null | undefined): string | undefined => {
-    if (!display) return undefined
-    const parts = display.split(':').map(Number)
-    if (parts.length === 2) return `PT${parts[0]}M${parts[1]}S`
-    if (parts.length === 3) return `PT${parts[0]}H${parts[1]}M${parts[2]}S`
-    return undefined
-  }
 
   const categoryLabels: { [key: string]: string } = {
     review: 'Essai',

@@ -1,5 +1,6 @@
 import { VehicleNew, FicheTechnique } from '@/lib/types'
 import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
+import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
 import {
   Fuel,
   Gauge,
@@ -39,8 +40,8 @@ export function KeySpecsStrip({ vehicle, fiche }: VehicleSpecsProps) {
 
   const specs = [
     makeSpec(Zap, 'Puissance', vehicle.horsepower ? `${vehicle.horsepower} ch` : ficheSpecs['Puissance dynamique']),
-    makeSpec(Fuel, 'Carburant', vehicle.fuel_type || ficheSpecs['Motorisation']),
-    makeSpec(Cog, 'Boîte', vehicle.transmission || ficheSpecs['Boîte à vitesse']),
+    makeSpec(Fuel, 'Carburant', vehicle.fuel_type ? fuelLabel(vehicle.fuel_type) : ficheSpecs['Motorisation']),
+    makeSpec(Cog, 'Boîte', vehicle.transmission ? transmissionLabel(vehicle.transmission) : ficheSpecs['Boîte à vitesse']),
     makeSpec(Car, 'V. Max', ficheSpecs['Vitesse maxi.'] || (vehicle.top_speed ? `${vehicle.top_speed} km/h` : null)),
     makeSpec(Ruler, 'Coffre', ficheSpecs['Volume de coffre'] || (vehicle.cargo_capacity ? `${vehicle.cargo_capacity} L` : null)),
     makeSpec(Gauge, 'Couple', ficheSpecs['Couple maxi.'] || (vehicle.torque ? `${vehicle.torque} Nm` : null)),
@@ -192,8 +193,8 @@ export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
       icon: Cog,
       color: 'text-blue-600 bg-blue-50 border-blue-200',
       items: [
-        { label: 'Carburant', value: vehicle.fuel_type },
-        { label: 'Transmission', value: vehicle.transmission },
+        { label: 'Carburant', value: vehicle.fuel_type ? fuelLabel(vehicle.fuel_type) : null },
+        { label: 'Transmission', value: vehicle.transmission ? transmissionLabel(vehicle.transmission) : null },
         { label: 'Cylindrée', value: vehicle.engine_size ? `${vehicle.engine_size}L` : null },
         { label: 'Cylindres', value: vehicle.cylinders },
         { label: 'Puissance', value: vehicle.horsepower ? `${vehicle.horsepower} ch` : null },

@@ -2,7 +2,7 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Eye } from 'lucide-react'
+import { Eye, Calculator, ChevronRight } from 'lucide-react'
 import { formatViewsLabel } from '@/lib/views'
 import { createClient } from '@/lib/supabase/server'
 import { slug } from '@/lib/slug'
@@ -18,8 +18,12 @@ import { buildModelGroups, type VehicleRowForGrouping } from '@/lib/vehicles/gro
 import { rankSimilarModels } from '@/lib/vehicles/similar-vehicles'
 import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
 import { buildModelFaq } from '@/lib/vehicles/model-faq'
+import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
+import { fuelTypeToEnergyParam, type EnergyKind } from '@/lib/outils/cout-100km'
 import { VideoCard } from '@/components/videos/VideoCard'
+import { LazyVideoEmbed } from '@/components/videos/LazyVideoEmbed'
 import { filterVideosForCar } from '@/lib/videos/match-video-to-car'
+import { getMappedVideosForModel } from '@/lib/videos/video-model-map'
 import { ArticleCard } from '@/components/articles/ArticleCard'
 import { filterArticlesForBrand } from '@/lib/articles/match-article-to-brand'
 import { ShareButton } from '@/components/shared/ShareButton'
@@ -217,6 +221,10 @@ export default async function ModelDetailPage({ params }: PageProps) {
     .limit(200)
   const carVideos = filterVideosForCar(allVideos ?? [], brand.name, model.name, 4)
 
+  // Curated (human-validated) videos featured as embedded players. Empty until
+  // src/config/video-model-map.json is populated after validating the audit CSV.
+  const mappedVideos = getMappedVideosForModel(model.id)
+
   // Articles related to the brand (brand-level): blog_posts have no brand link,
   // so match the brand name in title or tags against the published catalogue.
   const { data: allPosts } = await supabase
@@ -236,6 +244,21 @@ export default async function ModelDetailPage({ params }: PageProps) {
   const hasPopular = !!representative.is_popular
   const fuelTypes = Array.from(new Set(variants.map(v => v.fuel_type).filter(Boolean)))
   const transmissions = Array.from(new Set(variants.map(v => v.transmission).filter(Boolean)))
+
+  // Cost-per-100km calculator deep link — only surfaced for hybrid/electric
+  // models (per brief). Prefer the greenest energy present; pass the combined
+  // consumption for hybrids (electric kWh/100km isn't stored, so the calculator
+  // falls back to its own default for those).
+  const calcEnergy: EnergyKind | null = (() => {
+    const kinds = fuelTypes.map((f) => fuelTypeToEnergyParam(f as string))
+    if (kinds.includes('electrique')) return 'electrique'
+    if (kinds.includes('hybride')) return 'hybride'
+    return null
+  })()
+  const calcConso = representative.fuel_consumption_combined
+  const calcHref = calcEnergy
+    ? `/outils/cout-100km?energie=${calcEnergy}${calcEnergy === 'hybride' && calcConso ? `&conso=${calcConso}` : ''}`
+    : null
 
   // Freshness signal shown near the title (explicit fr-MA locale, never a bare
   // toLocaleDateString whose output depends on the server locale).
@@ -332,8 +355,8 @@ export default async function ModelDetailPage({ params }: PageProps) {
             brand: { '@type': 'Brand', name: brand.name },
             model: model.name,
             ...(representative.year ? { vehicleModelDate: representative.year.toString() } : {}),
-            ...(fuelTypes.length > 0 ? { fuelType: fuelTypes.join(', ') } : {}),
-            ...(transmissions.length > 0 ? { vehicleTransmission: transmissions.join(', ') } : {}),
+            ...(fuelTypes.length > 0 ? { fuelType: fuelTypes.map(fuelLabel).join(', ') } : {}),
+            ...(transmissions.length > 0 ? { vehicleTransmission: transmissions.map(transmissionLabel).join(', ') } : {}),
             ...(images.length > 0 ? { image: images[0] } : {}),
             url: canonicalUrl,
             ...(offers ? { offers } : {}),
@@ -405,6 +428,21 @@ export default async function ModelDetailPage({ params }: PageProps) {
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <VehicleSpecs vehicle={representative as any} fiche={fiche as any} />
             </div>
+
+            {calcHref && (
+              <Link
+                href={calcHref}
+                className="flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 transition-colors hover:bg-emerald-100/60"
+              >
+                <span className="flex items-center gap-3">
+                  <Calculator className="h-5 w-5 shrink-0 text-emerald-600" />
+                  <span className="text-sm font-medium text-emerald-900">
+                    Combien coûte 100 km avec ce modèle ? Comparez essence, hybride et électrique.
+                  </span>
+                </span>
+                <ChevronRight className="h-5 w-5 shrink-0 text-emerald-600" />
+              </Link>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -485,8 +523,8 @@ export default async function ModelDetailPage({ params }: PageProps) {
                           {v.version || `${brand.name} ${model.name}`}
                         </p>
                         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500 mt-1">
-                          {v.fuel_type && <span>{v.fuel_type}</span>}
-                          {v.transmission && <span>{v.transmission}</span>}
+                          {v.fuel_type && <span>{fuelLabel(v.fuel_type)}</span>}
+                          {v.transmission && <span>{transmissionLabel(v.transmission)}</span>}
                           {v.horsepower && <span>{v.horsepower} ch</span>}
                         </div>
                         {v.price_min && (
@@ -535,6 +573,26 @@ export default async function ModelDetailPage({ params }: PageProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {similarModelGroups.map((mg) => (
                 <ModelCard key={mg.modelId} model={mg} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {mappedVideos.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-primary mb-6">
+              En vidéo — {brand.name} {model.name}
+            </h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {mappedVideos.map((v, i) => (
+                <LazyVideoEmbed
+                  key={i}
+                  videoUrl={v.videoUrl}
+                  title={v.title}
+                  thumbnailUrl={v.thumbnailUrl}
+                  duration={v.duration}
+                  uploadDate={v.uploadDate}
+                />
               ))}
             </div>
           </div>

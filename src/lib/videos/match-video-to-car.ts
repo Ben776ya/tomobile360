@@ -46,3 +46,30 @@ export function filterVideosForCar<
     .sort((a, b) => (b.views ?? 0) - (a.views ?? 0))
     .slice(0, limit)
 }
+
+export type MatchConfidence = 'high' | 'medium'
+
+/**
+ * Grade how confident a video→car match is, or null when it doesn't match at
+ * all. Reuses videoMatchesCar for the yes/no decision, then grades:
+ *  - high: the brand appears in the TITLE (not just the description) and the
+ *    model name is not a single very-short token prone to false positives.
+ *  - medium: matches, but the brand is only in the description, or the model
+ *    name is a single short token (e.g. "X", "3", "G6", "05").
+ * Intended for the read-only audit CSV, so a human can prioritise validation.
+ */
+export function scoreVideoMatch(
+  title: string,
+  description: string | null,
+  brandName: string,
+  modelName: string,
+): MatchConfidence | null {
+  if (!videoMatchesCar(title, description, brandName, modelName)) return null
+  const brandInTitle = brandMatchesText(title, brandName)
+  const modelTokens = tokenize(modelName)
+  // Single tokens of 2 chars or fewer ("X", "3", "G6", "05") are the ones that
+  // create false positives in free text; multi-token or longer distinctive
+  // names (e.g. "3008", "Atto 3") are safe.
+  const risky = modelTokens.length === 1 && modelTokens[0].length <= 2
+  return brandInTitle && !risky ? 'high' : 'medium'
+}
