@@ -35,15 +35,18 @@ export const ENERGY_KIND_UNITS: Record<EnergyKind, string> = {
 }
 
 /**
- * Launch-default rates, mirrored in migrations/seed-energy-rates.sql. Used when
- * the energy_rates table is absent or empty. Keep AS_OF and the values in sync
- * with the seed. VERIFY these against real Moroccan prices before relying on them.
+ * Default rates, mirrored in migrations/seed-energy-rates.sql. Used when the
+ * energy_rates table is absent or empty. Keep AS_OF and the values in sync with
+ * the seed.
+ *
+ * essence / diesel / kwh_home are operator-confirmed Moroccan prices (replacing
+ * the original launch placeholders). kwh_public remains an unconfirmed estimate.
  */
-export const FALLBACK_RATES_AS_OF = '2026-07-17'
+export const FALLBACK_RATES_AS_OF = '2026-07-22'
 export const FALLBACK_RATES: EnergyRates = {
-  essence: 15.2,
-  diesel: 13.6,
-  kwh_home: 1.2,
+  essence: 13.8,
+  diesel: 12.8,
+  kwh_home: 1.17,
   kwh_public: 4.0,
 }
 
