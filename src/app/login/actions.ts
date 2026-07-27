@@ -9,7 +9,7 @@ export type SignInState = { error?: string }
  * Email + password sign-in. On success the @supabase/ssr server client writes
  * the auth session cookies (works from a Server Action), then we redirect to
  * the admin dashboard. The /admin gate (middleware + layout) re-checks the
- * is_admin role server-side.
+ * role server-side and sends journalists on to /admin/blog.
  */
 export async function signIn(
   _prevState: SignInState,

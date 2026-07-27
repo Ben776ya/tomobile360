@@ -5,19 +5,26 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Shield, Edit, Trash2, X, Loader2 } from 'lucide-react'
-import { toggleUserAdmin, updateUserProfile, deleteUser } from '@/lib/actions/admin/users'
+import { Edit, Trash2, X, Loader2 } from 'lucide-react'
+import { setUserRole, updateUserProfile, deleteUser } from '@/lib/actions/admin/users'
+import type { UserRole } from '@/lib/auth/check-admin'
+
+const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
+  { value: 'admin', label: 'Admin' },
+  { value: 'journalist', label: 'Journaliste' },
+  { value: 'user', label: 'Utilisateur' },
+]
 
 interface UserActionsProps {
   userId: string
-  isAdmin: boolean
+  role: UserRole
   fullName: string | null
   phone: string | null
   city: string | null
   isSelf: boolean
 }
 
-export function UserActions({ userId, isAdmin, fullName, phone, city, isSelf }: UserActionsProps) {
+export function UserActions({ userId, role, fullName, phone, city, isSelf }: UserActionsProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [showEdit, setShowEdit] = useState(false)
@@ -25,12 +32,14 @@ export function UserActions({ userId, isAdmin, fullName, phone, city, isSelf }: 
   const [editPhone, setEditPhone] = useState(phone || '')
   const [editCity, setEditCity] = useState(city || '')
 
-  const handleToggleAdmin = async () => {
-    const action = isAdmin ? 'retirer les droits admin de' : 'donner les droits admin à'
-    if (!confirm(`Voulez-vous ${action} cet utilisateur?`)) return
+  const handleRoleChange = async (nextRole: UserRole) => {
+    if (nextRole === role) return
+
+    const label = ROLE_OPTIONS.find((o) => o.value === nextRole)?.label ?? nextRole
+    if (!confirm(`Attribuer le rôle « ${label} » à cet utilisateur ?`)) return
 
     setLoading(true)
-    const result = await toggleUserAdmin(userId, !isAdmin)
+    const result = await setUserRole(userId, nextRole)
     if (result.error) {
       alert(result.error)
     }
@@ -71,20 +80,24 @@ export function UserActions({ userId, isAdmin, fullName, phone, city, isSelf }: 
   return (
     <>
       <div className="flex items-center justify-end gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleToggleAdmin}
+        <label className="sr-only" htmlFor={`role-${userId}`}>
+          Rôle de l&apos;utilisateur
+        </label>
+        <select
+          id={`role-${userId}`}
+          value={role}
+          onChange={(e) => handleRoleChange(e.target.value as UserRole)}
           disabled={loading || isSelf}
-          title={isSelf ? 'Vous ne pouvez pas modifier vos propres droits' : isAdmin ? 'Retirer admin' : 'Donner admin'}
-          className={`shadow-sm border hover:shadow-md transition-all ${isAdmin ? 'bg-yellow-100 border-yellow-300 hover:bg-yellow-200' : 'border-border hover:bg-primary/5'}`}
+          title={isSelf ? 'Vous ne pouvez pas modifier votre propre rôle' : 'Changer le rôle'}
+          className="h-9 rounded-md border border-white/10 bg-dark-600 px-2 text-sm text-white shadow-sm transition-all hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Shield className={`h-4 w-4 ${isAdmin ? 'fill-yellow-500 text-yellow-500' : ''}`} />
-          )}
-        </Button>
+          {ROLE_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {loading && <Loader2 className="h-4 w-4 animate-spin text-dark-200" />}
         <Button
           variant="ghost"
           size="sm"

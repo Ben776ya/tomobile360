@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
-import { checkAdminApi as checkAdmin } from '@/lib/auth/check-admin'
+import { checkBlogAccessApi as checkAdmin } from '@/lib/auth/check-admin'
 import { extractInternalLinks } from '../../../../../../scripts/lib/extract-internal-links'
 import { validateInternalHref } from '../../../../../../scripts/lib/validate-route'
 

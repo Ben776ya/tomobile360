@@ -3,17 +3,33 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
-import { checkAdmin } from '@/lib/auth/check-admin'
+import { checkAdmin, type UserRole } from '@/lib/auth/check-admin'
 
-export async function toggleUserAdmin(userId: string, isAdmin: boolean) {
+const ASSIGNABLE_ROLES: UserRole[] = ['admin', 'journalist', 'user']
+
+/**
+ * Sets a user's role. `role` is the source of truth — `profiles.is_admin` is
+ * derived from it by the profiles_role_guard trigger and must never be written
+ * from application code.
+ */
+export async function setUserRole(userId: string, role: UserRole) {
   const adminCheck = await checkAdmin()
   if (adminCheck.error) return { error: adminCheck.error }
 
-  const supabase = await createClient()
+  if (!ASSIGNABLE_ROLES.includes(role)) {
+    return { error: 'Rôle invalide' }
+  }
+
+  // Guards against an admin locking themselves out of the panel.
+  if (adminCheck.user!.id === userId) {
+    return { error: 'Vous ne pouvez pas modifier votre propre rôle' }
+  }
+
+  const supabase = createClient()
 
   const { error } = await supabase
     .from('profiles')
-    .update({ is_admin: isAdmin })
+    .update({ role })
     .eq('id', userId)
 
   if (error) return { error: error.message }
@@ -30,7 +46,7 @@ export async function updateUserProfile(userId: string, data: {
   const adminCheck = await checkAdmin()
   if (adminCheck.error) return { error: adminCheck.error }
 
-  const supabase = await createClient()
+  const supabase = createClient()
 
   const updateData: Record<string, string> = {
     updated_at: new Date().toISOString(),

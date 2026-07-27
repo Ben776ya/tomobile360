@@ -60,6 +60,9 @@ migrations/
 scripts/*
 !scripts/audit-internal-links.ts
 !scripts/validate-content.ts
+# not legacy: the only supported way to create staff accounts and rotate
+# passwords (no signup flow, no self-service reset, no SMTP configured)
+!scripts/create-staff-user.mjs
 !scripts/fix-broken-links.ts
 !scripts/extract-magazine-cover.py
 !scripts/compress-magazine-pdf.py

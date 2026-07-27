@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { checkAdmin } from '@/lib/auth/check-admin'
+import { getSessionRole } from '@/lib/auth/check-admin'
 import { LoginForm } from '@/components/auth/LoginForm'
 
 export const metadata: Metadata = {
@@ -9,11 +9,10 @@ export const metadata: Metadata = {
 }
 
 export default async function LoginPage() {
-  // Already signed in as an admin → go straight to the dashboard.
-  const auth = await checkAdmin()
-  if (!auth.error) {
-    redirect('/admin')
-  }
+  // Already signed in as staff → go straight to their section.
+  const role = await getSessionRole()
+  if (role === 'admin') redirect('/admin')
+  if (role === 'journalist') redirect('/admin/blog')
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
