@@ -59,23 +59,31 @@ export async function middleware(request: NextRequest) {
 
   // Admin route protection (SEC-01)
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    // Unauthenticated -> send to the login page so the admin can sign in.
+    // Unauthenticated -> send to the login page so staff can sign in.
     // The session cookie set there is what we read here; the /admin layout
-    // re-checks the is_admin role server-side.
+    // re-checks the role server-side.
     if (!user) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // D-04: Query profiles table for admin status (session client, RLS allows own row)
+    // D-04: Query profiles for the role (session client, RLS allows own row)
     const { data: profile } = await supabase
       .from('profiles')
-      .select('is_admin')
+      .select('role')
       .eq('id', user.id)
       .single()
 
-    // D-03: Authenticated but not admin -> redirect to homepage
-    if (!profile?.is_admin) {
+    const role = profile?.role
+
+    // D-03: Authenticated but not staff -> redirect to homepage
+    if (role !== 'admin' && role !== 'journalist') {
       return NextResponse.redirect(new URL('/', request.url))
+    }
+
+    // Journalists are confined to the blog. Anything else lands them back on
+    // their own section rather than a dead end.
+    if (role === 'journalist' && !request.nextUrl.pathname.startsWith('/admin/blog')) {
+      return NextResponse.redirect(new URL('/admin/blog', request.url))
     }
   }
 

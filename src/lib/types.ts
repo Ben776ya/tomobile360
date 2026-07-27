@@ -280,7 +280,10 @@ export type Profile = {
   city: string | null
   bio: string | null
   is_dealer: boolean | null
+  /** Derived from `role` by the profiles_role_guard trigger — never write it. */
   is_admin: boolean | null
+  /** Source of truth for permissions: 'admin' | 'journalist' | 'user'. */
+  role: string
   created_at: string | null
   updated_at: string | null
 }

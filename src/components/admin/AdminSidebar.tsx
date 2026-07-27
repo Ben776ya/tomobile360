@@ -17,23 +17,34 @@ import {
   FileText,
   Mail
 } from 'lucide-react'
+import type { StaffRole } from '@/lib/auth/check-admin'
 
-const menuItems = [
-  { href: '/admin', icon: LayoutDashboard, label: 'Tableau de bord', exact: true },
-  { href: '/admin/brands', icon: Car, label: 'Catalogue' },
-  { href: '/admin/coups-de-coeur', icon: Heart, label: 'Coups de Cœur' },
-  { href: '/admin/fiches-techniques', icon: FileText, label: 'Fiches Techniques' },
-  { href: '/admin/blog', icon: PenSquare, label: 'Blog' },
-  { href: '/admin/users', icon: Users, label: 'Utilisateurs' },
-  { href: '/admin/messages', icon: Mail, label: 'Messages' },
-  { href: '/admin/promotions', icon: TrendingUp, label: 'Promotions' },
-  { href: '/admin/import-cars', icon: Upload, label: 'Importer véhicules' },
-  { href: '/admin/sync-videos', icon: Video, label: 'Sync vidéos' },
-  { href: '/admin/narsa-videos', icon: Shield, label: 'Vidéos NARSA' },
+// `roles` mirrors the server-side gates: middleware confines journalists to
+// /admin/blog and every other server action requires checkAdmin(). Hiding a
+// link is presentation only — it is never the thing enforcing access.
+const menuItems: {
+  href: string
+  icon: typeof LayoutDashboard
+  label: string
+  exact?: boolean
+  roles: StaffRole[]
+}[] = [
+  { href: '/admin', icon: LayoutDashboard, label: 'Tableau de bord', exact: true, roles: ['admin'] },
+  { href: '/admin/brands', icon: Car, label: 'Catalogue', roles: ['admin'] },
+  { href: '/admin/coups-de-coeur', icon: Heart, label: 'Coups de Cœur', roles: ['admin'] },
+  { href: '/admin/fiches-techniques', icon: FileText, label: 'Fiches Techniques', roles: ['admin'] },
+  { href: '/admin/blog', icon: PenSquare, label: 'Blog', roles: ['admin', 'journalist'] },
+  { href: '/admin/users', icon: Users, label: 'Utilisateurs', roles: ['admin'] },
+  { href: '/admin/messages', icon: Mail, label: 'Messages', roles: ['admin'] },
+  { href: '/admin/promotions', icon: TrendingUp, label: 'Promotions', roles: ['admin'] },
+  { href: '/admin/import-cars', icon: Upload, label: 'Importer véhicules', roles: ['admin'] },
+  { href: '/admin/sync-videos', icon: Video, label: 'Sync vidéos', roles: ['admin'] },
+  { href: '/admin/narsa-videos', icon: Shield, label: 'Vidéos NARSA', roles: ['admin'] },
 ]
 
-export function AdminSidebar() {
+export function AdminSidebar({ role }: { role: StaffRole }) {
   const pathname = usePathname()
+  const visibleItems = menuItems.filter((item) => item.roles.includes(role))
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href
@@ -48,13 +59,13 @@ export function AdminSidebar() {
           <Shield className="h-8 w-8 text-primary-300" />
         </div>
         <h3 className="font-semibold text-center text-secondary">
-          Administration
+          {role === 'journalist' ? 'Rédaction' : 'Administration'}
         </h3>
       </div>
 
       {/* Navigation Menu */}
       <nav className="space-y-1">
-        {menuItems.map((item) => {
+        {visibleItems.map((item) => {
           const Icon = item.icon
           const active = isActive(item.href, item.exact)
           return (
@@ -83,15 +94,16 @@ export function AdminSidebar() {
           <ExternalLink className="h-5 w-5" />
           <span>Retour au site</span>
         </Link>
-        <form action="/actions/logout" method="post">
-          <button
-            type="submit"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-dark-200 hover:bg-[#32B75C]/10 hover:text-[#32B75C] hover:shadow-sm transition-all duration-200 w-full"
-          >
-            <LogOut className="h-5 w-5" />
-            <span>Déconnexion</span>
-          </button>
-        </form>
+        {/* The handler is a GET route at /logout — a POST to /actions/logout
+            (the previous target) 404s. */}
+        <Link
+          href="/logout"
+          prefetch={false}
+          className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-dark-200 hover:bg-[#32B75C]/10 hover:text-[#32B75C] hover:shadow-sm transition-all duration-200 w-full"
+        >
+          <LogOut className="h-5 w-5" />
+          <span>Déconnexion</span>
+        </Link>
       </div>
     </div>
   )

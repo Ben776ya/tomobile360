@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { checkAdminApi } from '@/lib/auth/check-admin'
+import { checkBlogAccessApi } from '@/lib/auth/check-admin'
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 export async function POST(request: NextRequest) {
-  const auth = await checkAdminApi()
+  const auth = await checkBlogAccessApi()
   if (auth.error) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
 // DELETE — remove image from storage
 export async function DELETE(request: NextRequest) {
-  const auth = await checkAdminApi()
+  const auth = await checkBlogAccessApi()
   if (auth.error) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }

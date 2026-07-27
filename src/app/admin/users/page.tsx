@@ -3,8 +3,19 @@ import { createClient } from '@/lib/supabase/server'
 import { Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { UserActions } from '@/components/admin/UserActions'
+import type { UserRole } from '@/lib/auth/check-admin'
 
 export const revalidate = 30
+
+const ROLE_BADGE: Record<UserRole, { label: string; variant: 'warning' | 'success' | 'default' }> = {
+  admin: { label: 'Admin', variant: 'warning' },
+  journalist: { label: 'Journaliste', variant: 'success' },
+  user: { label: 'Utilisateur', variant: 'default' },
+}
+
+function toRole(value: string | null | undefined): UserRole {
+  return value === 'admin' || value === 'journalist' ? value : 'user'
+}
 
 export default async function AdminUsersPage() {
   const supabase = await createClient()
@@ -17,7 +28,7 @@ export default async function AdminUsersPage() {
   // Fetch users
   const { data: users } = await supabase
     .from('profiles')
-    .select('*')
+    .select('id, avatar_url, full_name, phone, city, role, created_at')
     .order('created_at', { ascending: false })
     .limit(50)
 
@@ -104,11 +115,9 @@ export default async function AdminUsersPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      {u.is_admin ? (
-                        <Badge variant="warning">Admin</Badge>
-                      ) : (
-                        <Badge variant="default">Utilisateur</Badge>
-                      )}
+                      <Badge variant={ROLE_BADGE[toRole(u.role)].variant}>
+                        {ROLE_BADGE[toRole(u.role)].label}
+                      </Badge>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-sm text-dark-300">
@@ -120,7 +129,7 @@ export default async function AdminUsersPage() {
                     <td className="px-6 py-4">
                       <UserActions
                         userId={u.id}
-                        isAdmin={u.is_admin ?? false}
+                        role={toRole(u.role)}
                         fullName={u.full_name}
                         phone={u.phone}
                         city={u.city}
