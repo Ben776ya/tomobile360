@@ -11,10 +11,11 @@ describe('blog categories', () => {
   it('lists categories in the required order', () => {
     expect(BLOG_CATEGORIES.map((c) => c.value)).toEqual([
       'nouveautes',
-      'business',
       'essai',
-      'classic-cars',
+      'business',
       'interview',
+      'classic-cars',
+      'sport-auto',
     ])
   })
 
@@ -23,6 +24,7 @@ describe('blog categories', () => {
     expect(CATEGORY_LABELS['essai']).toBe('Essai')
     expect(CATEGORY_LABELS['classic-cars']).toBe('Classic Cars')
     expect(CATEGORY_LABELS['interview']).toBe('Interview')
+    expect(CATEGORY_LABELS['sport-auto']).toBe('Sport Auto')
   })
 
   it('no longer exposes the dropped categories', () => {

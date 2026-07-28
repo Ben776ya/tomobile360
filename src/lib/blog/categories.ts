@@ -4,10 +4,11 @@
  */
 export const BLOG_CATEGORIES = [
   { value: 'nouveautes',   label: 'Nouveautés',   pill: 'bg-secondary text-white',   text: 'text-secondary' },
-  { value: 'business',     label: 'Business',     pill: 'bg-indigo-500 text-white',  text: 'text-indigo-400' },
   { value: 'essai',        label: 'Essai',        pill: 'bg-red-500 text-white',     text: 'text-red-400' },
-  { value: 'classic-cars', label: 'Classic Cars', pill: 'bg-amber-600 text-white',   text: 'text-amber-500' },
+  { value: 'business',     label: 'Business',     pill: 'bg-indigo-500 text-white',  text: 'text-indigo-400' },
   { value: 'interview',    label: 'Interview',    pill: 'bg-rose-500 text-white',    text: 'text-rose-400' },
+  { value: 'classic-cars', label: 'Classic Cars', pill: 'bg-amber-600 text-white',   text: 'text-amber-500' },
+  { value: 'sport-auto',   label: 'Sport Auto',   pill: 'bg-emerald-500 text-white', text: 'text-emerald-400' },
 ] as const
 
 export type BlogCategory = (typeof BLOG_CATEGORIES)[number]
