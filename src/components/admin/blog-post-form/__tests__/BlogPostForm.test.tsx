@@ -70,14 +70,15 @@ describe('BlogPostForm', () => {
     expect(titleInput.value).toBe('Article édité')
   })
 
-  it('renders all 5 category options in the select', () => {
+  it('renders all 6 category options in the select', () => {
     render(<BlogPostForm mode="create" />)
     // The category select has no label `for`, so query by the placeholder text.
     expect(screen.getByRole('option', { name: 'Nouveautés' })).toBeInTheDocument()
-    expect(screen.getByRole('option', { name: 'Business' })).toBeInTheDocument()
     expect(screen.getByRole('option', { name: 'Essai' })).toBeInTheDocument()
-    expect(screen.getByRole('option', { name: 'Classic Cars' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Business' })).toBeInTheDocument()
     expect(screen.getByRole('option', { name: 'Interview' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Classic Cars' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Sport Auto' })).toBeInTheDocument()
   })
 
   it('auto-fills slug from title in create mode', async () => {

@@ -16,14 +16,15 @@ function Wrapper() {
 }
 
 describe('MetadataSection category dropdown', () => {
-  it('offers the five categories', () => {
+  it('offers the six categories', () => {
     render(<Wrapper />)
     for (const label of [
       'Nouveautés',
-      'Business',
       'Essai',
-      'Classic Cars',
+      'Business',
       'Interview',
+      'Classic Cars',
+      'Sport Auto',
     ]) {
       expect(screen.getByRole('option', { name: label })).toBeInTheDocument()
     }
