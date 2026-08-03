@@ -20,25 +20,31 @@ export function NewsSection({ articles }: NewsSectionProps) {
   return (
     <section className="py-4 md:py-6 bg-[#565A5D]/10">
       <div className="container mx-auto px-4">
-        <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-card p-6 md:p-8">
+        <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-card px-6 pb-6 pt-4 md:px-8 md:pb-8 md:pt-5">
         {/* Section Header */}
-        <div className="text-center mb-12 relative">
-          {/* Partnership badge — "En partenariat avec" caption above a horizontal
-              "challenge" label, floated on the right between the title and subtitle */}
-          <div className="absolute right-2 sm:right-4 md:right-6 top-3 md:top-4 z-10 flex flex-col items-center gap-1.5">
-            <span className="text-gray-500 text-xs md:text-sm leading-none">
-              En partenariat avec
-            </span>
-            <span className="inline-block rounded-md bg-[#DB0E16] px-4 py-1.5 font-roboto text-base md:text-lg font-bold lowercase text-white shadow-lg shadow-[#DB0E16]/30 ring-1 ring-black/5">
-              challenge
-            </span>
-          </div>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-4">
+        <div className="mb-12">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-4 text-center">
             Restez informé des dernières actualités automobiles
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">
-            Les guides d&apos;achat Tomobile 360 : essais, nouveautés et tendances du marché
-          </p>
+          {/* Subtitle row — the "En partenariat avec" + "challenge" badge sits on
+              the right, vertically level with the subtitle. It is a flex sibling
+              rather than an absolute overlay, so it reserves its own space and can
+              never overlap the text; the empty left spacer mirrors its flex basis
+              to keep the subtitle centered. Stacks below the subtitle on mobile. */}
+          <div className="flex flex-col items-center gap-3 md:flex-row md:gap-4">
+            <div className="hidden md:block md:flex-1" aria-hidden="true" />
+            <p className="text-gray-500 max-w-2xl text-center">
+              Les guides d&apos;achat Tomobile 360 : essais, nouveautés et tendances du marché
+            </p>
+            <div className="flex items-center gap-2.5 md:flex-1 md:justify-end">
+              <span className="text-gray-500 text-xs md:text-sm leading-none">
+                En partenariat avec
+              </span>
+              <span className="inline-block rounded-md bg-[#DB0E16] px-4 py-1.5 font-roboto text-base md:text-lg font-bold lowercase leading-tight text-white shadow-lg shadow-[#DB0E16]/30 ring-1 ring-black/5">
+                challenge
+              </span>
+            </div>
+          </div>
           <div className="neon-line w-24 mx-auto mt-4" />
         </div>
 

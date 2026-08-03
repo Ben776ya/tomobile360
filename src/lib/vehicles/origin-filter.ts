@@ -31,7 +31,6 @@ export const ORIGIN_EXCLUDED_MODELS: ReadonlyArray<{ brand: string; model: strin
   { brand: 'DFSK', model: 'K01h' },
   { brand: 'DFSK', model: 'C31' },
   { brand: 'DFSK', model: 'C35' },
-  { brand: 'Foton', model: 'Tm' },
 ]
 
 /**
