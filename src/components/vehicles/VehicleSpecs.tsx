@@ -1,6 +1,8 @@
 import { VehicleNew, FicheTechnique } from '@/lib/types'
 import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
 import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
+import { SpecSection } from './SpecSection'
+import { ExpandAllButton } from './ExpandAllButton'
 import {
   Fuel,
   Gauge,
@@ -111,6 +113,21 @@ function getDetailCategoryConfig(category: string): { icon: typeof Car; color: s
   return { icon: Car, color: 'text-gray-600 bg-gray-50 border-gray-200' }
 }
 
+const FICHE_CONTAINER_ID = 'fiche-technique-rubriques'
+
+/** Title row shared by both render paths: heading, tap hint, expand-all. */
+function FicheHeading() {
+  return (
+    <div className="flex items-end justify-between gap-4 flex-wrap">
+      <div>
+        <h3 className="text-xl font-semibold text-slate-700">Fiche Technique</h3>
+        <p className="text-sm text-gray-400 mt-0.5">Appuyez sur une rubrique pour l&apos;afficher.</p>
+      </div>
+      <ExpandAllButton containerId={FICHE_CONTAINER_ID} />
+    </div>
+  )
+}
+
 export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
   // Priority 1: Render from fiches_techniques table data.
   // Drop placeholder/zero values (e.g. "0 Nm", "", "-") up front so a fiche
@@ -123,62 +140,55 @@ export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
 
   if (hasSpecs || hasDetail) {
     return (
-      <div className="space-y-8">
-        <h3 className="text-xl font-semibold text-slate-700">Fiche Technique</h3>
+      <div className="space-y-6">
+        <FicheHeading />
 
+        <div id={FICHE_CONTAINER_ID} className="space-y-3">
         {/* Specs: key-value pairs */}
         {hasSpecs && (
-          <div className="border border-border rounded-xl overflow-hidden">
-            <div className="flex items-center gap-3 px-5 py-3.5 bg-blue-50 border-b border-blue-200">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50">
-                <Cog className="h-5 w-5 text-blue-600" />
+          <SpecSection
+            title="CARACTÉRISTIQUES TECHNIQUES"
+            icon={Cog}
+            color="text-blue-600 bg-blue-50 border-blue-200"
+            count={meaningfulSpecs.length}
+          >
+            {meaningfulSpecs.map(([key, value], index) => (
+              <div
+                key={key}
+                className={`flex items-center justify-between px-5 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}
+              >
+                <span className="text-sm text-muted-foreground">{key}</span>
+                <span className="text-sm font-semibold text-dark-800 text-right max-w-[60%]">{value}</span>
               </div>
-              <h4 className="text-base font-bold text-blue-600">CARACTÉRISTIQUES TECHNIQUES</h4>
-            </div>
-            <div className="divide-y divide-border">
-              {meaningfulSpecs.map(([key, value], index) => (
-                <div
-                  key={key}
-                  className={`flex items-center justify-between px-5 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}
-                >
-                  <span className="text-sm text-muted-foreground">{key}</span>
-                  <span className="text-sm font-semibold text-dark-800 text-right max-w-[60%]">{value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+            ))}
+          </SpecSection>
         )}
 
         {/* En Detail: categorized lists */}
         {hasDetail && Object.entries(fiche!.en_detail).map(([category, items]) => {
           if (!items || items.length === 0) return null
           const config = getDetailCategoryConfig(category)
-          const Icon = config.icon
-          const colorClasses = config.color.split(' ')
           return (
-            <div key={category} className="border border-border rounded-xl overflow-hidden">
-              <div className={`flex items-center gap-3 px-5 py-3.5 ${colorClasses[1]} border-b ${colorClasses[2]}`}>
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${colorClasses[1]}`}>
-                  <Icon className={`h-5 w-5 ${colorClasses[0]}`} />
+            <SpecSection
+              key={category}
+              title={category.toUpperCase()}
+              icon={config.icon}
+              color={config.color}
+              count={items.length}
+            >
+              {items.map((item, index) => (
+                <div
+                  key={index}
+                  className={`flex items-center gap-3 px-5 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}
+                >
+                  <Check className="h-4 w-4 text-green-500 shrink-0" />
+                  <span className="text-sm text-dark-800">{item}</span>
                 </div>
-                <h4 className={`text-base font-bold ${colorClasses[0]}`}>
-                  {category.toUpperCase()}
-                </h4>
-              </div>
-              <div className="divide-y divide-border">
-                {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className={`flex items-center gap-3 px-5 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}
-                  >
-                    <Check className="h-4 w-4 text-green-500 shrink-0" />
-                    <span className="text-sm text-dark-800">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+              ))}
+            </SpecSection>
           )
         })}
+        </div>
 
         {/* External source link intentionally not rendered (internal reference only). */}
       </div>
@@ -263,42 +273,32 @@ export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
   }
 
   return (
-    <div className="space-y-8">
-      <h3 className="text-xl font-semibold text-slate-700">Fiche Technique</h3>
+    <div className="space-y-6">
+      <FicheHeading />
 
-      {visibleCategories.map((category) => {
-        const Icon = category.icon
-        const colorClasses = category.color.split(' ')
-
-        return (
-          <div key={category.name} className="border border-border rounded-xl overflow-hidden">
-            {/* Category Header */}
-            <div className={`flex items-center gap-3 px-5 py-3.5 ${colorClasses[1]} border-b ${colorClasses[2]}`}>
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${colorClasses[1]}`}>
-                <Icon className={`h-5 w-5 ${colorClasses[0]}`} />
-              </div>
-              <h4 className={`text-base font-bold ${colorClasses[0]}`}>
-                {category.name}
-              </h4>
+      <div id={FICHE_CONTAINER_ID} className="space-y-3">
+      {visibleCategories.map((category) => (
+        <SpecSection
+          key={category.name}
+          title={category.name}
+          icon={category.icon}
+          color={category.color}
+          count={category.items.length}
+        >
+          {category.items.map((item, index) => (
+            <div
+              key={item.label}
+              className={`flex items-center justify-between px-5 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}
+            >
+              <span className="text-sm text-muted-foreground">{item.label}</span>
+              <span className="text-sm text-right max-w-[60%]">
+                {renderValue(item.value)}
+              </span>
             </div>
-
-            {/* Spec Rows */}
-            <div className="divide-y divide-border">
-              {category.items.map((item, index) => (
-                <div
-                  key={item.label}
-                  className={`flex items-center justify-between px-5 py-3 ${index % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}
-                >
-                  <span className="text-sm text-muted-foreground">{item.label}</span>
-                  <span className="text-sm text-right max-w-[60%]">
-                    {renderValue(item.value)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )
-      })}
+          ))}
+        </SpecSection>
+      ))}
+      </div>
 
       {/* External source link intentionally not rendered (internal reference only). */}
     </div>
