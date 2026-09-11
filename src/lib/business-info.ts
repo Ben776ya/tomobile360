@@ -33,14 +33,18 @@ function required(name: EnvKey, fallback?: string): string {
 
 export const BUSINESS_INFO = {
   // Public-facing contact channels
-  EMAIL: 'contact@tomobile360.ma',
+  EMAIL: 'Contact@tomobile360.ma',
   EMAIL_PRIVACY: 'privacy@tomobile360.ma',
-  PHONE_DISPLAY: '+212 522 54 81 50 à 52', // landline range (3 lines: 50, 51, 52)
-  PHONE_TEL: '+212522548150',              // first line of the range, for tel: links
+  // Two mobile lines (updated 2026-09-11). PHONE_* is the primary; PHONE_2_*
+  // the secondary. Both are rendered wherever a phone number is shown.
+  PHONE_DISPLAY: '+212 620 138 138',
+  PHONE_TEL: '+212620138138',
+  PHONE_2_DISPLAY: '+212 619 031 813',
+  PHONE_2_TEL: '+212619031813',
 
-  // USER_REQUIRED — real WhatsApp number, set via env
-  WHATSAPP_DISPLAY: required('NEXT_PUBLIC_WHATSAPP_DISPLAY', '+212 522 54 81 50'),
-  WHATSAPP_E164: required('NEXT_PUBLIC_WHATSAPP_E164', '212522548150'),
+  // USER_REQUIRED — real WhatsApp number, set via env; falls back to the primary line
+  WHATSAPP_DISPLAY: required('NEXT_PUBLIC_WHATSAPP_DISPLAY', '+212 620 138 138'),
+  WHATSAPP_E164: required('NEXT_PUBLIC_WHATSAPP_E164', '212620138138'),
 
   // Physical address
   ADDRESS_SHORT: 'Quartier El Manar, Casablanca',
