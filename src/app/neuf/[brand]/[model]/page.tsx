@@ -2,7 +2,7 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Eye, Calculator, ChevronRight } from 'lucide-react'
+import { Eye, Calculator, ChevronRight, MapPin } from 'lucide-react'
 import { formatViewsLabel } from '@/lib/views'
 import { createClient } from '@/lib/supabase/server'
 import { slug } from '@/lib/slug'
@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
 import { VehicleSpecs, KeySpecsStrip } from '@/components/vehicles/VehicleSpecs'
+import { PriceVersionsCard, hasVersionsList } from '@/components/vehicles/PriceVersionsCard'
 import { ImageGallery } from '@/components/vehicles/ImageGallery'
 import { ModelCard, type ModelGroup } from '@/components/vehicles/ModelCard'
 import { buildModelGroups, type VehicleRowForGrouping } from '@/lib/vehicles/group-by-model'
@@ -337,6 +338,15 @@ export default async function ModelDetailPage({ params }: PageProps) {
     }
   })()
 
+  // Jump links for the header nav — only sections that actually render.
+  const sectionLinks = [
+    { href: '#prix', label: 'Prix' },
+    ...(hasVersionsList(variants) ? [{ href: '#versions', label: 'Versions' }] : []),
+    { href: '#fiche-technique', label: 'Fiche technique' },
+    ...(faqItems.length > 0 ? [{ href: '#faq', label: 'FAQ' }] : []),
+    ...(similarModelGroups.length > 0 ? [{ href: '#similaires', label: 'Similaires' }] : []),
+  ]
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-6 lg:px-8 py-8 pb-20 lg:pb-8">
@@ -411,13 +421,34 @@ export default async function ModelDetailPage({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* Brand blurb — same description shown when browsing by marque */}
-              {brand.description && (
-                <p className="text-sm text-gray-500 leading-relaxed mt-4 pt-4 border-t border-gray-100">
-                  {brand.description}
-                </p>
-              )}
+              {/* In-page jump links — the page is long; let the reader go
+                  straight to what they came for. Targets carry scroll-mt-24
+                  so the sticky header never covers the section title. */}
+              <nav aria-label="Sections de la page" className="mt-4 pt-4 border-t border-gray-100 -mx-1 px-1 overflow-x-auto">
+                <ul className="flex gap-2 whitespace-nowrap">
+                  {sectionLinks.map((l) => (
+                    <li key={l.href}>
+                      <a
+                        href={l.href}
+                        className="inline-flex items-center px-3 py-1.5 rounded-full border border-gray-200 bg-gray-50 text-xs font-medium text-gray-600 hover:bg-secondary-50 hover:border-secondary-200 hover:text-secondary transition-colors"
+                      >
+                        {l.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
             </div>
+
+            <PriceVersionsCard
+              brandName={brand.name}
+              modelName={model.name}
+              variants={variants}
+              minPrice={minPrice}
+              priceDisplay={priceDisplay}
+              promo={bestPromo}
+              finalPrice={finalPrice}
+            />
 
             {(representative.horsepower || representative.fuel_type || representative.transmission || representative.acceleration || representative.fuel_consumption_combined || representative.co2_emissions || fiche) && (
               <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -425,7 +456,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div id="fiche-technique" className="bg-white rounded-xl border border-gray-200 p-6 scroll-mt-24">
               <VehicleSpecs vehicle={representative as any} fiche={fiche as any} />
             </div>
 
@@ -449,29 +480,28 @@ export default async function ModelDetailPage({ params }: PageProps) {
           <div className="lg:col-span-1">
             <div className="sticky top-4 space-y-6">
               <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-card hover:shadow-elevated hover:-translate-y-0.5 transition-all duration-300">
-                <h3 className="text-lg font-semibold text-primary mb-4">Prix</h3>
-
-                {bestPromo && minPrice ? (
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-400 line-through">{formatPrice(minPrice)}</p>
-                    <p className="text-3xl font-bold text-secondary">{formatPrice(finalPrice)}</p>
-                    <p className="text-sm text-green-600 mt-1">Économisez {formatPrice(minPrice - finalPrice)}</p>
-                  </div>
-                ) : (
-                  <p className="text-3xl font-bold text-secondary mb-4">{priceDisplay}</p>
-                )}
-
-                {bestPromo && (
-                  <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                    {bestPromo.title && <p className="text-sm font-semibold text-amber-700 mb-1">{bestPromo.title}</p>}
-                    {bestPromo.valid_until && (
-                      <p className="text-xs text-amber-600/80">
-                        Valable jusqu&apos;au{' '}
-                        {new Date(bestPromo.valid_until).toLocaleDateString('fr-MA', { day: 'numeric', month: 'long', year: 'numeric' })}
-                      </p>
-                    )}
-                  </div>
-                )}
+                <h3 className="text-lg font-semibold text-primary">Intéressé par ce modèle ?</h3>
+                {/* Compact recap only — the full price + versions block sits
+                    under the header; this keeps the figure in view on desktop
+                    while the sticky sidebar follows the reader down the fiche. */}
+                <p className="text-sm text-gray-500 mt-1 mb-4">
+                  {bestPromo && minPrice ? (
+                    <>
+                      <span className="line-through mr-1.5">{formatPrice(minPrice)}</span>
+                      <span className="font-semibold text-secondary">{formatPrice(finalPrice)}</span>
+                    </>
+                  ) : (
+                    <span className="font-semibold text-secondary">{priceDisplay}</span>
+                  )}
+                  {hasVersionsList(variants) && (
+                    <>
+                      {' · '}
+                      <a href="#versions" className="hover:underline">
+                        {variants.length} version{variants.length > 1 ? 's' : ''}
+                      </a>
+                    </>
+                  )}
+                </p>
 
                 <div className="space-y-3">
                   <TrackedLink
@@ -513,34 +543,34 @@ export default async function ModelDetailPage({ params }: PageProps) {
                 )}
               </div>
 
-              {variants.length > 1 && (
-                <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-card">
-                  <h3 className="text-lg font-semibold text-primary mb-4">Versions disponibles</h3>
-                  <ul className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 -mr-2">
-                    {variants.map((v, i) => (
-                      <li key={i} className="border-b border-gray-100 last:border-b-0 pb-3 last:pb-0">
-                        <p className="text-sm font-semibold text-gray-800">
-                          {v.version || `${brand.name} ${model.name}`}
+              {/* Brand blurb — same description shown when browsing by marque */}
+              {(brand.description || brand.origin) && (
+                <aside aria-labelledby="brand-about-heading" className="bg-white rounded-xl border border-gray-200 p-6 shadow-card">
+                  <div className="flex items-center gap-3 mb-3">
+                    {brand.logo_url && (
+                      <Image src={brand.logo_url} alt={brand.name} width={40} height={40} className="object-contain shrink-0" />
+                    )}
+                    <div className="min-w-0">
+                      <h3 id="brand-about-heading" className="text-base font-semibold text-primary">À propos de {brand.name}</h3>
+                      {brand.origin && (
+                        <p className="flex items-center gap-1 text-xs text-gray-400">
+                          <MapPin className="h-3 w-3" aria-hidden="true" />
+                          {brand.origin}
                         </p>
-                        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500 mt-1">
-                          {v.fuel_type && <span>{fuelLabel(v.fuel_type)}</span>}
-                          {v.transmission && <span>{transmissionLabel(v.transmission)}</span>}
-                          {v.horsepower && <span>{v.horsepower} ch</span>}
-                        </div>
-                        {v.price_min && (
-                          <p className="text-sm font-semibold text-secondary mt-1">{formatPrice(v.price_min)}</p>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                      )}
+                    </div>
+                  </div>
+                  {brand.description && (
+                    <p className="text-sm text-gray-500 leading-relaxed">{brand.description}</p>
+                  )}
+                </aside>
               )}
             </div>
           </div>
         </div>
 
         {faqItems.length > 0 && (
-          <section className="mt-12" aria-labelledby="faq-heading">
+          <section id="faq" className="mt-12 scroll-mt-24" aria-labelledby="faq-heading">
             {/* FAQPage JSON-LD — an exact mirror of the visible block below,
                 both driven by `faqItems` (single source of truth). */}
             <JsonLd
@@ -568,7 +598,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
         )}
 
         {similarModelGroups.length > 0 && (
-          <div className="mt-12">
+          <div id="similaires" className="mt-12 scroll-mt-24">
             <h2 className="text-2xl font-bold text-primary mb-6">Véhicules Similaires</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {similarModelGroups.map((mg) => (
