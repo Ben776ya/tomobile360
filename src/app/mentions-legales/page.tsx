@@ -25,7 +25,7 @@ export default function MentionsLegalesPage() {
               Le site Tomobile360.ma est édité par :<br />
               <strong>{BUSINESS_INFO.COMPANY_LEGAL_NAME}</strong><br />
               Adresse : {BUSINESS_INFO.ADDRESS_FULL}<br />
-              Téléphone : {BUSINESS_INFO.PHONE_DISPLAY}<br />
+              Téléphone : {BUSINESS_INFO.PHONE_DISPLAY} / {BUSINESS_INFO.PHONE_2_DISPLAY}<br />
               Email : {BUSINESS_INFO.EMAIL}<br />
               RC : {BUSINESS_INFO.RC_NUMBER}<br />
               ICE : {BUSINESS_INFO.ICE_NUMBER}<br />

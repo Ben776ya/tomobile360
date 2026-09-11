@@ -168,9 +168,15 @@ export default function ContactPage() {
                       <p className="font-semibold text-gray-900">Téléphone</p>
                       <a
                         href={`tel:${BUSINESS_INFO.PHONE_TEL}`}
-                        className="text-sm text-gray-500 hover:text-secondary transition-colors"
+                        className="block text-sm text-gray-500 hover:text-secondary transition-colors"
                       >
                         {BUSINESS_INFO.PHONE_DISPLAY}
+                      </a>
+                      <a
+                        href={`tel:${BUSINESS_INFO.PHONE_2_TEL}`}
+                        className="block text-sm text-gray-500 hover:text-secondary transition-colors"
+                      >
+                        {BUSINESS_INFO.PHONE_2_DISPLAY}
                       </a>
                     </div>
                   </div>
