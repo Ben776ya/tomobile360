@@ -379,3 +379,103 @@ html {
 .vp-tile.f-top         .vp-cutout { box-shadow: 0 14px 28px -10px #F7C40066, 0 2px 6px rgba(13, 18, 32, 0.18); }
 .vp-tile.f-chinese     .vp-cutout { box-shadow: 0 14px 28px -10px #15803D66, 0 2px 6px rgba(13, 18, 32, 0.18); }
 
+
+/* ── Admin article editor (TipTap) ─────────────────────────────────────────
+   Mirrors the public article typography (src/components/blog/MarkdownRenderer.tsx)
+   so journalists write on what readers will see. Selectors stay on direct
+   children / known nestings so block node views (galleries, embeds) keep
+   their own styles. */
+.tm-editor-content {
+  @apply min-h-[420px] text-[15px] leading-relaxed text-gray-600 outline-none md:text-base;
+}
+.tm-editor-content::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.tm-editor-content > p,
+.tm-editor-content li > p,
+.tm-editor-content blockquote > p {
+  @apply mb-5;
+}
+.tm-editor-content li > p,
+.tm-editor-content blockquote > p:last-child,
+.tm-editor-content td > p,
+.tm-editor-content th > p {
+  @apply mb-0;
+}
+.tm-editor-content > h1 {
+  @apply relative clear-both mb-5 mt-10 pl-5 font-display text-2xl font-bold text-primary before:absolute before:bottom-0 before:left-0 before:top-0 before:w-1 before:rounded-full before:bg-secondary md:text-3xl;
+}
+.tm-editor-content > h2 {
+  @apply relative clear-both mb-4 mt-10 pl-5 font-display text-xl font-bold text-primary before:absolute before:bottom-0 before:left-0 before:top-0 before:w-1 before:rounded-full before:bg-secondary md:text-2xl;
+}
+.tm-editor-content > h3 {
+  @apply relative clear-both mb-3 mt-8 pl-4 font-display text-lg font-bold text-primary before:absolute before:bottom-1 before:left-0 before:top-1 before:w-0.5 before:rounded-full before:bg-secondary/50 md:text-xl;
+}
+.tm-editor-content > h4 {
+  @apply mb-3 mt-6 font-display text-base font-bold text-primary;
+}
+.tm-editor-content > h1:first-child,
+.tm-editor-content > h2:first-child,
+.tm-editor-content > h3:first-child {
+  @apply mt-0;
+}
+.tm-editor-content > ul,
+.tm-editor-content li > ul,
+.tm-editor-content blockquote > ul {
+  @apply mb-5 list-disc space-y-1.5 pl-6 marker:text-secondary;
+}
+.tm-editor-content > ol,
+.tm-editor-content li > ol,
+.tm-editor-content blockquote > ol {
+  @apply mb-5 list-decimal space-y-1.5 pl-6 marker:text-secondary;
+}
+.tm-editor-content li > ul,
+.tm-editor-content li > ol {
+  @apply mb-0 mt-1.5;
+}
+.tm-editor-content > blockquote {
+  @apply my-6 rounded-lg border-l-4 border-secondary bg-secondary/5 px-5 py-4 italic text-gray-600;
+}
+.tm-editor-content a {
+  @apply cursor-text text-secondary underline decoration-secondary/30 underline-offset-2;
+}
+.tm-editor-content strong {
+  @apply font-bold text-gray-700;
+}
+.tm-editor-content code {
+  @apply rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm text-primary;
+}
+.tm-editor-content > pre {
+  @apply my-6 overflow-x-auto rounded-lg border border-primary/10 bg-primary/5 px-5 py-4 font-mono text-sm text-primary;
+}
+.tm-editor-content > pre code {
+  @apply bg-transparent p-0;
+}
+.tm-editor-content > hr {
+  @apply clear-both my-8 border-t border-gray-200;
+}
+.tm-editor-content > hr.ProseMirror-selectednode {
+  @apply border-secondary;
+}
+.tm-editor-content table {
+  @apply my-6 w-full border-collapse overflow-hidden rounded-lg border border-gray-200 text-left text-sm;
+}
+.tm-editor-content th {
+  @apply relative border border-gray-200 bg-gray-50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary;
+}
+.tm-editor-content td {
+  @apply relative border border-gray-200 px-4 py-2.5 text-gray-600;
+}
+.tm-editor-content .selectedCell::after {
+  @apply pointer-events-none absolute inset-0 bg-secondary/10 content-[''];
+}
+.tm-editor-content > p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  @apply pointer-events-none float-left h-0 text-gray-400;
+}
+/* A block selected from the keyboard (arrow keys onto a gallery / embed / image). */
+.tm-editor-content .ProseMirror-selectednode > [data-node-view-wrapper] > div {
+  @apply ring-2 ring-secondary ring-offset-2;
+}

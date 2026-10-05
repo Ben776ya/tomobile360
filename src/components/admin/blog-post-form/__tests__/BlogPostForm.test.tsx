@@ -8,14 +8,6 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
 }))
 
-// MarkdownRenderer pulls in react-markdown + rehype/remark plugins that don't
-// need to render to validate the form behavior; stub it.
-vi.mock('@/components/blog/MarkdownRenderer', () => ({
-  MarkdownRenderer: ({ content }: { content: string }) => (
-    <div data-testid="markdown-preview">{content}</div>
-  ),
-}))
-
 // The form posts to /api/admin/blog. We mock fetch globally so submit handlers
 // don't hit the network.
 const fetchMock = vi.fn().mockResolvedValue({
@@ -93,7 +85,25 @@ describe('BlogPostForm', () => {
     expect(slugInput.value).toBe('mon-super-article')
   })
 
+  it('renders the rich article editor instead of the old textarea + image manager', async () => {
+    render(<BlogPostForm mode="create" />)
+    expect(await screen.findByRole('button', { name: 'Galerie photos' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Vidéo \/ média/ })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /Éditeur/ })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.queryByText('Images du contenu')).not.toBeInTheDocument()
+  })
+
+  it('opens an existing article in the editor', async () => {
+    const { container } = render(
+      <BlogPostForm mode="edit" post={makePost({ content: '## Intertitre\n\nCorps de l’article.' })} />,
+    )
+    await vi.waitFor(() => {
+      expect(container.querySelector('.tm-editor-content h2')?.textContent).toBe('Intertitre')
+    })
+  })
+
   it('calls fetch with title/content/category payload when submitting', async () => {
+    const user = userEvent.setup()
     render(<BlogPostForm mode="create" />)
 
     const titleInput = screen.getByLabelText(/titre \*/i) as HTMLInputElement
@@ -103,7 +113,8 @@ describe('BlogPostForm', () => {
     const categorySelect = screen.getByLabelText(/catégorie/i) as HTMLSelectElement
     fireEvent.change(categorySelect, { target: { value: 'business' } })
 
-    // The content editor is a textarea (Markdown editor).
+    // Write the body through the editor's Markdown mode.
+    await user.click(await screen.findByRole('tab', { name: /Markdown/ }))
     const contentEditor = screen.getByPlaceholderText(/markdown/i) as HTMLTextAreaElement
     fireEvent.change(contentEditor, { target: { value: 'Hello body' } })
 
@@ -122,6 +133,37 @@ describe('BlogPostForm', () => {
     expect(body.content).toBe('Hello body')
     expect(body.category).toBe('business')
     expect(body.status).toBe('published')
+    expect(body.inline_images).toEqual([])
+  })
+
+  it('derives inline_images from every image in the content, galleries included', async () => {
+    const IMG = 'https://abc.supabase.co/storage/v1/object/public/blog-images/blog'
+    const content = [
+      `![Borne](${IMG}/borne.webp "size:medium|float:left|caption:Recharge")`,
+      '',
+      ':::gallery[Salon]{layout="grid"}',
+      `![Avant](${IMG}/1.webp "caption:Vue avant")`,
+      `![](${IMG}/2.webp)`,
+      ':::',
+      '',
+      '::embed{url="https://youtu.be/dQw4w9WgXcQ"}',
+    ].join('\n')
+    render(<BlogPostForm mode="edit" post={makePost({ content })} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /enregistrer brouillon/i }))
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalled()
+    })
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toBe('/api/admin/blog/post-1')
+    const body = JSON.parse((init as { body: string }).body)
+    expect(body.content).toBe(content)
+    expect(body.status).toBe('draft')
+    expect(body.inline_images).toEqual([
+      { image_url: `${IMG}/borne.webp`, alt_text: 'Borne', caption: 'Recharge', display_order: 0, size: 'medium', float_position: 'left' },
+      { image_url: `${IMG}/1.webp`, alt_text: 'Avant', caption: 'Vue avant', display_order: 1, size: 'full', float_position: 'none' },
+      { image_url: `${IMG}/2.webp`, alt_text: null, caption: null, display_order: 2, size: 'full', float_position: 'none' },
+    ])
   })
 
   it('adds a tag chip and removes it', async () => {
@@ -167,7 +209,7 @@ describe('BlogPostForm', () => {
     // Each hashtag becomes its own chip, not one blob.
     for (const t of ['AFRIQUEAUTOMOBILE', 'ALGERIEINDUSTRIE', 'FASTLANE2030']) {
       expect(
-        screen.getByRole('button', { name: new RegExp(`supprimer le tag ${t}`, 'i') }),
+        screen.getByRole('button', { name: `Supprimer le tag ${t}` }),
       ).toBeInTheDocument()
     }
   })

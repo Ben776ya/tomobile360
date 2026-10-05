@@ -28,7 +28,9 @@ const securityHeaders = [
       // GA4 sends its /g/collect beacon to *.google-analytics.com (region
       // endpoints) / *.analytics.google.com; gtag also fetches from GTM.
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com",
-      "frame-src 'self' https://www.youtube.com https://youtube.com",
+      // Article embeds (src/lib/blog/embeds.ts EMBED_FRAME_ORIGINS) plus the
+      // legacy youtube.com player used by the video pages.
+      "frame-src 'self' https://www.youtube.com https://youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.dailymotion.com https://www.facebook.com https://www.instagram.com https://www.tiktok.com",
       "media-src 'self' https://*.supabase.co",
       "object-src 'none'",
       "base-uri 'self'",

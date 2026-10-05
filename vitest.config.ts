@@ -6,6 +6,10 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'happy-dom',
+    // Tests render iframes (article embeds); never let happy-dom fetch them.
+    environmentOptions: {
+      happyDOM: { settings: { disableIframePageLoading: true } },
+    },
     globals: true,
     include: ['src/**/*.{test,spec}.{ts,tsx}', 'tests/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', '.next', 'scripts/**/*'],
