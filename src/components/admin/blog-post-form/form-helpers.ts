@@ -1,7 +1,7 @@
 import type { BlogPost } from '@/lib/types/blog'
-import type { ManagedImage } from '@/components/admin/BlogImageManager'
 import type { BlogPostFormValues } from './types'
 import { DEFAULT_AUTHOR } from '@/lib/blog/authors'
+import { extractContentImages } from '@/lib/blog/article-blocks'
 
 /**
  * Slug-from-title generator. Mirrors the implementation that lived inline in
@@ -23,25 +23,11 @@ export function slugify(text: string): string {
     .substring(0, 200)
 }
 
-type BlogPostWithImages = BlogPost & {
-  images?: Array<{
-    id: string
-    image_url: string
-    alt_text: string | null
-    caption: string | null
-    display_order: number | null
-    size: string | null
-    float_position: string | null
-  }>
-}
-
 /**
  * Build the `defaultValues` for useForm() from the optional existing post.
  * Mirrors the original BlogPostForm `useState(post?.x ?? '')` initialisation.
  */
-export function buildDefaultValues(
-  post: BlogPostWithImages | undefined,
-): BlogPostFormValues {
+export function buildDefaultValues(post: BlogPost | undefined): BlogPostFormValues {
   return {
     title: post?.title || '',
     slug: post?.slug || '',
@@ -54,18 +40,6 @@ export function buildDefaultValues(
     hero_image_caption: post?.hero_image_caption || '',
     content: post?.content || '',
     featured: post?.featured ?? false,
-    inline_images: post?.images
-      ? post.images.map(
-          (img): ManagedImage => ({
-            id: img.id,
-            url: img.image_url,
-            alt: img.alt_text || '',
-            caption: img.caption || '',
-            size: (img.size as ManagedImage['size']) || 'full',
-            float: (img.float_position as ManagedImage['float']) || 'none',
-          }),
-        )
-      : [],
   }
 }
 
@@ -90,7 +64,8 @@ export function buildBlogPostPayload(
     author: values.author,
     status,
     featured: values.featured,
-    inline_images: values.inline_images.map((img, i) => ({
+    // blog_images mirrors every image in the body (standalone and galleries).
+    inline_images: extractContentImages(values.content).map((img, i) => ({
       image_url: img.url,
       alt_text: img.alt || null,
       caption: img.caption || null,

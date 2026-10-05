@@ -16,17 +16,7 @@ import { ContentSection } from './ContentSection'
 import { PublishingSection } from './PublishingSection'
 
 export interface BlogPostFormProps {
-  post?: BlogPost & {
-    images?: Array<{
-      id: string
-      image_url: string
-      alt_text: string | null
-      caption: string | null
-      display_order: number | null
-      size: string | null
-      float_position: string | null
-    }>
-  }
+  post?: BlogPost
   mode: 'create' | 'edit'
 }
 

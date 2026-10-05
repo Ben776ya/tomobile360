@@ -64,6 +64,8 @@ scripts/*
 # passwords (no signup flow, no self-service reset, no SMTP configured)
 !scripts/create-staff-user.mjs
 !scripts/fix-broken-links.ts
+# guards the article editor against the live content (npm run check:editor-compat)
+!scripts/check-article-editor-compat.ts
 !scripts/extract-magazine-cover.py
 !scripts/compress-magazine-pdf.py
 !scripts/upload-magazines-to-supabase.mjs

@@ -15,7 +15,7 @@ export default function NewBlogPostPage() {
         </Link>
         <h1 className="text-3xl font-bold text-white">Nouveau post</h1>
         <p className="text-dark-200 mt-1">
-          Rédigez votre article en Markdown ou importez un fichier .md
+          Rédigez votre article (texte, photos, galeries, vidéos) ou importez un fichier .md
         </p>
       </div>
       <BlogPostForm mode="create" />

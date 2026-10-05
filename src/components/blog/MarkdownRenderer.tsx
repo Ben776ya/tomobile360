@@ -1,18 +1,34 @@
 'use client'
 
 import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 import rehypeSlug from 'rehype-slug'
 import Image from 'next/image'
 import type { Components } from 'react-markdown'
+import type { ComponentType } from 'react'
+import { parseImageMeta, type ImageMeta } from '@/lib/blog/image-meta'
+import { normalizeGalleryLayout, type GalleryImage } from '@/lib/blog/article-blocks'
+import { articleRemarkPlugins } from '@/lib/blog/markdown-pipeline'
+import { ArticleGallery } from './ArticleGallery'
+import { ArticleEmbed } from './ArticleEmbed'
 
 // Defense-in-depth XSS sanitization. defaultSchema mirrors GitHub's sanitizer:
 // keeps the markdown-equivalent HTML tags (headings, lists, tables, code,
 // img/a/blockquote, plus title attrs we use for image meta), drops <script>,
-// <iframe>, inline event handlers, and javascript: URLs.
-const sanitizeSchema = defaultSchema
+// <iframe>, inline event handlers, and javascript: URLs. The only additions
+// are the two article block elements produced by remarkArticleBlocks; their
+// attributes are plain strings, and ArticleEmbed only ever frames URLs that
+// parseEmbedUrl rebuilt for an allowlisted provider.
+const sanitizeSchema = {
+  ...defaultSchema,
+  tagNames: [...(defaultSchema.tagNames ?? []), 'tm-gallery', 'tm-embed'],
+  attributes: {
+    ...defaultSchema.attributes,
+    'tm-gallery': ['layout', 'caption'],
+    'tm-embed': ['url', 'caption'],
+  },
+}
 
 interface MarkdownRendererProps {
   content: string
@@ -20,41 +36,6 @@ interface MarkdownRendererProps {
 
 function isExternalUrl(href: string): boolean {
   return href.startsWith('http://') || href.startsWith('https://')
-}
-
-type ImageMeta = {
-  size: 'small' | 'medium' | 'large' | 'full'
-  float: 'left' | 'right' | 'none'
-  caption: string
-}
-
-function parseImageMeta(title?: string): ImageMeta {
-  if (!title) return { size: 'full', float: 'none', caption: '' }
-
-  // Caption may contain pipes, so extract it first (everything after "caption:")
-  let caption = ''
-  let rest = title
-  const captionIdx = title.indexOf('caption:')
-  if (captionIdx >= 0) {
-    caption = title.slice(captionIdx + 'caption:'.length).trim()
-    rest = title.slice(0, captionIdx).replace(/\|$/, '')
-  }
-
-  const meta: Record<string, string> = {}
-  rest.split('|').forEach((part) => {
-    const colonIdx = part.indexOf(':')
-    if (colonIdx > 0) {
-      const key = part.slice(0, colonIdx).trim()
-      const val = part.slice(colonIdx + 1).trim()
-      meta[key] = val
-    }
-  })
-
-  return {
-    size: (['small', 'medium', 'large', 'full'].includes(meta.size) ? meta.size : 'full') as ImageMeta['size'],
-    float: (['left', 'right', 'none'].includes(meta.float) ? meta.float : 'none') as ImageMeta['float'],
-    caption,
-  }
 }
 
 const SIZE_CLASSES: Record<ImageMeta['size'], string> = {
@@ -232,16 +213,62 @@ const components: Components = {
   ),
 }
 
+
+interface HastElement {
+  type: string
+  tagName?: string
+  properties?: Record<string, unknown>
+  children?: HastElement[]
+}
+
+/** Images inside a <tm-gallery>, in document order. */
+function galleryImagesFrom(node: HastElement | undefined): GalleryImage[] {
+  const out: GalleryImage[] = []
+  const walk = (n: HastElement) => {
+    if (n.type === 'element' && n.tagName === 'img') {
+      const src = typeof n.properties?.src === 'string' ? n.properties.src : ''
+      if (src) {
+        out.push({
+          src,
+          alt: typeof n.properties?.alt === 'string' ? n.properties.alt : '',
+          caption: parseImageMeta(typeof n.properties?.title === 'string' ? n.properties.title : '').caption,
+        })
+      }
+    }
+    n.children?.forEach(walk)
+  }
+  if (node) walk(node)
+  return out
+}
+
+type BlockProps = { node?: HastElement; layout?: string; caption?: string; url?: string }
+
+// Custom elements emitted by remarkArticleBlocks (not part of the JSX
+// intrinsic-element map that `Components` is typed against).
+const blockComponents: Record<string, ComponentType<BlockProps>> = {
+  'tm-gallery': ({ node, layout, caption }) => (
+    <ArticleGallery
+      images={galleryImagesFrom(node)}
+      layout={normalizeGalleryLayout(layout)}
+      caption={caption || undefined}
+    />
+  ),
+  'tm-embed': ({ url, caption }) => <ArticleEmbed url={url ?? ''} caption={caption || undefined} />,
+}
+
+const allComponents = { ...components, ...blockComponents } as Components
+
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
+  // remark: GFM, then directives → article blocks (gallery / embed).
   // Plugin order matters: rehypeRaw parses raw HTML into HAST first,
   // rehypeSanitize then walks the tree and removes anything not in the schema,
   // rehypeSlug adds IDs to surviving headings for anchor linking.
   return (
     <div className="mx-auto max-w-[65ch] px-1 sm:px-0 after:content-[''] after:block after:clear-both">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={articleRemarkPlugins}
         rehypePlugins={[rehypeRaw, [rehypeSanitize, sanitizeSchema], rehypeSlug]}
-        components={components}
+        components={allComponents}
       >
         {content}
       </ReactMarkdown>
