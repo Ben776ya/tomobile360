@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/server'
 import type { VehicleUsed, Video } from '@/lib/types'
 import type { BlogListItem } from '@/lib/types/blog'
+import { getInstagramReels, INSTAGRAM_HANDLE, INSTAGRAM_PROFILE_URL } from '@/lib/instagram'
 
 type HomeUsedListing = VehicleUsed & {
   brands?: { name: string; logo_url: string | null }
@@ -15,6 +16,7 @@ import { HeroSection } from '@/components/home/HeroSection'
 import { BrandCarousel } from '@/components/shared/BrandCarousel'
 import { OccasionServicesSection } from '@/components/home/OccasionServicesSection'
 import { FeatureGrid } from '@/components/home/FeatureGrid'
+import { InstagramReels } from '@/components/home/InstagramReels'
 import { UsedListingCard } from '@/components/vehicles/UsedListingCard'
 import { ServicesSection } from '@/components/home/ServicesSection'
 import { PromoBanner } from '@/components/home/PromoBanner'
@@ -65,6 +67,7 @@ export default async function HomePage() {
     { data: recentBlogPosts },
     { data: latestVideos },
     { data: allBrands },
+    instagramReels,
   ] = await Promise.all([
     // Brands for search
     supabase
@@ -112,6 +115,9 @@ export default async function HomePage() {
       .from('brands')
       .select('id, name, logo_url')
       .order('name'),
+
+    // Latest Instagram reels (never throws — curated fallback)
+    getInstagramReels(),
   ])
 
   return (
@@ -120,15 +126,29 @@ export default async function HomePage() {
       {/* 1. Hero Section with Search Form */}
       <HeroSection brands={brands || []} models={models || []} />
 
-      {/* 2 + 3. Joined band: FeatureGrid + Brand Carousel on subtle charcoal tint */}
+      {/* 2 + 3. Joined band on subtle charcoal tint: feature carousel + brand
+          carousel on the left, Instagram reels panel on the right spanning
+          both (stacked below them under lg). */}
       <div className="bg-[#565A5D]/10">
-        {/* 2. Feature grid — comparateur, offres, top ventes, coups de cœur */}
-        <FeatureGrid />
+        <div className="container mx-auto grid gap-6 px-4 pb-4 pt-5 md:pb-6 lg:grid-cols-[minmax(0,1fr)_auto]">
+          <div className="flex min-w-0 flex-col gap-6">
+            {/* 2. Feature carousel — comparateur, offres, top ventes, coups de cœur */}
+            <FeatureGrid />
 
-        {/* 3. Brand Carousel */}
-        {allBrands && allBrands.length > 0 && (
-          <BrandCarousel brands={allBrands} />
-        )}
+            {/* 3. Brand Carousel — stretches so its card ends level with the reels panel */}
+            {allBrands && allBrands.length > 0 && (
+              <BrandCarousel brands={allBrands} className="flex-1" />
+            )}
+          </div>
+
+          {/* Instagram reels — 9:16, top level with the tiles, bottom with the brand card */}
+          <InstagramReels
+            reels={instagramReels}
+            handle={INSTAGRAM_HANDLE}
+            profileUrl={INSTAGRAM_PROFILE_URL}
+            className="mx-auto w-full max-w-[280px] lg:mx-0 lg:w-[290px] lg:max-w-none xl:w-[340px] 2xl:w-[388px]"
+          />
+        </div>
       </div>
 
       {/* 4. OCCASION Services Section */}

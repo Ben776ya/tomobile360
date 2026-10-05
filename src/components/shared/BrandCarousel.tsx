@@ -12,26 +12,20 @@ interface BrandCarouselProps {
     logo_url: string | null
   }>
   showTitle?: boolean
+  className?: string
 }
 
-export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) {
+export function BrandCarousel({ brands, showTitle = true, className = '' }: BrandCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
 
-  // Responsive brands per page
-  const [brandsPerPage, setBrandsPerPage] = useState(6)
+  // Brands per page: 1 on phones, 4 from sm up (the carousel shares its row
+  // with the Instagram reels panel on desktop)
+  const [brandsPerPage, setBrandsPerPage] = useState(4)
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setBrandsPerPage(1)
-      } else if (window.innerWidth < 768) {
-        setBrandsPerPage(4)
-      } else if (window.innerWidth < 1024) {
-        setBrandsPerPage(5)
-      } else {
-        setBrandsPerPage(6)
-      }
+      setBrandsPerPage(window.innerWidth < 640 ? 1 : 4)
     }
 
     handleResize()
@@ -61,85 +55,83 @@ export function BrandCarousel({ brands, showTitle = true }: BrandCarouselProps) 
 
   return (
     <section
-      className="pt-1 pb-4 md:pb-6"
+      className={`flex flex-col ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="container mx-auto px-4">
-        <div className="bg-white rounded-2xl overflow-hidden p-6 md:p-8">
-          <div className="w-full sm:w-3/4 mx-auto">
-            {/* Section Title */}
-            {showTitle && (
-              <div className="text-center mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-slate-700 mb-2">
-                  SÉLECTIONNEZ LA MARQUE DE VOTRE CHOIX
-                </h2>
-                <p className="text-gray-600">
-                  Découvrez toutes les marques disponibles sur notre plateforme
-                </p>
-              </div>
-            )}
-
-            {/* Carousel */}
-            <div className="relative flex items-center gap-3 sm:gap-4">
-              {/* Previous */}
-              <button
-                onClick={() => setCurrentIndex((prev) =>
-                  prev === 0 ? Math.max(0, brands.length - brandsPerPage) : Math.max(0, prev - brandsPerPage)
-                )}
-                className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-secondary hover:text-secondary transition-all duration-200"
-                aria-label="Marques précédentes"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-
-              {/* Brands Container */}
-              <div className="flex-1">
-                <div
-                  className="grid gap-3 sm:gap-5 md:gap-6"
-                  style={{ gridTemplateColumns: `repeat(${brandsPerPage}, minmax(0, 1fr))` }}
-                >
-                  {displayBrands.map((brand) => (
-                    <Link
-                      key={brand.id}
-                      href={`/neuf?brand=${brand.id}`}
-                      className="group flex flex-col items-center justify-center
-                                 bg-white border border-gray-100 rounded-xl p-3 sm:p-4 md:p-5
-                                 min-h-[64px] sm:min-h-[72px] md:min-h-[80px]
-                                 hover:border-secondary/30
-                                 transition-all duration-300"
-                    >
-                      {brand.logo_url ? (
-                        <div className="relative w-full h-20 sm:h-16 md:h-20">
-                          <Image
-                            src={brand.logo_url}
-                            alt={brand.name}
-                            fill
-                            className="object-contain transition-all duration-300 group-hover:scale-110"
-                            sizes="(max-width: 640px) 160px, (max-width: 768px) 120px, 140px"
-                          />
-                        </div>
-                      ) : (
-                        <span className="text-base sm:text-sm md:text-base font-semibold text-gray-500 group-hover:text-secondary transition-colors">
-                          {brand.name}
-                        </span>
-                      )}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              {/* Next */}
-              <button
-                onClick={() => setCurrentIndex((prev) =>
-                  prev + brandsPerPage >= brands.length ? 0 : prev + brandsPerPage
-                )}
-                className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-secondary hover:text-secondary transition-all duration-200"
-                aria-label="Marques suivantes"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
+      <div className="flex flex-1 flex-col justify-center bg-white rounded-2xl overflow-hidden p-6 md:p-8" data-brand-card>
+        <div className="w-full">
+          {/* Section Title */}
+          {showTitle && (
+            <div className="text-center mb-6">
+              <h2 className="text-2xl xl:text-3xl font-bold text-slate-700 mb-2">
+                SÉLECTIONNEZ LA MARQUE DE VOTRE CHOIX
+              </h2>
+              <p className="text-gray-600">
+                Découvrez toutes les marques disponibles sur notre plateforme
+              </p>
             </div>
+          )}
+
+          {/* Carousel */}
+          <div className="relative flex items-center gap-3 sm:gap-4">
+            {/* Previous */}
+            <button
+              onClick={() => setCurrentIndex((prev) =>
+                prev === 0 ? Math.max(0, brands.length - brandsPerPage) : Math.max(0, prev - brandsPerPage)
+              )}
+              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-secondary hover:text-secondary transition-all duration-200"
+              aria-label="Marques précédentes"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+
+            {/* Brands Container */}
+            <div className="flex-1">
+              <div
+                className="grid gap-3 sm:gap-5 md:gap-6"
+                style={{ gridTemplateColumns: `repeat(${brandsPerPage}, minmax(0, 1fr))` }}
+              >
+                {displayBrands.map((brand) => (
+                  <Link
+                    key={brand.id}
+                    href={`/neuf?brand=${brand.id}`}
+                    className="group flex flex-col items-center justify-center
+                               bg-white border border-gray-100 rounded-xl p-3 sm:p-4 md:p-5
+                               min-h-[64px] sm:min-h-[72px] md:min-h-[80px]
+                               hover:border-secondary/30
+                               transition-all duration-300"
+                  >
+                    {brand.logo_url ? (
+                      <div className="relative w-full h-20 sm:h-16 md:h-20">
+                        <Image
+                          src={brand.logo_url}
+                          alt={brand.name}
+                          fill
+                          className="object-contain transition-all duration-300 group-hover:scale-110"
+                          sizes="(max-width: 640px) 160px, (max-width: 768px) 120px, 140px"
+                        />
+                      </div>
+                    ) : (
+                      <span className="text-base sm:text-sm md:text-base font-semibold text-gray-500 group-hover:text-secondary transition-colors">
+                        {brand.name}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Next */}
+            <button
+              onClick={() => setCurrentIndex((prev) =>
+                prev + brandsPerPage >= brands.length ? 0 : prev + brandsPerPage
+              )}
+              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-secondary hover:text-secondary transition-all duration-200"
+              aria-label="Marques suivantes"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </div>

@@ -31,7 +31,9 @@ const securityHeaders = [
       // Article embeds (src/lib/blog/embeds.ts EMBED_FRAME_ORIGINS) plus the
       // legacy youtube.com player used by the video pages.
       "frame-src 'self' https://www.youtube.com https://youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.dailymotion.com https://www.facebook.com https://www.instagram.com https://www.tiktok.com",
-      "media-src 'self' https://*.supabase.co",
+      // Instagram CDN: homepage reels panel plays reel MP4s from the Instagram
+      // API (src/lib/instagram.ts) natively.
+      "media-src 'self' https://*.supabase.co https://*.cdninstagram.com https://*.fbcdn.net",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
