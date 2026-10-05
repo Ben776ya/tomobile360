@@ -211,6 +211,7 @@ html {
   font: inherit;
   color: inherit;
   padding: 0;
+  container-type: inline-size;
 }
 .vp-tile:hover {
   transform: translateY(-6px);
@@ -363,6 +364,15 @@ html {
   font-size: 11px;
   margin-top: 6px;
   color: rgba(28, 37, 65, 0.55);
+}
+
+/* Narrow tiles (3-up carousel between md and xl): smaller cutout and tighter
+   footer so the circle never covers the title. */
+@container (max-width: 220px) {
+  .vp-cutout { top: 24%; width: 50%; border-width: 3px; }
+  .vp-footer { padding: 40px 12px 14px; }
+  .vp-title { font-size: 14px; }
+  .vp-sub { font-size: 10px; margin-top: 4px; }
 }
 
 /* Per-feature theme overrides (set CSS variables on the tile) */

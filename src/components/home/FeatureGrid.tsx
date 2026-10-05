@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { VehicleSelector } from '@/components/vehicles/VehicleSelector'
 import { ComparisonTable } from '@/components/vehicles/ComparisonTable'
 import { formatPrice } from '@/lib/utils'
-import { MobileCarousel } from '@/components/shared/MobileCarousel'
+import { LoopCarousel } from '@/components/shared/LoopCarousel'
 
 interface VehicleData {
   id: string
@@ -352,15 +352,10 @@ export function FeatureGrid() {
   }
 
   return (
-    <section className="py-2">
-      <div className="container mx-auto px-4">
-        <div className="px-2 md:px-4 py-3 relative">
+    <div className="relative">
 
-        {/* ── Card grid (desktop) / infinite carousel (mobile) ── */}
-        <MobileCarousel
-          desktopClassName="mx-auto grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-5"
-          autoPlayMs={5000}
-        >
+        {/* ── Endless carousel: 3 tiles per view (2 on sm, 1 on mobile) ── */}
+        <LoopCarousel label="Services Tomobile 360" prevLabel="Services précédents" nextLabel="Services suivants">
           {featureItems.map((item) => {
             const isExpand = item.action === 'expand'
             return (
@@ -377,7 +372,7 @@ export function FeatureGrid() {
               />
             )
           })}
-        </MobileCarousel>
+        </LoopCarousel>
 
         {/* ── Comparateur expand panel ── */}
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
@@ -622,8 +617,6 @@ export function FeatureGrid() {
             </div>
           </div>
         </div>
-        </div>
-      </div>
 
       {/* Vehicle selector modal */}
       {showSelector && (
@@ -633,6 +626,6 @@ export function FeatureGrid() {
           excludeIds={selectedIds}
         />
       )}
-    </section>
+    </div>
   )
 }

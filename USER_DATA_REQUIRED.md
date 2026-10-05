@@ -185,6 +185,18 @@ Tunnel route: `/monitoring` (the SDK proxies events through your own domain to b
 
 ---
 
+## 12ter. Optional: Instagram reels auto-sync (homepage reels panel)
+
+The homepage reels panel (right of the feature tiles) works without this: it shows a curated list of @tomobile360.ma reels (`CURATED_REEL_CODES` in `src/lib/instagram.ts`) through Instagram's official embed. With a token it lists the latest reels automatically (refreshed hourly) and plays them full-bleed in the 9:16 panel.
+
+| # | Item | Env var | Value |
+|---|------|---------|-------|
+| 12t.1 | Long-lived Instagram User access token for @tomobile360.ma (professional account) | `INSTAGRAM_ACCESS_TOKEN` | From a Meta app using *Instagram API with Instagram Login*, permission `instagram_business_basic`. **Server-only — never prefix with `NEXT_PUBLIC_`.** |
+
+Set it for **Production** and **Preview** in Vercel. Long-lived tokens expire after 60 days unless refreshed; when it expires the panel silently falls back to the curated list. Reels using licensed music have no downloadable video in the API and keep using the embed.
+
+---
+
 ## 12. Optional: marketing photos and SOFAC/AtlantaSanad disclaimers
 
 The current SOFAC and AtlantaSanad disclaimers on `/services/credit` and `/services/assurance` use standard regulatory language. **Have your legal/compliance contact at each partner review them once** before launch. They may want specific wording about:
