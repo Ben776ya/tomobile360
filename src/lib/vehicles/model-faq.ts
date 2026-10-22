@@ -1,5 +1,5 @@
 import { formatPrice } from '@/lib/utils'
-import { transmissionLabel } from '@/lib/vehicles/display-labels'
+import type { VersionSpecs } from '@/lib/vehicles/version-specs'
 
 /**
  * A single question/answer pair. This same array feeds BOTH the visible FAQ
@@ -18,12 +18,10 @@ export interface ModelFaqInput {
   minPrice: number | null
   /** Highest variant price (MAD), used only to phrase a range. */
   maxPrice: number | null
-  /** Combined-cycle consumption in L/100 km, or null / 0 when unknown. */
-  consumptionCombined: number | null
-  /** Fiscal power string already extracted from the fiche (e.g. "8 CV"), or null. */
-  fiscalPower: string | null
-  /** Raw transmission enum values (e.g. ["Manual", "Automatic"]). */
-  transmissions: string[]
+  /** The version `specs` describes (the one the page displays), named in the answers; null when the model has one. */
+  versionName: string | null
+  /** That version's figures from getVersionSpecs — the page's reader; null = unknown, never quoted. */
+  specs: Pick<VersionSpecs, 'consumption' | 'fiscalPower' | 'transmission'>
   /** Number of versions from `variant_list`. */
   versionCount: number
 }
@@ -40,9 +38,8 @@ export function buildModelFaq(input: ModelFaqInput): ModelFaqItem[] {
     modelName,
     minPrice,
     maxPrice,
-    consumptionCombined,
-    fiscalPower,
-    transmissions,
+    versionName,
+    specs,
     versionCount,
   } = input
 
@@ -66,35 +63,29 @@ export function buildModelFaq(input: ModelFaqInput): ModelFaqItem[] {
     })
   }
 
-  // 3) Combined consumption — only when > 0.
-  if (consumptionCombined && consumptionCombined > 0) {
+  // 3–5) The displayed version's figures, from the page's reader: named when
+  // the model has several versions, and only when the reader knows them.
+  const forVersion = (sentence: string) =>
+    versionName ? `En version ${versionName}, ${sentence}` : sentence.charAt(0).toUpperCase() + sentence.slice(1)
+
+  if (specs.consumption) {
     items.push({
       question: `Quelle est la consommation du ${car} ?`,
-      answer: `Le ${car} affiche une consommation mixte de ${consumptionCombined} L/100 km.`,
+      answer: forVersion(`le ${car} affiche une consommation mixte de ${specs.consumption}.`),
     })
   }
 
-  // 4) Fiscal power — only when the fiche carries a real value.
-  const fiscal = fiscalPower?.trim()
-  if (fiscal) {
+  if (specs.fiscalPower) {
     items.push({
       question: `Quelle est la puissance fiscale du ${car} ?`,
-      answer: `La puissance fiscale du ${car} est de ${fiscal}.`,
+      answer: forVersion(`la puissance fiscale du ${car} est de ${specs.fiscalPower}.`),
     })
   }
 
-  // 5) Transmission — only when at least one is known.
-  const transLabels = transmissions
-    .map((t) => transmissionLabel(t).toLowerCase())
-    .filter(Boolean)
-  if (transLabels.length > 0) {
-    const joined =
-      transLabels.length > 1
-        ? `${transLabels.slice(0, -1).join(', ')} ou ${transLabels[transLabels.length - 1]}`
-        : transLabels[0]
+  if (specs.transmission) {
     items.push({
       question: `Quelle boîte de vitesses équipe le ${car} ?`,
-      answer: `Le ${car} est disponible avec une boîte ${joined}.`,
+      answer: forVersion(`le ${car} est équipé d'une boîte ${specs.transmission.toLowerCase()}.`),
     })
   }
 

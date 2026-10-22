@@ -11,18 +11,25 @@ import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
  * Data shape: `vehicles_new` holds one row per model; its `variant_list`
  * carries the per-version facts (name, price, power, fuel, gearbox).
  * Everything else — consumption, top speed, trunk, torque, equipment — sits in
- * ONE model-level `fiches_techniques` row scraped from a single version the
- * source doesn't name. Reading the two side by side unchecked is how the
- * Sandero Streetway showed 90 ch (its first version) next to a fiche saying
- * 95 ch (a dCi version). So a fiche figure is attributed to a version only
- * when the fiche provably describes it; otherwise it reads SPEC_UNAVAILABLE.
+ * `fiches_techniques`: one row per version (`version` = the exact
+ * variant_list name) and/or one legacy model-level row (`version` NULL)
+ * scraped from a single version the source doesn't name. Reading that legacy
+ * row next to the versions unchecked is how the Sandero Streetway showed
+ * 90 ch (its first version) next to a fiche saying 95 ch (a dCi version). So a
+ * version reads its own row; failing that, a legacy figure is attributed to it
+ * only when the legacy row provably describes it; otherwise SPEC_UNAVAILABLE.
  */
 
 /** Shown for any figure we can't tie to the selected version — never 0 or blank. */
 export const SPEC_UNAVAILABLE = 'Information non disponible'
 
-/** Any fiche row shape (typed or raw Supabase `Json`); only `specs` is read. */
-type FicheLike = { specs?: unknown } | null | undefined
+/**
+ * Any fiche row shape (typed or raw Supabase `Json`); only `specs` and
+ * `version` are read. `version` NULL — or absent, before the column exists —
+ * marks the legacy model-level fiche.
+ */
+export type FicheRow = { specs?: unknown; version?: string | null }
+type FicheLike = FicheRow | null | undefined
 
 function ficheSpecs(fiche: FicheLike): Record<string, unknown> {
   const specs = fiche?.specs
@@ -89,7 +96,33 @@ function describes(sourceHp: number | null, sourceGearbox: unknown, variant: Var
 
 export function ficheDescribesVariant(fiche: FicheLike, variant: Variant, variants: Variant[]): boolean {
   if (!fiche) return false
+  // A per-version row describes its own version, by definition.
+  if (fiche.version != null) return fiche.version === variant.version
   return describes(fichePowerCh(fiche), ficheSpecs(fiche)['Boîte à vitesse'], variant, variants)
+}
+
+/** A version's fiche among its model's rows: its own row, else the model-level one. */
+export function ficheForVariant<F extends FicheRow>(fiches: F[] | null | undefined, variant: Pick<Variant, 'version'>): F | null {
+  const rows = fiches ?? []
+  return (
+    rows.find((f) => f.version != null && f.version === variant.version) ??
+    rows.find((f) => f.version == null) ??
+    null
+  )
+}
+
+/** Does `variant` have figures from a fiche — its own row, or the model-level one tied to it? */
+export function variantHasFiche(fiches: FicheRow[] | null | undefined, variant: Variant, variants: Variant[]): boolean {
+  return ficheDescribesVariant(ficheForVariant(fiches, variant), variant, variants)
+}
+
+/** Fiche rows grouped by `model_id` (the comparator reads several models at once). */
+export function fichesByModel<F extends FicheRow & { model_id: string }>(rows: F[] | null | undefined): Record<string, F[]> {
+  const map: Record<string, F[]> = {}
+  ;(rows ?? []).forEach((f) => {
+    map[f.model_id] = [...(map[f.model_id] ?? []), f]
+  })
+  return map
 }
 
 export function rowDescribesVariant(vehicle: VehicleSpecColumns, variant: Variant, variants: Variant[]): boolean {
@@ -97,21 +130,23 @@ export function rowDescribesVariant(vehicle: VehicleSpecColumns, variant: Varian
 }
 
 /**
- * The version to show: the one `requested` (a versionSlug) names, else the
- * first the fiche describes — so the default view keeps every figure the page
- * has — else the first version.
+ * The version to show: the one `requested` (a versionSlug) names; else, when
+ * versions have their own fiche, the first listed (the « à partir de » one);
+ * else the first the model-level fiche describes — so the default view keeps
+ * every figure the page has — else the first version.
  */
-export function selectVariant(variants: Variant[], fiche: FicheLike, requested?: string | null): Variant {
+export function selectVariant(variants: Variant[], fiches: FicheRow[] | null | undefined, requested?: string | null): Variant {
+  const perVersion = variants.some((v) => ficheForVariant(fiches, v)?.version != null)
   return (
     (requested ? variants.find((v) => versionSlug(v) === requested) : undefined) ??
-    variants.find((v) => ficheDescribesVariant(fiche, v, variants)) ??
+    (perVersion ? variants[0] : variants.find((v) => variantHasFiche(fiches, v, variants))) ??
     variants[0]
   )
 }
 
 export type VersionSpecKey =
   | 'price' | 'power' | 'fuel' | 'transmission' | 'consumption' | 'topSpeed' | 'trunk' | 'torque'
-  | 'engineSize' | 'acceleration' | 'co2' | 'seats'
+  | 'engineSize' | 'acceleration' | 'co2' | 'seats' | 'fiscalPower'
 
 /** Display strings for one version; null = unknown for that version. */
 export type VersionSpecs = { price: string } & Record<Exclude<VersionSpecKey, 'price'>, string | null>
@@ -129,6 +164,7 @@ export const VERSION_SPEC_LABELS: Record<VersionSpecKey, string> = {
   acceleration: '0-100 km/h',
   co2: 'CO2',
   seats: 'Places',
+  fiscalPower: 'Puissance fiscale',
 }
 
 /** Figures of the model page's « Points clés » strip, in order (the comparator shows them too). */
@@ -136,15 +172,17 @@ export const KEY_SPEC_KEYS: VersionSpecKey[] = ['price', 'power', 'fuel', 'trans
 
 export function getVersionSpecs({
   vehicle,
-  fiche,
+  fiches,
   variant,
   variants,
 }: {
   vehicle?: VehicleSpecColumns | null
-  fiche?: FicheLike
+  /** Every fiche row of the model; the variant's own row wins over the model-level one. */
+  fiches?: FicheRow[] | null
   variant: Variant
   variants: Variant[]
 }): VersionSpecs {
+  const fiche = ficheForVariant(fiches, variant)
   const specs = ficheSpecs(fiche)
   const ficheOk = ficheDescribesVariant(fiche, variant, variants)
   const rowOk = !!vehicle && rowDescribesVariant(vehicle, variant, variants)
@@ -170,5 +208,6 @@ export function getVersionSpecs({
     acceleration: fromFiche('Accélération 0-100 km/h', 'Accélération 0–100 km/h', 'Accélération') ?? fromRow(vehicle?.acceleration, 's'),
     co2: fromFiche('Emission CO2') ?? fromRow(vehicle?.co2_emissions, ' g/km'),
     seats: fromFiche('Nombre de places') ?? fromRow(vehicle?.seating_capacity, ''),
+    fiscalPower: fromFiche('Puissance fiscale'),
   }
 }
