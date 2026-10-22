@@ -22,6 +22,17 @@ export const TRANSMISSION_LABELS: Record<string, string> = {
   DCT: 'Automatique (DCT)',
 }
 
+/** brands.origin is stored in English (e.g. 'China'). */
+export const COUNTRY_LABELS: Record<string, string> = {
+  China: 'Chine',
+}
+
+/** French country label for a brand origin, falling back to the raw value. */
+export function originLabel(value: string | null | undefined): string {
+  if (!value) return ''
+  return COUNTRY_LABELS[value] ?? value
+}
+
 /** French fuel label, falling back to the raw value for anything unmapped. */
 export function fuelLabel(value: string | null | undefined): string {
   if (!value) return ''
