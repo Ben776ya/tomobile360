@@ -49,6 +49,14 @@ describe('estimateUsedPrice — catalogue basis', () => {
     expect(acceptable.average).toBeLessThan(bon.average)
   })
 
+  it('never estimates above the catalogue price, even « Excellent » and nearly new', () => {
+    const r = estimateUsedPrice({ ...auditCase, year: 2026, mileage: 500, condition: 'Excellent', cataloguePrice: DUSTER })!
+    // Uncapped this was 222 089 average / 255 402 max for a 202 000 car.
+    expect(r.average).toBe(DUSTER)
+    expect(r.max).toBe(DUSTER)
+    expect(r.min).toBeLessThan(DUSTER)
+  })
+
   it('still applies mileage', () => {
     const low = estimateUsedPrice({ ...auditCase, mileage: 20000, cataloguePrice: DUSTER })!
     const high = estimateUsedPrice({ ...auditCase, mileage: 150000, cataloguePrice: DUSTER })!

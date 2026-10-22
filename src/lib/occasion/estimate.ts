@@ -54,10 +54,12 @@ export function estimateUsedPrice(input: EstimateInput): UsedPriceEstimate | nul
 
   const estimatedPrice = basePrice * depreciation * mileageDepreciation * conditionMultiplier
 
+  // A used car is never worth more than new: « Excellent » (×1.1) on a nearly
+  // new car would otherwise land above the catalogue price.
   return {
     min: Math.round(estimatedPrice * 0.85),
-    max: Math.round(estimatedPrice * 1.15),
-    average: Math.round(estimatedPrice),
+    max: Math.min(Math.round(estimatedPrice * 1.15), basePrice),
+    average: Math.min(Math.round(estimatedPrice), basePrice),
     basis: { kind: 'catalogue', price: basePrice },
   }
 }
