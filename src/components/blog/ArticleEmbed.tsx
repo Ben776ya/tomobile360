@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { ExternalLink, Link2, Play } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { parseEmbedUrl, toSafeLinkUrl, type EmbedInfo } from '@/lib/blog/embeds'
+import { useConsent } from '@/lib/analytics/use-consent'
+import { ConsentGatedEmbed, EmbedConsentGate } from '@/components/shared/EmbedConsentGate'
 
 interface ArticleEmbedProps {
   url: string
@@ -18,7 +20,9 @@ const IFRAME_ALLOW =
 /**
  * URL-embedded media for article bodies (`::embed{url}`): YouTube, Vimeo,
  * Dailymotion, Facebook, Instagram, TikTok. Unsupported URLs degrade to a
- * plain link card — an arbitrary URL is never put in an iframe.
+ * plain link card — an arbitrary URL is never put in an iframe. No player
+ * loads before cookie consent or a click on the embed (EmbedConsentGate); the
+ * caption always links to the original.
  */
 export function ArticleEmbed({ url, caption, className }: ArticleEmbedProps) {
   const info = parseEmbedUrl(url)
@@ -74,15 +78,17 @@ function EmbedFrame({ info, title }: { info: EmbedInfo; title: string }) {
   if (info.shape === 'portrait') {
     return (
       <div className="mx-auto aspect-[9/16] w-full max-w-[340px] overflow-hidden rounded-xl bg-black">
-        <iframe
-          src={info.src}
-          title={title}
-          className="h-full w-full"
-          allow={IFRAME_ALLOW}
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="strict-origin-when-cross-origin"
-        />
+        <ConsentGatedEmbed provider={info.label} thumbnail={info.provider === 'youtube' ? info.thumbnail : null}>
+          <iframe
+            src={info.src}
+            title={title}
+            className="h-full w-full"
+            allow={IFRAME_ALLOW}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        </ConsentGatedEmbed>
       </div>
     )
   }
@@ -97,22 +103,28 @@ function EmbedFrame({ info, title }: { info: EmbedInfo; title: string }) {
 
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black">
-      <iframe
-        src={info.src}
-        title={title}
-        className="absolute inset-0 h-full w-full"
-        allow={IFRAME_ALLOW}
-        allowFullScreen
-        loading="lazy"
-        referrerPolicy="strict-origin-when-cross-origin"
-      />
+      <ConsentGatedEmbed provider={info.label}>
+        <iframe
+          src={info.src}
+          title={title}
+          className="absolute inset-0 h-full w-full"
+          allow={IFRAME_ALLOW}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
+      </ConsentGatedEmbed>
     </div>
   )
 }
 
-/** Thumbnail + play button; the heavy YouTube player loads only on click. */
+/**
+ * Thumbnail + play button; the heavy YouTube player loads only on click.
+ * Before cookie consent the thumbnail sits behind EmbedConsentGate instead.
+ */
 function YouTubeFacade({ info, title }: { info: EmbedInfo; title: string }) {
   const [playing, setPlaying] = useState(false)
+  const consented = useConsent() === 'accepted'
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black">
       {playing ? (
@@ -124,6 +136,8 @@ function YouTubeFacade({ info, title }: { info: EmbedInfo; title: string }) {
           allowFullScreen
           referrerPolicy="strict-origin-when-cross-origin"
         />
+      ) : !consented ? (
+        <EmbedConsentGate provider={info.label} thumbnail={info.thumbnail} onLoad={() => setPlaying(true)} />
       ) : (
         <button
           type="button"
@@ -175,23 +189,25 @@ function PostFrame({ info, title }: { info: EmbedInfo; title: string }) {
 
   return (
     <div className="mx-auto w-full max-w-[540px] overflow-hidden rounded-xl border border-gray-200 bg-white">
-      <iframe
-        ref={ref}
-        src={info.src}
-        title={title}
-        className={cn(
-          'block w-full',
-          !height &&
-            (info.provider === 'instagram'
-              ? 'h-[calc(min(100vw_-_2rem,540px)_*_1.25_+_190px)]'
-              : 'h-[620px]'),
-        )}
-        style={height ? { height } : undefined}
-        allow={IFRAME_ALLOW}
-        allowFullScreen
-        loading="lazy"
-        referrerPolicy="strict-origin-when-cross-origin"
-      />
+      <ConsentGatedEmbed provider={info.label} kind="content" className="aspect-video h-auto">
+        <iframe
+          ref={ref}
+          src={info.src}
+          title={title}
+          className={cn(
+            'block w-full',
+            !height &&
+              (info.provider === 'instagram'
+                ? 'h-[calc(min(100vw_-_2rem,540px)_*_1.25_+_190px)]'
+                : 'h-[620px]'),
+          )}
+          style={height ? { height } : undefined}
+          allow={IFRAME_ALLOW}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
+      </ConsentGatedEmbed>
     </div>
   )
 }

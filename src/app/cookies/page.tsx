@@ -43,8 +43,9 @@ export default function CookiesPage() {
           <section id="gerer" className="scroll-mt-24">
             <h2 className="text-xl font-bold text-slate-700 mb-4">2. Gérer vos choix</h2>
             <p className="text-gray-600 mb-4">
-              Votre choix porte sur Google Analytics et sur les reels Instagram de la page
-              d&apos;accueil (section 4). Vous pouvez le modifier à tout moment :
+              Votre choix porte sur Google Analytics, sur les reels Instagram de la page
+              d&apos;accueil (section 4) et sur les vidéos et contenus intégrés (section 5). Vous
+              pouvez le modifier à tout moment :
             </p>
             <ConsentChoice />
           </section>
@@ -133,8 +134,17 @@ export default function CookiesPage() {
               Certaines pages intègrent des lecteurs tiers : vidéos YouTube sur les pages vidéo et
               les fiches modèles, et, dans certains articles, des contenus YouTube, Vimeo,
               Dailymotion, Facebook, Instagram ou TikTok. Ces services peuvent déposer leurs propres
-              cookies lorsque leur lecteur est chargé, à l&apos;ouverture de la page ou au clic sur
-              la vidéo selon les pages.
+              cookies lorsque leur lecteur est chargé. Les vidéos YouTube sont intégrées en mode de
+              confidentialité avancée (youtube-nocookie.com).
+            </p>
+            <p className="text-gray-600 mt-4">
+              Tant que vous n&apos;avez pas accepté les cookies, aucun de ces lecteurs n&apos;est
+              chargé : à sa place s&apos;affichent un bouton « Charger la vidéo » (« Afficher le
+              contenu » pour une publication Facebook ou Instagram) et un lien vers le contenu
+              d&apos;origine, sur l&apos;image d&apos;aperçu de la vidéo lorsqu&apos;il y en a une. Ce
+              bouton charge uniquement ce lecteur et n&apos;enregistre aucun choix. Si vous avez
+              accepté les cookies, les lecteurs se chargent sans ce bouton ; certaines vidéos YouTube
+              attendent toutefois un clic sur leur image d&apos;aperçu.
             </p>
           </section>
 

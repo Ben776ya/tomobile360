@@ -41,11 +41,12 @@ export function CookieConsent() {
     >
       <p className="text-sm leading-relaxed mb-3">
         Avec votre accord, nous mesurons l&apos;audience avec Google Analytics
-        et affichons les reels Instagram de la page d&apos;accueil : ces deux
-        services déposent leurs propres cookies. Si vous refusez, Google
-        Analytics n&apos;est pas chargé et les reels ne s&apos;affichent que si
-        vous le demandez. Vous pouvez changer d&apos;avis à tout moment sur la
-        page{' '}
+        et affichons les reels Instagram de la page d&apos;accueil ainsi que les
+        vidéos et contenus intégrés (YouTube, Vimeo, Dailymotion, Facebook,
+        Instagram, TikTok) : ces services déposent leurs propres cookies. Si
+        vous refusez, Google Analytics n&apos;est pas chargé et les reels et
+        vidéos ne s&apos;affichent que si vous le demandez. Vous pouvez changer
+        d&apos;avis à tout moment sur la page{' '}
         <Link href="/cookies" className="underline text-secondary">
           politique cookies
         </Link>

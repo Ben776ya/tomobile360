@@ -36,13 +36,28 @@ export function getVideoId(url: string): string | null {
   return null
 }
 
-/** Build an embeddable iframe URL. Returns the original url if unrecognised. */
+/**
+ * Build an embeddable iframe URL. YouTube uses its privacy-enhanced
+ * youtube-nocookie.com player. Returns the original url if unrecognised.
+ */
 export function getVideoEmbedUrl(url: string): string {
   const provider = getVideoProvider(url)
   const id = getVideoId(url)
-  if (provider === 'youtube' && id) return `https://www.youtube.com/embed/${id}`
+  if (provider === 'youtube' && id) return `https://www.youtube-nocookie.com/embed/${id}`
   if (provider === 'vimeo' && id) return `https://player.vimeo.com/video/${id}`
   return url
+}
+
+/** Who hosts the video, for consent notices: "YouTube", "Vimeo", else the site's hostname. */
+export function getVideoHostLabel(url: string): string {
+  const provider = getVideoProvider(url)
+  if (provider === 'youtube') return 'YouTube'
+  if (provider === 'vimeo') return 'Vimeo'
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return 'un site tiers'
+  }
 }
 
 /** A YouTube thumbnail URL (hqdefault) derived from a watch/share URL. Null if not YouTube. */

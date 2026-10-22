@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 
 type Row = Record<string, unknown>
 const TABLES: Record<string, Row[]> = {
@@ -19,8 +19,10 @@ function query(table: string) {
     order: () => q,
     limit: () => q,
     eq: (c: string, v: unknown) => (preds.push((r) => r[c] === v), q),
-    then: (resolve: (x: { data: Row[] }) => unknown) =>
-      resolve({ data: (TABLES[table] ?? []).filter((r) => preds.every((p) => p(r))) }),
+    then: (resolve: (x: { data: Row[]; count: number }) => unknown) => {
+      const rows = (TABLES[table] ?? []).filter((r) => preds.every((p) => p(r)))
+      return resolve({ data: rows, count: rows.length })
+    },
   }
   return q
 }
@@ -36,5 +38,28 @@ describe('sitemap', () => {
       'https://www.tomobile360.ma/videos/aaaaaaaa-0000-4000-8000-000000000001',
     ])
     expect(videos[0].lastModified).toEqual(new Date('2026-10-01T09:00:00'))
+  })
+
+  describe('editorial selections', () => {
+    afterEach(() => {
+      TABLES.vehicles_new = []
+    })
+    const SELECTIONS = ['/neuf/promotions', '/neuf/populaires', '/coups-de-coeur'].map((p) => `https://www.tomobile360.ma${p}`)
+    const listed = async () => (await sitemap()).map((e) => e.url).filter((u) => SELECTIONS.includes(u))
+
+    it('leaves out every selection page that has no available vehicle', async () => {
+      TABLES.vehicles_new = [
+        // Flagged but no longer available: does not count.
+        { model_id: 'm1', is_available: false, is_featured_offer: true, is_popular: true, is_coup_de_coeur: true },
+      ]
+      expect(await listed()).toEqual([])
+    })
+
+    it('lists a selection page again as soon as one available vehicle is flagged', async () => {
+      TABLES.vehicles_new = [
+        { model_id: 'm1', is_available: true, is_featured_offer: false, is_popular: true, is_coup_de_coeur: false },
+      ]
+      expect(await listed()).toEqual(['https://www.tomobile360.ma/neuf/populaires'])
+    })
   })
 })

@@ -3,13 +3,20 @@ import { ArrowRight, ChevronLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { ModelCard } from '@/components/vehicles/ModelCard'
 import { buildModelGroups } from '@/lib/vehicles/group-by-model'
+import type { Metadata } from 'next'
 import { pageMetadata } from '@/lib/seo/page-metadata'
+import { hasSelection } from '@/lib/seo/selection-pages'
 
-export const metadata = pageMetadata({
-  title: 'Promotions Voitures Neuves au Maroc',
-  description: 'Profitez des meilleures promotions sur les voitures neuves au Maroc. Remises, offres spéciales et prix barrés chez les concessionnaires.',
-  path: '/neuf/promotions',
-})
+export async function generateMetadata(): Promise<Metadata> {
+  const metadata = pageMetadata({
+    title: 'Promotions Voitures Neuves au Maroc',
+    description: 'Profitez des meilleures promotions sur les voitures neuves au Maroc. Remises, offres spéciales et prix barrés chez les concessionnaires.',
+    path: '/neuf/promotions',
+  })
+  // Empty state while no vehicle is selected: keep it out of search results.
+  const supabase = await createClient()
+  return (await hasSelection(supabase, 'is_featured_offer')) ? metadata : { ...metadata, robots: { index: false } }
+}
 
 export const revalidate = 60
 

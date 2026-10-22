@@ -9,8 +9,9 @@ import { Badge } from '@/components/ui/badge'
 import { formatRelativeTime } from '@/lib/utils'
 import { LinkifyText } from '@/components/shared/LinkifyText'
 import { VideoShareButton } from '@/components/videos/VideoShareButton'
+import { ConsentGatedEmbed } from '@/components/shared/EmbedConsentGate'
 import { slug } from '@/lib/slug'
-import { getVideoEmbedUrl, toIsoDuration } from '@/lib/videos/youtube'
+import { getVideoEmbedUrl, getVideoHostLabel, toIsoDuration } from '@/lib/videos/youtube'
 import { videoCategoryLabel } from '@/lib/videos/categories'
 import { cleanVideoDescription } from '@/lib/videos/clean-description'
 
@@ -96,7 +97,8 @@ export default async function VideoDetailPage({ params }: PageProps) {
     .order('views', { ascending: false })
     .limit(3)
 
-  const embedUrl = getVideoEmbedUrl((video as any).embed_url || (video as any).video_url || '')
+  const sourceUrl: string = (video as any).embed_url || (video as any).video_url || ''
+  const embedUrl = getVideoEmbedUrl(sourceUrl)
   const description = cleanVideoDescription(video.description)
 
   return (
@@ -134,13 +136,20 @@ export default async function VideoDetailPage({ params }: PageProps) {
             {/* Video Player */}
             <div className="bg-white rounded-lg shadow-card overflow-hidden border border-gray-100">
               <div className="aspect-video bg-black">
-                <iframe
-                  src={embedUrl}
-                  title={video.title}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+                {/* The player loads only after cookie consent or « Charger la vidéo ». */}
+                <ConsentGatedEmbed
+                  provider={getVideoHostLabel(sourceUrl)}
+                  href={video.video_url}
+                  thumbnail={video.thumbnail_url}
+                >
+                  <iframe
+                    src={embedUrl}
+                    title={video.title}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </ConsentGatedEmbed>
               </div>
 
               {/* Video Info */}

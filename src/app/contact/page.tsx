@@ -113,10 +113,10 @@ export default function ContactPage() {
     setErrors({})
   }
 
-  const InputError = ({ error }: { error?: string }) => {
+  const InputError = ({ id, error }: { id: string; error?: string }) => {
     if (!error) return null
     return (
-      <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+      <p id={id} className="mt-1 text-sm text-red-500 flex items-center gap-1">
         <AlertCircle className="h-3.5 w-3.5" />
         {error}
       </p>
@@ -267,12 +267,14 @@ export default function ContactPage() {
                           type="text"
                           value={formData.name}
                           onChange={(e) => handleChange('name', e.target.value)}
+                          aria-invalid={!!errors.name}
+                          aria-describedby={errors.name ? 'contact-name-error' : undefined}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
                             errors.name ? 'border-red-500' : 'border-gray-200'
                           }`}
                           placeholder="Votre nom"
                         />
-                        <InputError error={errors.name} />
+                        <InputError id="contact-name-error" error={errors.name} />
                       </div>
                       <div>
                         <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -283,12 +285,14 @@ export default function ContactPage() {
                           type="email"
                           value={formData.email}
                           onChange={(e) => handleChange('email', e.target.value)}
+                          aria-invalid={!!errors.email}
+                          aria-describedby={errors.email ? 'contact-email-error' : undefined}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
                             errors.email ? 'border-red-500' : 'border-gray-200'
                           }`}
                           placeholder="votre@email.com"
                         />
-                        <InputError error={errors.email} />
+                        <InputError id="contact-email-error" error={errors.email} />
                       </div>
                     </div>
 
@@ -302,12 +306,14 @@ export default function ContactPage() {
                           type="tel"
                           value={formData.phone}
                           onChange={(e) => handleChange('phone', e.target.value)}
+                          aria-invalid={!!errors.phone}
+                          aria-describedby={errors.phone ? 'contact-phone-error' : undefined}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
                             errors.phone ? 'border-red-500' : 'border-gray-200'
                           }`}
                           placeholder="+212 6XX-XXXXXX"
                         />
-                        <InputError error={errors.phone} />
+                        <InputError id="contact-phone-error" error={errors.phone} />
                       </div>
                       <div>
                         <label htmlFor="contact-subject" className="block text-sm font-medium text-gray-700 mb-2">
@@ -317,6 +323,8 @@ export default function ContactPage() {
                           id="contact-subject"
                           value={formData.subject}
                           onChange={(e) => handleChange('subject', e.target.value)}
+                          aria-invalid={!!errors.subject}
+                          aria-describedby={errors.subject ? 'contact-subject-error' : undefined}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all ${
                             errors.subject ? 'border-red-500' : 'border-gray-200'
                           }`}
@@ -328,7 +336,7 @@ export default function ContactPage() {
                           <option value="partnership">Partenariat</option>
                           <option value="other">Autre</option>
                         </select>
-                        <InputError error={errors.subject} />
+                        <InputError id="contact-subject-error" error={errors.subject} />
                       </div>
                     </div>
 
@@ -341,12 +349,14 @@ export default function ContactPage() {
                         rows={5}
                         value={formData.message}
                         onChange={(e) => handleChange('message', e.target.value)}
+                        aria-invalid={!!errors.message}
+                        aria-describedby={errors.message ? 'contact-message-error' : undefined}
                         className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all resize-none placeholder-gray-400 ${
                           errors.message ? 'border-red-500' : 'border-gray-200'
                         }`}
                         placeholder="Votre message..."
                       />
-                      <InputError error={errors.message} />
+                      <InputError id="contact-message-error" error={errors.message} />
                     </div>
 
                     <FormPrivacyNotice>
