@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { gaEvents } from '@/lib/analytics/gtag'
+import { FormPrivacyNotice } from '@/components/shared/FormPrivacyNotice'
 
 interface ContactDealerDialogProps {
   vehicleName: string
@@ -141,6 +142,12 @@ export function ContactDealerDialog({
               className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary"
             />
           </div>
+
+          <FormPrivacyNotice>
+            Ces informations ne sont pas enregistrées sur notre site : « Envoyer le message » ouvre
+            WhatsApp avec un message pré-rempli adressé à l&apos;équipe Tomobile 360, qui peut le transmettre au
+            concessionnaire pour vous mettre en relation.
+          </FormPrivacyNotice>
 
           <div className="flex gap-3">
             <Button type="submit" className="flex-1 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
