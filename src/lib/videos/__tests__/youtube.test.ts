@@ -3,6 +3,7 @@ import {
   getVideoProvider,
   getVideoId,
   getVideoEmbedUrl,
+  getVideoHostLabel,
   getYouTubeThumbnail,
   toIsoDuration,
 } from '../youtube'
@@ -42,15 +43,24 @@ describe('getVideoId', () => {
 describe('getVideoEmbedUrl', () => {
   it('builds youtube embed urls from any youtube form', () => {
     expect(getVideoEmbedUrl('https://www.youtube.com/watch?v=abc123')).toBe(
-      'https://www.youtube.com/embed/abc123',
+      'https://www.youtube-nocookie.com/embed/abc123',
     )
-    expect(getVideoEmbedUrl('https://youtu.be/abc123')).toBe('https://www.youtube.com/embed/abc123')
+    expect(getVideoEmbedUrl('https://youtu.be/abc123')).toBe('https://www.youtube-nocookie.com/embed/abc123')
   })
   it('builds vimeo embed urls', () => {
     expect(getVideoEmbedUrl('https://vimeo.com/123')).toBe('https://player.vimeo.com/video/123')
   })
   it('returns the original url when unrecognised', () => {
     expect(getVideoEmbedUrl('https://example.com/v')).toBe('https://example.com/v')
+  })
+})
+
+describe('getVideoHostLabel', () => {
+  it('names the provider, else the hostname', () => {
+    expect(getVideoHostLabel('https://www.youtube.com/watch?v=abc123')).toBe('YouTube')
+    expect(getVideoHostLabel('https://vimeo.com/123')).toBe('Vimeo')
+    expect(getVideoHostLabel('https://www.example.com/v')).toBe('example.com')
+    expect(getVideoHostLabel('pas une url')).toBe('un site tiers')
   })
 })
 

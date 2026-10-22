@@ -4,7 +4,9 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { Play } from 'lucide-react'
 import { JsonLd } from '@/components/seo/JsonLd'
-import { getVideoEmbedUrl, getYouTubeThumbnail, toIsoDuration } from '@/lib/videos/youtube'
+import { EmbedConsentGate } from '@/components/shared/EmbedConsentGate'
+import { useConsent } from '@/lib/analytics/use-consent'
+import { getVideoEmbedUrl, getVideoHostLabel, getYouTubeThumbnail, toIsoDuration } from '@/lib/videos/youtube'
 import { cleanVideoDescription } from '@/lib/videos/clean-description'
 
 interface LazyVideoEmbedProps {
@@ -23,8 +25,10 @@ interface LazyVideoEmbedProps {
 /**
  * Click-to-load video embed: renders a lightweight thumbnail facade and only
  * mounts the YouTube/Vimeo iframe after the user clicks — so the heavy player
- * doesn't load on every model page. Emits VideoObject JSON-LD (server-rendered
- * in the initial HTML) whether or not the iframe is loaded.
+ * doesn't load on every model page. Until cookies are accepted the facade is
+ * EmbedConsentGate (« Charger la vidéo » + link to the original). Emits
+ * VideoObject JSON-LD (server-rendered in the initial HTML) whether or not the
+ * iframe is loaded.
  */
 export function LazyVideoEmbed({
   videoUrl,
@@ -36,6 +40,7 @@ export function LazyVideoEmbed({
   className,
 }: LazyVideoEmbedProps) {
   const [loaded, setLoaded] = useState(false)
+  const consented = useConsent() === 'accepted'
 
   const baseEmbed = getVideoEmbedUrl(videoUrl)
   const thumbnail = thumbnailUrl || getYouTubeThumbnail(videoUrl)
@@ -70,6 +75,13 @@ export function LazyVideoEmbed({
             className="h-full w-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+          />
+        ) : !consented ? (
+          <EmbedConsentGate
+            provider={getVideoHostLabel(videoUrl)}
+            href={videoUrl}
+            thumbnail={thumbnail}
+            onLoad={() => setLoaded(true)}
           />
         ) : (
           <button

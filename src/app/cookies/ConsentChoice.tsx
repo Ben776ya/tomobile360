@@ -4,8 +4,8 @@ import { setConsent } from '@/lib/analytics/consent'
 import { useConsent } from '@/lib/analytics/use-consent'
 
 const STATUS = {
-  accepted: 'Vous avez accepté Google Analytics et les reels Instagram.',
-  refused: 'Vous avez refusé Google Analytics et les reels Instagram.',
+  accepted: 'Vous avez accepté Google Analytics, les reels Instagram et les vidéos intégrées.',
+  refused: 'Vous avez refusé Google Analytics, les reels Instagram et les vidéos intégrées.',
   none: "Vous n'avez pas encore fait de choix.",
 }
 

@@ -1,11 +1,13 @@
 /**
  * Cookie-consent state, shared between the consent banner, the /cookies page,
- * the GA4 loader and the homepage Instagram reels panel.
+ * the GA4 loader, the homepage Instagram reels panel and the third-party video
+ * / post embeds (EmbedConsentGate).
  *
- * "Accepter" on the banner enables GA4 and the homepage Instagram embeds, which
- * both set their own cookies, so neither may load before the visitor has
- * accepted. This module is the single source of truth for that decision
- * (React components read it through useConsent in ./use-consent).
+ * "Accepter" on the banner enables GA4, the homepage Instagram embeds and the
+ * video / post embeds, which all set their own cookies, so none may load
+ * before the visitor has accepted (or clicked to load that one embed). This
+ * module is the single source of truth for that decision (React components
+ * read it through useConsent in ./use-consent).
  *
  * v2 (2026-10-21): the banner now names what "Accepter" enables (GA4 and the
  * Instagram embeds). Choices stored under v1 were given on a banner that said

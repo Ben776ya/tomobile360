@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, afterEach } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MarkdownRenderer } from '../MarkdownRenderer'
 import { serializeEmbed, serializeGallery, type GalleryLayout } from '@/lib/blog/article-blocks'
+import { CONSENT_STORAGE_KEY, readConsent } from '@/lib/analytics/consent'
 
 const IMG = 'https://abc.supabase.co/storage/v1/object/public/blog-images/blog'
 
@@ -67,27 +68,63 @@ describe('MarkdownRenderer — galleries', () => {
 })
 
 describe('MarkdownRenderer — embeds', () => {
-  it('renders YouTube as a click-to-load facade, then the privacy-enhanced player', () => {
+  afterEach(() => localStorage.clear())
+
+  it('without cookie consent, YouTube shows its thumbnail and « Charger la vidéo », then the privacy-enhanced player', () => {
     const { container } = render(
       <MarkdownRenderer content={serializeEmbed({ url: 'https://youtu.be/dQw4w9WgXcQ', caption: 'Essai du Toyota bZ4X' })} />,
     )
     expect(container.querySelector('iframe')).toBeNull()
     expect(screen.getByText('Essai du Toyota bZ4X')).toBeInTheDocument()
+    expect(srcOf(container.querySelector('img')!)).toContain('i.ytimg.com/vi/dQw4w9WgXcQ/')
+    expect(screen.getByRole('link', { name: /Voir sur YouTube/ })).toHaveAttribute('href', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+    fireEvent.click(screen.getByRole('button', { name: 'Charger la vidéo' }))
+    const iframe = container.querySelector('iframe')!
+    expect(iframe.getAttribute('src')).toBe('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0&autoplay=1')
+    expect(readConsent()).toBeNull()
+  })
+
+  it('with cookie consent, YouTube is a click-to-play facade, then the privacy-enhanced player', () => {
+    localStorage.setItem(CONSENT_STORAGE_KEY, 'accepted')
+    const { container } = render(
+      <MarkdownRenderer content={serializeEmbed({ url: 'https://youtu.be/dQw4w9WgXcQ', caption: 'Essai du Toyota bZ4X' })} />,
+    )
+    expect(container.querySelector('iframe')).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: /Lire la vidéo : Essai du Toyota bZ4X/ }))
     const iframe = container.querySelector('iframe')!
     expect(iframe.getAttribute('src')).toBe('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0&autoplay=1')
   })
 
-  it.each([
-    ['https://www.instagram.com/reel/C8AbCdEfGh/', 'https://www.instagram.com/reel/C8AbCdEfGh/embed/', 'instagram'],
-    ['https://www.facebook.com/watch/?v=1234567890', 'https://www.facebook.com/plugins/video.php?href=', 'facebook'],
-    ['https://www.tiktok.com/@a/video/7312345678901234567', 'https://www.tiktok.com/player/v1/7312345678901234567', 'tiktok'],
-    ['https://vimeo.com/76979871', 'https://player.vimeo.com/video/76979871', 'vimeo'],
-    ['https://dai.ly/x8abcd1', 'https://www.dailymotion.com/embed/video/x8abcd1', 'dailymotion'],
-  ])('renders %s as an iframe player', (url, srcPrefix, provider) => {
+  const PLAYERS = [
+    ['https://www.instagram.com/reel/C8AbCdEfGh/', 'https://www.instagram.com/reel/C8AbCdEfGh/embed/', 'instagram', 'Afficher le contenu'],
+    ['https://www.facebook.com/watch/?v=1234567890', 'https://www.facebook.com/plugins/video.php?href=', 'facebook', 'Charger la vidéo'],
+    ['https://www.facebook.com/tomobile360/posts/pfbid0abc', 'https://www.facebook.com/plugins/post.php?href=', 'facebook', 'Afficher le contenu'],
+    ['https://www.tiktok.com/@a/video/7312345678901234567', 'https://www.tiktok.com/player/v1/7312345678901234567', 'tiktok', 'Charger la vidéo'],
+    ['https://vimeo.com/76979871', 'https://player.vimeo.com/video/76979871', 'vimeo', 'Charger la vidéo'],
+    ['https://dai.ly/x8abcd1', 'https://www.dailymotion.com/embed/video/x8abcd1', 'dailymotion', 'Charger la vidéo'],
+    ['https://www.youtube.com/shorts/dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ', 'youtube', 'Charger la vidéo'],
+  ] as const
+
+  it.each(PLAYERS)('without cookie consent, loads nothing for %s until its button is clicked', (url, srcPrefix, provider, button) => {
     const { container } = render(<MarkdownRenderer content={serializeEmbed({ url })} />)
     const figure = container.querySelector(`figure[data-embed-provider="${provider}"]`)
     expect(figure).not.toBeNull()
+    expect(figure!.querySelector('iframe')).toBeNull()
+    expect(within(figure as HTMLElement).getByText(/qui peut déposer des cookies\.$/)).toBeInTheDocument()
+    // The caption still links to the original.
+    expect(within(figure as HTMLElement).getByRole('link', { name: /Voir sur/ })).toBeInTheDocument()
+
+    fireEvent.click(within(figure as HTMLElement).getByRole('button', { name: button }))
+    const iframe = figure!.querySelector('iframe')!
+    expect(iframe.getAttribute('src')!.startsWith(srcPrefix)).toBe(true)
+    expect(iframe.getAttribute('loading')).toBe('lazy')
+  })
+
+  it.each(PLAYERS)('with cookie consent, renders %s as an iframe player', (url, srcPrefix, provider) => {
+    localStorage.setItem(CONSENT_STORAGE_KEY, 'accepted')
+    const { container } = render(<MarkdownRenderer content={serializeEmbed({ url })} />)
+    const figure = container.querySelector(`figure[data-embed-provider="${provider}"]`)
+    expect(figure!.querySelector('[data-embed-consent]')).toBeNull()
     const iframe = figure!.querySelector('iframe')!
     expect(iframe.getAttribute('src')!.startsWith(srcPrefix)).toBe(true)
     expect(iframe.getAttribute('loading')).toBe('lazy')
