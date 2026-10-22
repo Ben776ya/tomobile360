@@ -11,8 +11,6 @@ const ENV_VARS = {
   NEXT_PUBLIC_RC_NUMBER:        process.env.NEXT_PUBLIC_RC_NUMBER,
   NEXT_PUBLIC_ICE_NUMBER:       process.env.NEXT_PUBLIC_ICE_NUMBER,
   NEXT_PUBLIC_DIRECTOR_NAME:    process.env.NEXT_PUBLIC_DIRECTOR_NAME,
-  NEXT_PUBLIC_WHATSAPP_DISPLAY: process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY,
-  NEXT_PUBLIC_WHATSAPP_E164:    process.env.NEXT_PUBLIC_WHATSAPP_E164,
   NEXT_PUBLIC_CAPITAL_SOCIAL:   process.env.NEXT_PUBLIC_CAPITAL_SOCIAL,
   NEXT_PUBLIC_CNDP_DECLARATION: process.env.NEXT_PUBLIC_CNDP_DECLARATION,
 } as const
@@ -42,9 +40,11 @@ export const BUSINESS_INFO = {
   PHONE_2_DISPLAY: '+212 619 031 813',
   PHONE_2_TEL: '+212619031813',
 
-  // USER_REQUIRED — real WhatsApp number, set via env; falls back to the primary line
-  WHATSAPP_DISPLAY: required('NEXT_PUBLIC_WHATSAPP_DISPLAY', '+212 620 138 138'),
-  WHATSAPP_E164: required('NEXT_PUBLIC_WHATSAPP_E164', '212620138138'),
+  // WhatsApp is the primary line (confirmed by the owner 2026-10-22). Not read
+  // from env: a stale NEXT_PUBLIC_WHATSAPP_E164 on Vercel sent chats to an
+  // unlisted number (audit 2026-10-21, F12).
+  WHATSAPP_DISPLAY: '+212 620 138 138',
+  WHATSAPP_E164: '212620138138',
 
   // Physical address
   ADDRESS_SHORT: 'Quartier El Manar, Casablanca',
