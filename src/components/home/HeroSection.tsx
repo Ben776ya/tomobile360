@@ -67,6 +67,27 @@ const fiscalPowerToHP: Record<string, { min: number; max: number }> = {
   '10+': { min: 181, max: 99999 },
 }
 
+/**
+ * Price bounds from the budget bracket, the price slider and the typed max.
+ * Every source applies at once, so the highest min and the lowest max win.
+ * Both the live result count and « Rechercher » use this, so the catalogue
+ * opens on exactly the count shown. `max` is null when nothing caps the price.
+ */
+function priceBounds(budget: string, slider: number[], typedMax: string): { min: number; max: number | null } {
+  const mins = [slider[0]]
+  const maxes: number[] = []
+  if (budget) {
+    // "150000-250000", "0-150000" or "500000+"
+    const [low, high] = budget.split('-')
+    mins.push(parseInt(low))
+    if (high) maxes.push(parseInt(high))
+  }
+  if (slider[1] < 1000000) maxes.push(slider[1])
+  const typed = parseInt(typedMax)
+  if (typed > 0) maxes.push(typed)
+  return { min: Math.max(...mins), max: maxes.length > 0 ? Math.min(...maxes) : null }
+}
+
 const selectStyle = {
   backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
   backgroundPosition: 'right 0.5rem center',
@@ -100,18 +121,9 @@ export function HeroSection({ brands }: HeroSectionProps) {
         if (selectedFuel) query = query.eq('fuel_type', selectedFuel)
         if (selectedType) query = query.eq('models.category', selectedType)
 
-        if (selectedBudget) {
-          const parts = selectedBudget.split('-')
-          const min = parseInt(parts[0])
-          const max = parts[1] ? parseInt(parts[1]) : null
-          if (min > 0) query = query.gte('price_min', min)
-          if (max && !selectedBudget.includes('+')) query = query.lte('price_min', max).gt('price_min', 0)
-        }
-
-        if (priceRange[0] > 0) query = query.gte('price_min', priceRange[0])
-        if (priceRange[1] < 1000000) query = query.lte('price_min', priceRange[1]).gt('price_min', 0)
-        const typedMax = parseInt(maxBudget)
-        if (typedMax > 0) query = query.lte('price_min', typedMax).gt('price_min', 0)
+        const price = priceBounds(selectedBudget, priceRange, maxBudget)
+        if (price.min > 0) query = query.gte('price_min', price.min)
+        if (price.max !== null) query = query.lte('price_min', price.max).gt('price_min', 0)
 
         if (selectedFiscalPower && fiscalPowerToHP[selectedFiscalPower]) {
           const hpRange = fiscalPowerToHP[selectedFiscalPower]
@@ -137,21 +149,10 @@ export function HeroSection({ brands }: HeroSectionProps) {
     if (selectedType) params.set('category', selectedType)
     if (selectedFuel) params.set('fuel', selectedFuel)
 
-    if (selectedBudget) {
-      const [min, max] = selectedBudget.split('-')
-      if (min && min !== '0') params.set('priceMin', min.replace('+', ''))
-      if (max && !selectedBudget.includes('+')) params.set('priceMax', max)
-    }
-
-    if (priceRange[0] > 0) params.set('priceMin', priceRange[0].toString())
-    if (priceRange[1] < 1000000) params.set('priceMax', priceRange[1].toString())
-
-    // A typed max budget narrows any bracket/slider max (same as the count).
-    const typedMax = parseInt(maxBudget)
-    if (typedMax > 0) {
-      const otherMax = parseInt(params.get('priceMax') || '')
-      params.set('priceMax', String(otherMax > 0 ? Math.min(otherMax, typedMax) : typedMax))
-    }
+    // Same bounds as the live count.
+    const price = priceBounds(selectedBudget, priceRange, maxBudget)
+    if (price.min > 0) params.set('priceMin', String(price.min))
+    if (price.max !== null) params.set('priceMax', String(price.max))
 
     if (selectedFiscalPower && fiscalPowerToHP[selectedFiscalPower]) {
       const hpRange = fiscalPowerToHP[selectedFiscalPower]
