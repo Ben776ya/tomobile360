@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Play } from 'lucide-react'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { getVideoEmbedUrl, getYouTubeThumbnail, toIsoDuration } from '@/lib/videos/youtube'
+import { cleanVideoDescription } from '@/lib/videos/clean-description'
 
 interface LazyVideoEmbedProps {
   /** The watch/share URL (the `video_url` column). */
@@ -39,6 +40,7 @@ export function LazyVideoEmbed({
   const baseEmbed = getVideoEmbedUrl(videoUrl)
   const thumbnail = thumbnailUrl || getYouTubeThumbnail(videoUrl)
   const isoDuration = toIsoDuration(duration)
+  const summary = cleanVideoDescription(description)
   // Autoplay only after an explicit click (facade → player).
   const embedSrc = baseEmbed.includes('?') ? `${baseEmbed}&autoplay=1` : `${baseEmbed}?autoplay=1`
 
@@ -48,7 +50,7 @@ export function LazyVideoEmbed({
         data={{
           '@type': 'VideoObject',
           name: title,
-          ...(description ? { description: description.substring(0, 200) } : {}),
+          ...(summary ? { description: summary.substring(0, 200) } : {}),
           thumbnailUrl: [thumbnail || 'https://www.tomobile360.ma/og-image.png'],
           ...(uploadDate ? { uploadDate } : {}),
           ...(isoDuration ? { duration: isoDuration } : {}),
