@@ -1,15 +1,19 @@
 /**
- * Cookie-consent state, shared between the consent banner and the GA4 loader.
+ * Cookie-consent state, shared between the consent banner, the /cookies page,
+ * the GA4 loader and the homepage Instagram reels panel.
  *
- * The site's cookie banner promises that NO audience-measurement cookie is set
- * without explicit consent, so GA4 must only load once the visitor has
- * accepted. This module is the single source of truth for that decision.
+ * "Accepter" on the banner enables GA4 and the homepage Instagram embeds, which
+ * both set their own cookies, so neither may load before the visitor has
+ * accepted. This module is the single source of truth for that decision
+ * (React components read it through useConsent in ./use-consent).
  *
- * The storage key is unchanged from the banner's original value so existing
- * visitors keep their prior choice.
+ * v2 (2026-10-21): the banner now names what "Accepter" enables (GA4 and the
+ * Instagram embeds). Choices stored under v1 were given on a banner that said
+ * only necessary cookies were used, so they are not carried over: every
+ * visitor is asked again.
  */
 
-export const CONSENT_STORAGE_KEY = 'tomobile360-cookie-consent-v1'
+export const CONSENT_STORAGE_KEY = 'tomobile360-cookie-consent-v2'
 export const CONSENT_CHANGED_EVENT = 'tomobile360-consent-changed'
 
 export type ConsentValue = 'accepted' | 'refused'

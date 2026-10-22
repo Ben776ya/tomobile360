@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { ChevronLeft, ChevronRight, Pause, Play, Volume2, VolumeX } from 'lucide-react'
 import type { InstagramReel } from '@/lib/instagram'
 import { InstagramIcon } from '@/components/shared/FloatingSocialBubble'
+import { useConsent } from '@/lib/analytics/use-consent'
 
 interface InstagramReelsProps {
   reels: InstagramReel[]
@@ -90,10 +91,15 @@ function useAfterPageLoad(): boolean {
  * with a pair of small arrows. By default each reel is Instagram's own embed,
  * cropped to the reel; a reel with a playable MP4 (Instagram API) plays
  * natively and adds pause / mute controls.
+ *
+ * Both load from Instagram's servers, so nothing is loaded until the visitor
+ * accepts cookies or clicks "Charger les reels" (ReelConsentGate).
  */
 export function InstagramReels({ reels, handle, profileUrl, className = '' }: InstagramReelsProps) {
   const [current, setCurrent] = useState(0)
   const [muted, setMuted] = useState(true)
+  const [loadRequested, setLoadRequested] = useState(false)
+  const allowed = useConsent() === 'accepted' || loadRequested
   const ready = useAfterPageLoad()
   const n = reels.length
   if (n === 0) return null
@@ -116,7 +122,9 @@ export function InstagramReels({ reels, handle, profileUrl, className = '' }: In
 
       {/* The reel, edge to edge under the header. */}
       <div className="relative min-h-0 flex-1 overflow-hidden bg-black" style={NO_SCROLL_CLIP} data-reel-media>
-        {native ? (
+        {!allowed ? (
+          <ReelConsentGate reel={reel} onLoad={() => setLoadRequested(true)} />
+        ) : native ? (
           <ReelVideo key={reel.code} reel={reel} ready={ready} muted={muted} onToggleMute={() => setMuted((m) => !m)} />
         ) : (
           <ReelEmbed key={reel.code} reel={reel} ready={ready} title={`Reel Instagram de @${handle} (${current + 1} sur ${n})`} />
@@ -199,6 +207,35 @@ function ReelLink({ reel, visible }: { reel: InstagramReel; visible: boolean }) 
     >
       Voir ce reel sur Instagram
     </a>
+  )
+}
+
+/**
+ * Shown in place of the reel until the visitor accepts cookies: no request
+ * reaches Instagram until they click "Charger les reels" (this panel only, not
+ * stored) or open the reel on Instagram.
+ */
+function ReelConsentGate({ reel, onLoad }: { reel: InstagramReel; onLoad: () => void }) {
+  return (
+    <div
+      className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-neutral-900 px-10 text-center"
+      data-reel-consent
+    >
+      <span aria-hidden="true">
+        <InstagramIcon className="h-9 w-9 text-white/40" />
+      </span>
+      <p className="text-xs leading-relaxed text-white/80">
+        Ces reels sont hébergés par Instagram, qui peut déposer des cookies.
+      </p>
+      <button
+        type="button"
+        onClick={onLoad}
+        className="whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-black transition-colors hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900"
+      >
+        Charger les reels
+      </button>
+      <ReelLink reel={reel} visible />
+    </div>
   )
 }
 

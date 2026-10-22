@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import type { InstagramReel } from '@/lib/instagram'
+import { CONSENT_STORAGE_KEY, readConsent, setConsent } from '@/lib/analytics/consent'
 import { InstagramReels } from '../InstagramReels'
 
 const embedReel = (code: string): InstagramReel => ({
@@ -34,6 +35,8 @@ function renderReels(reels: InstagramReel[]) {
 
 describe('InstagramReels', () => {
   beforeEach(() => {
+    // Most tests cover the loaded panel; the consent gate has its own block below.
+    localStorage.setItem(CONSENT_STORAGE_KEY, 'accepted')
     vi.useFakeTimers()
     vi.stubGlobal('requestIdleCallback', undefined)
     vi.stubGlobal(
@@ -45,8 +48,65 @@ describe('InstagramReels', () => {
     )
   })
   afterEach(() => {
+    localStorage.clear()
     vi.useRealTimers()
     vi.unstubAllGlobals()
+  })
+
+  describe('cookie consent', () => {
+    const gate = (panel: HTMLElement) => panel.querySelector('[data-reel-consent]')
+    // Nothing in the panel may point the browser at Instagram's servers (links aside).
+    const loadsFromInstagram = (panel: HTMLElement) =>
+      panel.querySelector('iframe, video, script') !== null || /cdninstagram|fbcdn|\/embed/.test(panel.innerHTML)
+
+    it.each([
+      ['no choice yet', null],
+      ['cookies refused', 'refused'],
+    ])('loads nothing from Instagram with %s, and offers click-to-load or a link out', (_, stored) => {
+      localStorage.clear()
+      if (stored) localStorage.setItem(CONSENT_STORAGE_KEY, stored)
+      const { panel } = renderReels([embedReel('AAA'), videoReel('VID')])
+
+      expect(loadsFromInstagram(panel)).toBe(false)
+      expect(gate(panel)).toHaveTextContent('Ces reels sont hébergés par Instagram, qui peut déposer des cookies.')
+      expect(screen.getByRole('button', { name: 'Charger les reels' })).toBeInTheDocument()
+      expect(screen.getAllByRole('link', { name: 'Voir ce reel sur Instagram' })[0]).toHaveAttribute('href', 'https://www.instagram.com/reel/AAA/')
+
+      // Still nothing for the native-MP4 reel.
+      fireEvent.click(screen.getByRole('button', { name: 'Reel suivant' }))
+      expect(loadsFromInstagram(panel)).toBe(false)
+      expect(screen.getAllByRole('link', { name: 'Voir ce reel sur Instagram' })[0]).toHaveAttribute('href', 'https://www.instagram.com/reel/VID/')
+    })
+
+    it('loads the embed once cookies are accepted, without a reload', () => {
+      localStorage.clear()
+      const { panel } = renderReels([embedReel('AAA')])
+      expect(panel.querySelector('iframe')).toBeNull()
+
+      act(() => setConsent('accepted'))
+      expect(gate(panel)).toBeNull()
+      expect(panel.querySelector('iframe')!.getAttribute('src')).toBe('https://www.instagram.com/reel/AAA/embed/')
+    })
+
+    it('loads on "Charger les reels" for this panel only, without storing consent', () => {
+      localStorage.setItem(CONSENT_STORAGE_KEY, 'refused')
+      const { panel } = renderReels([videoReel('VID'), embedReel('AAA')])
+
+      fireEvent.click(screen.getByRole('button', { name: 'Charger les reels' }))
+      expect(gate(panel)).toBeNull()
+      expect(panel.querySelector('video')!.getAttribute('src')).toBe('https://scontent.cdninstagram.com/v/VID.mp4')
+      fireEvent.click(screen.getByRole('button', { name: 'Reel suivant' }))
+      expect(panel.querySelector('iframe')!.getAttribute('src')).toBe('https://www.instagram.com/reel/AAA/embed/')
+      expect(readConsent()).toBe('refused')
+    })
+
+    it('unloads the embed if consent is withdrawn', () => {
+      const { panel } = renderReels([embedReel('AAA')])
+      expect(panel.querySelector('iframe')).not.toBeNull()
+      act(() => setConsent('refused'))
+      expect(loadsFromInstagram(panel)).toBe(false)
+      expect(gate(panel)).not.toBeNull()
+    })
   })
 
   it('is a borderless 9:16 labelled panel', () => {
