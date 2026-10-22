@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
 import { HeroSlider, type HeroSlide } from '@/components/home/HeroSlider'
+import { PRICE_RANGES } from '@/components/vehicles/VehicleFilters'
 
 // Hero background slideshow. Images live in public/hero/ (WebP, ~2:1). See HeroSlider.tsx.
 const HERO_IMAGES: HeroSlide[] = [
@@ -20,19 +21,20 @@ interface HeroSectionProps {
   models?: Array<{ id: string; name: string; brand_id: string | null }>
 }
 
+// Same brackets as the catalogue's "Gamme de prix" filter.
 const budgetRanges = [
   { value: '', label: 'BUDGET' },
-  { value: '0-400000', label: 'Moins de 400 000 DH' },
-  { value: '400000-800000', label: '400 000 - 800 000 DH' },
-  { value: '800000-1000000', label: '800 000 - 1 000 000 DH' },
-  { value: '1000000+', label: '+1 000 000 DH' },
+  ...PRICE_RANGES.map((r) => ({
+    value: r.max ? `${r.min ?? '0'}-${r.max}` : `${r.min}+`,
+    label: r.label,
+  })),
 ]
 
 const vehicleTypes = [
   { id: 'Citadine', label: 'Citadine' },
   { id: 'Berline', label: 'Berline' },
   { id: 'SUV', label: 'SUV/4x4' },
-  { id: 'Monospace', label: 'Sportive' },
+  { id: 'Monospace', label: 'Monospace' },
   { id: 'Utilitaire', label: 'VUL' },
 ]
 
@@ -81,6 +83,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
   const [selectedFuel, setSelectedFuel] = useState('')
   const [selectedFiscalPower, setSelectedFiscalPower] = useState('')
   const [priceRange, setPriceRange] = useState([0, 1000000])
+  const [maxBudget, setMaxBudget] = useState('')
   const [resultCount, setResultCount] = useState<number | null>(null)
 
   // Fetch result count reactively
@@ -90,7 +93,8 @@ export function HeroSection({ brands }: HeroSectionProps) {
         const supabase = createClient()
 
         const selectStr = selectedType ? '*, models!inner(*)' : '*'
-        let query = supabase.from('vehicles_new').select(selectStr, { count: 'exact', head: true })
+        // Mirror /neuf: available rows only; a budget cap excludes "Prix sur demande" (0).
+        let query = supabase.from('vehicles_new').select(selectStr, { count: 'exact', head: true }).eq('is_available', true)
 
         if (selectedBrand) query = query.eq('brand_id', selectedBrand)
         if (selectedFuel) query = query.eq('fuel_type', selectedFuel)
@@ -101,11 +105,13 @@ export function HeroSection({ brands }: HeroSectionProps) {
           const min = parseInt(parts[0])
           const max = parts[1] ? parseInt(parts[1]) : null
           if (min > 0) query = query.gte('price_min', min)
-          if (max && !selectedBudget.includes('+')) query = query.lte('price_min', max)
+          if (max && !selectedBudget.includes('+')) query = query.lte('price_min', max).gt('price_min', 0)
         }
 
         if (priceRange[0] > 0) query = query.gte('price_min', priceRange[0])
-        if (priceRange[1] < 1000000) query = query.lte('price_min', priceRange[1])
+        if (priceRange[1] < 1000000) query = query.lte('price_min', priceRange[1]).gt('price_min', 0)
+        const typedMax = parseInt(maxBudget)
+        if (typedMax > 0) query = query.lte('price_min', typedMax).gt('price_min', 0)
 
         if (selectedFiscalPower && fiscalPowerToHP[selectedFiscalPower]) {
           const hpRange = fiscalPowerToHP[selectedFiscalPower]
@@ -122,7 +128,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
 
     const timer = setTimeout(fetchCount, 300)
     return () => clearTimeout(timer)
-  }, [selectedBrand, selectedType, selectedFuel, selectedBudget, selectedFiscalPower, priceRange])
+  }, [selectedBrand, selectedType, selectedFuel, selectedBudget, selectedFiscalPower, priceRange, maxBudget])
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -139,6 +145,13 @@ export function HeroSection({ brands }: HeroSectionProps) {
 
     if (priceRange[0] > 0) params.set('priceMin', priceRange[0].toString())
     if (priceRange[1] < 1000000) params.set('priceMax', priceRange[1].toString())
+
+    // A typed max budget narrows any bracket/slider max (same as the count).
+    const typedMax = parseInt(maxBudget)
+    if (typedMax > 0) {
+      const otherMax = parseInt(params.get('priceMax') || '')
+      params.set('priceMax', String(otherMax > 0 ? Math.min(otherMax, typedMax) : typedMax))
+    }
 
     if (selectedFiscalPower && fiscalPowerToHP[selectedFiscalPower]) {
       const hpRange = fiscalPowerToHP[selectedFiscalPower]
@@ -179,6 +192,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
                 type="button"
                 onClick={() => setSelectedType(selectedType === type.id ? '' : type.id)}
                 aria-pressed={selectedType === type.id}
+                title={type.id === 'Utilitaire' ? 'Véhicule utilitaire léger' : undefined}
                 className={`flex flex-col items-center justify-center min-h-[48px] py-2 px-1 rounded-lg transition-colors duration-200 border ${
                   selectedType === type.id
                     ? 'bg-secondary/20 text-white border-secondary/60'
@@ -235,12 +249,26 @@ export function HeroSection({ brands }: HeroSectionProps) {
               onChange={(e) => setSelectedFiscalPower(e.target.value)}
               className={selectClassName}
               style={selectStyle}
+              title="Puissance fiscale (CV fiscaux), base de la vignette"
             >
               {fiscalPowerOptions.map((opt) => (
                 <option key={opt.value} value={opt.value} className="bg-gray-900 text-white">{opt.label}</option>
               ))}
             </select>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              value={maxBudget}
+              onChange={(e) => setMaxBudget(e.target.value)}
+              placeholder="BUDGET MAX (DH)"
+              aria-label="Budget maximum en DH"
+              className="col-span-2 w-full px-2.5 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/70 focus:border-secondary focus:ring-1 focus:ring-secondary/40 outline-none transition-all duration-200"
+            />
           </div>
+          <p className="text-[10px] leading-snug text-white/65 mb-2">
+            Puissance fiscale&nbsp;: CV fiscaux, base de la vignette · VUL&nbsp;: véhicule utilitaire léger
+          </p>
 
           {/* Price Slider + Search Button */}
           <div className="flex flex-col gap-1.5">

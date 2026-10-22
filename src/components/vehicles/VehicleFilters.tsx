@@ -6,6 +6,15 @@ import { Label } from '@/components/ui/label'
 import { X, SlidersHorizontal } from 'lucide-react'
 import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
 
+// Budget brackets of the catalogue — the home hero search reuses them.
+export const PRICE_RANGES: Array<{ label: string; min?: string; max?: string }> = [
+  { label: 'Moins de 150 000 DH', max: '150000' },
+  { label: '150 000 - 250 000 DH', min: '150000', max: '250000' },
+  { label: '250 000 - 350 000 DH', min: '250000', max: '350000' },
+  { label: '350 000 - 500 000 DH', min: '350000', max: '500000' },
+  { label: 'Plus de 500 000 DH', min: '500000' },
+]
+
 interface VehicleFiltersProps {
   brands: Array<{ id: string; name: string }>
   models: Array<{ id: string; brand_id: string | null; name: string; category: string | null }>
@@ -28,6 +37,8 @@ export function VehicleFilters({
   const transmission = searchParams.get('transmission') || ''
   const priceMin = searchParams.get('priceMin') || ''
   const priceMax = searchParams.get('priceMax') || ''
+  const hpMin = searchParams.get('hpMin') || ''
+  const hpMax = searchParams.get('hpMax') || ''
   const sort = searchParams.get('sort') || ''
   const origin = searchParams.get('origin') || ''
 
@@ -39,14 +50,6 @@ export function VehicleFilters({
 
   const fuelTypes = ['Essence', 'Diesel', 'Hybrid', 'Electric', 'PHEV']
   const transmissionTypes = ['Manual', 'Automatic', 'CVT', 'DCT']
-  const priceRanges = [
-    { label: 'Moins de 150 000 DH', max: '150000' },
-    { label: '150 000 - 250 000 DH', min: '150000', max: '250000' },
-    { label: '250 000 - 350 000 DH', min: '250000', max: '350000' },
-    { label: '350 000 - 500 000 DH', min: '350000', max: '500000' },
-    { label: 'Plus de 500 000 DH', min: '500000' },
-  ]
-
   const sortOptions = [
     { value: 'newest', label: 'Plus récents' },
     { value: 'popular', label: 'Plus populaires' },
@@ -108,13 +111,15 @@ export function VehicleFilters({
     transmission: (v) => transmissionLabel(v),
     priceMin: (v) => `Min ${parseInt(v).toLocaleString()} DH`,
     priceMax: (v) => `Max ${parseInt(v).toLocaleString()} DH`,
+    hpMin: (v) => `Min ${v} ch`,
+    hpMax: (v) => `Max ${v} ch`,
     sort: (v) => {
       const labels: Record<string, string> = { newest: 'Plus récents', popular: 'Plus populaires', 'price-asc': 'Prix ↑', 'price-desc': 'Prix ↓', 'name-asc': 'A → Z' }
       return labels[v] || v
     },
   }
 
-  const activeFilters = Object.entries({ brand, model, category, fuel, transmission, priceMin, priceMax }).filter(([, v]) => v)
+  const activeFilters = Object.entries({ brand, model, category, fuel, transmission, priceMin, priceMax, hpMin, hpMax }).filter(([, v]) => v)
 
   const selectClass = 'w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:border-secondary focus:ring-1 focus:ring-secondary/20 outline-none transition-all duration-200'
 
@@ -236,7 +241,7 @@ export function VehicleFilters({
         <div>
           <Label className="mb-2 block">Gamme de prix</Label>
           <div className="space-y-2">
-            {priceRanges.map((range, index) => (
+            {PRICE_RANGES.map((range, index) => (
               <label key={index} className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-all duration-200">
                 <input
                   type="radio"

@@ -27,6 +27,8 @@ interface SearchParams {
   priceMin?: string
   priceMax?: string
   yearMin?: string
+  hpMin?: string
+  hpMax?: string
   origin?: string
   sort?: string
   page?: string
@@ -48,6 +50,9 @@ export default async function NewVehiclesPage({
   const priceMin = searchParams.priceMin ? parseInt(searchParams.priceMin) : undefined
   const priceMax = searchParams.priceMax ? parseInt(searchParams.priceMax) : undefined
   const yearMin = searchParams.yearMin ? parseInt(searchParams.yearMin) : undefined
+  // Horsepower band sent by the home hero's "puissance fiscale" selector.
+  const hpMin = searchParams.hpMin ? parseInt(searchParams.hpMin) : undefined
+  const hpMax = searchParams.hpMax ? parseInt(searchParams.hpMax) : undefined
   const originDbValue = resolveOriginDbValue(searchParams.origin)
   const originLabel = originDbValue ? ORIGIN_LABELS[originDbValue] : null
   // Origin listings (e.g. "Voitures chinoises") default to alphabetical order.
@@ -83,8 +88,11 @@ export default async function NewVehiclesPage({
   if (fuel) query = query.eq('fuel_type', fuel)
   if (transmission) query = query.eq('transmission', transmission)
   if (priceMin) query = query.gte('price_min', priceMin)
-  if (priceMax) query = query.lte('price_min', priceMax)
+  // A budget cap excludes "Prix sur demande" rows (price_min 0).
+  if (priceMax) query = query.lte('price_min', priceMax).gt('price_min', 0)
   if (yearMin) query = query.gte('year', yearMin)
+  if (hpMin) query = query.gte('horsepower', hpMin)
+  if (hpMax) query = query.lte('horsepower', hpMax)
 
   // Origin filter (e.g. "Voitures chinoises") — constrain to brands tagged with this origin
   let originHasNoMatch = false
@@ -197,6 +205,8 @@ export default async function NewVehiclesPage({
     if (priceMin && key !== 'priceMax' && key !== 'priceMin') params.set('priceMin', priceMin.toString())
     if (priceMax && key !== 'priceMax' && key !== 'priceMin') params.set('priceMax', priceMax.toString())
     if (yearMin && key !== 'yearMin') params.set('yearMin', yearMin.toString())
+    if (hpMin) params.set('hpMin', hpMin.toString())
+    if (hpMax) params.set('hpMax', hpMax.toString())
     if (searchParams.sort) params.set('sort', searchParams.sort)
     const currentValue = searchParams[key as keyof SearchParams]
     if (currentValue !== value) {
@@ -209,7 +219,7 @@ export default async function NewVehiclesPage({
     return searchParams[key as keyof SearchParams] === value
   }
 
-  const activeFilterCount = [brand, model, category, fuel, transmission, priceMin, priceMax, yearMin].filter(Boolean).length
+  const activeFilterCount = [brand, model, category, fuel, transmission, priceMin, priceMax, yearMin, hpMin, hpMax].filter(Boolean).length
 
   return (
     <div className="min-h-screen bg-background">
