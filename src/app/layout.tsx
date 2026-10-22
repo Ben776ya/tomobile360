@@ -100,17 +100,10 @@ export default function RootLayout({
                   name: 'Tomobile 360',
                   url: 'https://www.tomobile360.ma',
                   inLanguage: 'fr-MA',
-                  potentialAction: {
-                    '@type': 'SearchAction',
-                    target: {
-                      '@type': 'EntryPoint',
-                      urlTemplate: 'https://www.tomobile360.ma/neuf?q={search_term_string}',
-                    },
-                    'query-input': 'required name=search_term_string',
-                  },
                 },
                 {
-                  '@type': 'AutoDealer',
+                  // A media and lead-connection service, not a dealer.
+                  '@type': 'NewsMediaOrganization',
                   '@id': 'https://www.tomobile360.ma/#organization',
                   name: 'Tomobile 360',
                   url: 'https://www.tomobile360.ma',

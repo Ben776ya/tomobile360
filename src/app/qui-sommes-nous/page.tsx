@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { AtSign, Camera } from 'lucide-react'
+import { AtSign } from 'lucide-react'
 import { pageMetadata } from '@/lib/seo/page-metadata'
 
 export const metadata = pageMetadata({
@@ -27,12 +27,7 @@ const team = [
     name: 'Rafik Kamal Lahlou',
     role: 'Fondateur & Directeur de rédaction',
     email: 'rafik@tomobile360.ma',
-    photoUrl: undefined as string | undefined,
     bio: "Véritable touche-à-tout, Rafik Lahlou est avant tout un fervent passionné de l'automobile depuis tout jeune. Il fut le premier à créer un site web consacré à l'automobile au Maroc (tomobile.net) en 2000. Directeur de rédaction des publications Challenge, VH Magazine et Lalla Fatima, il dirige conjointement avec Abdelmajid Alaoui l'atelier RM Automobiles Classiques. Vice-président de la Fédération Marocaine des Véhicules Anciens et du Royal Automobile Club Marocain.",
-    socials: [
-      { label: 'Instagram', icon: 'ig' },
-      { label: 'Facebook', icon: 'fb' },
-    ],
   },
   {
     initials: 'DJ',
@@ -43,12 +38,7 @@ const team = [
     name: 'David Jérémie',
     role: 'Journaliste Automobile',
     email: 'david@tomobile360.ma',
-    photoUrl: undefined as string | undefined,
     bio: "David Jérémie a évolué dès l'entame de sa carrière en 1994 en Martinique dans l'automobile, le journalisme et la radio. C'est en 2002 qu'il intègre la presse marocaine, s'étant fait une spécialité dans le secteur de l'automobile sous toutes ses formes, du deux-roues et des sports mécaniques.",
-    socials: [
-      { label: 'Instagram', icon: 'ig' },
-      { label: 'Facebook', icon: 'fb' },
-    ],
   },
   {
     initials: 'AB',
@@ -59,13 +49,7 @@ const team = [
     name: 'Amine Bouharaoui',
     role: 'Journaliste Spécialisé',
     email: 'amine@tomobile360.ma',
-    photoUrl: undefined as string | undefined,
     bio: "Amine Bouharaoui est un passionné de l'automobile, tant des véhicules actuels que des véhicules anciens, de la mécanique, des nouvelles technologies liées à la mobilité électrique et du sport automobile. Ses connaissances techniques et son ressenti au volant lui permettent de se faire une idée précise sur tout type de véhicules.",
-    socials: [
-      { label: 'Instagram', icon: 'ig' },
-      { label: 'LinkedIn', icon: 'li' },
-      { label: 'Facebook', icon: 'fb' },
-    ],
   },
   {
     initials: 'NB',
@@ -76,12 +60,7 @@ const team = [
     name: 'Nabil Bennani (NAB)',
     role: 'Humoriste & Animateur',
     email: 'nabil@tomobile360.ma',
-    photoUrl: undefined as string | undefined,
     bio: "NAB est un humoriste, animateur et voix-off marocain reconnu. Il observe avec humour les contradictions du quotidien moderne, créant une proximité naturelle avec un public large. Il anime une émission sur Radio MFM et collabore avec VH Magazine et Tomobile360, apportant son regard singulier sur l'univers automobile.",
-    socials: [
-      { label: 'Instagram', icon: 'ig' },
-      { label: 'Facebook', icon: 'fb' },
-    ],
   },
 ]
 
@@ -90,34 +69,6 @@ const values = [
   { iconBg: '#f0fdf4', iconColor: '#32B75C', title: 'Journalisme indépendant', desc: 'Une ligne éditoriale libre et indépendante, au service des lecteurs et non des constructeurs.', icon: 'press' },
   { iconBg: '#fff7ed', iconColor: '#c2410c', title: 'Passion authentique', desc: 'Vingt ans de passion automobile transmis à travers chaque article, vidéo et essai publié.', icon: 'passion' },
 ]
-
-// ── Social Icons ─────────────────────────────────────────────────────────────
-
-function InstagramIcon({ size = 15 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="2" y="2" width="20" height="20" rx="6" stroke="currentColor" strokeWidth="1.8"/>
-      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.8"/>
-      <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
-    </svg>
-  )
-}
-
-function FacebookIcon({ size = 15 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h8.6v-7h-2.3v-2.7h2.3v-2c0-2.3 1.4-3.5 3.4-3.5.7 0 1.4 0 2.1.1V9h-1.5c-1.1 0-1.3.5-1.3 1.3v1.7H19l-.4 2.7h-2.3V21H20a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1z"/>
-    </svg>
-  )
-}
-
-function LinkedInIcon({ size = 15 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zm-9 6H7v9h3V9zm5.5-.25a2.88 2.88 0 0 0-2.59 1.44L13 9.75V9h-3v9h3v-4.5c0-1.38.56-2.25 1.75-2.25 1.14 0 1.75.87 1.75 2.25V18h3v-4.75c0-2.63-1.27-4.5-3.5-4.5zM8.5 6a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
-    </svg>
-  )
-}
 
 // ── Value Icons ───────────────────────────────────────────────────────────────
 
@@ -281,14 +232,6 @@ export default function QuiSommesNousPage() {
                 >
                   {member.initials}
                 </div>
-
-                {/* Photo coming pill — shown only when no photoUrl is set */}
-                {!member.photoUrl && (
-                  <div className="absolute bottom-3.5 right-3.5 flex items-center gap-1.5 bg-black/40 rounded-full px-3 py-1">
-                    <Camera size={10} className="text-white/85" />
-                    <span className="text-[10px] text-white/85 font-medium tracking-wide">Photo à venir</span>
-                  </div>
-                )}
               </div>
 
               {/* ── Content */}
@@ -331,21 +274,6 @@ export default function QuiSommesNousPage() {
                       <AtSign size={12} className="flex-shrink-0 text-gray-300 group-hover/link:text-secondary transition-colors duration-300" />
                       <span className="truncate">{member.email}</span>
                     </a>
-                  </div>
-
-                  {/* Social icons */}
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    {member.socials.map((s) => (
-                      <button
-                        key={s.label}
-                        title={s.label}
-                        className="w-8 h-8 rounded-xl border border-gray-100 flex items-center justify-center text-gray-300 hover:text-secondary hover:border-secondary/20 hover:bg-secondary/5 hover:scale-110 transition-all duration-300"
-                      >
-                        {s.icon === 'ig' && <InstagramIcon size={14} />}
-                        {s.icon === 'fb' && <FacebookIcon size={14} />}
-                        {s.icon === 'li' && <LinkedInIcon size={14} />}
-                      </button>
-                    ))}
                   </div>
                 </div>
               </div>

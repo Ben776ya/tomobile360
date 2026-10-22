@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { submitControleBooking } from '@/lib/actions/service-bookings'
+import { FormPrivacyNotice } from '@/components/shared/FormPrivacyNotice'
 
 const cities = [
   { city: 'Casablanca' },
@@ -13,7 +14,7 @@ const cities = [
 ]
 
 export function BookingForm() {
-  const [form, setForm] = useState({ city: '', plate_number: '', preferred_date: '', phone: '' })
+  const [form, setForm] = useState({ city: '', phone: '' })
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -29,22 +30,22 @@ export function BookingForm() {
       return
     }
     setSubmitted(true)
-    setForm({ city: '', plate_number: '', preferred_date: '', phone: '' })
+    setForm({ city: '', phone: '' })
   }
 
   if (submitted) {
     return (
       <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-card text-center">
-        <h2 className="text-xl font-bold text-primary mb-2">Demande envoyée</h2>
+        <h2 className="text-xl font-bold text-primary mb-2">Inscription enregistrée</h2>
         <p className="text-gray-600 mb-6">
-          Nous vous recontactons sous 24h pour confirmer votre créneau.
+          Nous vous contacterons au numéro indiqué dès l&apos;ouverture du service.
         </p>
         <button
           type="button"
           onClick={() => setSubmitted(false)}
           className="text-secondary font-semibold hover:underline"
         >
-          Réserver un autre créneau
+          Inscrire un autre numéro
         </button>
       </div>
     )
@@ -52,11 +53,16 @@ export function BookingForm() {
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-card">
-      <h2 className="text-xl font-bold text-primary mb-6">Réserver un créneau</h2>
+      <h2 className="text-xl font-bold text-primary mb-2">Être averti de l&apos;ouverture</h2>
+      <p className="text-sm text-gray-500 mb-6">
+        Le service n&apos;est pas encore ouvert : aucun rendez-vous n&apos;est pris. Laissez votre
+        ville et votre numéro, nous vous prévenons dès son lancement.
+      </p>
       <form onSubmit={handleSubmit} className="space-y-6" noValidate>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Ville</label>
+          <label htmlFor="controle-city" className="block text-sm font-medium text-gray-700 mb-2">Ville</label>
           <select
+            id="controle-city"
             value={form.city}
             onChange={(e) => setForm({ ...form, city: e.target.value })}
             required
@@ -72,32 +78,9 @@ export function BookingForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Immatriculation</label>
+          <label htmlFor="controle-phone" className="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
           <input
-            type="text"
-            value={form.plate_number}
-            onChange={(e) => setForm({ ...form, plate_number: e.target.value })}
-            required
-            placeholder="Ex: 12345-A-67"
-            className="w-full px-4 py-3 bg-white text-primary border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent placeholder-gray-400"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Date souhaitée</label>
-          <input
-            type="date"
-            value={form.preferred_date}
-            onChange={(e) => setForm({ ...form, preferred_date: e.target.value })}
-            required
-            min={new Date().toISOString().split('T')[0]}
-            className="w-full px-4 py-3 bg-white text-primary border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
-          <input
+            id="controle-phone"
             type="tel"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -107,9 +90,10 @@ export function BookingForm() {
           />
         </div>
 
-        <div className="bg-gray-100 rounded-xl p-4 border border-gray-100">
-          <p className="text-xs text-muted-foreground">Tarification et conditions communiquées par le partenaire à confirmation de la prise de rendez-vous.</p>
-        </div>
+        <FormPrivacyNotice>
+          Votre ville et votre numéro sont enregistrés par Tomobile 360 uniquement pour vous prévenir
+          de l&apos;ouverture du service de contrôle technique.
+        </FormPrivacyNotice>
 
         {error && (
           <div className="text-sm px-3 py-2 rounded-lg bg-red-500/10 text-red-600 border border-red-500/30">
@@ -128,7 +112,7 @@ export function BookingForm() {
               Envoi…
             </>
           ) : (
-            'Réserver maintenant'
+            "Être averti de l'ouverture"
           )}
         </button>
       </form>

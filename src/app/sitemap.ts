@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { slug } from '@/lib/slug'
 import { normalizeTags } from '@/lib/blog/tags'
+import { SELECTION_PAGES, hasSelection } from '@/lib/seo/selection-pages'
 
 const BASE_URL = 'https://www.tomobile360.ma'
 
@@ -39,6 +40,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/mentions-legales`, changeFrequency: 'yearly', priority: 0.2 },
     { url: `${BASE_URL}/cookies`, changeFrequency: 'yearly', priority: 0.1 },
   ]
+
+  // Editorial selections with no vehicle show an empty state (and are noindex):
+  // left out until vehicles are flagged again.
+  const emptySelections = new Set<string>()
+  await Promise.all(
+    Object.entries(SELECTION_PAGES).map(async ([path, flag]) => {
+      if (!(await hasSelection(supabase, flag))) emptySelections.add(`${BASE_URL}${path}`)
+    }),
+  )
 
   // Dynamic: blog post pages
   const { data: blogPosts } = await supabase
@@ -120,5 +130,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  return [...staticPages, ...articlePages, ...tagPages, ...vehiclePages, ...usedVehiclePages]
+  // Dynamic: video pages (/videos/[id], canonical by id; published only, as the page)
+  const { data: videos } = await supabase
+    .from('videos')
+    .select('id, created_at')
+    .eq('is_published', true)
+    .order('created_at', { ascending: false })
+    .limit(1000)
+
+  const videoPages: MetadataRoute.Sitemap = (videos || []).map((v) => ({
+    url: `${BASE_URL}/videos/${v.id}`,
+    lastModified: v.created_at ? new Date(v.created_at) : new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }))
+
+  return [...staticPages.filter((p) => !emptySelections.has(p.url)), ...articlePages, ...tagPages, ...vehiclePages, ...usedVehiclePages, ...videoPages]
 }

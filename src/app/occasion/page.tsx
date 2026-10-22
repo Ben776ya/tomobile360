@@ -1,11 +1,17 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ExternalLink, Calendar, Gauge, Fuel, Zap, GitFork, Car } from 'lucide-react'
-import { getMoccazListings, type MoccazListing } from '@/lib/scrapers/moccaz'
+import { ExternalLink, Calendar, Gauge, Fuel, Zap, GitFork, Car, X } from 'lucide-react'
+import { getMoccazStock, type MoccazListing } from '@/lib/scrapers/moccaz'
+import { filterMoccazListings, parseMoccazFilters, toSearchParams } from '@/lib/occasion/moccaz-filters'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
+import { Pagination } from '@/components/actu/Pagination'
 import { pageMetadata } from '@/lib/seo/page-metadata'
+import { formatPrice } from '@/lib/utils'
 
 export const revalidate = 0
+
+// One page of the grid: 3 cars, the ad banner, 16 cars (5 rows of 4).
+const PAGE_SIZE = 19
 
 export const metadata = pageMetadata({
   title: 'Voitures d\'Occasion Vérifiées au Maroc — M-OCCAZ',
@@ -132,26 +138,42 @@ function MOccazCard({ listing }: { listing: MoccazListing }) {
 export default async function UsedVehiclesPage({
   searchParams,
 }: {
-  searchParams: Record<string, string>
+  searchParams: Record<string, string | string[] | undefined>
 }) {
-  let moccazListings = await getMoccazListings()
+  const { listings: allListings, complete } = await getMoccazStock()
+  const filters = parseMoccazFilters(searchParams)
+  const moccazListings = filterMoccazListings(allListings, filters)
+  // A partial stock (a page failed) is only the newest listings: say so.
+  const stockLabel = complete ? 'annonces M-OCCAZ' : 'dernières annonces M-OCCAZ'
 
-  const brand = searchParams.brand?.toLowerCase()
-  const fuel  = searchParams.fuel?.toLowerCase()
+  const totalPages = Math.max(1, Math.ceil(moccazListings.length / PAGE_SIZE))
+  const requestedPage = Number(searchParams.page)
+  const page = Number.isInteger(requestedPage) && requestedPage > 1 ? Math.min(requestedPage, totalPages) : 1
+  const pageListings = moccazListings.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
-  if (brand) {
-    moccazListings = moccazListings.filter(l => l.title.toLowerCase().includes(brand))
+  // Links add or remove one filter and keep the others.
+  const activeParams = toSearchParams(filters)
+  const hrefWith = (key: string, value: string | null) => {
+    const next = new URLSearchParams(activeParams)
+    if (value === null) next.delete(key)
+    else next.set(key, value)
+    const qs = next.toString()
+    return qs ? `/occasion?${qs}` : '/occasion'
   }
-  if (fuel) {
-    moccazListings = moccazListings.filter(l => l.fuel.toLowerCase().includes(fuel))
-  }
 
+  const activeChips: { key: string; label: string }[] = []
+  if (filters.brand) activeChips.push({ key: 'brand', label: `Marque : ${filters.brand}` })
+  if (filters.fuel) activeChips.push({ key: 'fuel', label: `Carburant : ${filters.fuel}` })
+  if (filters.priceMax !== undefined) activeChips.push({ key: 'priceMax', label: `Prix max : ${formatPrice(filters.priceMax)}` })
+  if (filters.transmission) activeChips.push({ key: 'transmission', label: `Boîte : ${filters.transmission === 'automatic' ? 'Automatique' : 'Manuelle'}` })
+  if (filters.mileageMax !== undefined) activeChips.push({ key: 'mileageMax', label: `Kilométrage max : ${new Intl.NumberFormat('fr-MA').format(filters.mileageMax)} km` })
+
+  // No city shortcut: the M-OCCAZ feed carries no location per listing.
   const quickFilters = [
-    { label: 'Moins de 80 000 DH', params: 'priceMax=80000' },
-    { label: 'Diesel', params: 'fuel=Diesel' },
-    { label: 'Automatique', params: 'transmission=Automatic' },
-    { label: 'Casablanca', params: 'city=Casablanca' },
-    { label: 'Moins de 50 000 km', params: 'mileageMax=50000' },
+    { label: 'Moins de 80 000 DH', key: 'priceMax', value: '80000' },
+    { label: 'Diesel', key: 'fuel', value: 'Diesel' },
+    { label: 'Automatique', key: 'transmission', value: 'Automatic' },
+    { label: 'Moins de 50 000 km', key: 'mileageMax', value: '50000' },
   ]
 
   return (
@@ -169,7 +191,7 @@ export default async function UsedVehiclesPage({
           <p className="text-gray-600 text-sm leading-relaxed">
             Retrouvez une sélection de voitures d&apos;occasion vérifiées par notre partenaire M-OCCAZ.
             Chaque véhicule bénéficie du contrôle qualité M-CHECK couvrant plus de 100 points d&apos;inspection
-            mécanique et esthétique. Filtrez par budget, kilométrage, type de carburant ou ville pour trouver
+            mécanique et esthétique. Filtrez par budget, kilométrage, type de carburant ou boîte de vitesses pour trouver
             le véhicule qui vous correspond. Toutes les annonces incluent un historique complet, des photos
             détaillées et un prix transparent sans surprise.
           </p>
@@ -212,21 +234,62 @@ export default async function UsedVehiclesPage({
 
             {/* Quick-filter pills */}
             <div className="flex flex-wrap gap-2 mb-6">
-              {quickFilters.map((f) => (
-                <Link
-                  key={f.params}
-                  href={`/occasion?${f.params}`}
-                  className="px-3 sm:px-4 py-2 sm:py-1.5 text-xs sm:text-sm font-medium rounded-full border border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary hover:bg-secondary/5 transition-all duration-150"
-                >
-                  {f.label}
-                </Link>
-              ))}
+              {quickFilters.map((f) => {
+                const active = activeParams.get(f.key)?.toLowerCase() === f.value.toLowerCase()
+                return (
+                  <Link
+                    key={f.key}
+                    href={hrefWith(f.key, active ? null : f.value)}
+                    className={`px-3 sm:px-4 py-2 sm:py-1.5 text-xs sm:text-sm font-medium rounded-full border transition-all duration-150 ${
+                      active
+                        ? 'border-secondary bg-secondary text-white'
+                        : 'border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary hover:bg-secondary/5'
+                    }`}
+                  >
+                    {f.label}
+                  </Link>
+                )
+              })}
             </div>
+
+            {/* Result count + active filters */}
+            {allListings.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 mb-6">
+                <p className="text-sm text-gray-600 mr-1">
+                  {activeChips.length > 0 ? (
+                    <>
+                      <strong className="text-primary">{moccazListings.length}</strong>{' '}
+                      {moccazListings.length > 1 ? 'résultats' : 'résultat'} parmi les {allListings.length} {stockLabel}
+                    </>
+                  ) : (
+                    <>
+                      <strong className="text-primary">{allListings.length}</strong> {stockLabel}
+                    </>
+                  )}
+                </p>
+                {activeChips.map((chip) => (
+                  <Link
+                    key={chip.key}
+                    href={hrefWith(chip.key, null)}
+                    aria-label={`Retirer le filtre ${chip.label}`}
+                    className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-full bg-secondary/10 text-secondary hover:bg-secondary/20 transition-all duration-150"
+                  >
+                    {chip.label}
+                    <X className="w-3 h-3" />
+                  </Link>
+                ))}
+                {activeChips.length > 0 && (
+                  <Link href="/occasion" className="text-xs text-gray-500 underline hover:text-secondary">
+                    Effacer les filtres
+                  </Link>
+                )}
+              </div>
+            )}
 
             {/* Listings grid — first 3 cars, then ad banner, then cars 4-19 */}
             {moccazListings.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-                {moccazListings.slice(0, 3).map((listing) => (
+                {pageListings.slice(0, 3).map((listing) => (
                   <MOccazCard key={listing.slug} listing={listing} />
                 ))}
 
@@ -246,15 +309,26 @@ export default async function UsedVehiclesPage({
                   />
                 </a>
 
-                {moccazListings.slice(3, 19).map((listing) => (
+                {pageListings.slice(3).map((listing) => (
                   <MOccazCard key={listing.slug} listing={listing} />
                 ))}
+              </div>
+            ) : allListings.length > 0 ? (
+              <div className="text-center py-12 text-sm text-gray-500">
+                <p className="text-base font-semibold text-gray-700 mb-1">Aucun résultat</p>
+                <p>Aucune des {allListings.length} {stockLabel} ne correspond à ces critères.</p>
               </div>
             ) : (
               <div className="text-center py-12 text-gray-400 text-sm">
                 Impossible de charger les annonces M-OCCAZ pour le moment.
               </div>
             )}
+
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              hrefFor={(p) => hrefWith('page', p > 1 ? String(p) : null)}
+            />
 
           </div>
 

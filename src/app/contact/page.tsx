@@ -6,6 +6,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { submitContactMessage } from '@/lib/actions/contact'
 import { BUSINESS_INFO, whatsappLink } from '@/lib/business-info'
 import { gaEvents } from '@/lib/analytics/gtag'
+import { FormPrivacyNotice } from '@/components/shared/FormPrivacyNotice'
 
 interface FormErrors {
   name?: string
@@ -112,10 +113,10 @@ export default function ContactPage() {
     setErrors({})
   }
 
-  const InputError = ({ error }: { error?: string }) => {
+  const InputError = ({ id, error }: { id: string; error?: string }) => {
     if (!error) return null
     return (
-      <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+      <p id={id} className="mt-1 text-sm text-red-500 flex items-center gap-1">
         <AlertCircle className="h-3.5 w-3.5" />
         {error}
       </p>
@@ -214,10 +215,12 @@ export default function ContactPage() {
               <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-200">
                 <div className="flex items-center gap-3 mb-4">
                   <MessageCircle className="h-6 w-6 text-secondary" />
-                  <h3 className="font-bold text-slate-700">Chat en ligne</h3>
+                  <h3 className="font-bold text-slate-700">Écrire sur WhatsApp</h3>
                 </div>
                 <p className="text-sm text-gray-500 mb-4">
-                  Besoin d&apos;une réponse rapide ? Chattez avec notre équipe en direct.
+                  Écrivez à l&apos;équipe Tomobile 360 sur WhatsApp. Nos horaires :<br />
+                  {BUSINESS_INFO.HOURS_WEEKDAY}<br />
+                  {BUSINESS_INFO.HOURS_SATURDAY}
                 </p>
                 <a
                   href={whatsappLink('Bonjour Tomobile 360, j\'aimerais discuter avec votre équipe.')}
@@ -226,7 +229,7 @@ export default function ContactPage() {
                   onClick={() => gaEvents.whatsappClick({ context: 'contact' })}
                   className="w-full inline-flex items-center justify-center px-4 py-2 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary-400 transition-colors"
                 >
-                  Démarrer le chat
+                  Écrire sur WhatsApp
                 </a>
               </div>
             </div>
@@ -256,60 +259,72 @@ export default function ContactPage() {
                   <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700 mb-2">
                           Nom complet *
                         </label>
                         <input
+                          id="contact-name"
                           type="text"
                           value={formData.name}
                           onChange={(e) => handleChange('name', e.target.value)}
+                          aria-invalid={!!errors.name}
+                          aria-describedby={errors.name ? 'contact-name-error' : undefined}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
                             errors.name ? 'border-red-500' : 'border-gray-200'
                           }`}
                           placeholder="Votre nom"
                         />
-                        <InputError error={errors.name} />
+                        <InputError id="contact-name-error" error={errors.name} />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 mb-2">
                           Email *
                         </label>
                         <input
+                          id="contact-email"
                           type="email"
                           value={formData.email}
                           onChange={(e) => handleChange('email', e.target.value)}
+                          aria-invalid={!!errors.email}
+                          aria-describedby={errors.email ? 'contact-email-error' : undefined}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
                             errors.email ? 'border-red-500' : 'border-gray-200'
                           }`}
                           placeholder="votre@email.com"
                         />
-                        <InputError error={errors.email} />
+                        <InputError id="contact-email-error" error={errors.email} />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="contact-phone" className="block text-sm font-medium text-gray-700 mb-2">
                           Téléphone
                         </label>
                         <input
+                          id="contact-phone"
                           type="tel"
                           value={formData.phone}
                           onChange={(e) => handleChange('phone', e.target.value)}
+                          aria-invalid={!!errors.phone}
+                          aria-describedby={errors.phone ? 'contact-phone-error' : undefined}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all placeholder-gray-400 ${
                             errors.phone ? 'border-red-500' : 'border-gray-200'
                           }`}
                           placeholder="+212 6XX-XXXXXX"
                         />
-                        <InputError error={errors.phone} />
+                        <InputError id="contact-phone-error" error={errors.phone} />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="contact-subject" className="block text-sm font-medium text-gray-700 mb-2">
                           Sujet *
                         </label>
                         <select
+                          id="contact-subject"
                           value={formData.subject}
                           onChange={(e) => handleChange('subject', e.target.value)}
+                          aria-invalid={!!errors.subject}
+                          aria-describedby={errors.subject ? 'contact-subject-error' : undefined}
                           className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all ${
                             errors.subject ? 'border-red-500' : 'border-gray-200'
                           }`}
@@ -321,25 +336,34 @@ export default function ContactPage() {
                           <option value="partnership">Partenariat</option>
                           <option value="other">Autre</option>
                         </select>
-                        <InputError error={errors.subject} />
+                        <InputError id="contact-subject-error" error={errors.subject} />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700 mb-2">
                         Message *
                       </label>
                       <textarea
+                        id="contact-message"
                         rows={5}
                         value={formData.message}
                         onChange={(e) => handleChange('message', e.target.value)}
+                        aria-invalid={!!errors.message}
+                        aria-describedby={errors.message ? 'contact-message-error' : undefined}
                         className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-transparent transition-all resize-none placeholder-gray-400 ${
                           errors.message ? 'border-red-500' : 'border-gray-200'
                         }`}
                         placeholder="Votre message..."
                       />
-                      <InputError error={errors.message} />
+                      <InputError id="contact-message-error" error={errors.message} />
                     </div>
+
+                    <FormPrivacyNotice>
+                      Vos données sont enregistrées par Tomobile 360 et utilisées uniquement pour
+                      répondre à votre message ; votre adresse IP et votre navigateur sont enregistrés
+                      pour prévenir les abus.
+                    </FormPrivacyNotice>
 
                     <button
                       type="submit"

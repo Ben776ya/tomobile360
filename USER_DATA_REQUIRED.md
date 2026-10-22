@@ -49,12 +49,7 @@ The `/confidentialite` page now references loi 09-08 and CNDP explicitly. Withou
 
 ## 3. WhatsApp number (optional but recommended)
 
-If you have a dedicated WhatsApp number for sales/contact, set these. Otherwise leave unset — the site falls back to the office landline (`+212 522 54 81 50`) for both display and `wa.me` links.
-
-| # | Item | Env var | Format |
-|---|------|---------|--------|
-| 3.1 | Display form (footer, contact, vehicle CTAs) | `NEXT_PUBLIC_WHATSAPP_DISPLAY` | `+212 6XX XX XX XX` |
-| 3.2 | wa.me link form | `NEXT_PUBLIC_WHATSAPP_E164` | `2126XXXXXXXX` (no `+`, no spaces) |
+Done (2026-10-22): WhatsApp uses the primary line `+212 620 138 138`, set in `src/lib/business-info.ts` (`WHATSAPP_DISPLAY` / `WHATSAPP_E164`). It is no longer read from env, so the old `NEXT_PUBLIC_WHATSAPP_*` variables on Vercel are unused and can be deleted.
 
 ---
 

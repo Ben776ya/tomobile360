@@ -178,13 +178,9 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
             '@type': 'Offer',
             price: listing.price,
             priceCurrency: 'MAD',
-            availability: 'https://schema.org/InStock',
             url: `https://www.tomobile360.ma/occasion/${params.id}`,
             itemCondition: 'https://schema.org/UsedCondition',
-            seller: {
-              '@type': 'Person',
-              name: seller?.full_name || 'Vendeur particulier',
-            },
+            // No seller/availability: neither is verified by Tomobile 360.
           },
         }}
       />
@@ -193,7 +189,7 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
         <Breadcrumbs
           items={[
             { name: 'Occasion', href: '/occasion' },
-            { name: brandName, href: `/occasion?brand=${listing.brand_id}` },
+            { name: brandName, href: `/occasion?brand=${encodeURIComponent(brandName)}` },
             { name: `${brandName} ${modelName}` },
           ]}
         />

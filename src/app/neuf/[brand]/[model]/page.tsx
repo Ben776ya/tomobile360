@@ -17,9 +17,10 @@ import { ImageGallery } from '@/components/vehicles/ImageGallery'
 import { ModelCard, type ModelGroup } from '@/components/vehicles/ModelCard'
 import { buildModelGroups, type VehicleRowForGrouping } from '@/lib/vehicles/group-by-model'
 import { rankSimilarModels } from '@/lib/vehicles/similar-vehicles'
-import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
 import { buildModelFaq } from '@/lib/vehicles/model-faq'
-import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
+import { fuelLabel, transmissionLabel, originLabel } from '@/lib/vehicles/display-labels'
+import { vehicleVariants, selectVariant, versionSlug, getVersionSpecs } from '@/lib/vehicles/version-specs'
+import { compareHref } from '@/lib/vehicles/compare-params'
 import { fuelTypeToEnergyParam, type EnergyKind } from '@/lib/outils/cout-100km'
 import { VideoCard } from '@/components/videos/VideoCard'
 import { LazyVideoEmbed } from '@/components/videos/LazyVideoEmbed'
@@ -52,6 +53,8 @@ export const revalidate = 60
 
 interface PageProps {
   params: { brand: string; model: string }
+  /** `?version=<versionSlug>` selects the version every figure on the page describes. */
+  searchParams?: { version?: string | string[] }
 }
 
 async function resolveModel(brandParam: string, modelParam: string) {
@@ -94,16 +97,8 @@ async function resolveModel(brandParam: string, modelParam: string) {
 
   if (!vehicle) return null
 
-  const variants: Variant[] = Array.isArray(vehicle.variant_list) && vehicle.variant_list.length > 0
-    ? (vehicle.variant_list as Variant[])
-    : [{
-        version: vehicle.version,
-        price_min: vehicle.price_min,
-        price_max: vehicle.price_max,
-        horsepower: vehicle.horsepower,
-        fuel_type: vehicle.fuel_type,
-        transmission: vehicle.transmission,
-      }]
+  // Same derivation as the comparator, so both list the same versions.
+  const variants: Variant[] = vehicleVariants(vehicle as any)
 
   return {
     model: { id: target.id as string, name: target.name as string, category: target.category as string | null },
@@ -149,7 +144,7 @@ export async function generateMetadata({ params }: PageProps) {
   }
 }
 
-export default async function ModelDetailPage({ params }: PageProps) {
+export default async function ModelDetailPage({ params, searchParams }: PageProps) {
   const resolved = await resolveModel(params.brand, params.model)
   if (!resolved) notFound()
 
@@ -165,11 +160,18 @@ export default async function ModelDetailPage({ params }: PageProps) {
   const representative = vehicle
   const images = (representative.images as string[] | null) || []
 
-  const { data: fiche } = await supabase
+  // Every fiche row of the model: per-version rows and/or the model-level one.
+  // `*` so this reads the same before and after the `version` column exists.
+  const { data: fiches } = await supabase
     .from('fiches_techniques')
-    .select('id, model_id, specs, en_detail, source_url, created_at, updated_at')
+    .select('*')
     .eq('model_id', model.id)
-    .single()
+
+  // The version every figure below describes (key specs, fiche, FAQ, compare
+  // link): `?version=` when it names one, else the reader's default version.
+  const requestedVersion = typeof searchParams?.version === 'string' ? searchParams.version : null
+  const selectedVariant = selectVariant(variants, fiches, requestedVersion)
+  const basePath = `/neuf/${canonicalBrandSlug}/${canonicalModelSlug}`
 
   void supabase.rpc('increment_vehicle_views', { vehicle_id: representative.id })
 
@@ -268,21 +270,15 @@ export default async function ModelDetailPage({ params }: PageProps) {
     : null
 
   // FAQ — built from data only, then reused verbatim for the visible block AND
-  // the FAQPage JSON-LD so the two can never disagree. Fiscal power is pulled
-  // from the fiche only when a matching key holds a meaningful value.
-  const ficheSpecsRecord = (fiche?.specs ?? {}) as Record<string, unknown>
-  const fiscalPowerEntry = Object.entries(ficheSpecsRecord).find(([k]) => /fiscal/i.test(k))
-  const fiscalPower = fiscalPowerEntry && isMeaningfulSpecValue(fiscalPowerEntry[1])
-    ? String(fiscalPowerEntry[1])
-    : null
+  // the FAQPage JSON-LD so the two can never disagree. Its figures are the
+  // displayed version's, from the same reader as « Points clés ».
   const faqItems = buildModelFaq({
     brandName: brand.name,
     modelName: model.name,
     minPrice,
     maxPrice,
-    consumptionCombined: representative.fuel_consumption_combined ?? null,
-    fiscalPower,
-    transmissions: transmissions as string[],
+    versionName: variants.length > 1 ? selectedVariant.version : null,
+    specs: getVersionSpecs({ vehicle: representative, fiches, variant: selectedVariant, variants }),
     versionCount: variants.length,
   })
 
@@ -318,8 +314,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
       ...(v.version ? { name: v.version } : {}),
       price: v.price_min,
       priceCurrency: 'MAD',
-      availability: 'https://schema.org/InStock',
-      seller: { '@type': 'Organization' as const, name: 'Tomobile 360' },
+      // No seller/availability: Tomobile 360 is not the dealer and stock is unverified.
     }))
 
   // Wrap multi-variant pricing in an AggregateOffer so SERPs render a
@@ -395,7 +390,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
                         {variants.length} version{variants.length > 1 ? 's' : ''} disponible{variants.length > 1 ? 's' : ''}
                       </p>
                       {updatedAtLabel && (
-                        <p className="text-xs text-gray-400 mt-0.5">Mis à jour le {updatedAtLabel}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">Prix et versions mis à jour le {updatedAtLabel}</p>
                       )}
                     </div>
                   </div>
@@ -448,16 +443,16 @@ export default async function ModelDetailPage({ params }: PageProps) {
               priceDisplay={priceDisplay}
               promo={bestPromo}
               finalPrice={finalPrice}
+              selected={selectedVariant}
+              basePath={basePath}
             />
 
-            {(representative.horsepower || representative.fuel_type || representative.transmission || representative.acceleration || representative.fuel_consumption_combined || representative.co2_emissions || fiche) && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <KeySpecsStrip vehicle={representative as any} fiche={fiche as any} />
-              </div>
-            )}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <KeySpecsStrip vehicle={representative as any} fiches={fiches as any} variant={selectedVariant} variants={variants} />
+            </div>
 
             <div id="fiche-technique" className="bg-white rounded-xl border border-gray-200 p-6 scroll-mt-24">
-              <VehicleSpecs vehicle={representative as any} fiche={fiche as any} />
+              <VehicleSpecs vehicle={representative as any} fiches={fiches as any} variant={selectedVariant} variants={variants} basePath={basePath} />
             </div>
 
             {calcHref && (
@@ -524,9 +519,13 @@ export default async function ModelDetailPage({ params }: PageProps) {
                   />
                   <TestDriveDialog
                     vehicleName={`${brand.name} ${model.name}`}
+                    version={selectedVariant?.version ?? undefined}
                     dealerPhone={BUSINESS_INFO.WHATSAPP_E164}
                   />
-                  <Link href="/neuf/comparer" className="block">
+                  <Link
+                    href={compareHref([{ id: representative.id, version: versionSlug(selectedVariant) || null }])}
+                    className="block"
+                  >
                     <Button variant="outline" className="w-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                       Comparer ce véhicule
                     </Button>
@@ -555,7 +554,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
                       {brand.origin && (
                         <p className="flex items-center gap-1 text-xs text-gray-400">
                           <MapPin className="h-3 w-3" aria-hidden="true" />
-                          {brand.origin}
+                          {originLabel(brand.origin)}
                         </p>
                       )}
                     </div>

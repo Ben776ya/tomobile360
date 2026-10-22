@@ -110,10 +110,11 @@ const featureItems: FeatureItem[] = [
   },
   {
     key: 'top',
-    title: 'Top Ventes',
-    subtitle: 'Les plus populaires',
+    // `is_popular` is an editorial flag set in the admin — not sales or visit data.
+    title: 'Modèles populaires',
+    subtitle: 'Sélection de la rédaction',
     imageSrc: '/features/top-ventes-voitures-populaires-maroc.png',
-    imageAlt: 'Top ventes voitures populaires au Maroc',
+    imageAlt: 'Modèles populaires sélectionnés par la rédaction',
     href: '/neuf/populaires',
     action: 'link',
   },
@@ -248,7 +249,15 @@ function FeatureCard({
   )
 }
 
-export function FeatureGrid() {
+type FeatureGridProps = {
+  /** Whether /neuf/promotions, /neuf/populaires and /coups-de-coeur have
+   *  anything to show — their tiles are hidden until they do. */
+  hasOffers: boolean
+  hasPopular: boolean
+  hasCoupsDeCoeur: boolean
+}
+
+export function FeatureGrid({ hasOffers, hasPopular, hasCoupsDeCoeur }: FeatureGridProps) {
   /* ─── Comparateur state ─── */
   const [comparatorOpen, setComparatorOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -351,28 +360,46 @@ export function FeatureGrid() {
     }
   }
 
+  const hasContent: Partial<Record<FeatureKey, boolean>> = {
+    offres: hasOffers,
+    top: hasPopular,
+    coeur: hasCoupsDeCoeur,
+  }
+  const visibleItems = featureItems.filter((item) => hasContent[item.key] !== false)
+
+  const renderCard = (item: FeatureItem) => (
+    <FeatureCard
+      key={item.key}
+      featureKey={item.key}
+      title={item.title}
+      subtitle={item.subtitle}
+      imageSrc={item.imageSrc}
+      imageAlt={item.imageAlt}
+      href={item.href}
+      action={item.action}
+      onClick={item.action === 'expand' ? () => handleExpandClick(item.key as 'comparateur' | 'coeur') : undefined}
+    />
+  )
+
   return (
     <div className="relative">
 
         {/* ── Endless carousel: 3 tiles per view (2 on sm, 1 on mobile) ── */}
-        <LoopCarousel label="Services Tomobile 360" prevLabel="Services précédents" nextLabel="Services suivants">
-          {featureItems.map((item) => {
-            const isExpand = item.action === 'expand'
-            return (
-              <FeatureCard
-                key={item.key}
-                featureKey={item.key}
-                title={item.title}
-                subtitle={item.subtitle}
-                imageSrc={item.imageSrc}
-                imageAlt={item.imageAlt}
-                href={item.href}
-                action={item.action}
-                onClick={isExpand ? () => handleExpandClick(item.key as 'comparateur' | 'coeur') : undefined}
-              />
-            )
-          })}
-        </LoopCarousel>
+        {visibleItems.length >= 3 ? (
+          <LoopCarousel label="Services Tomobile 360" prevLabel="Services précédents" nextLabel="Services suivants">
+            {visibleItems.map(renderCard)}
+          </LoopCarousel>
+        ) : (
+          // Fewer tiles than a desktop view: looping would show one twice, so
+          // lay them out as a static row at the carousel's tile width.
+          <div className="flex justify-center md:px-9">
+            {visibleItems.map((item) => (
+              <div key={item.key} className="w-1/2 px-3 md:w-1/3">
+                {renderCard(item)}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* ── Comparateur expand panel ── */}
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
@@ -457,6 +484,7 @@ export function FeatureGrid() {
         </div>
 
         {/* ── Coups de Coeur expand panel ── */}
+      {hasCoupsDeCoeur && (
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
           cdcOpen ? 'max-h-[1200px] opacity-100 mt-4' : 'max-h-0 opacity-0'
         }`}>
@@ -518,7 +546,7 @@ export function FeatureGrid() {
               if (chosen.length === 0) {
                 return (
                   <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center">
-                    <p className="text-sm text-gray-500 mb-3">Notre sélection arrive bientôt pour ce segment.</p>
+                    <p className="text-sm text-gray-500 mb-3">Aucun modèle disponible dans ce segment pour le moment.</p>
                     <Link href="/neuf" className="text-sm font-semibold text-secondary hover:underline">
                       Voir toutes les voitures neuves →
                     </Link>
@@ -617,6 +645,7 @@ export function FeatureGrid() {
             </div>
           </div>
         </div>
+      )}
 
       {/* Vehicle selector modal */}
       {showSelector && (

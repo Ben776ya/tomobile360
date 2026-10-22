@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { BUSINESS_INFO } from '@/lib/business-info'
+import { CONSENT_STORAGE_KEY } from '@/lib/analytics/consent'
+import { ConsentChoice } from './ConsentChoice'
 
 export const metadata: Metadata = {
   title: 'Politique de Cookies',
@@ -8,6 +10,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://www.tomobile360.ma/cookies',
   },
+}
+
+function TH({ children }: { children: React.ReactNode }) {
+  return <th className="text-left py-3 px-4 font-semibold text-gray-700">{children}</th>
+}
+
+function TD({ children }: { children: React.ReactNode }) {
+  return <td className="py-3 px-4 align-top">{children}</td>
 }
 
 export default function CookiesPage() {
@@ -23,105 +33,123 @@ export default function CookiesPage() {
             <h2 className="text-xl font-bold text-slate-700 mb-4">1. Qu&apos;est-ce qu&apos;un cookie ?</h2>
             <p className="text-gray-600">
               Un cookie est un petit fichier texte déposé sur votre appareil (ordinateur,
-              tablette, smartphone) lors de votre visite sur notre site. Les cookies nous
-              permettent de reconnaître votre navigateur et de mémoriser certaines informations
-              pour améliorer votre expérience de navigation.
+              tablette, smartphone) lors de votre visite sur un site. Le stockage local de votre
+              navigateur fonctionne de façon comparable. Cette page liste tout ce que
+              tomobile360.ma dépose ou charge sur votre appareil. Le site n&apos;utilise aucun
+              cookie publicitaire.
             </p>
           </section>
 
-          <section>
-            <h2 className="text-xl font-bold text-slate-700 mb-4">2. Types de cookies utilisés</h2>
-
-            <h3 className="text-lg font-semibold text-gray-700 mt-6 mb-3">Cookies essentiels</h3>
+          <section id="gerer" className="scroll-mt-24">
+            <h2 className="text-xl font-bold text-slate-700 mb-4">2. Gérer vos choix</h2>
             <p className="text-gray-600 mb-4">
-              Ces cookies sont nécessaires au fonctionnement du site. Ils permettent d&apos;utiliser
-              les principales fonctionnalités du site (connexion, panier, etc.). Sans ces cookies,
-              vous ne pourrez pas utiliser normalement le site.
+              Votre choix porte sur Google Analytics, sur les reels Instagram de la page
+              d&apos;accueil (section 4) et sur les vidéos et contenus intégrés (section 5). Vous
+              pouvez le modifier à tout moment :
             </p>
-
-            <h3 className="text-lg font-semibold text-gray-700 mt-6 mb-3">Cookies de performance</h3>
-            <p className="text-gray-600 mb-4">
-              Ces cookies nous permettent d&apos;analyser l&apos;utilisation du site afin d&apos;en améliorer
-              les performances. Ils collectent des informations anonymes sur les pages visitées,
-              le temps passé sur le site, etc.
-            </p>
-
-            <h3 className="text-lg font-semibold text-gray-700 mt-6 mb-3">Cookies de fonctionnalité</h3>
-            <p className="text-gray-600 mb-4">
-              Ces cookies permettent de mémoriser vos préférences (langue, région, paramètres
-              d&apos;affichage) pour personnaliser votre expérience sur le site.
-            </p>
-
-            <h3 className="text-lg font-semibold text-gray-700 mt-6 mb-3">Cookies publicitaires</h3>
-            <p className="text-gray-600">
-              Ces cookies sont utilisés pour vous proposer des publicités pertinentes en fonction
-              de vos centres d&apos;intérêt. Ils peuvent également limiter le nombre de fois où vous
-              voyez une publicité.
-            </p>
+            <ConsentChoice />
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-700 mb-4">3. Liste des cookies utilisés</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">3. Ce qui est utilisé sans votre consentement</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Nom</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Type</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Durée</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Finalité</th>
+                    <TH>Nom</TH>
+                    <TH>Émetteur</TH>
+                    <TH>Durée</TH>
+                    <TH>Finalité</TH>
                   </tr>
                 </thead>
                 <tbody className="text-gray-600">
                   <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">session_id</td>
-                    <td className="py-3 px-4">Essentiel</td>
-                    <td className="py-3 px-4">Session</td>
-                    <td className="py-3 px-4">Identification de session</td>
+                    <TD>{CONSENT_STORAGE_KEY} (stockage local)</TD>
+                    <TD>Tomobile 360</TD>
+                    <TD>Jusqu&apos;à ce que vous changiez d&apos;avis ou effaciez les données du site</TD>
+                    <TD>Mémoriser votre choix (accepter ou refuser)</TD>
                   </tr>
                   <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">auth_token</td>
-                    <td className="py-3 px-4">Essentiel</td>
-                    <td className="py-3 px-4">7 jours</td>
-                    <td className="py-3 px-4">Authentification</td>
-                  </tr>
-                  <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">_ga</td>
-                    <td className="py-3 px-4">Performance</td>
-                    <td className="py-3 px-4">2 ans</td>
-                    <td className="py-3 px-4">Google Analytics</td>
-                  </tr>
-                  <tr className="border-b border-gray-200">
-                    <td className="py-3 px-4">preferences</td>
-                    <td className="py-3 px-4">Fonctionnalité</td>
-                    <td className="py-3 px-4">1 an</td>
-                    <td className="py-3 px-4">Préférences utilisateur</td>
+                    <TD>sb-…-auth-token (cookie)</TD>
+                    <TD>Tomobile 360, via Supabase</TD>
+                    <TD>400 jours, supprimé à la déconnexion</TD>
+                    <TD>
+                      Connexion à l&apos;espace réservé à l&apos;équipe Tomobile 360. Il n&apos;est pas
+                      déposé chez les visiteurs.
+                    </TD>
                   </tr>
                 </tbody>
               </table>
             </div>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-bold text-slate-700 mb-4">4. Gestion des cookies</h2>
-            <p className="text-gray-600 mb-4">
-              Vous pouvez à tout moment choisir d&apos;accepter ou de refuser les cookies. Plusieurs
-              possibilités s&apos;offrent à vous :
+            <p className="text-gray-600 mt-4">
+              Sans cookie, notre hébergeur Vercel mesure la fréquentation des pages et leurs
+              performances d&apos;affichage (Vercel Web Analytics et Speed Insights), et les erreurs
+              techniques sont transmises à Sentry pour être corrigées.
             </p>
-            <ul className="list-disc pl-6 text-gray-600 space-y-2">
-              <li>
-                <strong>Via notre bandeau de cookies :</strong> Lors de votre première visite,
-                vous pouvez accepter ou refuser les cookies non essentiels.
-              </li>
-              <li>
-                <strong>Via les paramètres de votre navigateur :</strong> Vous pouvez configurer
-                votre navigateur pour bloquer ou supprimer les cookies.
-              </li>
-            </ul>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-700 mb-4">5. Configuration du navigateur</h2>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">4. Services utilisés uniquement avec votre accord</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <TH>Nom</TH>
+                    <TH>Émetteur</TH>
+                    <TH>Durée</TH>
+                    <TH>Finalité</TH>
+                  </tr>
+                </thead>
+                <tbody className="text-gray-600">
+                  <tr className="border-b border-gray-200">
+                    <TD>_ga, _ga_&lt;identifiant&gt; (cookies)</TD>
+                    <TD>Google (Google Analytics)</TD>
+                    <TD>2 ans</TD>
+                    <TD>Mesure d&apos;audience : pages consultées, durée et provenance des visites</TD>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <TD>Cookies Instagram</TD>
+                    <TD>Meta (instagram.com)</TD>
+                    <TD>Fixée par Meta</TD>
+                    <TD>
+                      Lecture des reels Instagram intégrés à la page d&apos;accueil. Ils sont aussi
+                      chargés si vous cliquez sur « Charger les reels ».
+                    </TD>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-gray-600 mt-4">
+              Si vous refusez, le site reste entièrement utilisable : Google Analytics n&apos;est pas
+              chargé et les reels de la page d&apos;accueil sont remplacés par un bouton « Charger les
+              reels » et un lien vers Instagram. Si vous retirez votre accord, Google Analytics
+              s&apos;arrête et ses cookies _ga sont supprimés ; les cookies déjà déposés par
+              Instagram relèvent de Meta et se suppriment depuis votre navigateur.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">5. Vidéos et contenus intégrés</h2>
+            <p className="text-gray-600">
+              Certaines pages intègrent des lecteurs tiers : vidéos YouTube sur les pages vidéo et
+              les fiches modèles, et, dans certains articles, des contenus YouTube, Vimeo,
+              Dailymotion, Facebook, Instagram ou TikTok. Ces services peuvent déposer leurs propres
+              cookies lorsque leur lecteur est chargé. Les vidéos YouTube sont intégrées en mode de
+              confidentialité avancée (youtube-nocookie.com).
+            </p>
+            <p className="text-gray-600 mt-4">
+              Tant que vous n&apos;avez pas accepté les cookies, aucun de ces lecteurs n&apos;est
+              chargé : à sa place s&apos;affichent un bouton « Charger la vidéo » (« Afficher le
+              contenu » pour une publication Facebook ou Instagram) et un lien vers le contenu
+              d&apos;origine, sur l&apos;image d&apos;aperçu de la vidéo lorsqu&apos;il y en a une. Ce
+              bouton charge uniquement ce lecteur et n&apos;enregistre aucun choix. Si vous avez
+              accepté les cookies, les lecteurs se chargent sans ce bouton ; certaines vidéos YouTube
+              attendent toutefois un clic sur leur image d&apos;aperçu.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-700 mb-4">6. Configuration du navigateur</h2>
             <p className="text-gray-600 mb-4">
               Voici comment gérer les cookies dans les principaux navigateurs :
             </p>
@@ -134,15 +162,6 @@ export default function CookiesPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-700 mb-4">6. Conséquences du refus des cookies</h2>
-            <p className="text-gray-600">
-              Le refus des cookies essentiels peut empêcher l&apos;utilisation de certaines
-              fonctionnalités du site. Le refus des cookies non essentiels n&apos;affectera pas
-              votre navigation, mais pourrait limiter la personnalisation de votre expérience.
-            </p>
-          </section>
-
-          <section>
             <h2 className="text-xl font-bold text-slate-700 mb-4">7. Contact</h2>
             <p className="text-gray-600">
               Pour toute question concernant notre politique de cookies, contactez-nous :<br />
@@ -151,7 +170,7 @@ export default function CookiesPage() {
           </section>
 
           <p className="text-sm text-gray-600 mt-12 pt-8 border-t border-gray-200">
-            Dernière mise à jour : Mai 2026
+            Dernière mise à jour : Octobre 2026
           </p>
         </div>
       </div>

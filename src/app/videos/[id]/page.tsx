@@ -9,8 +9,11 @@ import { Badge } from '@/components/ui/badge'
 import { formatRelativeTime } from '@/lib/utils'
 import { LinkifyText } from '@/components/shared/LinkifyText'
 import { VideoShareButton } from '@/components/videos/VideoShareButton'
+import { ConsentGatedEmbed } from '@/components/shared/EmbedConsentGate'
 import { slug } from '@/lib/slug'
-import { getVideoEmbedUrl, toIsoDuration } from '@/lib/videos/youtube'
+import { getVideoEmbedUrl, getVideoHostLabel, toIsoDuration } from '@/lib/videos/youtube'
+import { videoCategoryLabel } from '@/lib/videos/categories'
+import { cleanVideoDescription } from '@/lib/videos/clean-description'
 
 export const revalidate = 30
 
@@ -31,15 +34,17 @@ export async function generateMetadata({ params }: PageProps) {
 
   if (!video) return { title: 'Vidéo non trouvée' }
 
+  const description = cleanVideoDescription(video.description)
+
   return {
     title: `${video.title} — Tomobile 360 TV`,
-    description: video.description?.substring(0, 155) || 'Regardez les meilleures vidéos automobile du Maroc sur Tomobile 360 TV.',
+    description: description.substring(0, 155) || 'Regardez les meilleures vidéos automobile du Maroc sur Tomobile 360 TV.',
     alternates: {
       canonical: `https://www.tomobile360.ma/videos/${params.id}`,
     },
     openGraph: {
       title: video.title,
-      description: video.description?.substring(0, 155),
+      description: description.substring(0, 155) || undefined,
       images: video.thumbnail_url
         ? [{ url: video.thumbnail_url }]
         : [{ url: '/og-image.png' }],
@@ -92,15 +97,9 @@ export default async function VideoDetailPage({ params }: PageProps) {
     .order('views', { ascending: false })
     .limit(3)
 
-  const embedUrl = getVideoEmbedUrl((video as any).embed_url || (video as any).video_url || '')
-
-  const categoryLabels: { [key: string]: string } = {
-    review: 'Essai',
-    comparison: 'Comparatif',
-    news: 'Actualité',
-    guide: 'Guide',
-    event: 'Événement',
-  }
+  const sourceUrl: string = (video as any).embed_url || (video as any).video_url || ''
+  const embedUrl = getVideoEmbedUrl(sourceUrl)
+  const description = cleanVideoDescription(video.description)
 
   return (
     <div className="min-h-screen bg-background">
@@ -108,7 +107,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
         data={{
           '@type': 'VideoObject',
           name: video.title,
-          description: video.description?.substring(0, 200) || '',
+          description: description.substring(0, 200),
           thumbnailUrl: [video.thumbnail_url || 'https://www.tomobile360.ma/og-image.png'],
           uploadDate: video.created_at,
           ...(video.duration ? { duration: toIsoDuration(video.duration) } : {}),
@@ -137,13 +136,20 @@ export default async function VideoDetailPage({ params }: PageProps) {
             {/* Video Player */}
             <div className="bg-white rounded-lg shadow-card overflow-hidden border border-gray-100">
               <div className="aspect-video bg-black">
-                <iframe
-                  src={embedUrl}
-                  title={video.title}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+                {/* The player loads only after cookie consent or « Charger la vidéo ». */}
+                <ConsentGatedEmbed
+                  provider={getVideoHostLabel(sourceUrl)}
+                  href={video.video_url}
+                  thumbnail={video.thumbnail_url}
+                >
+                  <iframe
+                    src={embedUrl}
+                    title={video.title}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </ConsentGatedEmbed>
               </div>
 
               {/* Video Info */}
@@ -153,7 +159,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
                     <div className="flex items-center gap-2 mb-2">
                       {video.category && (
                         <Badge variant="secondary">
-                          {categoryLabels[video.category] || video.category}
+                          {videoCategoryLabel(video.category)}
                         </Badge>
                       )}
                     </div>
@@ -180,12 +186,14 @@ export default async function VideoDetailPage({ params }: PageProps) {
                 </div>
 
                 {/* Description */}
-                <div className="border-t border-gray-200 pt-4">
-                  <h2 className="text-lg font-semibold text-slate-700 mb-3">Description</h2>
-                  <p className="text-gray-600 whitespace-pre-line">
-                    <LinkifyText text={video.description || ''} />
-                  </p>
-                </div>
+                {description && (
+                  <div className="border-t border-gray-200 pt-4">
+                    <h2 className="text-lg font-semibold text-slate-700 mb-3">Description</h2>
+                    <p className="text-gray-600 whitespace-pre-line">
+                      <LinkifyText text={description} />
+                    </p>
+                  </div>
+                )}
 
                 {/* Related Vehicle */}
                 {video.vehicle_id && (

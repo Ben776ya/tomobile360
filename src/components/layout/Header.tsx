@@ -8,6 +8,8 @@ import { Menu, X, FileText, Search, PlayCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { FloatingSocialBubble } from '@/components/shared/FloatingSocialBubble'
 import { cn } from '@/lib/utils'
+import { CATEGORY_LABELS } from '@/lib/blog/categories'
+import { videoCategoryLabel } from '@/lib/videos/categories'
 
 interface ArticleResult {
   id: string
@@ -80,6 +82,7 @@ export default function Header() {
         supabase
           .from('videos')
           .select('id, title, thumbnail_url, category, duration')
+          .eq('is_published', true)
           .or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
           .limit(3),
       ])
@@ -111,6 +114,14 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // The header search covers articles and videos only, and /actu ignores ?q=,
+  // so Enter opens the first match rather than an unfiltered list.
+  const firstResultHref = searchResults[0]
+    ? `/actu/${searchResults[0].slug}`
+    : videoResults[0]
+      ? `/videos/${videoResults[0].id}`
+      : null
 
   const navLinks = [
     { href: '/neuf', label: 'NEUF' },
@@ -184,9 +195,10 @@ export default function Header() {
                 onFocus={() => setSearchOpen(true)}
                 onKeyDown={e => {
                   if (e.key === 'Escape') { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
-                  if (e.key === 'Enter' && searchQuery.trim()) { router.push(`/actu?q=${encodeURIComponent(searchQuery.trim())}`); setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
+                  if (e.key === 'Enter' && firstResultHref) { router.push(firstResultHref); setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
                 }}
-                placeholder="Rechercher articles, vidéos..."
+                placeholder="Rechercher articles et vidéos"
+                aria-label="Rechercher dans les articles et les vidéos"
                 className="w-52 px-2 py-1.5 text-sm bg-transparent text-gray-800 placeholder-gray-500 outline-none"
               />
               {searchQuery && (
@@ -225,7 +237,7 @@ export default function Header() {
                             )}
                             <div className="min-w-0">
                               {article.category && (
-                                <span className="text-[10px] font-semibold text-secondary uppercase tracking-wide">{article.category}</span>
+                                <span className="text-[10px] font-semibold text-secondary uppercase tracking-wide">{CATEGORY_LABELS[article.category] || article.category}</span>
                               )}
                               <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">{article.title}</p>
                             </div>
@@ -241,7 +253,7 @@ export default function Header() {
                         {videoResults.map(video => (
                           <Link
                             key={video.id}
-                            href="/videos"
+                            href={`/videos/${video.id}`}
                             onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
                             className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors"
                           >
@@ -259,7 +271,7 @@ export default function Header() {
                             )}
                             <div className="min-w-0">
                               {video.category && (
-                                <span className="text-[10px] font-semibold text-secondary uppercase tracking-wide">{video.category}</span>
+                                <span className="text-[10px] font-semibold text-secondary uppercase tracking-wide">{videoCategoryLabel(video.category)}</span>
                               )}
                               <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">{video.title}</p>
                             </div>
@@ -269,11 +281,11 @@ export default function Header() {
                     )}
                     <div className="border-t border-gray-100 flex">
                       <Link
-                        href={`/actu?q=${encodeURIComponent(searchQuery)}`}
+                        href="/actu"
                         onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
                         className="flex-1 px-3 py-2.5 text-xs font-semibold text-secondary hover:bg-blue-50 text-center transition-colors"
                       >
-                        Articles →
+                        Tous les articles →
                       </Link>
                       <span className="w-px bg-gray-100" />
                       <Link
@@ -281,7 +293,7 @@ export default function Header() {
                         onClick={() => { setSearchOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
                         className="flex-1 px-3 py-2.5 text-xs font-semibold text-secondary hover:bg-blue-50 text-center transition-colors"
                       >
-                        Vidéos →
+                        Toutes les vidéos →
                       </Link>
                     </div>
                   </>
@@ -322,9 +334,10 @@ export default function Header() {
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   onKeyDown={e => {
-                    if (e.key === 'Enter' && searchQuery.trim()) { router.push(`/actu?q=${encodeURIComponent(searchQuery.trim())}`); setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
+                    if (e.key === 'Enter' && firstResultHref) { router.push(firstResultHref); setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }
                   }}
-                  placeholder="Rechercher articles, vidéos..."
+                  placeholder="Rechercher articles et vidéos"
+                  aria-label="Rechercher dans les articles et les vidéos"
                   className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 rounded-lg text-gray-800 placeholder-gray-400 outline-none border border-gray-200 focus:border-secondary/40"
                 />
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -345,7 +358,7 @@ export default function Header() {
                   {videoResults.map(video => (
                     <Link
                       key={video.id}
-                      href="/videos"
+                      href={`/videos/${video.id}`}
                       onClick={() => { setMobileMenuOpen(false); setSearchQuery(''); setSearchResults([]); setVideoResults([]) }}
                       className="flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50 text-sm text-gray-800 border-b border-gray-50 last:border-0"
                     >

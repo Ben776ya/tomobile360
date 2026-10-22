@@ -938,7 +938,7 @@ async function uploadImageSet(entry) {
 //   vehicleDefaultsFromFiche() — same defaults logic as applyCreate — so the
 //   model's public page stops 404'ing.
 //
-// Always refreshes fiches_techniques (upsert by model_id) when a fiche file
+// Always refreshes the model-level fiche (upsert by model_id, version NULL) when a fiche file
 // exists.
 // ---------------------------------------------------------------------------
 async function applyReplace(entry) {
@@ -996,11 +996,12 @@ async function applyReplace(entry) {
         .from('fiches_techniques')
         .upsert({
           model_id: entry.modelId,
+          version: null, // model-level fiche (migrations/fiches-per-version.sql)
           specs: transformed.specs,
           en_detail: transformed.en_detail,
           source_url: transformed.source_url,
           updated_at: new Date().toISOString(),
-        }, { onConflict: 'model_id' })
+        }, { onConflict: 'model_id,version' })
       if (error) throw new Error(`fiches_techniques upsert failed for ${entry.modelId}: ${error.message}`)
       ficheStatus = 'UPSERTED'
     } else {
@@ -1085,11 +1086,12 @@ async function applyCreate(entry, idx) {
     if (APPLY) {
       const { error } = await supabase.from('fiches_techniques').upsert({
         model_id: modelId,
+        version: null, // model-level fiche (migrations/fiches-per-version.sql)
         specs: transformed.specs,
         en_detail: transformed.en_detail,
         source_url: transformed.source_url,
         updated_at: new Date().toISOString(),
-      }, { onConflict: 'model_id' })
+      }, { onConflict: 'model_id,version' })
       if (error) throw new Error(`fiche upsert failed: ${error.message}`)
       ficheStatus = 'UPSERTED'
     } else {

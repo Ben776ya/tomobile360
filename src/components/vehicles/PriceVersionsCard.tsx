@@ -1,7 +1,9 @@
+import Link from 'next/link'
 import { Tag } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
 import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
+import { versionSlug } from '@/lib/vehicles/version-specs'
 import type { Variant } from '@/lib/types'
 
 export type PricePromo = {
@@ -22,6 +24,10 @@ interface PriceVersionsCardProps {
   promo: PricePromo | null
   /** minPrice after the promo discount (equals minPrice when no promo). */
   finalPrice: number
+  /** The version the page shows; its row is marked. */
+  selected?: Variant
+  /** Model page path: when given, each named version links to `?version=` to select it. */
+  basePath?: string
 }
 
 /** With a single unnamed variant the list would just repeat the headline. */
@@ -42,6 +48,8 @@ export function PriceVersionsCard({
   priceDisplay,
   promo,
   finalPrice,
+  selected,
+  basePath,
 }: PriceVersionsCardProps) {
   const showVersions = hasVersionsList(variants)
   const hasPromo = !!promo && !!minPrice
@@ -91,15 +99,23 @@ export function PriceVersionsCard({
           <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3">
             {variants.length} version{variants.length > 1 ? 's' : ''} disponible{variants.length > 1 ? 's' : ''}
           </h3>
+          {basePath && variants.length > 1 && (
+            <p className="text-xs text-gray-400 -mt-2 mb-3">
+              Choisissez une version : prix, motorisation et fiche technique s&apos;affichent pour celle-ci.
+            </p>
+          )}
           <ul className="border border-gray-200 rounded-xl overflow-hidden divide-y divide-gray-100">
-            {variants.map((v, i) => (
-              <li
-                key={`${v.version ?? 'v'}-${i}`}
-                className={`flex items-center justify-between gap-4 px-4 py-3 ${i % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`}
-              >
+            {variants.map((v, i) => {
+              const isSelected = !!selected && v === selected
+              const rowClass = `flex items-center justify-between gap-4 px-4 py-3 ${isSelected ? 'bg-secondary-50' : i % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50 transition-colors`
+              const body = (
+                <>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-gray-800">
                     {v.version || `${brandName} ${modelName}`}
+                    {isSelected && variants.length > 1 && (
+                      <span className="ml-2 text-xs font-medium text-secondary">Version affichée</span>
+                    )}
                   </p>
                   {(v.fuel_type || v.transmission || v.horsepower) && (
                     <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500 mt-0.5">
@@ -116,8 +132,25 @@ export function PriceVersionsCard({
                     <span className="text-gray-400 font-medium">Prix sur demande</span>
                   )}
                 </p>
-              </li>
-            ))}
+                </>
+              )
+              return (
+                <li key={`${v.version ?? 'v'}-${i}`}>
+                  {basePath && v.version ? (
+                    <Link
+                      href={`${basePath}?version=${versionSlug(v)}`}
+                      scroll={false}
+                      aria-current={isSelected ? 'true' : undefined}
+                      className={rowClass}
+                    >
+                      {body}
+                    </Link>
+                  ) : (
+                    <div className={rowClass}>{body}</div>
+                  )}
+                </li>
+              )
+            })}
           </ul>
         </div>
       )}

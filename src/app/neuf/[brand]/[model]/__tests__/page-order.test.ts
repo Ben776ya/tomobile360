@@ -48,4 +48,28 @@ describe('model page layout order', () => {
   it('exposes the fiche anchor used by the jump nav', () => {
     expect(jsx).toContain('id="fiche-technique"')
   })
+
+  it('prefills the comparator with this model and its selected version', () => {
+    expect(jsx).not.toContain('href="/neuf/comparer"')
+    expect(jsx).toContain('compareHref([{ id: representative.id, version: versionSlug(selectedVariant)')
+  })
+
+  it('feeds the key specs and the fiche the same selected version', () => {
+    expect(jsx).toMatch(/<KeySpecsStrip[^>]*variant=\{selectedVariant\}/)
+    expect(jsx).toMatch(/<VehicleSpecs [^>]*variant=\{selectedVariant\}/)
+  })
+
+  it('reads every fiche row of the model, with `*` so it works before the version column exists', () => {
+    const query = src.slice(src.indexOf(".from('fiches_techniques')"), src.indexOf('const requestedVersion'))
+    expect(query).toContain(".select('*')")
+    expect(query).toContain(".eq('model_id', model.id)")
+    expect(query).not.toMatch(/\.single\(\)|\.maybeSingle\(\)/)
+    expect(jsx).toMatch(/<KeySpecsStrip[^>]*fiches=\{fiches/)
+    expect(jsx).toMatch(/<VehicleSpecs [^>]*fiches=\{fiches/)
+  })
+
+  it('builds the FAQ (and its JSON-LD) from the displayed version through the same reader', () => {
+    expect(src).toContain('specs: getVersionSpecs({ vehicle: representative, fiches, variant: selectedVariant, variants })')
+    expect(src).toContain('versionName: variants.length > 1 ? selectedVariant.version : null')
+  })
 })

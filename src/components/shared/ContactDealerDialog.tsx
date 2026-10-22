@@ -14,6 +14,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { gaEvents } from '@/lib/analytics/gtag'
+import { FormPrivacyNotice } from '@/components/shared/FormPrivacyNotice'
+import { whatsappLink } from '@/lib/business-info'
 
 interface ContactDealerDialogProps {
   vehicleName: string
@@ -36,10 +38,9 @@ export function ContactDealerDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const message = `Bonjour, je suis interesse(e) par ${vehicleName}.%0A%0ANom: ${formData.name}%0ATelephone: ${formData.phone}%0AEmail: ${formData.email}%0A%0A${formData.message}`
-    const phone = dealerPhone ? dealerPhone.replace(/[^0-9]/g, '') : ''
+    const message = `Bonjour, je suis intéressé(e) par ${vehicleName}.\n\nNom: ${formData.name}\nTéléphone: ${formData.phone}\nEmail: ${formData.email}\n\n${formData.message}`
     gaEvents.dealerContact({ vehicle: vehicleName })
-    window.open(`https://wa.me/${phone}?text=${message}`, '_blank')
+    window.open(whatsappLink(message, dealerPhone ? dealerPhone.replace(/[^0-9]/g, '') : undefined), '_blank')
     setOpen(false)
     setFormData({
       name: '',
@@ -141,6 +142,12 @@ export function ContactDealerDialog({
               className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary"
             />
           </div>
+
+          <FormPrivacyNotice>
+            Ces informations ne sont pas enregistrées sur notre site : « Envoyer le message » ouvre
+            WhatsApp avec un message pré-rempli adressé à l&apos;équipe Tomobile 360, qui peut le transmettre au
+            concessionnaire pour vous mettre en relation.
+          </FormPrivacyNotice>
 
           <div className="flex gap-3">
             <Button type="submit" className="flex-1 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">

@@ -65,11 +65,11 @@ const services: ServiceItem[] = [
   {
     icon: CalendarCheck,
     title: 'Contrôle Technique',
-    description: 'Passez votre contrôle technique en toute sérénité dans nos centres partenaires.',
+    description: 'Service bientôt disponible : laissez votre numéro pour être averti de son ouverture.',
     href: '/services/controle',
     color: 'bg-[#FFF3E0]',
     iconColor: 'text-orange-500',
-    features: ['Rendez-vous en ligne', 'Centres agréés', 'Contre-visite incluse'],
+    features: ['Bientôt disponible', "Alerte à l'ouverture"],
   },
   {
     icon: ShieldCheck,

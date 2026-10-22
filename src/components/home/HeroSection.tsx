@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
 import { HeroSlider, type HeroSlide } from '@/components/home/HeroSlider'
+import { PRICE_RANGES } from '@/components/vehicles/VehicleFilters'
 
 // Hero background slideshow. Images live in public/hero/ (WebP, ~2:1). See HeroSlider.tsx.
 const HERO_IMAGES: HeroSlide[] = [
@@ -20,19 +21,20 @@ interface HeroSectionProps {
   models?: Array<{ id: string; name: string; brand_id: string | null }>
 }
 
+// Same brackets as the catalogue's "Gamme de prix" filter.
 const budgetRanges = [
   { value: '', label: 'BUDGET' },
-  { value: '0-400000', label: 'Moins de 400 000 DH' },
-  { value: '400000-800000', label: '400 000 - 800 000 DH' },
-  { value: '800000-1000000', label: '800 000 - 1 000 000 DH' },
-  { value: '1000000+', label: '+1 000 000 DH' },
+  ...PRICE_RANGES.map((r) => ({
+    value: r.max ? `${r.min ?? '0'}-${r.max}` : `${r.min}+`,
+    label: r.label,
+  })),
 ]
 
 const vehicleTypes = [
   { id: 'Citadine', label: 'Citadine' },
   { id: 'Berline', label: 'Berline' },
   { id: 'SUV', label: 'SUV/4x4' },
-  { id: 'Monospace', label: 'Sportive' },
+  { id: 'Monospace', label: 'Monospace' },
   { id: 'Utilitaire', label: 'VUL' },
 ]
 
@@ -65,6 +67,27 @@ const fiscalPowerToHP: Record<string, { min: number; max: number }> = {
   '10+': { min: 181, max: 99999 },
 }
 
+/**
+ * Price bounds from the budget bracket, the price slider and the typed max.
+ * Every source applies at once, so the highest min and the lowest max win.
+ * Both the live result count and « Rechercher » use this, so the catalogue
+ * opens on exactly the count shown. `max` is null when nothing caps the price.
+ */
+function priceBounds(budget: string, slider: number[], typedMax: string): { min: number; max: number | null } {
+  const mins = [slider[0]]
+  const maxes: number[] = []
+  if (budget) {
+    // "150000-250000", "0-150000" or "500000+"
+    const [low, high] = budget.split('-')
+    mins.push(parseInt(low))
+    if (high) maxes.push(parseInt(high))
+  }
+  if (slider[1] < 1000000) maxes.push(slider[1])
+  const typed = parseInt(typedMax)
+  if (typed > 0) maxes.push(typed)
+  return { min: Math.max(...mins), max: maxes.length > 0 ? Math.min(...maxes) : null }
+}
+
 const selectStyle = {
   backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
   backgroundPosition: 'right 0.5rem center',
@@ -81,6 +104,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
   const [selectedFuel, setSelectedFuel] = useState('')
   const [selectedFiscalPower, setSelectedFiscalPower] = useState('')
   const [priceRange, setPriceRange] = useState([0, 1000000])
+  const [maxBudget, setMaxBudget] = useState('')
   const [resultCount, setResultCount] = useState<number | null>(null)
 
   // Fetch result count reactively
@@ -90,22 +114,16 @@ export function HeroSection({ brands }: HeroSectionProps) {
         const supabase = createClient()
 
         const selectStr = selectedType ? '*, models!inner(*)' : '*'
-        let query = supabase.from('vehicles_new').select(selectStr, { count: 'exact', head: true })
+        // Mirror /neuf: available rows only; a budget cap excludes "Prix sur demande" (0).
+        let query = supabase.from('vehicles_new').select(selectStr, { count: 'exact', head: true }).eq('is_available', true)
 
         if (selectedBrand) query = query.eq('brand_id', selectedBrand)
         if (selectedFuel) query = query.eq('fuel_type', selectedFuel)
         if (selectedType) query = query.eq('models.category', selectedType)
 
-        if (selectedBudget) {
-          const parts = selectedBudget.split('-')
-          const min = parseInt(parts[0])
-          const max = parts[1] ? parseInt(parts[1]) : null
-          if (min > 0) query = query.gte('price_min', min)
-          if (max && !selectedBudget.includes('+')) query = query.lte('price_min', max)
-        }
-
-        if (priceRange[0] > 0) query = query.gte('price_min', priceRange[0])
-        if (priceRange[1] < 1000000) query = query.lte('price_min', priceRange[1])
+        const price = priceBounds(selectedBudget, priceRange, maxBudget)
+        if (price.min > 0) query = query.gte('price_min', price.min)
+        if (price.max !== null) query = query.lte('price_min', price.max).gt('price_min', 0)
 
         if (selectedFiscalPower && fiscalPowerToHP[selectedFiscalPower]) {
           const hpRange = fiscalPowerToHP[selectedFiscalPower]
@@ -122,7 +140,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
 
     const timer = setTimeout(fetchCount, 300)
     return () => clearTimeout(timer)
-  }, [selectedBrand, selectedType, selectedFuel, selectedBudget, selectedFiscalPower, priceRange])
+  }, [selectedBrand, selectedType, selectedFuel, selectedBudget, selectedFiscalPower, priceRange, maxBudget])
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -131,14 +149,10 @@ export function HeroSection({ brands }: HeroSectionProps) {
     if (selectedType) params.set('category', selectedType)
     if (selectedFuel) params.set('fuel', selectedFuel)
 
-    if (selectedBudget) {
-      const [min, max] = selectedBudget.split('-')
-      if (min && min !== '0') params.set('priceMin', min.replace('+', ''))
-      if (max && !selectedBudget.includes('+')) params.set('priceMax', max)
-    }
-
-    if (priceRange[0] > 0) params.set('priceMin', priceRange[0].toString())
-    if (priceRange[1] < 1000000) params.set('priceMax', priceRange[1].toString())
+    // Same bounds as the live count.
+    const price = priceBounds(selectedBudget, priceRange, maxBudget)
+    if (price.min > 0) params.set('priceMin', String(price.min))
+    if (price.max !== null) params.set('priceMax', String(price.max))
 
     if (selectedFiscalPower && fiscalPowerToHP[selectedFiscalPower]) {
       const hpRange = fiscalPowerToHP[selectedFiscalPower]
@@ -179,6 +193,7 @@ export function HeroSection({ brands }: HeroSectionProps) {
                 type="button"
                 onClick={() => setSelectedType(selectedType === type.id ? '' : type.id)}
                 aria-pressed={selectedType === type.id}
+                title={type.id === 'Utilitaire' ? 'Véhicule utilitaire léger' : undefined}
                 className={`flex flex-col items-center justify-center min-h-[48px] py-2 px-1 rounded-lg transition-colors duration-200 border ${
                   selectedType === type.id
                     ? 'bg-secondary/20 text-white border-secondary/60'
@@ -235,12 +250,26 @@ export function HeroSection({ brands }: HeroSectionProps) {
               onChange={(e) => setSelectedFiscalPower(e.target.value)}
               className={selectClassName}
               style={selectStyle}
+              title="Puissance fiscale (CV fiscaux), base de la vignette"
             >
               {fiscalPowerOptions.map((opt) => (
                 <option key={opt.value} value={opt.value} className="bg-gray-900 text-white">{opt.label}</option>
               ))}
             </select>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              value={maxBudget}
+              onChange={(e) => setMaxBudget(e.target.value)}
+              placeholder="BUDGET MAX (DH)"
+              aria-label="Budget maximum en DH"
+              className="col-span-2 w-full px-2.5 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/70 focus:border-secondary focus:ring-1 focus:ring-secondary/40 outline-none transition-all duration-200"
+            />
           </div>
+          <p className="text-[10px] leading-snug text-white/65 mb-2">
+            Puissance fiscale&nbsp;: CV fiscaux, base de la vignette · VUL&nbsp;: véhicule utilitaire léger
+          </p>
 
           {/* Price Slider + Search Button */}
           <div className="flex flex-col gap-1.5">

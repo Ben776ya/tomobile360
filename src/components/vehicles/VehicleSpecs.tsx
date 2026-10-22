@@ -1,6 +1,19 @@
-import { VehicleNew, FicheTechnique } from '@/lib/types'
+import Link from 'next/link'
+import { VehicleNew, FicheTechnique, Variant } from '@/lib/types'
 import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
-import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
+import {
+  SPEC_UNAVAILABLE,
+  KEY_SPEC_KEYS,
+  VERSION_SPEC_LABELS,
+  getVersionSpecs,
+  ficheDescribesVariant,
+  ficheForVariant,
+  rowDescribesVariant,
+  variantHasFiche,
+  vehicleVariants,
+  versionSlug,
+  type VersionSpecKey,
+} from '@/lib/vehicles/version-specs'
 import { SpecSection } from './SpecSection'
 import { ExpandAllButton } from './ExpandAllButton'
 import {
@@ -17,54 +30,68 @@ import {
   X,
   Car,
   Droplets,
+  Tag,
 } from 'lucide-react'
 
 interface VehicleSpecsProps {
   vehicle: VehicleNew
-  fiche?: FicheTechnique | null
+  /** Every fiche row of the model (per-version rows and/or the model-level one). */
+  fiches?: FicheTechnique[] | null
+  /** Selected version. When given, the fiche is only shown for the versions it describes. */
+  variant?: Variant
+  variants?: Variant[]
+  /** Model page path, used to link the versions the fiche does describe. */
+  basePath?: string
 }
 
-type KeySpec = {
-  icon: any
-  label: string
-  value: string
+interface KeySpecsStripProps {
+  vehicle: VehicleNew
+  fiches?: FicheTechnique[] | null
+  /** The selected version — every figure in the strip is this version's. */
+  variant: Variant
+  variants: Variant[]
 }
 
-export function KeySpecsStrip({ vehicle, fiche }: VehicleSpecsProps) {
-  const ficheSpecs = fiche?.specs || {}
+const KEY_SPEC_ICONS: Partial<Record<VersionSpecKey, typeof Car>> = {
+  price: Tag,
+  power: Zap,
+  fuel: Fuel,
+  transmission: Cog,
+  consumption: Droplets,
+  topSpeed: Car,
+  trunk: Ruler,
+  torque: Gauge,
+}
 
-  // Resolve each key spec (vehicle column preferred, fiche as fallback), then
-  // keep only the ones with a meaningful value — this hides placeholder zeros
-  // like a fiche "Couple maxi." stored as "0 Nm" and guards against building a
-  // "null km/h" string when neither source has the field.
-  const makeSpec = (icon: any, label: string, value: string | number | null | undefined): KeySpec | null =>
-    isMeaningfulSpecValue(value) ? { icon, label, value: String(value) } : null
-
-  const specs = [
-    makeSpec(Zap, 'Puissance', vehicle.horsepower ? `${vehicle.horsepower} ch` : ficheSpecs['Puissance dynamique']),
-    makeSpec(Fuel, 'Carburant', vehicle.fuel_type ? fuelLabel(vehicle.fuel_type) : ficheSpecs['Motorisation']),
-    makeSpec(Cog, 'Boîte', vehicle.transmission ? transmissionLabel(vehicle.transmission) : ficheSpecs['Boîte à vitesse']),
-    makeSpec(Car, 'V. Max', ficheSpecs['Vitesse maxi.'] || (vehicle.top_speed ? `${vehicle.top_speed} km/h` : null)),
-    makeSpec(Ruler, 'Coffre', ficheSpecs['Volume de coffre'] || (vehicle.cargo_capacity ? `${vehicle.cargo_capacity} L` : null)),
-    makeSpec(Gauge, 'Couple', ficheSpecs['Couple maxi.'] || (vehicle.torque ? `${vehicle.torque} Nm` : null)),
-  ].filter((s): s is KeySpec => s !== null)
-
-  if (specs.length === 0) return null
+export function KeySpecsStrip({ vehicle, fiches, variant, variants }: KeySpecsStripProps) {
+  // Same reader as the fiche below and the comparator: per-version facts come
+  // from the variant, fiche figures only when the fiche describes this version.
+  const specs = getVersionSpecs({ vehicle, fiches, variant, variants })
 
   return (
     <div>
-      <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3">Points Clés</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        {specs.map((spec) => {
-          const Icon = spec.icon
+      <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-1">Points Clés</h3>
+      {variant.version && (
+        <p className="text-sm text-gray-500 mb-3">
+          Version : <span className="font-semibold text-gray-700">{variant.version}</span>
+        </p>
+      )}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {KEY_SPEC_KEYS.map((key) => {
+          const Icon = KEY_SPEC_ICONS[key] ?? Car
+          const value = specs[key]
           return (
             <div
-              key={spec.label}
+              key={key}
               className="flex flex-col items-center text-center p-3 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl"
             >
               <Icon className="h-5 w-5 text-secondary mb-1.5" />
-              <span className="text-xs text-muted-foreground">{spec.label}</span>
-              <span className="text-sm font-bold text-dark-800">{spec.value}</span>
+              <span className="text-xs text-muted-foreground">{VERSION_SPEC_LABELS[key]}</span>
+              {value ? (
+                <span className="text-sm font-bold text-dark-800">{value}</span>
+              ) : (
+                <span className="text-xs text-gray-400">{SPEC_UNAVAILABLE}</span>
+              )}
             </div>
           )
         })}
@@ -128,7 +155,18 @@ function FicheHeading() {
   )
 }
 
-export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
+export function VehicleSpecs({ vehicle, fiches, variant, variants, basePath }: VehicleSpecsProps) {
+  // Same per-version reader as KeySpecsStrip and the comparator. The fiche is
+  // the selected version's own row, else the model-level one, which describes
+  // one engine: list the versions it can be tied to.
+  const allVariants = variants ?? vehicleVariants(vehicle)
+  const selected = variant ?? allVariants[0]
+  const fiche = ficheForVariant(fiches, selected)
+  const ficheVersions = allVariants.filter((v) => ficheDescribesVariant(fiche, v, allVariants))
+  const ficheFitsSelected = ficheVersions.includes(selected)
+  // Versions shown this very fiche (a version with its own row reads that instead).
+  const scopeVersions = ficheVersions.filter((v) => ficheForVariant(fiches, v) === fiche)
+
   // Priority 1: Render from fiches_techniques table data.
   // Drop placeholder/zero values (e.g. "0 Nm", "", "-") up front so a fiche
   // full of empty cells doesn't render an empty "CARACTÉRISTIQUES" box.
@@ -138,10 +176,64 @@ export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
   const hasSpecs = meaningfulSpecs.length > 0
   const hasDetail = fiche && Object.keys(fiche.en_detail || {}).length > 0
 
+  // The fiche describes other versions only: show none of its figures under
+  // this version, point to the versions that have one instead.
+  if ((hasSpecs || hasDetail) && variant && !ficheFitsSelected && ficheVersions.length > 0) {
+    const withFiche = allVariants.filter((v) => variantHasFiche(fiches, v, allVariants))
+    return (
+      <div className="space-y-3">
+        <h3 className="text-xl font-semibold text-slate-700">Fiche Technique</h3>
+        <p className="text-sm text-gray-600">
+          Fiche détaillée de la version {selected.version} : {SPEC_UNAVAILABLE.toLowerCase()}.
+        </p>
+        <p className="text-sm text-gray-600">
+          Disponible pour :{' '}
+          {withFiche.map((v, i) => (
+            <span key={`${v.version}-${i}`}>
+              {i > 0 && ', '}
+              {basePath ? (
+                <Link
+                  href={`${basePath}?version=${versionSlug(v)}#fiche-technique`}
+                  scroll={false}
+                  className="font-medium text-secondary hover:underline"
+                >
+                  {v.version}
+                </Link>
+              ) : (
+                v.version
+              )}
+            </span>
+          ))}
+        </p>
+      </div>
+    )
+  }
+
   if (hasSpecs || hasDetail) {
+    const scopeNote = !variant
+      ? null
+      : !ficheFitsSelected
+      ? 'Version décrite non précisée par la source : ces données peuvent différer de la version sélectionnée.'
+      : scopeVersions.length === allVariants.length
+      ? (allVariants.length > 1 ? 'Données valables pour toutes les versions.' : null)
+      : `Données valables pour : ${scopeVersions.map((v) => v.version).join(', ')}.`
+    const ficheDate = variant && fiche?.updated_at
+      ? new Date(fiche.updated_at).toLocaleDateString('fr-MA', { day: 'numeric', month: 'long', year: 'numeric' })
+      : null
+
     return (
       <div className="space-y-6">
         <FicheHeading />
+
+        {(scopeNote || ficheDate || (variant && hasDetail)) && (
+          <div className="text-xs text-gray-500 space-y-0.5 -mt-3">
+            {scopeNote && <p>{scopeNote}</p>}
+            {variant && hasDetail && (
+              <p>Équipements listés d&apos;après la fiche — de série ou en option : {SPEC_UNAVAILABLE.toLowerCase()}.</p>
+            )}
+            {ficheDate && <p>Fiche mise à jour le {ficheDate}.</p>}
+          </div>
+        )}
 
         <div id={FICHE_CONTAINER_ID} className="space-y-3">
         {/* Specs: key-value pairs */}
@@ -196,22 +288,27 @@ export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
   }
 
   // Priority 2: Fallback to individual vehicle columns (legacy data)
-  // Organized into categories matching the structured path visual style
+  // Organized into categories matching the structured path visual style.
+  // Per-version facts come from the selected version; the row's engine
+  // columns describe one version only, so they show only for that one.
+  const own = getVersionSpecs({ vehicle, fiches: null, variant: selected, variants: allVariants })
+  const rowOk = rowDescribesVariant(vehicle, selected, allVariants)
+  const engine = <T,>(value: T): T | null => (rowOk ? value : null)
   const legacyCategories = [
     {
       name: 'MOTEUR & PERFORMANCES',
       icon: Cog,
       color: 'text-blue-600 bg-blue-50 border-blue-200',
       items: [
-        { label: 'Carburant', value: vehicle.fuel_type ? fuelLabel(vehicle.fuel_type) : null },
-        { label: 'Transmission', value: vehicle.transmission ? transmissionLabel(vehicle.transmission) : null },
-        { label: 'Cylindrée', value: vehicle.engine_size ? `${vehicle.engine_size}L` : null },
-        { label: 'Cylindres', value: vehicle.cylinders },
-        { label: 'Puissance', value: vehicle.horsepower ? `${vehicle.horsepower} ch` : null },
-        { label: 'Puissance (kW)', value: vehicle.power_kw ? `${vehicle.power_kw} kW` : null },
-        { label: 'Couple', value: vehicle.torque ? `${vehicle.torque} Nm` : null },
-        { label: '0-100 km/h', value: vehicle.acceleration ? `${vehicle.acceleration}s` : null },
-        { label: 'Vitesse max', value: vehicle.top_speed ? `${vehicle.top_speed} km/h` : null },
+        { label: 'Carburant', value: own.fuel },
+        { label: 'Transmission', value: own.transmission },
+        { label: 'Cylindrée', value: own.engineSize },
+        { label: 'Cylindres', value: engine(vehicle.cylinders) },
+        { label: 'Puissance', value: own.power },
+        { label: 'Puissance (kW)', value: engine(vehicle.power_kw ? `${vehicle.power_kw} kW` : null) },
+        { label: 'Couple', value: own.torque },
+        { label: '0-100 km/h', value: own.acceleration },
+        { label: 'Vitesse max', value: own.topSpeed },
       ].filter((item) => item.value != null),
     },
     {
@@ -219,11 +316,11 @@ export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
       icon: Fuel,
       color: 'text-green-600 bg-green-50 border-green-200',
       items: [
-        { label: 'Conso. ville', value: vehicle.fuel_consumption_city ? `${vehicle.fuel_consumption_city} L/100km` : null },
-        { label: 'Conso. autoroute', value: vehicle.fuel_consumption_highway ? `${vehicle.fuel_consumption_highway} L/100km` : null },
-        { label: 'Conso. mixte', value: vehicle.fuel_consumption_combined ? `${vehicle.fuel_consumption_combined} L/100km` : null },
-        { label: 'Émissions CO2', value: vehicle.co2_emissions ? `${vehicle.co2_emissions} g/km` : null },
-        { label: 'Norme Euro', value: vehicle.euro_norm },
+        { label: 'Conso. ville', value: engine(vehicle.fuel_consumption_city ? `${vehicle.fuel_consumption_city} L/100km` : null) },
+        { label: 'Conso. autoroute', value: engine(vehicle.fuel_consumption_highway ? `${vehicle.fuel_consumption_highway} L/100km` : null) },
+        { label: 'Conso. mixte', value: own.consumption },
+        { label: 'Émissions CO2', value: own.co2 },
+        { label: 'Norme Euro', value: engine(vehicle.euro_norm) },
       ].filter((item) => item.value != null),
     },
     {
@@ -236,8 +333,8 @@ export function VehicleSpecs({ vehicle, fiche }: VehicleSpecsProps) {
         { label: 'Hauteur', value: vehicle.dimensions?.height ? `${vehicle.dimensions.height} mm` : null },
         { label: 'Empattement', value: vehicle.dimensions?.wheelbase ? `${vehicle.dimensions.wheelbase} mm` : null },
         { label: 'Portes', value: vehicle.doors },
-        { label: 'Places', value: vehicle.seating_capacity },
-        { label: 'Volume coffre', value: vehicle.cargo_capacity ? `${vehicle.cargo_capacity} L` : null },
+        { label: 'Places', value: own.seats },
+        { label: 'Volume coffre', value: own.trunk },
       ].filter((item) => item.value != null),
     },
     {

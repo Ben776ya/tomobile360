@@ -77,4 +77,16 @@ describe('PriceVersionsCard', () => {
     expect(document.querySelector('#versions')).toBeTruthy()
     expect(screen.getByText('1 version disponible')).toBeInTheDocument()
   })
+
+  it('turns each version into a ?version= link and marks the selected one', () => {
+    render(<PriceVersionsCard {...base} selected={variants[1]} basePath="/neuf/gac/emkoo" />)
+    const links = screen.getAllByRole('link')
+    expect(links.map((l) => l.getAttribute('href'))).toEqual([
+      '/neuf/gac/emkoo?version=2-0-atk-235-hev-dynamic',
+      '/neuf/gac/emkoo?version=2-0-atk-235-hev-premium',
+    ])
+    expect(links[0]).not.toHaveAttribute('aria-current')
+    expect(links[1]).toHaveAttribute('aria-current', 'true')
+    expect(links[1]).toHaveTextContent('Version affichée')
+  })
 })

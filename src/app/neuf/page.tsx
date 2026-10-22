@@ -7,6 +7,7 @@ import { BrandHeader } from '@/components/vehicles/BrandHeader'
 import { SlidersHorizontal } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { resolveOriginDbValue, ORIGIN_LABELS, isOriginExcludedModel } from '@/lib/vehicles/origin-filter'
+import { AUTOMATIC_TRANSMISSIONS } from '@/lib/vehicles/display-labels'
 
 export const revalidate = 60
 
@@ -27,6 +28,8 @@ interface SearchParams {
   priceMin?: string
   priceMax?: string
   yearMin?: string
+  hpMin?: string
+  hpMax?: string
   origin?: string
   sort?: string
   page?: string
@@ -48,6 +51,9 @@ export default async function NewVehiclesPage({
   const priceMin = searchParams.priceMin ? parseInt(searchParams.priceMin) : undefined
   const priceMax = searchParams.priceMax ? parseInt(searchParams.priceMax) : undefined
   const yearMin = searchParams.yearMin ? parseInt(searchParams.yearMin) : undefined
+  // Horsepower band sent by the home hero's "puissance fiscale" selector.
+  const hpMin = searchParams.hpMin ? parseInt(searchParams.hpMin) : undefined
+  const hpMax = searchParams.hpMax ? parseInt(searchParams.hpMax) : undefined
   const originDbValue = resolveOriginDbValue(searchParams.origin)
   const originLabel = originDbValue ? ORIGIN_LABELS[originDbValue] : null
   // Origin listings (e.g. "Voitures chinoises") default to alphabetical order.
@@ -81,10 +87,17 @@ export default async function NewVehiclesPage({
     }
   }
   if (fuel) query = query.eq('fuel_type', fuel)
-  if (transmission) query = query.eq('transmission', transmission)
+  if (transmission) {
+    query = transmission === 'Automatic'
+      ? query.in('transmission', AUTOMATIC_TRANSMISSIONS)
+      : query.eq('transmission', transmission)
+  }
   if (priceMin) query = query.gte('price_min', priceMin)
-  if (priceMax) query = query.lte('price_min', priceMax)
+  // A budget cap excludes "Prix sur demande" rows (price_min 0).
+  if (priceMax) query = query.lte('price_min', priceMax).gt('price_min', 0)
   if (yearMin) query = query.gte('year', yearMin)
+  if (hpMin) query = query.gte('horsepower', hpMin)
+  if (hpMax) query = query.lte('horsepower', hpMax)
 
   // Origin filter (e.g. "Voitures chinoises") — constrain to brands tagged with this origin
   let originHasNoMatch = false
@@ -131,7 +144,8 @@ export default async function NewVehiclesPage({
       )
       break
     case 'price-asc':
-      modelGroups.sort((a, b) => (a.minPrice ?? Infinity) - (b.minPrice ?? Infinity))
+      // "Prix sur demande" (null or 0, as ModelCard detects it) goes last.
+      modelGroups.sort((a, b) => (a.minPrice || Infinity) - (b.minPrice || Infinity))
       break
     case 'price-desc':
       modelGroups.sort((a, b) => (b.minPrice ?? 0) - (a.minPrice ?? 0))
@@ -167,10 +181,15 @@ export default async function NewVehiclesPage({
     { data: brands },
     { data: categories },
     { data: allModels },
+    { count: popularCount },
+    { count: offersCount },
   ] = await Promise.all([
     supabase.from('brands').select('id, name, logo_url, description, origin, created_at').order('name'),
     supabase.from('models').select('category').order('category'),
     supabase.from('models').select('id, brand_id, name, category').order('name'),
+    // Quick links only point to /neuf/populaires and /neuf/promotions when they have content
+    supabase.from('vehicles_new').select('id', { count: 'exact', head: true }).eq('is_popular', true).eq('is_available', true),
+    supabase.from('vehicles_new').select('id', { count: 'exact', head: true }).eq('is_featured_offer', true).eq('is_available', true),
   ])
 
   const uniqueCategories = categories
@@ -196,6 +215,8 @@ export default async function NewVehiclesPage({
     if (priceMin && key !== 'priceMax' && key !== 'priceMin') params.set('priceMin', priceMin.toString())
     if (priceMax && key !== 'priceMax' && key !== 'priceMin') params.set('priceMax', priceMax.toString())
     if (yearMin && key !== 'yearMin') params.set('yearMin', yearMin.toString())
+    if (hpMin) params.set('hpMin', hpMin.toString())
+    if (hpMax) params.set('hpMax', hpMax.toString())
     if (searchParams.sort) params.set('sort', searchParams.sort)
     const currentValue = searchParams[key as keyof SearchParams]
     if (currentValue !== value) {
@@ -208,7 +229,7 @@ export default async function NewVehiclesPage({
     return searchParams[key as keyof SearchParams] === value
   }
 
-  const activeFilterCount = [brand, model, category, fuel, transmission, priceMin, priceMax, yearMin].filter(Boolean).length
+  const activeFilterCount = [brand, model, category, fuel, transmission, priceMin, priceMax, yearMin, hpMin, hpMax].filter(Boolean).length
 
   return (
     <div className="min-h-screen bg-background">
@@ -318,20 +339,28 @@ export default async function NewVehiclesPage({
                 >
                   Nouveautés
                 </Link>
-                <span className="text-gray-400">•</span>
-                <Link
-                  href="/neuf/populaires"
-                  className="text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
-                >
-                  Populaires
-                </Link>
-                <span className="text-gray-400">•</span>
-                <Link
-                  href="/neuf/promotions"
-                  className="text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
-                >
-                  Promotions
-                </Link>
+                {!!popularCount && (
+                  <>
+                    <span className="text-gray-400">•</span>
+                    <Link
+                      href="/neuf/populaires"
+                      className="text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
+                    >
+                      Populaires
+                    </Link>
+                  </>
+                )}
+                {!!offersCount && (
+                  <>
+                    <span className="text-gray-400">•</span>
+                    <Link
+                      href="/neuf/promotions"
+                      className="text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
+                    >
+                      Promotions
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
 

@@ -42,18 +42,16 @@ const socialLinks = [
 
 const neufLinks = [
   { href: '/neuf', label: 'Toutes les marques' },
-  { href: '/neuf?sort=price', label: 'Prix des voitures' },
+  { href: '/neuf?sort=price-asc', label: 'Prix des voitures' },
   { href: '/neuf/comparer', label: 'Comparateur' },
-  { href: '/neuf?type=concessionnaires', label: 'Concessionnaires' },
   { href: '/neuf/nouveautes', label: 'Nouveautés' },
-  { href: '/neuf?tab=fiches', label: 'Fiches techniques' },
+  { href: '/neuf', label: 'Fiches techniques' },
 ]
 
 const occasionLinks = [
   { href: '/occasion', label: 'Toutes les annonces' },
   { href: EXTERNAL_LINKS.SELL_CAR, label: 'Vendre ma voiture', external: true },
   { href: '/occasion/estimation', label: 'Estimation' },
-  { href: '/occasion?type=pro', label: 'Professionnels' },
 ]
 
 const serviceLinks = [
@@ -69,6 +67,7 @@ const legalLinks = [
   { href: '/confidentialite', label: 'Confidentialité' },
   { href: '/conditions', label: "Conditions d'utilisation" },
   { href: '/cookies', label: 'Cookies' },
+  { href: '/cookies#gerer', label: 'Gérer les cookies' },
 ]
 
 function FooterPillLink({
@@ -333,7 +332,7 @@ export default function Footer() {
             </h4>
             <ul className="list-none p-0 m-0 flex flex-wrap gap-x-[18px] gap-y-1.5">
               {neufLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <FooterPillLink
                     href={link.href}
                     label={link.label}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -10,11 +10,21 @@ import { VehicleSelector } from '@/components/vehicles/VehicleSelector'
 import { ComparisonTable } from '@/components/vehicles/ComparisonTable'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
+import type { Variant } from '@/lib/types'
+import { parseCompareSlots, compareHref, type CompareSlot } from '@/lib/vehicles/compare-params'
+import { vehicleVariants, selectVariant, versionSlug, fichesByModel, type FicheRow } from '@/lib/vehicles/version-specs'
 
 interface VehicleData {
   id: string
+  model_id: string
   year: number
+  version: string | null
   price_min: number | null
+  price_max: number | null
+  horsepower: number | null
+  fuel_type: string | null
+  transmission: string | null
+  variant_list: Variant[] | null
   images: string[] | null
   brands: { name: string; logo_url: string | null } | null
   models: { name: string } | null
@@ -23,8 +33,11 @@ interface VehicleData {
 export default function ComparePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [selectedVehicles, setSelectedVehicles] = useState<string[]>([])
+  // One slot per column: vehicle id + optional version (`?v=<id>_<versionSlug>`).
+  const [slots, setSlots] = useState<CompareSlot[]>([])
+  const selectedVehicles = useMemo(() => slots.map((s) => s.id), [slots])
   const [vehicleData, setVehicleData] = useState<Record<string, VehicleData>>({})
+  const [fiches, setFiches] = useState<Record<string, FicheRow[]>>({})
   const [showSelector, setShowSelector] = useState(false)
   const [loading, setLoading] = useState(false)
   const fetchedIdsRef = useRef<Set<string>>(new Set())
@@ -44,8 +57,15 @@ export default function ComparePage() {
       .from('vehicles_new')
       .select(`
         id,
+        model_id,
         year,
+        version,
         price_min,
+        price_max,
+        horsepower,
+        fuel_type,
+        transmission,
+        variant_list,
         images,
         brands:brand_id (name, logo_url),
         models:model_id (name)
@@ -53,6 +73,12 @@ export default function ComparePage() {
       .in('id', newIds)
 
     if (data) {
+      // The model page's fiches decide each column's default version, so read them too.
+      const { data: ficheRows } = await supabase
+        .from('fiches_techniques')
+        .select('*')
+        .in('model_id', data.map((v) => v.model_id))
+      setFiches(prev => ({ ...prev, ...fichesByModel(ficheRows) }))
       setVehicleData(prev => {
         const dataMap: Record<string, VehicleData> = { ...prev }
         data.forEach((vehicle: any) => {
@@ -65,36 +91,36 @@ export default function ComparePage() {
   }, [])
 
   useEffect(() => {
-    // Parse vehicle IDs from URL
-    const vehicles = searchParams.getAll('v')
-    setSelectedVehicles(vehicles)
+    // Parse vehicle slots from URL
+    const parsed = parseCompareSlots(searchParams.getAll('v'))
+    setSlots(parsed)
 
     // Fetch vehicle data for selected IDs
-    if (vehicles.length > 0) {
-      fetchVehicleData(vehicles)
+    if (parsed.length > 0) {
+      fetchVehicleData(parsed.map((s) => s.id))
     }
   }, [searchParams, fetchVehicleData])
 
   const handleAddVehicle = (vehicleId: string) => {
-    if (selectedVehicles.length >= 3) {
+    if (slots.length >= 3) {
       alert('Vous pouvez comparer jusqu\'à 3 véhicules')
       return
     }
 
-    const newVehicles = [...selectedVehicles, vehicleId]
-    updateURL(newVehicles)
+    updateURL([...slots, { id: vehicleId, version: null }])
     setShowSelector(false)
   }
 
   const handleRemoveVehicle = (index: number) => {
-    const newVehicles = selectedVehicles.filter((_, i) => i !== index)
-    updateURL(newVehicles)
+    updateURL(slots.filter((_, i) => i !== index))
   }
 
-  const updateURL = (vehicles: string[]) => {
-    const params = new URLSearchParams()
-    vehicles.forEach((v) => params.append('v', v))
-    router.push(`/neuf/comparer?${params.toString()}`)
+  const handleVersionChange = (index: number, version: string) => {
+    updateURL(slots.map((s, i) => (i === index ? { ...s, version } : s)))
+  }
+
+  const updateURL = (next: CompareSlot[]) => {
+    router.push(compareHref(next))
   }
 
   return (
@@ -122,6 +148,9 @@ export default function ComparePage() {
           {[0, 1, 2].map((index) => {
             const vehicleId = selectedVehicles[index]
             const vehicle = vehicleId ? vehicleData[vehicleId] : null
+            // Same version resolution as the table and the model page.
+            const variants = vehicle ? vehicleVariants(vehicle) : []
+            const variant = vehicle ? selectVariant(variants, fiches[vehicle.model_id], slots[index]?.version) : null
 
             return (
               <div
@@ -180,9 +209,27 @@ export default function ComparePage() {
                           <p className="text-sm text-gray-400">
                             {vehicle.year}
                           </p>
+                          {variant && variants.length > 1 ? (
+                            <label className="block">
+                              <span className="sr-only">Version</span>
+                              <select
+                                value={versionSlug(variant)}
+                                onChange={(e) => handleVersionChange(index, e.target.value)}
+                                className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-sm text-gray-700"
+                              >
+                                {variants.map((v, i) => (
+                                  <option key={`${v.version}-${i}`} value={versionSlug(v)}>
+                                    {v.version}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                          ) : (
+                            variant?.version && <p className="text-sm text-gray-600">{variant.version}</p>
+                          )}
                           <p className="text-secondary font-semibold">
-                            {vehicle.price_min
-                              ? `À partir de ${formatPrice(vehicle.price_min)}`
+                            {variant?.price_min
+                              ? formatPrice(variant.price_min)
                               : 'Prix sur demande'}
                           </p>
                         </div>
@@ -213,7 +260,7 @@ export default function ComparePage() {
 
         {/* Comparison Table */}
         {selectedVehicles.length >= 2 ? (
-          <ComparisonTable vehicleIds={selectedVehicles} />
+          <ComparisonTable vehicleIds={selectedVehicles} versions={slots.map((s) => s.version)} />
         ) : (
           <div className="bg-white rounded-lg shadow-card border border-gray-200 p-12 text-center">
             <p className="text-gray-500 mb-4">

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { FileText, Search, Trash2, Edit, Loader2 } from 'lucide-react'
+import { FileText, Search, Trash2, Edit, Loader2, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { deleteFicheTechnique } from '@/lib/actions/admin/fiches'
 import type { FicheTechnique } from '@/lib/types'
@@ -20,7 +20,7 @@ export default function AdminFichesTechniquesPage() {
     setLoading(true)
     const { data, error } = await supabase
       .from('fiches_techniques')
-      .select('id, model_id, specs, en_detail, source_url, created_at, updated_at, models(id, name, brand_id, brands(id, name))')
+      .select('*, models(id, name, brand_id, brands(id, name))')
       .order('updated_at', { ascending: false })
 
     if (error) {
@@ -63,13 +63,22 @@ export default function AdminFichesTechniquesPage() {
   return (
     <div>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-          Fiches Techniques
-        </h1>
-        <p className="text-dark-200">
-          Gerez les fiches techniques des modeles ({fiches.length} fiches)
-        </p>
+      <div className="mb-8 flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            Fiches Techniques
+          </h1>
+          <p className="text-dark-200">
+            Gerez les fiches techniques des modeles ({fiches.length} fiches)
+          </p>
+        </div>
+        <Link
+          href="/admin/fiches-techniques/new"
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm bg-primary hover:bg-primary/90 text-white rounded-lg transition"
+        >
+          <Plus className="h-4 w-4" />
+          Nouvelle fiche
+        </Link>
       </div>
 
       {/* Error/Success Messages */}
@@ -125,6 +134,9 @@ export default function AdminFichesTechniquesPage() {
                     Marque / Modele
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-dark-200">
+                    Version
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-dark-200">
                     Specs
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-dark-200">
@@ -144,7 +156,8 @@ export default function AdminFichesTechniquesPage() {
                   const modelName = fiche.models?.name ?? '—'
                   const specsCount = Object.keys(fiche.specs || {}).length
                   const detailsCount = Object.keys(fiche.en_detail || {}).length
-                  const label = `${brandName} ${modelName}`
+                  const versionLabel = fiche.version ?? 'Toutes versions'
+                  const label = `${brandName} ${modelName} (${versionLabel})`
 
                   return (
                     <tr key={fiche.id} className="hover:bg-white/5 transition">
@@ -156,6 +169,9 @@ export default function AdminFichesTechniquesPage() {
                             <p className="text-sm text-dark-300">{modelName}</p>
                           </div>
                         </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-sm text-dark-200">{versionLabel}</span>
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-sm text-dark-200">
