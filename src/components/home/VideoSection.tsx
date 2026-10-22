@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { Play, Eye, ChevronRight } from 'lucide-react'
 import { Video } from '@/lib/types'
 import { MobileCarousel } from '@/components/shared/MobileCarousel'
+import { videoCategoryLabel } from '@/lib/videos/categories'
+import { cleanVideoDescription } from '@/lib/videos/clean-description'
 
 interface VideoSectionProps {
   videos: Video[]
@@ -72,7 +74,7 @@ export function VideoSection({ videos }: VideoSectionProps) {
                     {/* Category Badge */}
                     {video.category && (
                       <div className="absolute top-2 left-2 bg-primary text-white text-xs font-semibold px-2 py-0.5 rounded">
-                        {video.category}
+                        {videoCategoryLabel(video.category)}
                       </div>
                     )}
                   </div>
@@ -81,9 +83,9 @@ export function VideoSection({ videos }: VideoSectionProps) {
                   <h3 className="font-bold text-white text-sm md:text-base mb-1.5 line-clamp-2 group-hover:text-secondary transition-colors">
                     {video.title}
                   </h3>
-                  {video.description && (
+                  {cleanVideoDescription(video.description) && (
                     <p className="text-gray-400 text-xs line-clamp-2 mb-1.5">
-                      {video.description}
+                      {cleanVideoDescription(video.description)}
                     </p>
                   )}
                   <div className="flex items-center gap-1 text-xs text-gray-500">

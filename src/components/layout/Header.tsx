@@ -8,6 +8,8 @@ import { Menu, X, FileText, Search, PlayCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { FloatingSocialBubble } from '@/components/shared/FloatingSocialBubble'
 import { cn } from '@/lib/utils'
+import { CATEGORY_LABELS } from '@/lib/blog/categories'
+import { videoCategoryLabel } from '@/lib/videos/categories'
 
 interface ArticleResult {
   id: string
@@ -235,7 +237,7 @@ export default function Header() {
                             )}
                             <div className="min-w-0">
                               {article.category && (
-                                <span className="text-[10px] font-semibold text-secondary uppercase tracking-wide">{article.category}</span>
+                                <span className="text-[10px] font-semibold text-secondary uppercase tracking-wide">{CATEGORY_LABELS[article.category] || article.category}</span>
                               )}
                               <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">{article.title}</p>
                             </div>
@@ -269,7 +271,7 @@ export default function Header() {
                             )}
                             <div className="min-w-0">
                               {video.category && (
-                                <span className="text-[10px] font-semibold text-secondary uppercase tracking-wide">{video.category}</span>
+                                <span className="text-[10px] font-semibold text-secondary uppercase tracking-wide">{videoCategoryLabel(video.category)}</span>
                               )}
                               <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">{video.title}</p>
                             </div>
