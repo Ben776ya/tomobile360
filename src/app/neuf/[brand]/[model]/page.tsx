@@ -20,7 +20,8 @@ import { rankSimilarModels } from '@/lib/vehicles/similar-vehicles'
 import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
 import { buildModelFaq } from '@/lib/vehicles/model-faq'
 import { fuelLabel, transmissionLabel, originLabel } from '@/lib/vehicles/display-labels'
-import { vehicleVariants, selectVariant } from '@/lib/vehicles/version-specs'
+import { vehicleVariants, selectVariant, versionSlug } from '@/lib/vehicles/version-specs'
+import { compareHref } from '@/lib/vehicles/compare-params'
 import { fuelTypeToEnergyParam, type EnergyKind } from '@/lib/outils/cout-100km'
 import { VideoCard } from '@/components/videos/VideoCard'
 import { LazyVideoEmbed } from '@/components/videos/LazyVideoEmbed'
@@ -527,7 +528,10 @@ export default async function ModelDetailPage({ params, searchParams }: PageProp
                     vehicleName={`${brand.name} ${model.name}`}
                     dealerPhone={BUSINESS_INFO.WHATSAPP_E164}
                   />
-                  <Link href="/neuf/comparer" className="block">
+                  <Link
+                    href={compareHref([{ id: representative.id, version: versionSlug(selectedVariant) || null }])}
+                    className="block"
+                  >
                     <Button variant="outline" className="w-full shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                       Comparer ce véhicule
                     </Button>

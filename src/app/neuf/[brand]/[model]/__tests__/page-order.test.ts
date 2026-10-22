@@ -48,4 +48,14 @@ describe('model page layout order', () => {
   it('exposes the fiche anchor used by the jump nav', () => {
     expect(jsx).toContain('id="fiche-technique"')
   })
+
+  it('prefills the comparator with this model and its selected version', () => {
+    expect(jsx).not.toContain('href="/neuf/comparer"')
+    expect(jsx).toContain('compareHref([{ id: representative.id, version: versionSlug(selectedVariant)')
+  })
+
+  it('feeds the key specs and the fiche the same selected version', () => {
+    expect(jsx).toMatch(/<KeySpecsStrip[^>]*variant=\{selectedVariant\}/)
+    expect(jsx).toMatch(/<VehicleSpecs [^>]*variant=\{selectedVariant\}/)
+  })
 })
