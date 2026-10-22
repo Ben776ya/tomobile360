@@ -14,7 +14,7 @@ export default async function EditFicheTechniquePage({
 
   const { data: fiche, error } = await supabase
     .from('fiches_techniques')
-    .select('id, model_id, specs, en_detail, source_url, created_at, updated_at, models(id, name, brand_id, brands(id, name))')
+    .select('*, models(id, name, brand_id, brands(id, name))')
     .eq('id', params.id)
     .single()
 
@@ -25,7 +25,7 @@ export default async function EditFicheTechniquePage({
   const brandName = (fiche as any).models?.brands?.name ?? ''
   const modelName = (fiche as any).models?.name ?? ''
   const title = brandName && modelName
-    ? `${brandName} ${modelName}`
+    ? `${brandName} ${modelName} — ${fiche.version ?? 'Toutes versions'}`
     : 'Fiche technique'
 
   return (
