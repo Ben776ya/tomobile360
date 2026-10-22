@@ -519,6 +519,7 @@ export default async function ModelDetailPage({ params, searchParams }: PageProp
                   />
                   <TestDriveDialog
                     vehicleName={`${brand.name} ${model.name}`}
+                    version={selectedVariant?.version ?? undefined}
                     dealerPhone={BUSINESS_INFO.WHATSAPP_E164}
                   />
                   <Link
