@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { createClient } from '@/lib/supabase/client'
-import { formatPrice } from '@/lib/utils'
+import { formatDate, formatPrice } from '@/lib/utils'
 import { gaEvents } from '@/lib/analytics/gtag'
+import { estimateUsedPrice, type UsedPriceEstimate } from '@/lib/occasion/estimate'
 
 export default function ValuationPage() {
   const [brands, setBrands] = useState<any[]>([])
@@ -20,11 +21,8 @@ export default function ValuationPage() {
     mileage: '',
     condition: '',
   })
-  const [estimation, setEstimation] = useState<{
-    min: number
-    max: number
-    average: number
-  } | null>(null)
+  const [estimation, setEstimation] = useState<(UsedPriceEstimate & { updatedAt: string | null }) | null>(null)
+  const [unavailable, setUnavailable] = useState(false)
 
   useEffect(() => {
     fetchBrands()
@@ -55,6 +53,7 @@ export default function ValuationPage() {
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
     setEstimation(null)
+    setUnavailable(false)
   }
 
   const calculateEstimation = async () => {
@@ -77,49 +76,30 @@ export default function ValuationPage() {
       .lte('year', parseInt(formData.year) + 2)
       .eq('is_active', true)
 
-    if (similarVehicles && similarVehicles.length > 0) {
-      // Calculate based on real data
-      const prices = similarVehicles.map((v) => v.price)
-      const min = Math.min(...prices)
-      const max = Math.max(...prices)
-      const average = prices.reduce((a, b) => a + b, 0) / prices.length
+    // Fallback reference: the model's new-car catalogue price (one row per model)
+    const { data: catalogue } = await supabase
+      .from('vehicles_new')
+      .select('price_min, price_max, updated_at')
+      .eq('model_id', formData.model_id)
+      .order('price_min', { ascending: true, nullsFirst: false })
+      .limit(1)
+      .maybeSingle()
 
-      setEstimation({ min, max, average })
-    } else {
-      // Calculate based on depreciation algorithm
-      const currentYear = new Date().getFullYear()
-      const vehicleAge = currentYear - parseInt(formData.year)
-      const mileage = parseInt(formData.mileage)
+    const result = estimateUsedPrice({
+      year: parseInt(formData.year),
+      mileage: parseInt(formData.mileage),
+      condition: formData.condition,
+      currentYear: new Date().getFullYear(),
+      similarPrices: (similarVehicles ?? []).map((v) => Number(v.price)),
+      cataloguePrice: Number(catalogue?.price_min) || Number(catalogue?.price_max) || null,
+    })
 
-      // Base price estimation (simplified)
-      let basePrice = 200000 // Default base price
-
-      // Depreciation by year (15% per year for first 5 years, 10% after)
-      let depreciationRate = vehicleAge <= 5 ? 0.15 : 0.10
-      let depreciation = Math.pow(1 - depreciationRate, vehicleAge)
-
-      // Depreciation by mileage (reduce price by 1% per 10,000 km)
-      let mileageDepreciation = Math.max(0, 1 - (mileage / 1000000))
-
-      // Condition multiplier
-      const conditionMultipliers: { [key: string]: number } = {
-        'Excellent': 1.1,
-        'Très Bon': 1.0,
-        'Bon': 0.9,
-        'Acceptable': 0.75,
-      }
-      const conditionMultiplier = conditionMultipliers[formData.condition] || 1.0
-
-      // Calculate estimated price
-      const estimatedPrice = basePrice * depreciation * mileageDepreciation * conditionMultiplier
-
-      setEstimation({
-        min: Math.round(estimatedPrice * 0.85),
-        max: Math.round(estimatedPrice * 1.15),
-        average: Math.round(estimatedPrice),
-      })
-    }
+    setEstimation(result && { ...result, updatedAt: catalogue?.updated_at ?? null })
+    setUnavailable(!result)
   }
+
+  const brandName = brands.find((b) => b.id === formData.brand_id)?.name
+  const modelName = models.find((m) => m.id === formData.model_id)?.name
 
   const currentYear = new Date().getFullYear()
   const years = Array.from({ length: 30 }, (_, i) => currentYear - i)
@@ -259,7 +239,7 @@ export default function ValuationPage() {
               {estimation && (
                 <div className="mt-8 p-6 bg-secondary/10 border border-secondary/20 rounded-lg">
                   <h3 className="text-lg font-semibold mb-4 text-center text-slate-700">
-                    Estimation de votre véhicule
+                    Fourchette indicative pour votre véhicule
                   </h3>
 
                   <div className="grid grid-cols-3 gap-4 mb-6">
@@ -283,9 +263,26 @@ export default function ValuationPage() {
                     </div>
                   </div>
 
+                  <p className="text-sm text-gray-600 text-center mb-2">
+                    {estimation.basis.kind === 'catalogue' ? (
+                      <>
+                        Basé sur le prix catalogue neuf de {brandName} {modelName} sur Tomobile 360 : à partir
+                        de {formatPrice(estimation.basis.price)}
+                        {estimation.updatedAt && <> (fiche mise à jour le {formatDate(estimation.updatedAt)})</>}, avec une
+                        décote selon l&apos;âge, le kilométrage et l&apos;état.
+                      </>
+                    ) : (
+                      <>
+                        Basé sur {estimation.basis.count}{' '}
+                        {estimation.basis.count > 1 ? 'annonces similaires publiées' : 'annonce similaire publiée'} sur
+                        Tomobile 360 (même modèle, année ± 2 ans).
+                      </>
+                    )}
+                  </p>
                   <p className="text-sm text-gray-500 text-center mb-4">
-                    Cette estimation est basée sur les données du marché et l&apos;état de votre véhicule.
-                    Le prix réel peut varier selon la demande et d&apos;autres facteurs.
+                    Il s&apos;agit d&apos;une fourchette indicative de prix affiché en annonce, et non d&apos;un prix de
+                    vente ni d&apos;une offre de rachat. La version, la motorisation et la boîte de vitesses ne sont pas
+                    prises en compte.
                   </p>
 
                   <div className="text-center">
@@ -297,6 +294,13 @@ export default function ValuationPage() {
                       <Button size="lg" className="shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">Vendre ma voiture maintenant</Button>
                     </a>
                   </div>
+                </div>
+              )}
+
+              {unavailable && (
+                <div className="mt-8 p-6 bg-gray-50 border border-gray-200 rounded-lg text-center text-sm text-gray-600">
+                  Estimation indisponible pour ce modèle : nous n&apos;avons ni prix catalogue neuf ni annonce similaire
+                  pour servir de référence.
                 </div>
               )}
             </div>
