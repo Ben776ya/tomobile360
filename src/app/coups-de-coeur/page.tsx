@@ -4,15 +4,22 @@ import { ModelCard } from '@/components/vehicles/ModelCard'
 import { buildModelGroups } from '@/lib/vehicles/group-by-model'
 import { ArrowRight, Car, Mountain, Truck, Zap } from 'lucide-react'
 import type { CoupDeCoeurCategory } from '@/lib/types'
+import type { Metadata } from 'next'
 import { pageMetadata } from '@/lib/seo/page-metadata'
+import { hasSelection } from '@/lib/seo/selection-pages'
 
 export const revalidate = 60
 
-export const metadata = pageMetadata({
-  title: 'Nos Coups de Coeur',
-  description: 'Notre sélection des meilleurs véhicules par segment : Voiture, SUV, Pick-up et Électrique.',
-  path: '/coups-de-coeur',
-})
+export async function generateMetadata(): Promise<Metadata> {
+  const metadata = pageMetadata({
+    title: 'Nos Coups de Coeur',
+    description: 'Notre sélection des meilleurs véhicules par segment : Voiture, SUV, Pick-up et Électrique.',
+    path: '/coups-de-coeur',
+  })
+  // Empty state while no vehicle is selected: keep it out of search results.
+  const supabase = await createClient()
+  return (await hasSelection(supabase, 'is_coup_de_coeur')) ? metadata : { ...metadata, robots: { index: false } }
+}
 
 type CategoryConfig = {
   value: CoupDeCoeurCategory

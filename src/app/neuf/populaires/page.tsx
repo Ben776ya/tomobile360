@@ -3,13 +3,20 @@ import { ArrowRight, ChevronLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { ModelCard } from '@/components/vehicles/ModelCard'
 import { buildModelGroups } from '@/lib/vehicles/group-by-model'
+import type { Metadata } from 'next'
 import { pageMetadata } from '@/lib/seo/page-metadata'
+import { hasSelection } from '@/lib/seo/selection-pages'
 
-export const metadata = pageMetadata({
-  title: 'Modèles Populaires : la Sélection de la Rédaction',
-  description: 'Les modèles neufs populaires sélectionnés par la rédaction Tomobile 360 : prix au Maroc, fiches techniques et comparatifs.',
-  path: '/neuf/populaires',
-})
+export async function generateMetadata(): Promise<Metadata> {
+  const metadata = pageMetadata({
+    title: 'Modèles Populaires : la Sélection de la Rédaction',
+    description: 'Les modèles neufs populaires sélectionnés par la rédaction Tomobile 360 : prix au Maroc, fiches techniques et comparatifs.',
+    path: '/neuf/populaires',
+  })
+  // Empty state while no vehicle is selected: keep it out of search results.
+  const supabase = await createClient()
+  return (await hasSelection(supabase, 'is_popular')) ? metadata : { ...metadata, robots: { index: false } }
+}
 
 export const revalidate = 60
 
