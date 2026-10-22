@@ -318,8 +318,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
       ...(v.version ? { name: v.version } : {}),
       price: v.price_min,
       priceCurrency: 'MAD',
-      availability: 'https://schema.org/InStock',
-      seller: { '@type': 'Organization' as const, name: 'Tomobile 360' },
+      // No seller/availability: Tomobile 360 is not the dealer and stock is unverified.
     }))
 
   // Wrap multi-variant pricing in an AggregateOffer so SERPs render a

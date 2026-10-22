@@ -120,5 +120,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  return [...staticPages, ...articlePages, ...tagPages, ...vehiclePages, ...usedVehiclePages]
+  // Dynamic: video pages (/videos/[id], canonical by id; published only, as the page)
+  const { data: videos } = await supabase
+    .from('videos')
+    .select('id, created_at')
+    .eq('is_published', true)
+    .order('created_at', { ascending: false })
+    .limit(1000)
+
+  const videoPages: MetadataRoute.Sitemap = (videos || []).map((v) => ({
+    url: `${BASE_URL}/videos/${v.id}`,
+    lastModified: v.created_at ? new Date(v.created_at) : new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }))
+
+  return [...staticPages, ...articlePages, ...tagPages, ...vehiclePages, ...usedVehiclePages, ...videoPages]
 }
