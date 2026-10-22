@@ -66,6 +66,9 @@ export default async function HomePage() {
     { data: latestUsedListings },
     { data: recentBlogPosts },
     { data: latestVideos },
+    { count: offersCount },
+    { count: popularCount },
+    { count: coupsDeCoeurCount },
     { data: allBrands },
     instagramReels,
   ] = await Promise.all([
@@ -110,6 +113,24 @@ export default async function HomePage() {
       .order('created_at', { ascending: false })
       .limit(3),
 
+    // Feature tiles only promote pages that have something to show: same
+    // filters as /neuf/promotions, /neuf/populaires and /coups-de-coeur.
+    supabase
+      .from('vehicles_new')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_featured_offer', true)
+      .eq('is_available', true),
+    supabase
+      .from('vehicles_new')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_popular', true)
+      .eq('is_available', true),
+    supabase
+      .from('vehicles_new')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_coup_de_coeur', true)
+      .eq('is_available', true),
+
     // All brands for carousel
     supabase
       .from('brands')
@@ -132,8 +153,13 @@ export default async function HomePage() {
       <div className="bg-[#565A5D]/10">
         <div className="container mx-auto grid gap-6 px-4 pb-4 pt-5 md:pb-6 lg:grid-cols-[minmax(0,1fr)_auto]">
           <div className="flex min-w-0 flex-col gap-6">
-            {/* 2. Feature carousel — comparateur, offres, top ventes, coups de cœur */}
-            <FeatureGrid />
+            {/* 2. Feature carousel — comparateur, voitures chinoises, and offres /
+                populaires / coups de cœur only while they have content */}
+            <FeatureGrid
+              hasOffers={!!offersCount}
+              hasPopular={!!popularCount}
+              hasCoupsDeCoeur={!!coupsDeCoeurCount}
+            />
 
             {/* 3. Brand Carousel — stretches so its card ends level with the reels panel */}
             {allBrands && allBrands.length > 0 && (
