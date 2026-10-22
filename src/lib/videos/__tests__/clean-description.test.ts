@@ -94,6 +94,7 @@ describe('cleanVideoDescription', () => {
     expect(cleanVideoDescription('Essai complet du Kia Tasman au Maroc. #Kia #Tasman')).toBe(
       'Essai complet du Kia Tasman au Maroc.',
     )
+    expect(cleanVideoDescription('Essai #Kia')).toBe('Essai')
   })
 
   it('drops generic subscribe / like / follow calls', () => {

@@ -23,15 +23,19 @@ const CALL_TO_ACTION_PATTERNS: RegExp[] = [
 const SOCIAL_LINK_LINE =
   /^https?:\/\/(www\.)?(instagram\.com|facebook\.com|fb\.com|tiktok\.com|twitter\.com|x\.com|linkedin\.com|snapchat\.com|threads\.net|youtube\.com\/(@|channel\/|c\/|user\/))\S*$/i
 
-/** Hashtags trailing a line of text ("… bonne journée! #PouceBleu #Auto"). */
-const TRAILING_HASHTAGS = /(\s+#[^\s#]+)+\s*$/
-
-/** True when at least half of the line's words are hashtags (a tag block). */
+/** True when most of the line's words are hashtags (a tag block). */
 function isHashtagLine(line: string): boolean {
   const words = line.split(/[\s,]+/).filter(Boolean)
-  if (words.length === 0) return false
   const tags = words.filter((w) => w.startsWith('#')).length
-  return tags * 2 >= words.length
+  return tags * 2 > words.length
+}
+
+/** Drops hashtags trailing a line of text ("… bonne journée! #PouceBleu #Auto"). */
+function stripTrailingHashtags(line: string): string {
+  const words = line.split(/\s+/)
+  let end = words.length
+  while (end > 1 && words[end - 1].startsWith('#')) end--
+  return end === words.length ? line : words.slice(0, end).join(' ')
 }
 
 export function cleanVideoDescription(description: string | null | undefined): string {
@@ -45,7 +49,7 @@ export function cleanVideoDescription(description: string | null | undefined): s
       continue
     }
     if (isHashtagLine(line)) continue
-    const text = line.replace(TRAILING_HASHTAGS, '')
+    const text = stripTrailingHashtags(line)
     if (CALL_TO_ACTION_PATTERNS.some((re) => re.test(text))) continue
     if (SOCIAL_LINK_LINE.test(text)) continue
     kept.push(text)
