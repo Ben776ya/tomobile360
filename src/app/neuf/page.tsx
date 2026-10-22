@@ -131,7 +131,8 @@ export default async function NewVehiclesPage({
       )
       break
     case 'price-asc':
-      modelGroups.sort((a, b) => (a.minPrice ?? Infinity) - (b.minPrice ?? Infinity))
+      // "Prix sur demande" (null or 0, as ModelCard detects it) goes last.
+      modelGroups.sort((a, b) => (a.minPrice || Infinity) - (b.minPrice || Infinity))
       break
     case 'price-desc':
       modelGroups.sort((a, b) => (b.minPrice ?? 0) - (a.minPrice ?? 0))

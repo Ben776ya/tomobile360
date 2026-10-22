@@ -56,8 +56,9 @@ export function VehicleFilters({
   ]
 
   // Mirror the page's default sort so the dropdown reflects the order actually
-  // shown — origin listings (e.g. "Voitures chinoises") default to alphabetical.
-  const effectiveSort = sort || (origin ? 'name-asc' : 'newest')
+  // shown — origin listings (e.g. "Voitures chinoises") default to alphabetical,
+  // brand listings to ascending price.
+  const effectiveSort = sort || (origin ? 'name-asc' : brand ? 'price-asc' : 'newest')
 
   const handleFilterChange = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
