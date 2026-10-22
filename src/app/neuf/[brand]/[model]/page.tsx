@@ -20,6 +20,7 @@ import { rankSimilarModels } from '@/lib/vehicles/similar-vehicles'
 import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
 import { buildModelFaq } from '@/lib/vehicles/model-faq'
 import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
+import { vehicleVariants, selectVariant } from '@/lib/vehicles/version-specs'
 import { fuelTypeToEnergyParam, type EnergyKind } from '@/lib/outils/cout-100km'
 import { VideoCard } from '@/components/videos/VideoCard'
 import { LazyVideoEmbed } from '@/components/videos/LazyVideoEmbed'
@@ -52,6 +53,8 @@ export const revalidate = 60
 
 interface PageProps {
   params: { brand: string; model: string }
+  /** `?version=<versionSlug>` selects the version every figure on the page describes. */
+  searchParams?: { version?: string | string[] }
 }
 
 async function resolveModel(brandParam: string, modelParam: string) {
@@ -94,16 +97,8 @@ async function resolveModel(brandParam: string, modelParam: string) {
 
   if (!vehicle) return null
 
-  const variants: Variant[] = Array.isArray(vehicle.variant_list) && vehicle.variant_list.length > 0
-    ? (vehicle.variant_list as Variant[])
-    : [{
-        version: vehicle.version,
-        price_min: vehicle.price_min,
-        price_max: vehicle.price_max,
-        horsepower: vehicle.horsepower,
-        fuel_type: vehicle.fuel_type,
-        transmission: vehicle.transmission,
-      }]
+  // Same derivation as the comparator, so both list the same versions.
+  const variants: Variant[] = vehicleVariants(vehicle as any)
 
   return {
     model: { id: target.id as string, name: target.name as string, category: target.category as string | null },
@@ -149,7 +144,7 @@ export async function generateMetadata({ params }: PageProps) {
   }
 }
 
-export default async function ModelDetailPage({ params }: PageProps) {
+export default async function ModelDetailPage({ params, searchParams }: PageProps) {
   const resolved = await resolveModel(params.brand, params.model)
   if (!resolved) notFound()
 
@@ -170,6 +165,12 @@ export default async function ModelDetailPage({ params }: PageProps) {
     .select('id, model_id, specs, en_detail, source_url, created_at, updated_at')
     .eq('model_id', model.id)
     .single()
+
+  // The version every figure below describes (key specs, fiche, compare link):
+  // `?version=` when it names one, else the version the fiche describes.
+  const requestedVersion = typeof searchParams?.version === 'string' ? searchParams.version : null
+  const selectedVariant = selectVariant(variants, fiche, requestedVersion)
+  const basePath = `/neuf/${canonicalBrandSlug}/${canonicalModelSlug}`
 
   void supabase.rpc('increment_vehicle_views', { vehicle_id: representative.id })
 
@@ -395,7 +396,7 @@ export default async function ModelDetailPage({ params }: PageProps) {
                         {variants.length} version{variants.length > 1 ? 's' : ''} disponible{variants.length > 1 ? 's' : ''}
                       </p>
                       {updatedAtLabel && (
-                        <p className="text-xs text-gray-400 mt-0.5">Mis à jour le {updatedAtLabel}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">Prix et versions mis à jour le {updatedAtLabel}</p>
                       )}
                     </div>
                   </div>
@@ -448,16 +449,16 @@ export default async function ModelDetailPage({ params }: PageProps) {
               priceDisplay={priceDisplay}
               promo={bestPromo}
               finalPrice={finalPrice}
+              selected={selectedVariant}
+              basePath={basePath}
             />
 
-            {(representative.horsepower || representative.fuel_type || representative.transmission || representative.acceleration || representative.fuel_consumption_combined || representative.co2_emissions || fiche) && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <KeySpecsStrip vehicle={representative as any} fiche={fiche as any} />
-              </div>
-            )}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <KeySpecsStrip vehicle={representative as any} fiche={fiche as any} variant={selectedVariant} variants={variants} />
+            </div>
 
             <div id="fiche-technique" className="bg-white rounded-xl border border-gray-200 p-6 scroll-mt-24">
-              <VehicleSpecs vehicle={representative as any} fiche={fiche as any} />
+              <VehicleSpecs vehicle={representative as any} fiche={fiche as any} variant={selectedVariant} variants={variants} basePath={basePath} />
             </div>
 
             {calcHref && (
