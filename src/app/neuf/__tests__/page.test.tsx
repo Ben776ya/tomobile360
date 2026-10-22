@@ -97,4 +97,15 @@ describe('/neuf catalogue params', () => {
   it('reads the hero horsepower band (hpMin/hpMax)', async () => {
     expect(await listedModels({ hpMin: '91', hpMax: '110' })).toEqual(['mid'])
   })
+
+  it('« Automatique » lists every automatic gearbox (Automatic, DCT, CVT)', async () => {
+    TABLES.vehicles_new = [
+      { ...car('bvm', 150000, 90), transmission: 'Manual' },
+      { ...car('bva', 150000, 90), transmission: 'Automatic' },
+      { ...car('edc', 150000, 90), transmission: 'DCT' },
+      { ...car('cvt', 150000, 90), transmission: 'CVT' },
+    ]
+    expect((await listedModels({ transmission: 'Automatic' })).sort()).toEqual(['bva', 'cvt', 'edc'])
+    expect(await listedModels({ transmission: 'Manual' })).toEqual(['bvm'])
+  })
 })

@@ -7,6 +7,7 @@ import { BrandHeader } from '@/components/vehicles/BrandHeader'
 import { SlidersHorizontal } from 'lucide-react'
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { resolveOriginDbValue, ORIGIN_LABELS, isOriginExcludedModel } from '@/lib/vehicles/origin-filter'
+import { AUTOMATIC_TRANSMISSIONS } from '@/lib/vehicles/display-labels'
 
 export const revalidate = 60
 
@@ -86,7 +87,11 @@ export default async function NewVehiclesPage({
     }
   }
   if (fuel) query = query.eq('fuel_type', fuel)
-  if (transmission) query = query.eq('transmission', transmission)
+  if (transmission) {
+    query = transmission === 'Automatic'
+      ? query.in('transmission', AUTOMATIC_TRANSMISSIONS)
+      : query.eq('transmission', transmission)
+  }
   if (priceMin) query = query.gte('price_min', priceMin)
   // A budget cap excludes "Prix sur demande" rows (price_min 0).
   if (priceMax) query = query.lte('price_min', priceMax).gt('price_min', 0)

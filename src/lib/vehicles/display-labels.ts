@@ -18,9 +18,12 @@ export const FUEL_LABELS: Record<string, string> = {
 export const TRANSMISSION_LABELS: Record<string, string> = {
   Manual: 'Manuelle',
   Automatic: 'Automatique',
-  CVT: 'CVT',
+  CVT: 'Automatique (CVT)',
   DCT: 'Automatique (DCT)',
 }
+
+/** Gearbox values the catalogue's « Automatique » filter covers. */
+export const AUTOMATIC_TRANSMISSIONS = ['Automatic', 'DCT', 'CVT']
 
 /** brands.origin is stored in English (e.g. 'China'). */
 export const COUNTRY_LABELS: Record<string, string> = {
