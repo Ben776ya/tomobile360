@@ -176,10 +176,15 @@ export default async function NewVehiclesPage({
     { data: brands },
     { data: categories },
     { data: allModels },
+    { count: popularCount },
+    { count: offersCount },
   ] = await Promise.all([
     supabase.from('brands').select('id, name, logo_url, description, origin, created_at').order('name'),
     supabase.from('models').select('category').order('category'),
     supabase.from('models').select('id, brand_id, name, category').order('name'),
+    // Quick links only point to /neuf/populaires and /neuf/promotions when they have content
+    supabase.from('vehicles_new').select('id', { count: 'exact', head: true }).eq('is_popular', true).eq('is_available', true),
+    supabase.from('vehicles_new').select('id', { count: 'exact', head: true }).eq('is_featured_offer', true).eq('is_available', true),
   ])
 
   const uniqueCategories = categories
@@ -329,20 +334,28 @@ export default async function NewVehiclesPage({
                 >
                   Nouveautés
                 </Link>
-                <span className="text-gray-400">•</span>
-                <Link
-                  href="/neuf/populaires"
-                  className="text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
-                >
-                  Populaires
-                </Link>
-                <span className="text-gray-400">•</span>
-                <Link
-                  href="/neuf/promotions"
-                  className="text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
-                >
-                  Promotions
-                </Link>
+                {!!popularCount && (
+                  <>
+                    <span className="text-gray-400">•</span>
+                    <Link
+                      href="/neuf/populaires"
+                      className="text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
+                    >
+                      Populaires
+                    </Link>
+                  </>
+                )}
+                {!!offersCount && (
+                  <>
+                    <span className="text-gray-400">•</span>
+                    <Link
+                      href="/neuf/promotions"
+                      className="text-secondary hover:text-secondary-400 hover:underline font-medium transition-all duration-300"
+                    >
+                      Promotions
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
 

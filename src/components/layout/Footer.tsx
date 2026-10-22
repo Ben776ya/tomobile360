@@ -67,6 +67,7 @@ const legalLinks = [
   { href: '/confidentialite', label: 'Confidentialité' },
   { href: '/conditions', label: "Conditions d'utilisation" },
   { href: '/cookies', label: 'Cookies' },
+  { href: '/cookies#gerer', label: 'Gérer les cookies' },
 ]
 
 function FooterPillLink({

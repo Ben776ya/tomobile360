@@ -189,7 +189,7 @@ export default async function UsedVehicleDetailPage({ params }: PageProps) {
         <Breadcrumbs
           items={[
             { name: 'Occasion', href: '/occasion' },
-            { name: brandName, href: `/occasion?brand=${listing.brand_id}` },
+            { name: brandName, href: `/occasion?brand=${encodeURIComponent(brandName)}` },
             { name: `${brandName} ${modelName}` },
           ]}
         />
