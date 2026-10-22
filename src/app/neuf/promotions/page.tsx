@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ChevronLeft } from 'lucide-react'
+import { ArrowRight, ChevronLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { ModelCard } from '@/components/vehicles/ModelCard'
 import { buildModelGroups } from '@/lib/vehicles/group-by-model'
@@ -49,12 +49,14 @@ export default async function PromotionsPage() {
           </p>
         </div>
 
-        <div className="mb-6 bg-white p-4 rounded-lg shadow-card border border-gray-200">
-          <p className="text-sm text-gray-500">
-            <span className="font-semibold text-secondary">{modelGroups.length}</span>{' '}
-            offre{modelGroups.length > 1 ? 's' : ''} spéciale{modelGroups.length > 1 ? 's' : ''}
-          </p>
-        </div>
+        {modelGroups.length > 0 && (
+          <div className="mb-6 bg-white p-4 rounded-lg shadow-card border border-gray-200">
+            <p className="text-sm text-gray-500">
+              <span className="font-semibold text-secondary">{modelGroups.length}</span>{' '}
+              offre{modelGroups.length > 1 ? 's' : ''} spéciale{modelGroups.length > 1 ? 's' : ''}
+            </p>
+          </div>
+        )}
 
         {modelGroups.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -64,9 +66,19 @@ export default async function PromotionsPage() {
           </div>
         ) : (
           <div className="bg-white rounded-lg p-12 text-center border border-gray-200">
-            <p className="text-gray-500">
-              Aucune offre spéciale disponible pour le moment.
+            <p className="text-lg font-semibold text-primary mb-2">
+              Aucune offre spéciale en cours.
             </p>
+            <p className="text-gray-500 mb-6">
+              Comparez les prix et les fiches techniques de tous les modèles neufs dans notre catalogue.
+            </p>
+            <Link
+              href="/neuf"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-secondary text-white hover:bg-secondary-400 font-semibold rounded-xl transition-all duration-300 hover:shadow-lg"
+            >
+              Voir le catalogue des voitures neuves
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         )}
       </div>

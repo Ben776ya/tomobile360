@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Play, Eye } from 'lucide-react'
+import { cleanVideoDescription } from '@/lib/videos/clean-description'
 
 interface VideoCardProps {
   id: string
@@ -17,6 +18,7 @@ interface VideoCardProps {
  * (`rounded-xl border border-gray-200`). Links to the video detail page.
  */
 export function VideoCard({ id, title, description, thumbnail_url, duration, views }: VideoCardProps) {
+  const summary = cleanVideoDescription(description)
   return (
     <Link
       href={`/videos/${id}`}
@@ -53,8 +55,8 @@ export function VideoCard({ id, title, description, thumbnail_url, duration, vie
         <h3 className="font-bold text-slate-700 mb-2 line-clamp-2 group-hover:text-secondary transition-colors duration-300">
           {title}
         </h3>
-        {description && (
-          <p className="text-sm text-gray-600 line-clamp-2 mb-3">{description}</p>
+        {summary && (
+          <p className="text-sm text-gray-600 line-clamp-2 mb-3">{summary}</p>
         )}
         <div className="flex items-center gap-1 text-xs text-gray-500">
           <Eye className="h-3 w-3" />

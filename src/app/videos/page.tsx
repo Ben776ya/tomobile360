@@ -5,6 +5,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs'
 import { Play, Eye, Clock } from 'lucide-react'
 import { formatRelativeTime } from '@/lib/utils'
 import { pageMetadata } from '@/lib/seo/page-metadata'
+import { cleanVideoDescription } from '@/lib/videos/clean-description'
 
 export const revalidate = 60
 
@@ -138,7 +139,7 @@ export default async function VideosPage({
                     {video.title}
                   </h3>
                   <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                    {video.description}
+                    {cleanVideoDescription(video.description)}
                   </p>
                   <div className="flex items-center gap-4 text-xs text-gray-500">
                     <div className="flex items-center gap-1">
