@@ -19,7 +19,7 @@ import { buildModelGroups, type VehicleRowForGrouping } from '@/lib/vehicles/gro
 import { rankSimilarModels } from '@/lib/vehicles/similar-vehicles'
 import { isMeaningfulSpecValue } from '@/lib/vehicles/spec-value'
 import { buildModelFaq } from '@/lib/vehicles/model-faq'
-import { fuelLabel, transmissionLabel } from '@/lib/vehicles/display-labels'
+import { fuelLabel, transmissionLabel, originLabel } from '@/lib/vehicles/display-labels'
 import { vehicleVariants, selectVariant } from '@/lib/vehicles/version-specs'
 import { fuelTypeToEnergyParam, type EnergyKind } from '@/lib/outils/cout-100km'
 import { VideoCard } from '@/components/videos/VideoCard'
@@ -556,7 +556,7 @@ export default async function ModelDetailPage({ params, searchParams }: PageProp
                       {brand.origin && (
                         <p className="flex items-center gap-1 text-xs text-gray-400">
                           <MapPin className="h-3 w-3" aria-hidden="true" />
-                          {brand.origin}
+                          {originLabel(brand.origin)}
                         </p>
                       )}
                     </div>
