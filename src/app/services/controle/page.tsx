@@ -6,7 +6,7 @@ import { pageMetadata } from '@/lib/seo/page-metadata'
 
 export const metadata = pageMetadata({
   title: 'Contrôle Technique Voiture au Maroc',
-  description: "Service de contrôle technique en cours de déploiement avec un partenaire agréé. Réservez votre place pour être averti dès l'ouverture.",
+  description: "Service de contrôle technique en cours de déploiement avec un partenaire agréé. Laissez votre numéro pour être averti dès l'ouverture.",
   path: '/services/controle',
 })
 
@@ -47,8 +47,13 @@ export default function ControlePage() {
                 Contrôle Technique
               </h1>
             </div>
+            <p className="inline-block mb-4 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm font-semibold">
+              Bientôt disponible
+            </p>
             <p className="text-lg md:text-xl text-gray-500">
-              Passez votre contrôle technique en toute sérénité dans nos centres partenaires agréés.
+              Service en cours de déploiement : nous finalisons les accords avec un réseau de centres
+              de contrôle technique agréés au Maroc. La prise de rendez-vous n&apos;est pas encore
+              ouverte ; inscrivez-vous pour être averti dès l&apos;ouverture.
             </p>
           </div>
         </div>
@@ -93,19 +98,6 @@ export default function ControlePage() {
             {/* Booking Form */}
             <BookingForm />
           </div>
-        </div>
-      </section>
-
-      {/* Coming soon — replace with real partner data when contracted */}
-      <section className="py-16 md:py-20 bg-white">
-        <div className="container mx-auto px-4 max-w-2xl text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-primary mb-4">
-            Service en cours de déploiement
-          </h2>
-          <p className="text-gray-600">
-            Nous finalisons les accords avec un réseau de centres de contrôle technique agréés au Maroc.
-            Inscrivez-vous via le formulaire ci-dessus pour être averti dès l&apos;ouverture.
-          </p>
         </div>
       </section>
     </div>

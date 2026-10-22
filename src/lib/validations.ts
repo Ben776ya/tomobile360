@@ -243,10 +243,12 @@ export type ContactMessageInput = z.infer<typeof ContactMessageSchema>
 
 // === Service Booking Schemas ===
 
+// The contrôle technique page only collects an opening alert (city + phone);
+// plate and date stay accepted, but optional, for the same table.
 export const ControleBookingSchema = z.object({
   city: z.string().trim().min(1, 'Ville requise'),
-  plate_number: z.string().trim().min(1, "Immatriculation requise").max(20),
-  preferred_date: z.string().refine((v) => !isNaN(Date.parse(v)), { message: 'Date invalide' }),
+  plate_number: z.string().trim().max(20).optional(),
+  preferred_date: z.string().refine((v) => !isNaN(Date.parse(v)), { message: 'Date invalide' }).optional(),
   phone: z
     .string()
     .trim()

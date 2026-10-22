@@ -8,8 +8,8 @@ import { rateLimit } from '@/lib/rate-limit'
 
 export async function submitControleBooking(formData: {
   city: string
-  plate_number: string
-  preferred_date: string
+  plate_number?: string
+  preferred_date?: string
   phone: string
 }) {
   const validation = validateAction(ControleBookingSchema, formData)
@@ -26,15 +26,21 @@ export async function submitControleBooking(formData: {
     return { error: 'Trop de tentatives. Réessayez dans quelques minutes.' }
   }
 
+  // The service isn't open yet: the page signs visitors up for an opening
+  // alert (city + phone). plate_number / preferred_date are NOT NULL in the
+  // table, so an alert stores an empty plate and the sign-up date, tagged in
+  // notes so it can't be mistaken for an appointment request.
+  const isAlert = !validation.data.plate_number && !validation.data.preferred_date
   const supabase = await createClient()
   const { error } = await supabase
     .from('service_bookings')
     .insert({
       service_type: 'controle_technique',
       city: validation.data.city,
-      plate_number: validation.data.plate_number,
-      preferred_date: validation.data.preferred_date,
+      plate_number: validation.data.plate_number ?? '',
+      preferred_date: validation.data.preferred_date ?? new Date().toISOString().slice(0, 10),
       phone: validation.data.phone,
+      ...(isAlert ? { notes: "Alerte d'ouverture (pas de rendez-vous demandé)" } : {}),
     })
 
   if (error) {

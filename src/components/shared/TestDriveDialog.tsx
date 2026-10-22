@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { gaEvents } from '@/lib/analytics/gtag'
+import { FormPrivacyNotice } from '@/components/shared/FormPrivacyNotice'
 
 interface TestDriveDialogProps {
   vehicleName: string
@@ -145,6 +146,12 @@ export function TestDriveDialog({ vehicleName, dealerPhone }: TestDriveDialogPro
               placeholder="Questions ou demandes particulières..."
             />
           </div>
+
+          <FormPrivacyNotice>
+            Ces informations ne sont pas enregistrées sur notre site : « Envoyer la demande » ouvre
+            WhatsApp avec un message pré-rempli adressé à l&apos;équipe Tomobile 360, qui l&apos;utilise pour
+            organiser votre essai.
+          </FormPrivacyNotice>
 
           <div className="flex gap-3">
             <Button type="submit" className="flex-1 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
