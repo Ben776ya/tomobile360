@@ -141,7 +141,7 @@ describe('getVersionSpecs — one reader for every view', () => {
 // (a) no `version` column — rows carry no `version` key (sanderoFiche above);
 // (b) the column exists, only the legacy row (version NULL);
 // (c) per-version rows next to the legacy one. Per-version rows follow the
-//     wandaloo shape; their figures are illustrative.
+//     imported fiche shape; their figures are illustrative.
 const legacyB = { ...sanderoFiche, version: null }
 const tceRow = {
   version: '1.0 TCe 90 Expression',
