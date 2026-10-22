@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { gaEvents } from '@/lib/analytics/gtag'
 import { FormPrivacyNotice } from '@/components/shared/FormPrivacyNotice'
+import { whatsappLink } from '@/lib/business-info'
 
 interface ContactDealerDialogProps {
   vehicleName: string
@@ -37,10 +38,9 @@ export function ContactDealerDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const message = `Bonjour, je suis interesse(e) par ${vehicleName}.%0A%0ANom: ${formData.name}%0ATelephone: ${formData.phone}%0AEmail: ${formData.email}%0A%0A${formData.message}`
-    const phone = dealerPhone ? dealerPhone.replace(/[^0-9]/g, '') : ''
+    const message = `Bonjour, je suis intéressé(e) par ${vehicleName}.\n\nNom: ${formData.name}\nTéléphone: ${formData.phone}\nEmail: ${formData.email}\n\n${formData.message}`
     gaEvents.dealerContact({ vehicle: vehicleName })
-    window.open(`https://wa.me/${phone}?text=${message}`, '_blank')
+    window.open(whatsappLink(message, dealerPhone ? dealerPhone.replace(/[^0-9]/g, '') : undefined), '_blank')
     setOpen(false)
     setFormData({
       name: '',
