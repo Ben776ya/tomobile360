@@ -8,6 +8,7 @@ const baseVehicle = { id: 'v1', brand_id: 'b', model_id: 'm' } as unknown as Veh
 const fiche = {
   id: 'f1',
   model_id: 'm',
+  version: null,
   specs: { 'Puissance dynamique': '235 ch', 'Couple maxi.': '0 Nm', 'Boîte à vitesse': 'Automatique' },
   en_detail: {
     'Confort': ['Climatisation auto', 'Sièges chauffants'],
@@ -46,7 +47,7 @@ function expectAllClosedDetails(expectedCount: number) {
 
 describe('VehicleSpecs — fiche path', () => {
   it('renders specs + each non-empty en_detail category as closed collapsibles', () => {
-    render(<VehicleSpecs vehicle={baseVehicle} fiche={fiche} />)
+    render(<VehicleSpecs vehicle={baseVehicle} fiches={[fiche]} />)
     // 1 specs rubric + Confort + Sécurité (Vide is skipped)
     expectAllClosedDetails(3)
     expect(screen.getByText('CARACTÉRISTIQUES TECHNIQUES')).toBeInTheDocument()
@@ -56,7 +57,7 @@ describe('VehicleSpecs — fiche path', () => {
   })
 
   it('shows the row count and drops placeholder zero values', () => {
-    render(<VehicleSpecs vehicle={baseVehicle} fiche={fiche} />)
+    render(<VehicleSpecs vehicle={baseVehicle} fiches={[fiche]} />)
     // "0 Nm" is filtered → 2 rows in the specs rubric; Confort also has 2
     expect(screen.getAllByText('2 éléments')).toHaveLength(2)
     expect(screen.queryByText('Couple maxi.')).not.toBeInTheDocument()
@@ -64,7 +65,7 @@ describe('VehicleSpecs — fiche path', () => {
   })
 
   it('"Tout déplier" opens every rubric and flips to "Tout replier"', () => {
-    render(<VehicleSpecs vehicle={baseVehicle} fiche={fiche} />)
+    render(<VehicleSpecs vehicle={baseVehicle} fiches={[fiche]} />)
     fireEvent.click(screen.getByRole('button', { name: /Tout déplier/ }))
     document.querySelectorAll('details').forEach((d) => expect(d.open).toBe(true))
     expect(screen.getByRole('button', { name: /Tout replier/ })).toHaveAttribute('aria-expanded', 'true')
@@ -88,8 +89,8 @@ describe('KeySpecsStrip + VehicleSpecs — one selected version', () => {
   const renderBoth = (variant: Variant) =>
     render(
       <>
-        <div data-testid="strip"><KeySpecsStrip vehicle={row} fiche={sanderoFiche} variant={variant} variants={variants} /></div>
-        <div data-testid="fiche"><VehicleSpecs vehicle={row} fiche={sanderoFiche} variant={variant} variants={variants} basePath="/neuf/dacia/sandero-streetway" /></div>
+        <div data-testid="strip"><KeySpecsStrip vehicle={row} fiches={[sanderoFiche]} variant={variant} variants={variants} /></div>
+        <div data-testid="fiche"><VehicleSpecs vehicle={row} fiches={[sanderoFiche]} variant={variant} variants={variants} basePath="/neuf/dacia/sandero-streetway" /></div>
       </>,
     )
 
@@ -131,9 +132,44 @@ describe('KeySpecsStrip + VehicleSpecs — one selected version', () => {
   })
 })
 
+describe('KeySpecsStrip + VehicleSpecs — per-version fiche rows (state c)', () => {
+  const variants: Variant[] = [
+    { version: '1.0 TCe 90 Expression', fuel_type: 'Essence', price_min: 128000, price_max: 128000, horsepower: 90, transmission: 'Manual' },
+    { version: '1.5 dCi 95 Expression', fuel_type: 'Diesel', price_min: 138000, price_max: 138000, horsepower: 95, transmission: 'Manual' },
+    { version: '1.5 dCi 95 Journey', fuel_type: 'Diesel', price_min: 148000, price_max: 148000, horsepower: 95, transmission: 'Manual' },
+  ]
+  const row = { ...baseVehicle, horsepower: 90, fuel_type: 'Essence', transmission: 'Manual', variant_list: variants } as unknown as VehicleNew
+  const legacy = { ...fiche, specs: { 'Puissance dynamique': '95 ch', 'Vitesse maxi.': '167.0 km/h' }, en_detail: {} } as FicheTechnique
+  const tceRow = { ...legacy, id: 'f-tce', version: '1.0 TCe 90 Expression', specs: { 'Vitesse maxi.': '175 km/h' } } as FicheTechnique
+  const journeyRow = { ...legacy, id: 'f-journey', version: '1.5 dCi 95 Journey', specs: { 'Vitesse maxi.': '165 km/h' } } as FicheTechnique
+
+  const renderBoth = (fiches: FicheTechnique[], variant: Variant) =>
+    render(
+      <>
+        <div data-testid="strip"><KeySpecsStrip vehicle={row} fiches={fiches} variant={variant} variants={variants} /></div>
+        <div data-testid="fiche"><VehicleSpecs vehicle={row} fiches={fiches} variant={variant} variants={variants} basePath="/neuf/dacia/sandero-streetway" /></div>
+      </>,
+    )
+
+  it('shows the selected version its own fiche, scoped to that version only', () => {
+    renderBoth([legacy, tceRow], variants[0])
+    expect(screen.getByTestId('strip')).toHaveTextContent('175 km/h')
+    const ficheBox = screen.getByTestId('fiche')
+    expect(ficheBox).toHaveTextContent('175 km/h')
+    expect(ficheBox).not.toHaveTextContent('167.0 km/h')
+    expect(ficheBox).toHaveTextContent('Données valables pour : 1.0 TCe 90 Expression.')
+  })
+
+  it('scopes the model-level fiche to the versions that have no row of their own', () => {
+    renderBoth([legacy, journeyRow], variants[1])
+    expect(screen.getByTestId('strip')).toHaveTextContent('167.0 km/h')
+    expect(screen.getByTestId('fiche')).toHaveTextContent('Données valables pour : 1.5 dCi 95 Expression.')
+  })
+})
+
 describe('VehicleSpecs — legacy columns path', () => {
   it('renders each populated category as a closed collapsible', () => {
-    render(<VehicleSpecs vehicle={legacyVehicle} fiche={null} />)
+    render(<VehicleSpecs vehicle={legacyVehicle} fiches={[]} />)
     // MOTEUR, CONSOMMATION, DIMENSIONS, GARANTIE (APPARENCE has no data)
     expectAllClosedDetails(4)
     expect(screen.getByText('MOTEUR & PERFORMANCES')).toBeInTheDocument()
@@ -141,7 +177,7 @@ describe('VehicleSpecs — legacy columns path', () => {
   })
 
   it('still shows the empty state when nothing is populated', () => {
-    render(<VehicleSpecs vehicle={baseVehicle} fiche={null} />)
+    render(<VehicleSpecs vehicle={baseVehicle} fiches={[]} />)
     expect(document.querySelectorAll('details')).toHaveLength(0)
     expect(screen.getByText(/bientôt disponibles/)).toBeInTheDocument()
   })

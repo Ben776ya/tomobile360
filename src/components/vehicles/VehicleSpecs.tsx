@@ -7,7 +7,9 @@ import {
   VERSION_SPEC_LABELS,
   getVersionSpecs,
   ficheDescribesVariant,
+  ficheForVariant,
   rowDescribesVariant,
+  variantHasFiche,
   vehicleVariants,
   versionSlug,
   type VersionSpecKey,
@@ -33,7 +35,8 @@ import {
 
 interface VehicleSpecsProps {
   vehicle: VehicleNew
-  fiche?: FicheTechnique | null
+  /** Every fiche row of the model (per-version rows and/or the model-level one). */
+  fiches?: FicheTechnique[] | null
   /** Selected version. When given, the fiche is only shown for the versions it describes. */
   variant?: Variant
   variants?: Variant[]
@@ -43,7 +46,7 @@ interface VehicleSpecsProps {
 
 interface KeySpecsStripProps {
   vehicle: VehicleNew
-  fiche?: FicheTechnique | null
+  fiches?: FicheTechnique[] | null
   /** The selected version — every figure in the strip is this version's. */
   variant: Variant
   variants: Variant[]
@@ -60,10 +63,10 @@ const KEY_SPEC_ICONS: Partial<Record<VersionSpecKey, typeof Car>> = {
   torque: Gauge,
 }
 
-export function KeySpecsStrip({ vehicle, fiche, variant, variants }: KeySpecsStripProps) {
+export function KeySpecsStrip({ vehicle, fiches, variant, variants }: KeySpecsStripProps) {
   // Same reader as the fiche below and the comparator: per-version facts come
   // from the variant, fiche figures only when the fiche describes this version.
-  const specs = getVersionSpecs({ vehicle, fiche, variant, variants })
+  const specs = getVersionSpecs({ vehicle, fiches, variant, variants })
 
   return (
     <div>
@@ -152,13 +155,17 @@ function FicheHeading() {
   )
 }
 
-export function VehicleSpecs({ vehicle, fiche, variant, variants, basePath }: VehicleSpecsProps) {
+export function VehicleSpecs({ vehicle, fiches, variant, variants, basePath }: VehicleSpecsProps) {
   // Same per-version reader as KeySpecsStrip and the comparator. The fiche is
-  // model-level and describes one engine: list the versions it can be tied to.
+  // the selected version's own row, else the model-level one, which describes
+  // one engine: list the versions it can be tied to.
   const allVariants = variants ?? vehicleVariants(vehicle)
   const selected = variant ?? allVariants[0]
+  const fiche = ficheForVariant(fiches, selected)
   const ficheVersions = allVariants.filter((v) => ficheDescribesVariant(fiche, v, allVariants))
   const ficheFitsSelected = ficheVersions.includes(selected)
+  // Versions shown this very fiche (a version with its own row reads that instead).
+  const scopeVersions = ficheVersions.filter((v) => ficheForVariant(fiches, v) === fiche)
 
   // Priority 1: Render from fiches_techniques table data.
   // Drop placeholder/zero values (e.g. "0 Nm", "", "-") up front so a fiche
@@ -170,8 +177,9 @@ export function VehicleSpecs({ vehicle, fiche, variant, variants, basePath }: Ve
   const hasDetail = fiche && Object.keys(fiche.en_detail || {}).length > 0
 
   // The fiche describes other versions only: show none of its figures under
-  // this version, point to the versions it does describe instead.
+  // this version, point to the versions that have one instead.
   if ((hasSpecs || hasDetail) && variant && !ficheFitsSelected && ficheVersions.length > 0) {
+    const withFiche = allVariants.filter((v) => variantHasFiche(fiches, v, allVariants))
     return (
       <div className="space-y-3">
         <h3 className="text-xl font-semibold text-slate-700">Fiche Technique</h3>
@@ -180,7 +188,7 @@ export function VehicleSpecs({ vehicle, fiche, variant, variants, basePath }: Ve
         </p>
         <p className="text-sm text-gray-600">
           Disponible pour :{' '}
-          {ficheVersions.map((v, i) => (
+          {withFiche.map((v, i) => (
             <span key={`${v.version}-${i}`}>
               {i > 0 && ', '}
               {basePath ? (
@@ -206,9 +214,9 @@ export function VehicleSpecs({ vehicle, fiche, variant, variants, basePath }: Ve
       ? null
       : !ficheFitsSelected
       ? 'Version décrite non précisée par la source : ces données peuvent différer de la version sélectionnée.'
-      : ficheVersions.length === allVariants.length
+      : scopeVersions.length === allVariants.length
       ? (allVariants.length > 1 ? 'Données valables pour toutes les versions.' : null)
-      : `Données valables pour : ${ficheVersions.map((v) => v.version).join(', ')}.`
+      : `Données valables pour : ${scopeVersions.map((v) => v.version).join(', ')}.`
     const ficheDate = variant && fiche?.updated_at
       ? new Date(fiche.updated_at).toLocaleDateString('fr-MA', { day: 'numeric', month: 'long', year: 'numeric' })
       : null
@@ -283,7 +291,7 @@ export function VehicleSpecs({ vehicle, fiche, variant, variants, basePath }: Ve
   // Organized into categories matching the structured path visual style.
   // Per-version facts come from the selected version; the row's engine
   // columns describe one version only, so they show only for that one.
-  const own = getVersionSpecs({ vehicle, fiche: null, variant: selected, variants: allVariants })
+  const own = getVersionSpecs({ vehicle, fiches: null, variant: selected, variants: allVariants })
   const rowOk = rowDescribesVariant(vehicle, selected, allVariants)
   const engine = <T,>(value: T): T | null => (rowOk ? value : null)
   const legacyCategories = [

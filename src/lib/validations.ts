@@ -183,6 +183,8 @@ export const UpdateFicheTechniqueSchema = z.object({
 
 export const CreateFicheTechniqueSchema = z.object({
   model_id: z.string().uuid('model_id doit être un UUID valide'),
+  /** Exact `variant_list` version, or null for a model-level fiche (all versions). */
+  version: z.string().min(1).nullable(),
   specs: z.record(z.string(), z.string()).default({}),
   en_detail: z.record(z.string(), z.array(z.string())).default({}),
 })

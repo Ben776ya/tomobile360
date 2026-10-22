@@ -583,6 +583,7 @@ export type Database = {
           source_url: string | null
           specs: Json
           updated_at: string
+          version: string | null
         }
         Insert: {
           created_at?: string
@@ -592,6 +593,7 @@ export type Database = {
           source_url?: string | null
           specs?: Json
           updated_at?: string
+          version?: string | null
         }
         Update: {
           created_at?: string
@@ -601,6 +603,7 @@ export type Database = {
           source_url?: string | null
           specs?: Json
           updated_at?: string
+          version?: string | null
         }
         Relationships: [
           {

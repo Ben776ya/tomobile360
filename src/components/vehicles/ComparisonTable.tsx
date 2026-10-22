@@ -9,10 +9,12 @@ import { slug } from '@/lib/slug'
 import {
   SPEC_UNAVAILABLE,
   VERSION_SPEC_LABELS,
+  fichesByModel,
   getVersionSpecs,
   selectVariant,
   vehicleVariants,
   versionSlug,
+  type FicheRow,
   type VersionSpecKey,
 } from '@/lib/vehicles/version-specs'
 
@@ -30,7 +32,7 @@ const SPEC_ROWS: VersionSpecKey[] = [
 
 export function ComparisonTable({ vehicleIds, versions }: ComparisonTableProps) {
   const [vehicles, setVehicles] = useState<any[]>([])
-  const [fiches, setFiches] = useState<Record<string, { specs: unknown }>>({})
+  const [fiches, setFiches] = useState<Record<string, FicheRow[]>>({})
   const [loading, setLoading] = useState(true)
 
   const fetchVehicles = useCallback(async () => {
@@ -46,14 +48,12 @@ export function ComparisonTable({ vehicleIds, versions }: ComparisonTableProps) 
       .in('id', vehicleIds)
 
     if (data) {
-      // Same model-level fiche the model page reads, so both show the same figures.
+      // Same fiche rows the model page reads, so both show the same figures.
       const { data: ficheRows } = await supabase
         .from('fiches_techniques')
-        .select('model_id, specs')
+        .select('*')
         .in('model_id', data.map((v) => v.model_id))
-      const ficheMap: Record<string, { specs: unknown }> = {}
-      ;(ficheRows ?? []).forEach((f) => { ficheMap[f.model_id] = f })
-      setFiches(ficheMap)
+      setFiches(fichesByModel(ficheRows))
       setVehicles(data)
     }
 
@@ -78,9 +78,9 @@ export function ComparisonTable({ vehicleIds, versions }: ComparisonTableProps) 
     const vehicle = vehicles.find((v) => v.id === id)
     if (!vehicle) return []
     const variants = vehicleVariants(vehicle)
-    const fiche = fiches[vehicle.model_id]
-    const variant = selectVariant(variants, fiche, versions?.[i])
-    return [{ key: `${id}-${i}`, vehicle, variant, specs: getVersionSpecs({ vehicle, fiche, variant, variants }) }]
+    const modelFiches = fiches[vehicle.model_id]
+    const variant = selectVariant(variants, modelFiches, versions?.[i])
+    return [{ key: `${id}-${i}`, vehicle, variant, specs: getVersionSpecs({ vehicle, fiches: modelFiches, variant, variants }) }]
   })
   type Column = (typeof columns)[number]
 

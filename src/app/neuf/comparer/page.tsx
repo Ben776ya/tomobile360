@@ -12,7 +12,7 @@ import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
 import type { Variant } from '@/lib/types'
 import { parseCompareSlots, compareHref, type CompareSlot } from '@/lib/vehicles/compare-params'
-import { vehicleVariants, selectVariant, versionSlug } from '@/lib/vehicles/version-specs'
+import { vehicleVariants, selectVariant, versionSlug, fichesByModel, type FicheRow } from '@/lib/vehicles/version-specs'
 
 interface VehicleData {
   id: string
@@ -37,7 +37,7 @@ export default function ComparePage() {
   const [slots, setSlots] = useState<CompareSlot[]>([])
   const selectedVehicles = useMemo(() => slots.map((s) => s.id), [slots])
   const [vehicleData, setVehicleData] = useState<Record<string, VehicleData>>({})
-  const [fiches, setFiches] = useState<Record<string, { specs: unknown }>>({})
+  const [fiches, setFiches] = useState<Record<string, FicheRow[]>>({})
   const [showSelector, setShowSelector] = useState(false)
   const [loading, setLoading] = useState(false)
   const fetchedIdsRef = useRef<Set<string>>(new Set())
@@ -73,16 +73,12 @@ export default function ComparePage() {
       .in('id', newIds)
 
     if (data) {
-      // The model page's fiche decides each column's default version, so read it too.
+      // The model page's fiches decide each column's default version, so read them too.
       const { data: ficheRows } = await supabase
         .from('fiches_techniques')
-        .select('model_id, specs')
+        .select('*')
         .in('model_id', data.map((v) => v.model_id))
-      setFiches(prev => {
-        const ficheMap = { ...prev }
-        ;(ficheRows ?? []).forEach((f) => { ficheMap[f.model_id] = f })
-        return ficheMap
-      })
+      setFiches(prev => ({ ...prev, ...fichesByModel(ficheRows) }))
       setVehicleData(prev => {
         const dataMap: Record<string, VehicleData> = { ...prev }
         data.forEach((vehicle: any) => {

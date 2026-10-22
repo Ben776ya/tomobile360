@@ -313,6 +313,8 @@ export type NarsaVideo = {
 export type FicheTechnique = {
   id: string
   model_id: string
+  /** Exact `variant_list` version this fiche describes; null = model-level fiche (all versions). */
+  version: string | null
   specs: Record<string, string>
   en_detail: Record<string, string[]>
   source_url: string | null

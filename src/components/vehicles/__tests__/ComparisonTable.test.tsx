@@ -82,6 +82,25 @@ describe('ComparisonTable — same source as the model page', () => {
     )
   })
 
+  it('reads each column\'s own version row when the model has per-version fiches (state c)', async () => {
+    const legacyRows = tables.fiches_techniques
+    tables.fiches_techniques = [
+      ...legacyRows.map((f) => ({ ...f, version: null })),
+      { model_id: 'm-sandero', version: '1.0 TCe 90 Expression', specs: { 'Conso. mixte': '5.3 L/100km', 'Vitesse maxi.': '175 km/h' } },
+    ]
+    try {
+      render(<ComparisonTable vehicleIds={['sandero', 'sandero']} versions={[null, '1-5-dci-95-expression']} />)
+      await screen.findByText('Caractéristiques')
+      // Default column = first listed version (it has its own row); the other reads the legacy row.
+      const cells = (label: string) => within(row(label)).getAllByRole('cell').slice(1).map((c) => c.textContent)
+      expect(cells('Version')).toEqual(['1.0 TCe 90 Expression', '1.5 dCi 95 Expression'])
+      expect(cells('Conso. mixte')).toEqual(['5.3 L/100km', '5.5 L/100km'])
+      expect(cells('Vitesse max')).toEqual(['175 km/h', '167.0 km/h'])
+    } finally {
+      tables.fiches_techniques = legacyRows
+    }
+  })
+
   it('highlights rows whose known values differ', async () => {
     render(<ComparisonTable vehicleIds={['sandero', 'duster']} />)
     await screen.findByText('Caractéristiques')
