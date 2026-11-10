@@ -20,21 +20,21 @@ export interface InstagramReel {
 export const INSTAGRAM_HANDLE = 'tomobile360.ma'
 export const INSTAGRAM_PROFILE_URL = EXTERNAL_LINKS.INSTAGRAM
 
-// Latest reels published by @tomobile360.ma (newest first, checked 2026-10-05).
+// Latest reels published by @tomobile360.ma (newest first, checked 2026-11-10).
 // Shown when INSTAGRAM_ACCESS_TOKEN is unset or the API call fails.
 const CURATED_REEL_CODES = [
+  'DfbybLjR56S',
+  'DfbvDReRxNr',
+  'DfAPLCYulM3',
+  'De1x2_DOVdW',
+  'DekcT9QOliv',
+  'DehxtaguYo7',
+  'DeaDJzTutEt',
+  'DeMLG6Vuw4Q',
   'DdUK3u-AHzj',
   'DdEwqCaAcb7',
   'DcjRhachDuc',
   'Db3nGiAuf_B',
-  'DbdWAbFgD39',
-  'DbVwwCloDG-',
-  'Da3DjFFgF0z',
-  'DavZEZztcml',
-  'DaVy1o3uioF',
-  'DaCxU2CsZMm',
-  'DZV7f12oQzc',
-  'DZKy91soBg0',
 ]
 
 const MEDIA_ENDPOINT = 'https://graph.instagram.com/me/media'
